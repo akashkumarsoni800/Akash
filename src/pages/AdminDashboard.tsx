@@ -1,44 +1,61 @@
 import React from "react";
-import { supabase } from "../supabaseClient"; // <-- Ye line add karein
-// Is line ko add karein (ya update karein agar pehle se hai)
-import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-// 1. Imports update karein
+import { supabase } from "../supabaseClient"; 
+import { useQueryClient, useQuery } from '@tanstack/react-query';
+
+// 👇 Yahan saare zaroori Hooks import kiye gaye hain
 import { 
   useListApprovals, 
   useApproveStudent, 
-  useInternetIdentity, 
-  useGetCallerUserProfile,
-  // Ye neeche wale 2 naye hooks add karein:
   useGetAllApprovedStudents,
-  useGetAllTeachers
-} from "../hooks/useQueries"; // Path check kar lena (shayad ../../hooks/index ho)
+  useGetAllTeachers,
+  useGetCallerUserProfile // <-- Ye missing tha, ab add kar diya hai
+} from "../hooks/useQueries"; 
 
-const Dashboard = () => {
-  // 1. Hooks se data aur functions nikaale
-  const { data: pendingStudents, isLoading } = useListApprovals();
-  const { mutate: approveStudent } = useApproveStudent();
-  const { logout } = useInternetIdentity();
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  // 1. Data Fetching Hooks
   const { data: profile } = useGetCallerUserProfile();
-const { data: approvedStudents } = useGetAllApprovedStudents();
+  const { data: pendingStudents, isLoading: loadingPending } = useListApprovals();
+  const { mutate: approveStudent } = useApproveStudent();
+  const { data: approvedStudents } = useGetAllApprovedStudents();
   const { data: teachers } = useGetAllTeachers();
 
-  // Calculation (Agar data abhi load nahi hua to 0 maano)
+  // 2. Logout Function
+  const handleLogout = async () => {
+    localStorage.removeItem("adarsh_school_login"); // Localstorage clear
+    await supabase.auth.signOut(); // Supabase clear
+    window.location.href = "/"; // Force Reload
+  };
+
+  // 3. Counts Calculation
   const totalStudentCount = approvedStudents?.length || 0;
   const totalTeacherCount = teachers?.length || 0;
-  if (isLoading) return <div className="p-10 text-center">Loading Dashboard...</div>;
+
+  // 4. Loading State (Crash rokne ke liye check)
+  if (!profile) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+         <div className="text-xl text-blue-600 animate-pulse">Loading Admin Profile...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navbar */}
       <nav className="bg-blue-900 text-white p-4 flex justify-between items-center shadow-lg">
         <div>
           <h1 className="text-xl font-bold">Adarsh Shishu Mandir</h1>
-          <p className="text-xs text-gray-300">Welcome, {profile.name}</p>
+          <p className="text-xs text-gray-300">
+            Welcome, {profile.name || "Admin"} {/* Naam yahan dikhega */}
+          </p>
         </div>
         <button 
-          onClick={logout} 
-          className="bg-red-500 px-4 py-2 rounded text-sm hover:bg-red-600"
+          onClick={handleLogout} 
+          className="bg-red-500 px-4 py-2 rounded text-sm hover:bg-red-600 transition"
         >
           Logout
         </button>
@@ -54,17 +71,17 @@ const { data: approvedStudents } = useGetAllApprovedStudents();
           </h2>
 
           {pendingStudents && pendingStudents.length === 0 ? (
-            <p className="text-gray-500">No pending approvals at the moment.</p>
+            <p className="text-gray-500 italic">No pending approvals at the moment.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-gray-700">
-                    <th className="p-3">Student Name</th>
-                    <th className="p-3">Class</th>
-                    <th className="p-3">Father's Name</th>
-                    <th className="p-3">Contact</th>
-                    <th className="p-3">Action</th>
+                    <th className="p-3 border-b">Student Name</th>
+                    <th className="p-3 border-b">Class</th>
+                    <th className="p-3 border-b">Father's Name</th>
+                    <th className="p-3 border-b">Contact</th>
+                    <th className="p-3 border-b">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -81,7 +98,7 @@ const { data: approvedStudents } = useGetAllApprovedStudents();
                               approveStudent(student.id);
                             }
                           }}
-                          className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition"
+                          className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition shadow-sm"
                         >
                           Approve ✅
                         </button>
@@ -94,31 +111,38 @@ const { data: approvedStudents } = useGetAllApprovedStudents();
           )}
         </div>
 
-        {/* Section 2: Quick Stats (Optional Placeholder) */}
+        {/* Section 2: Quick Stats & Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-100 p-6 rounded-lg text-blue-900">
-            <h3 className="font-bold">Total Students</h3>
-           <p className="text-3xl mt-2">{totalStudentCount}</p>
+          
+          {/* Card 1: Students */}
+          <div className="bg-blue-100 p-6 rounded-lg text-blue-900 shadow-sm border border-blue-200">
+            <h3 className="font-bold uppercase text-xs tracking-wider">Total Students</h3>
+            <p className="text-4xl font-extrabold mt-2">{totalStudentCount}</p>
           </div>
-          <div className="bg-green-100 p-6 rounded-lg text-green-900">
-            <h3 className="font-bold">Teachers</h3>
-           <p className="text-3xl mt-2">{totalTeacherCount}</p>
+
+          {/* Card 2: Teachers */}
+          <div className="bg-green-100 p-6 rounded-lg text-green-900 shadow-sm border border-green-200">
+            <h3 className="font-bold uppercase text-xs tracking-wider">Teachers</h3>
+            <p className="text-4xl font-extrabold mt-2">{totalTeacherCount}</p>
+            <Link to="/admin/add-teacher" className="text-xs underline mt-2 block hover:text-green-700">
+              + Add New Teacher
+            </Link>
           </div>
-          {/* EXAMS & RESULTS SECTION */}
-<div className="bg-purple-100 p-6 rounded-lg text-purple-900 flex flex-col justify-between">
-  <div>
-    <h3 className="font-bold">Exam Dept.</h3>
-    <p className="text-sm mt-2 opacity-80">Manage Marks & Results</p>
-  </div>
-  
-  {/* Ye Button aapko Upload Page par le jayega */}
-  <Link 
-    to="/admin/upload-result" 
-    className="mt-4 bg-purple-600 text-white text-center py-2 rounded text-sm hover:bg-purple-700 transition"
-  >
-    Upload Marks 📤
-  </Link>
-</div>
+
+          {/* Card 3: Exam Dept */}
+          <div className="bg-purple-100 p-6 rounded-lg text-purple-900 shadow-sm border border-purple-200 flex flex-col justify-between">
+            <div>
+              <h3 className="font-bold uppercase text-xs tracking-wider">Exam Dept.</h3>
+              <p className="text-sm mt-1 opacity-80">Manage Marks & Results</p>
+            </div>
+            <Link 
+              to="/admin/upload-result" 
+              className="mt-4 bg-purple-600 text-white text-center py-2 rounded text-sm hover:bg-purple-700 transition shadow"
+            >
+              Upload Marks 📤
+            </Link>
+          </div>
+
         </div>
 
       </div>
@@ -126,39 +150,4 @@ const { data: approvedStudents } = useGetAllApprovedStudents();
   );
 };
 
-export default Dashboard;// --- EXAM & RESULT MODULES ---
-
-// 1. Saare Exams ki list lao
-export const useGetAllExams = () => {
-  return useQuery({
-    queryKey: ['exams'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('exams').select('*');
-      if (error) throw error;
-      return data || [];
-    }
-  });
-};
-
-// 2. Result (Marks) Save karo
-export const useAddResult = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (resultData: any) => {
-      const { error } = await supabase.from('results').insert([{
-        student_id: resultData.studentId,
-        exam_id: resultData.examId,
-        marks_obtained: resultData.marks,
-        remarks: resultData.remarks
-      }]);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Marks Uploaded Successfully!");
-    }
-  });
-};
-
-function useMutation(arg0: { mutationFn: (resultData: any) => Promise<void>; onSuccess: () => void; }) {
-  throw new Error("Function not implemented.");
-}
+export default AdminDashboard;
