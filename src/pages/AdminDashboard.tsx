@@ -1,189 +1,164 @@
-import { useState } from 'react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useListApprovals } from '../hooks/useQueries';
-import { useQueryClient } from '@tanstack/react-query';
-import DashboardLayout from '../components/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Users, GraduationCap, BookOpen, ClipboardCheck, Bell } from 'lucide-react';
-import StudentsManagement from '../components/admin/StudentsManagement';
-import TeachersManagement from '../components/admin/TeachersManagement';
-import ExamsManagement from '../components/admin/ExamsManagement';
-import ApprovalsManagement from '../components/admin/ApprovalsManagement';
+import React from "react";
+import { supabase } from "../supabaseClient"; // <-- Ye line add karein
+// Is line ko add karein (ya update karein agar pehle se hai)
+import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+// 1. Imports update karein
+import { 
+  useListApprovals, 
+  useApproveStudent, 
+  useInternetIdentity, 
+  useGetCallerUserProfile,
+  // Ye neeche wale 2 naye hooks add karein:
+  useGetAllApprovedStudents,
+  useGetAllTeachers
+} from "../hooks/useQueries"; // Path check kar lena (shayad ../../hooks/index ho)
 
-export default function AdminDashboard() {
-  const { clear } = useInternetIdentity();
-  const queryClient = useQueryClient();
-  const { data: userProfile } = useGetCallerUserProfile();
-  const { data: approvals } = useListApprovals();
-  const [activeTab, setActiveTab] = useState('overview');
+const Dashboard = () => {
+  // 1. Hooks se data aur functions nikaale
+  const { data: pendingStudents, isLoading } = useListApprovals();
+  const { mutate: approveStudent } = useApproveStudent();
+  const { logout } = useInternetIdentity();
+  const { data: profile } = useGetCallerUserProfile();
+const { data: approvedStudents } = useGetAllApprovedStudents();
+  const { data: teachers } = useGetAllTeachers();
 
-  const handleLogout = async () => {
-    await clear();
-    queryClient.clear();
-  };
-
-  const pendingApprovals = approvals?.filter(a => a.status === 'pending').length || 0;
-
+  // Calculation (Agar data abhi load nahi hua to 0 maano)
+  const totalStudentCount = approvedStudents?.length || 0;
+  const totalTeacherCount = teachers?.length || 0;
+  if (isLoading) return <div className="p-10 text-center">Loading Dashboard...</div>;
   return (
-    <DashboardLayout
-      userName={userProfile?.name || 'Administrator'}
-      userRole="Administrator"
-      onLogout={handleLogout}
-    >
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navbar */}
+      <nav className="bg-blue-900 text-white p-4 flex justify-between items-center shadow-lg">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Manage all school operations and users</p>
+          <h1 className="text-xl font-bold">Adarsh Shishu Mandir</h1>
+          <p className="text-xs text-gray-300">Welcome, {profile.name}</p>
+        </div>
+        <button 
+          onClick={logout} 
+          className="bg-red-500 px-4 py-2 rounded text-sm hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </nav>
+
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto p-6">
+        
+        {/* Section 1: Pending Approvals */}
+        <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">
+            Pending Admission Requests
+          </h2>
+
+          {pendingStudents && pendingStudents.length === 0 ? (
+            <p className="text-gray-500">No pending approvals at the moment.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 text-gray-700">
+                    <th className="p-3">Student Name</th>
+                    <th className="p-3">Class</th>
+                    <th className="p-3">Father's Name</th>
+                    <th className="p-3">Contact</th>
+                    <th className="p-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingStudents?.map((student: any) => (
+                    <tr key={student.id} className="border-b hover:bg-gray-50">
+                      <td className="p-3 font-medium">{student.full_name}</td>
+                      <td className="p-3">{student.class_name}</td>
+                      <td className="p-3">{student.parent_name}</td>
+                      <td className="p-3">{student.contact_number}</td>
+                      <td className="p-3">
+                        <button
+                          onClick={() => {
+                            if(window.confirm(`Approve admission for ${student.full_name}?`)) {
+                              approveStudent(student.id);
+                            }
+                          }}
+                          className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition"
+                        >
+                          Approve ✅
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="overview" className="gap-2">
-              <ClipboardCheck className="h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="students" className="gap-2">
-              <GraduationCap className="h-4 w-4" />
-              <span className="hidden sm:inline">Students</span>
-            </TabsTrigger>
-            <TabsTrigger value="teachers" className="gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Teachers</span>
-            </TabsTrigger>
-            <TabsTrigger value="exams" className="gap-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Exams</span>
-            </TabsTrigger>
-            <TabsTrigger value="approvals" className="gap-2 relative">
-              <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Approvals</span>
-              {pendingApprovals > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center">
-                  {pendingApprovals}
-                </span>
-              )}
-            </TabsTrigger>
-          </TabsList>
+        {/* Section 2: Quick Stats (Optional Placeholder) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-blue-100 p-6 rounded-lg text-blue-900">
+            <h3 className="font-bold">Total Students</h3>
+           <p className="text-3xl mt-2">{totalStudentCount}</p>
+          </div>
+          <div className="bg-green-100 p-6 rounded-lg text-green-900">
+            <h3 className="font-bold">Teachers</h3>
+           <p className="text-3xl mt-2">{totalTeacherCount}</p>
+          </div>
+          {/* EXAMS & RESULTS SECTION */}
+<div className="bg-purple-100 p-6 rounded-lg text-purple-900 flex flex-col justify-between">
+  <div>
+    <h3 className="font-bold">Exam Dept.</h3>
+    <p className="text-sm mt-2 opacity-80">Manage Marks & Results</p>
+  </div>
+  
+  {/* Ye Button aapko Upload Page par le jayega */}
+  <Link 
+    to="/admin/upload-result" 
+    className="mt-4 bg-purple-600 text-white text-center py-2 rounded text-sm hover:bg-purple-700 transition"
+  >
+    Upload Marks 📤
+  </Link>
+</div>
+        </div>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">Approved students</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">Active teachers</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
-                  <Bell className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{pendingApprovals}</div>
-                  <p className="text-xs text-muted-foreground">Awaiting review</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Exams</CardTitle>
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">Scheduled exams</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Common administrative tasks</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <button
-                    onClick={() => setActiveTab('students')}
-                    className="w-full text-left px-4 py-3 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <div className="font-medium">Manage Students</div>
-                    <div className="text-sm text-muted-foreground">View and approve student registrations</div>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('teachers')}
-                    className="w-full text-left px-4 py-3 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <div className="font-medium">Manage Teachers</div>
-                    <div className="text-sm text-muted-foreground">Add and assign teachers to classes</div>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('exams')}
-                    className="w-full text-left px-4 py-3 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <div className="font-medium">Schedule Exams</div>
-                    <div className="text-sm text-muted-foreground">Create and manage examinations</div>
-                  </button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>System Status</CardTitle>
-                  <CardDescription>Current system information</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">System Status</span>
-                    <span className="text-sm font-medium text-green-600 dark:text-green-400">Operational</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Backend Connection</span>
-                    <span className="text-sm font-medium text-green-600 dark:text-green-400">Connected</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Last Updated</span>
-                    <span className="text-sm font-medium">{new Date().toLocaleDateString()}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="students">
-            <StudentsManagement />
-          </TabsContent>
-
-          <TabsContent value="teachers">
-            <TeachersManagement />
-          </TabsContent>
-
-          <TabsContent value="exams">
-            <ExamsManagement />
-          </TabsContent>
-
-          <TabsContent value="approvals">
-            <ApprovalsManagement />
-          </TabsContent>
-        </Tabs>
       </div>
-    </DashboardLayout>
+    </div>
   );
+};
+
+export default Dashboard;// --- EXAM & RESULT MODULES ---
+
+// 1. Saare Exams ki list lao
+export const useGetAllExams = () => {
+  return useQuery({
+    queryKey: ['exams'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('exams').select('*');
+      if (error) throw error;
+      return data || [];
+    }
+  });
+};
+
+// 2. Result (Marks) Save karo
+export const useAddResult = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (resultData: any) => {
+      const { error } = await supabase.from('results').insert([{
+        student_id: resultData.studentId,
+        exam_id: resultData.examId,
+        marks_obtained: resultData.marks,
+        remarks: resultData.remarks
+      }]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Marks Uploaded Successfully!");
+    }
+  });
+};
+
+function useMutation(arg0: { mutationFn: (resultData: any) => Promise<void>; onSuccess: () => void; }) {
+  throw new Error("Function not implemented.");
 }
