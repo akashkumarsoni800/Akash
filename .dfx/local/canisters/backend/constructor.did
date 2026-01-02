@@ -1,0 +1,94 @@
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   entityId: opt nat;
+   name: text;
+   userType: text;
+ };
+type UserApprovalInfo = 
+ record {
+   "principal": principal;
+   status: ApprovalStatus;
+ };
+type Time = int;
+type Teacher = 
+ record {
+   classes: vec text;
+   contactNumber: text;
+   fullName: text;
+   id: nat;
+   registrationTime: Time;
+   status: ApprovalStatus;
+   subjects: vec text;
+   userPrincipal: opt principal;
+ };
+type Student = 
+ record {
+   classAssignment: text;
+   contactNumber: text;
+   fullName: text;
+   guardianName: text;
+   id: nat;
+   registrationTime: Time;
+   status: ApprovalStatus;
+   userPrincipal: opt principal;
+ };
+type Grade = 
+ variant {
+   a;
+   b;
+   c;
+   d;
+   f;
+ };
+type ExamMarks = 
+ record {
+   grade: Grade;
+   marks: nat;
+   studentId: nat;
+ };
+type Exam = 
+ record {
+   examDate: Time;
+   id: nat;
+   marks: vec ExamMarks;
+   subject: text;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+service : {
+  addExam: (subject: text, examDate: Time) -> ();
+  approveStudent: (studentId: nat, status: ApprovalStatus) -> ();
+  approveTeacher: (teacherId: nat, status: ApprovalStatus) -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  getAllApprovedStudents: () -> (vec Student) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getExam: (examId: nat) -> (opt Exam) query;
+  getMyStudentId: () -> (opt nat) query;
+  getMyTeacherId: () -> (opt nat) query;
+  getStudentById: (studentId: nat) -> (opt Student) query;
+  getTeacherById: (teacherId: nat) -> (opt Teacher) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  initializeAccessControl: () -> ();
+  isCallerAdmin: () -> (bool) query;
+  isCallerApproved: () -> (bool) query;
+  isStudentApproved: (studentId: nat) -> (bool) query;
+  listApprovals: () -> (vec UserApprovalInfo) query;
+  registerStudent: (fullName: text, guardianName: text, contactNumber: 
+   text, classAssignment: text) -> ();
+  registerTeacher: (fullName: text, contactNumber: text, subjects: vec text,
+   classes: vec text) -> ();
+  requestApproval: () -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  setApproval: (user: principal, status: ApprovalStatus) -> ();
+}

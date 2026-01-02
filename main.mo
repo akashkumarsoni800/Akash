@@ -1,49 +1,47 @@
-import Time "mo:core/Time";
-import Text "mo:core/Text";
-import Map "mo:core/Map";
-import Array "mo:core/Array";
-import Order "mo:core/Order";
-import List "mo:core/List";
-import Option "mo:core/Option";
-import Principal "mo:core/Principal";
-import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
-import AccessControl "authorization/access-control";
-import UserApproval "user-approval/approval";
-import Char "mo:core/Char";
-import Nat32 "mo:core/Nat32";
+import Time "mo:base/Time";
+import Text "mo:base/Text";
+import HashMap "mo:base/HashMap";
+import Array "mo:base/Array";
+import Order "mo:base/Order";
+import Option "mo:base/Option";
+import Principal "mo:base/Principal";
+import Iter "mo:base/Iter";
+import Nat "mo:base/Nat";
+import Nat32 "mo:base/Nat32";
+import Buffer "mo:base/Buffer";
+import Debug "mo:base/Debug"; 
 
-actor {
+import AccessControl "access-control";
+import UserApproval "approval";
+
+// FINAL FIX: Yahan 'persistent' wapas lagaya hai
+persistent actor { 
+
+  // --- HELPER FUNCTIONS ---
+  func natHash(n : Nat) : Nat32 {
+    let mod = n % 4_294_967_296; 
+    Nat32.fromNat(mod)
+  };
+
+  // --- TYPE DEFINITIONS ---
   type Role = AccessControl.UserRole;
   type ApprovalStatus = UserApproval.ApprovalStatus;
 
   module TimeCompare {
     public func compare(t1 : Time.Time, t2 : Time.Time) : Order.Order {
-      compareValues(t1, t2);
-    };
-
-    private func compareValues(t1 : Time.Time, t2 : Time.Time) : Order.Order {
       if (t1 < t2) { #less } else if (t1 > t2) { #greater } else { #equal };
     };
   };
 
   module Grade {
-    public type Grade = {
-      #a;
-      #b;
-      #c;
-      #d;
-      #f;
-    };
+    public type Grade = { #a; #b; #c; #d; #f };
 
     public func fromMark(mark : Nat) : Grade {
-      if (mark >= 90) { #a } else if (mark >= 75) {
-        #b;
-      } else if (mark >= 60) {
-        #c;
-      } else if (mark >= 50) {
-        #d;
-      } else { #f };
+      if (mark >= 90) { #a } 
+      else if (mark >= 75) { #b } 
+      else if (mark >= 60) { #c } 
+      else if (mark >= 50) { #d } 
+      else { #f };
     };
   };
 
@@ -74,17 +72,17 @@ actor {
   };
 
   module ExamMarks {
-    public type Exam = {
-      id : Nat;
-      subject : Text;
-      examDate : Time.Time;
-      marks : [(Nat, ExamMarks)];
-    };
-
     public type ExamMarks = {
       studentId : Nat;
       marks : Nat;
       grade : Grade.Grade;
+    };
+
+    public type Exam = {
+      id : Nat;
+      subject : Text;
+      examDate : Time.Time;
+      marks : [ExamMarks]; 
     };
   };
 
@@ -94,19 +92,25 @@ actor {
     entityId : ?Nat;
   };
 
-  let students = Map.empty<Nat, Student.Student>();
-  let teachers = Map.empty<Nat, Teacher.Teacher>();
-  let exams = Map.empty<Nat, ExamMarks.Exam>();
-  let userProfiles = Map.empty<Principal, UserProfile>();
-  let principalToStudentId = Map.empty<Principal, Nat>();
-  let principalToTeacherId = Map.empty<Principal, Nat>();
+  // --- STATE VARIABLES ---
+  // FINAL FIX: Yahan 'transient' wapas lagaya hai
+  
+  transient let students = HashMap.HashMap<Nat, Student.Student>(0, Nat.equal, natHash);
+  transient let teachers = HashMap.HashMap<Nat, Teacher.Teacher>(0, Nat.equal, natHash);
+  transient let exams = HashMap.HashMap<Nat, ExamMarks.Exam>(0, Nat.equal, natHash);
+  
+  transient let userProfiles = HashMap.HashMap<Principal, UserProfile>(0, Principal.equal, Principal.hash);
+  transient let principalToStudentId = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
+  transient let principalToTeacherId = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
 
-  let accessControlState = AccessControl.initState();
-  let approvalState = UserApproval.initState(accessControlState);
+  transient let accessControlState = AccessControl.initState();
+  transient let approvalState = UserApproval.initState(accessControlState);
 
-  var studentIdCounter = 0;
-  var teacherIdCounter = 0;
-  var examIdCounter = 0;
+  transient var studentIdCounter = 0;
+  transient var teacherIdCounter = 0;
+  transient var examIdCounter = 0;
+
+  // --- FUNCTIONS ---
 
   public shared ({ caller }) func initializeAccessControl() : async () {
     AccessControl.initialize(accessControlState, caller);
@@ -126,28 +130,28 @@ actor {
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
+      Debug.trap("Unauthorized: Only users can access profiles");
     };
     userProfiles.get(caller);
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
+      Debug.trap("Unauthorized: Can only view your own profile");
     };
     userProfiles.get(user);
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save profiles");
+      Debug.trap("Unauthorized: Only users can save profiles");
     };
-    userProfiles.add(caller, profile);
+    userProfiles.put(caller, profile);
   };
 
   public shared ({ caller }) func registerStudent(fullName : Text, guardianName : Text, contactNumber : Text, classAssignment : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can register");
+      Debug.trap("Unauthorized: Only authenticated users can register");
     };
 
     studentIdCounter += 1;
@@ -162,13 +166,13 @@ actor {
       userPrincipal = ?caller;
     };
 
-    students.add(studentIdCounter, newStudent);
-    principalToStudentId.add(caller, studentIdCounter);
+    students.put(studentIdCounter, newStudent);
+    principalToStudentId.put(caller, studentIdCounter);
   };
 
   public shared ({ caller }) func registerTeacher(fullName : Text, contactNumber : Text, subjects : [Text], classes : [Text]) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can register teachers");
+      Debug.trap("Unauthorized: Only admins can register teachers");
     };
 
     teacherIdCounter += 1;
@@ -183,16 +187,16 @@ actor {
       userPrincipal = null;
     };
 
-    teachers.add(teacherIdCounter, newTeacher);
+    teachers.put(teacherIdCounter, newTeacher);
   };
 
   public shared ({ caller }) func approveStudent(studentId : Nat, status : ApprovalStatus) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can approve students");
+      Debug.trap("Unauthorized: Only admins can approve students");
     };
 
     switch (students.get(studentId)) {
-      case (null) { Runtime.trap("Student not found") };
+      case (null) { Debug.trap("Student not found") };
       case (?student) {
         let updatedStudent : Student.Student = {
           id = student.id;
@@ -200,22 +204,22 @@ actor {
           guardianName = student.guardianName;
           contactNumber = student.contactNumber;
           classAssignment = student.classAssignment;
-          status;
+          status = status;
           registrationTime = student.registrationTime;
           userPrincipal = student.userPrincipal;
         };
-        students.add(studentId, updatedStudent);
+        students.put(studentId, updatedStudent);
       };
     };
   };
 
   public shared ({ caller }) func approveTeacher(teacherId : Nat, status : ApprovalStatus) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can approve teachers");
+      Debug.trap("Unauthorized: Only admins can approve teachers");
     };
 
     switch (teachers.get(teacherId)) {
-      case (null) { Runtime.trap("Teacher not found") };
+      case (null) { Debug.trap("Teacher not found") };
       case (?teacher) {
         let updatedTeacher : Teacher.Teacher = {
           id = teacher.id;
@@ -223,18 +227,18 @@ actor {
           contactNumber = teacher.contactNumber;
           subjects = teacher.subjects;
           classes = teacher.classes;
-          status;
+          status = status;
           registrationTime = teacher.registrationTime;
           userPrincipal = teacher.userPrincipal;
         };
-        teachers.add(teacherId, updatedTeacher);
+        teachers.put(teacherId, updatedTeacher);
       };
     };
   };
 
   public shared ({ caller }) func addExam(subject : Text, examDate : Time.Time) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add exams");
+      Debug.trap("Unauthorized: Only admins can add exams");
     };
 
     examIdCounter += 1;
@@ -245,12 +249,12 @@ actor {
       marks = [];
     };
 
-    exams.add(examIdCounter, newExam);
+    exams.put(examIdCounter, newExam);
   };
 
   public query ({ caller }) func isStudentApproved(studentId : Nat) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can check approval status");
+      Debug.trap("Unauthorized: Only authenticated users can check approval status");
     };
 
     let isAdmin = AccessControl.isAdmin(accessControlState, caller);
@@ -260,52 +264,58 @@ actor {
       switch (callerStudentId) {
         case (?id) {
           if (id != studentId) {
-            Runtime.trap("Unauthorized: Students can only check their own approval status");
+            Debug.trap("Unauthorized: Students can only check their own approval status");
           };
         };
         case (null) {
-          Runtime.trap("Unauthorized: Only admins and the student can check approval status");
+          Debug.trap("Unauthorized: Only admins and the student can check approval status");
         };
       };
     };
 
     switch (students.get(studentId)) {
       case (null) { false };
-      case (?student) { student.status == #approved };
+      case (?student) { 
+        switch(student.status) {
+            case(#approved) { true };
+            case(_) { false };
+        }
+      };
     };
   };
 
   public query ({ caller }) func getAllApprovedStudents() : async [Student.Student] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can view students");
+      Debug.trap("Unauthorized: Only authenticated users can view students");
     };
 
-    students.values().toArray().filter(
-      func(student) {
-        student.status == #approved;
-      }
-    );
+    let buff = Buffer.Buffer<Student.Student>(0);
+    for (student in students.vals()) {
+      switch (student.status) {
+        case (#approved) { buff.add(student) };
+        case (_) {};
+      };
+    };
+    Buffer.toArray(buff);
   };
 
   public query ({ caller }) func getTeacherById(teacherId : Nat) : async ?Teacher.Teacher {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can view teachers");
+      Debug.trap("Unauthorized: Only authenticated users can view teachers");
     };
-
     teachers.get(teacherId);
   };
 
   public query ({ caller }) func getExam(examId : Nat) : async ?ExamMarks.Exam {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can view exams");
+      Debug.trap("Unauthorized: Only authenticated users can view exams");
     };
-
     exams.get(examId);
   };
 
   public query ({ caller }) func getStudentById(studentId : Nat) : async ?Student.Student {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can view student details");
+      Debug.trap("Unauthorized: Only authenticated users can view student details");
     };
 
     let isAdmin = AccessControl.isAdmin(accessControlState, caller);
@@ -315,11 +325,10 @@ actor {
       switch (callerStudentId) {
         case (?id) {
           if (id != studentId) {
-            Runtime.trap("Unauthorized: Students can only view their own details");
+            Debug.trap("Unauthorized: Students can only view their own details");
           };
         };
         case (null) {
-          // Caller is a teacher - allowed to view student info (read-only)
         };
       };
     };
@@ -329,22 +338,25 @@ actor {
 
   public query ({ caller }) func getMyStudentId() : async ?Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can access this");
+      Debug.trap("Unauthorized: Only authenticated users can access this");
     };
-
     principalToStudentId.get(caller);
   };
 
   public query ({ caller }) func getMyTeacherId() : async ?Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can access this");
+      Debug.trap("Unauthorized: Only authenticated users can access this");
     };
-
     principalToTeacherId.get(caller);
   };
 
   public query ({ caller }) func isCallerApproved() : async Bool {
-    AccessControl.hasPermission(accessControlState, caller, #admin) or UserApproval.isApproved(approvalState, caller);
+    let isAdmin = AccessControl.hasPermission(accessControlState, caller, #admin);
+    if (isAdmin) {
+        true
+    } else {
+        UserApproval.isApproved(approvalState, caller)
+    }
   };
 
   public shared ({ caller }) func requestApproval() : async () {
@@ -353,14 +365,14 @@ actor {
 
   public shared ({ caller }) func setApproval(user : Principal, status : ApprovalStatus) : async () {
     if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can perform this action");
+      Debug.trap("Unauthorized: Only admins can perform this action");
     };
     UserApproval.setApproval(approvalState, user, status);
   };
 
   public query ({ caller }) func listApprovals() : async [UserApproval.UserApprovalInfo] {
     if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can perform this action");
+      Debug.trap("Unauthorized: Only admins can perform this action");
     };
     UserApproval.listApprovals(approvalState);
   };

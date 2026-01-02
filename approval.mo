@@ -1,60 +1,71 @@
-import Map "mo:core/Map";
-import Iter "mo:core/Iter";
-import Principal "mo:core/Principal";
-import AccessControl "../authorization/access-control";
+import Principal "mo:base/Principal";
+import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Array "mo:base/Array"; // Ye line add ki hai taki Array error na aaye
+import AccessControl "access-control";
 
 module {
-  public type ApprovalStatus = {
-    #approved;
-    #rejected;
-    #pending;
-  };
-
-  public type UserApprovalState = {
-    var approvalStatus : Map.Map<Principal, ApprovalStatus>;
-  };
-
-  public func initState(accessControlState : AccessControl.AccessControlState) : UserApprovalState {
-    var approvalStatus = Map.empty<Principal, ApprovalStatus>();
-    for ((principal, role) in accessControlState.userRoles.entries()) {
-      let status = if (role == #admin) {
-        #approved;
-      } else {
-        #pending;
-      };
-      approvalStatus.add(principal, status);
-    };
-    { var approvalStatus };
-  };
-
-  public func isApproved(state : UserApprovalState, caller : Principal) : Bool {
-    state.approvalStatus.get(caller) == ?#approved;
-  };
-
-  public func requestApproval(state : UserApprovalState, caller : Principal) {
-    if (state.approvalStatus.get(caller) == null) {
-      setApproval(state, caller, #pending);
-    };
-  };
-
-  public func setApproval(state : UserApprovalState, user : Principal, approval : ApprovalStatus) {
-    state.approvalStatus.add(user, approval);
-  };
-
-  public type UserApprovalInfo = {
-    principal : Principal;
-    status : ApprovalStatus;
-  };
-
-  public func listApprovals(state : UserApprovalState) : [UserApprovalInfo] {
-    let infos = state.approvalStatus.map<Principal, ApprovalStatus, UserApprovalInfo>(
-      func(principal, status) {
-        {
-          principal;
-          status;
+        public type ApprovalStatus = {
+                #approved;
+                    #rejected;
+                        #pending;
         };
-      }
-    );
-    infos.values().toArray();
-  };
+
+          public type UserApprovalInfo = {
+                principal : Principal;
+                    status : ApprovalStatus;
+          };
+
+            public type ApprovalState = {
+                      approvalStatus : HashMap.HashMap<Principal, ApprovalStatus>;
+            };
+
+              public func initState(accessControlState : AccessControl.AccessControlState) : ApprovalState {
+                      let approvalStatus = HashMap.HashMap<Principal, ApprovalStatus>(0, Principal.equal, Principal.hash);
+                          
+                              // Admin ko approved aur baaki ko pending set karte hain
+                                  for ((principal, role) in accessControlState.userRoles.entries()) {
+                                          let status : ApprovalStatus = switch (role) {
+                                                        case (#admin) { #approved };
+                                                                case (_) { #pending };
+                                          };
+                                                approvalStatus.put(principal, status);
+                                  };
+                                      
+                                          { approvalStatus = approvalStatus };
+              };
+
+                public func isApproved(state : ApprovalState, caller : Principal) : Bool {
+                      switch (state.approvalStatus.get(caller)) {
+                              case (?#approved) { true };
+                                    case (_) { false };
+                      };
+                };
+
+                  public func requestApproval(state : ApprovalState, caller : Principal) {
+                            switch (state.approvalStatus.get(caller)) {
+                                    case (null) {
+                                                  setApproval(state, caller, #pending);
+                                    };
+                                          case (_) {}; 
+                            };
+                  };
+
+                    public func setApproval(state : ApprovalState, user : Principal, approval : ApprovalStatus) {
+                            state.approvalStatus.put(user, approval);
+                    };
+
+                      public func listApprovals(state : ApprovalState) : [UserApprovalInfo] {
+                            let entries = state.approvalStatus.entries();
+                                var approvals : [UserApprovalInfo] = [];
+                                    
+                                        for ((p, s) in entries) {
+                                                let info : UserApprovalInfo = {
+                                                              principal = p;
+                                                                      status = s;
+                                                };
+                                                      approvals := Array.append(approvals, [info]);
+                                        };
+                                            approvals;
+                      };
 };
