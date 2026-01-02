@@ -45,17 +45,23 @@ export const useInternetIdentity = () => {
 };
 
 // --- 2. PROFILE & ROLES ---
+// Is hisse ko useQueries.ts mein update karein
 export const useGetCallerUserProfile = () => {
   return { 
     data: { 
-      userType: UserRole.admin, 
-      name: 'Principal Dinesh Prasad',
+      userType: 'admin', 
+      name: 'Principal Dinesh', // Dashboard isi 'name' ko dhoond raha hai
       email: 'principal@adarsh.com' 
     }, 
     isLoading: false, 
     isFetched: true 
   };
 };
+
+export const useGetCallerUserRole = () => {
+  return { data: 'admin', isLoading: false };
+};
+
 
 export const useGetCallerUserRole = () => {
   return { data: UserRole.admin, isLoading: false };
