@@ -1,49 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 
-// --- Crash Catcher (Error Boundary) ---
+// --- Error Boundary (Crash Catcher) ---
 class ErrorBoundary extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = { hasError: false, errorInfo: "" };
+    this.state = { hasError: false };
   }
   static getDerivedStateFromError(error: any) {
     return { hasError: true };
   }
   componentDidCatch(error: any, errorInfo: any) {
-    console.error("CRASH REPORT:", error);
-    this.setState({ errorInfo: error.toString() });
+    console.error("CRASH:", error);
   }
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="p-6 bg-red-50 text-red-900 min-h-screen flex flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold">App Crashed</h1>
-          <p className="mt-2 text-sm text-red-700">Please check console for details.</p>
-          <button 
-            onClick={() => window.location.href = '/'}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Reload Home
-          </button>
-        </div>
-      );
+      return <div className="p-10 text-red-600 font-bold">💥 Component Crashed (Check Console)</div>;
     }
     return this.props.children;
   }
 }
 
 // --- Imports ---
-import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useGetCallerUserRole } from './hooks/useQueries';
-
-// --- Pages ---
+// Agar inme se koi file missing h to use hata dein
 import LoginPage from './pages/LoginPage';
 import ProfileSetupPage from './pages/ProfileSetupPage';
-import ResetPassword from './pages/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
 import AddTeacher from './pages/AddTeacher';
 import AddStudent from './pages/AddStudent';
@@ -54,35 +38,34 @@ import StudentDashboard from './pages/StudentDashboard';
 
 const queryClient = new QueryClient();
 
-// --- Auth Logic (Safe Mode) ---
-const AuthRedirector = () => {
-  const { identity, isInitializing } = useInternetIdentity();
-  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
-  const { data: userRole, isLoading: roleLoading } = useGetCallerUserRole();
+// --- TEST MODE REDIRECTOR (Isme Crash hone ka chance 0% hai) ---
+const ManualAuth = () => {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <h1 className="text-2xl font-bold mb-6 text-blue-900">🛠️ Debug Mode Active</h1>
+      <p className="mb-4 text-gray-600">Database logic disabled. Choose where to go:</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-md">
+        <button onClick={() => window.location.href = '/login'} className="p-3 bg-white border border-gray-300 rounded hover:bg-gray-50 font-medium">
+          Go to Login Page
+        </button>
+        
+        <button onClick={() => window.location.href = '/admin/dashboard'} className="p-3 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">
+          Go to Admin Dashboard
+        </button>
+        
+        <button onClick={() => window.location.href = '/admin/manage-fees'} className="p-3 bg-purple-600 text-white rounded hover:bg-purple-700 font-medium">
+          Check Manage Fees (Isme Error tha?)
+        </button>
 
-  const isAuthenticated = !!identity;
-
-  // 1. Loading Check
-  if (isInitializing || (isAuthenticated && (profileLoading || roleLoading))) {
-    return <div className="p-10 text-center">Loading System...</div>;
-  }
-
-  // 2. Login Check
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (isAuthenticated && !userProfile) return <Navigate to="/setup" replace />;
-
-  // 3. Role Check (Converted to String to prevent crash)
-  const safeRole = String(userRole || ""); 
-  const safeType = String(userProfile?.userType || "");
-
-  if (safeRole === 'admin' || safeType === 'admin') return <Navigate to="/admin/dashboard" replace />;
-  if (safeType === 'teacher') return <Navigate to="/teacher/dashboard" replace />;
-  if (safeType === 'student') return <Navigate to="/student/dashboard" replace />;
-
-  return <div className="p-10 text-center">Role Unknown. Contact Admin.</div>;
+        <button onClick={() => window.location.href = '/student/dashboard'} className="p-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium">
+          Go to Student Dashboard
+        </button>
+      </div>
+    </div>
+  );
 };
 
-// --- Main App ---
 export default function App() {
   return (
     <ErrorBoundary>
@@ -91,18 +74,19 @@ export default function App() {
           <BrowserRouter>
             <Toaster position="top-center" richColors />
             
-            {/* Routes Block: No comments allowed here */}
             <Routes>
-              <Route path="/" element={<AuthRedirector />} />
+              {/* Root par ab hum sidha Logic nahi lagayenge, Manual Buttons dikhayenge */}
+              <Route path="/" element={<ManualAuth />} />
               
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/setup" element={<ProfileSetupPage />} />
               
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/add-teacher" element={<AddTeacher />} />
               <Route path="/admin/add-student" element={<AddStudent />} />
               <Route path="/admin/upload-result" element={<UploadResult />} />
+              
+              {/* Is Route ko dhyaan se dekhein */}
               <Route path="/admin/manage-fees" element={<ManageFees />} />
 
               <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
