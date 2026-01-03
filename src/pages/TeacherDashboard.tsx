@@ -1,158 +1,144 @@
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useGetMyTeacherId, useGetTeacherById } from '../hooks/useQueries';
-import { useQueryClient } from '@tanstack/react-query';
-import DashboardLayout from '../components/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { BookOpen, Users, Calendar, ClipboardCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient'; // ✅ Supabase Import
+import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { BookOpen, Users, LogOut, Upload } from 'lucide-react';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
 export default function TeacherDashboard() {
-  const { clear } = useInternetIdentity();
-  const queryClient = useQueryClient();
-  const { data: userProfile } = useGetCallerUserProfile();
-  const { data: teacherId } = useGetMyTeacherId();
-  const { data: teacher } = useGetTeacherById(teacherId ?? null);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [teacherProfile, setTeacherProfile] = useState<any>(null);
 
+  // 1. Data Fetching from Supabase
+  useEffect(() => {
+    const fetchTeacherData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Profile aur Teacher details ek saath layein
+          const { data: teacher, error } = await supabase
+            .from('teachers')
+            .select('*')
+            .eq('auth_id', user.id)
+            .single();
+          
+          if (error) throw error;
+          setTeacherProfile(teacher);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeacherData();
+  }, []);
+
+  // 2. Logout Function
   const handleLogout = async () => {
-    await clear();
-    queryClient.clear();
+    await supabase.auth.signOut();
+    localStorage.removeItem("adarsh_school_login");
+    toast.success("Logged out successfully");
+    navigate('/login');
   };
 
+  if (loading) return <div className="p-10 text-center">Loading Dashboard...</div>;
+
   return (
-    <DashboardLayout
-      userName={userProfile?.name || 'Teacher'}
-      userRole="Teacher"
-      onLogout={handleLogout}
-    >
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Top Bar */}
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Teacher Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Manage your classes and student assessments</p>
+          <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+          <p className="text-gray-500 mt-1">
+            Welcome, {teacherProfile?.full_name || 'Teacher'} 👋
+          </p>
         </div>
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition"
+        >
+          <LogOut size={18} /> Logout
+        </button>
+      </div>
 
-        {!teacher && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Your teacher profile is being set up. Please contact the administrator to complete your registration.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {teacher && (
-          <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Assigned Classes</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teacher.classes.length}</div>
-                  <p className="text-xs text-muted-foreground">Active classes</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Subjects</CardTitle>
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teacher.subjects.length}</div>
-                  <p className="text-xs text-muted-foreground">Teaching subjects</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Attendance</CardTitle>
-                  <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">Pending marks</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Upcoming Exams</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">This month</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>My Classes</CardTitle>
-                  <CardDescription>Classes you are currently teaching</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {teacher.classes.length > 0 ? (
-                    <div className="space-y-2">
-                      {teacher.classes.map((className, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                          <div>
-                            <div className="font-medium">{className}</div>
-                            <div className="text-sm text-muted-foreground">Active</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No classes assigned yet</p>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>My Subjects</CardTitle>
-                  <CardDescription>Subjects you are teaching</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {teacher.subjects.length > 0 ? (
-                    <div className="space-y-2">
-                      {teacher.subjects.map((subject, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                          <div>
-                            <div className="font-medium">{subject}</div>
-                            <div className="text-sm text-muted-foreground">Active</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No subjects assigned yet</p>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
+      {!teacherProfile ? (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Teacher profile not found. Please contact Admin.
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <>
+          {/* Stats Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+            
+            {/* Card 1: Subject */}
             <Card>
-              <CardHeader>
-                <CardTitle>Feature Notice</CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">My Subject</CardTitle>
+                <BookOpen className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Attendance marking and exam marks entry features are currently being developed. 
-                    These features will be available in the next update.
-                  </AlertDescription>
-                </Alert>
+                <div className="text-2xl font-bold">{teacherProfile.subject}</div>
+                <p className="text-xs text-muted-foreground">Primary Subject</p>
               </CardContent>
             </Card>
-          </>
-        )}
-      </div>
-    </DashboardLayout>
+
+            {/* Card 2: Upload Marks (Actionable) */}
+            <Card 
+              className="cursor-pointer hover:border-blue-500 transition-colors border-2"
+              onClick={() => navigate('/admin/upload-result')} // 👈 Yahan redirection hai
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-blue-700">Upload Marks</CardTitle>
+                <Upload className="h-4 w-4 text-blue-700" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">Action</div>
+                <p className="text-xs text-muted-foreground">Click to enter student marks</p>
+              </CardContent>
+            </Card>
+
+            {/* Card 3: Contact */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Contact Info</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm font-medium">{teacherProfile.email}</div>
+                <p className="text-xs text-muted-foreground">{teacherProfile.phone}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Details Section */}
+          <div className="grid gap-6 md:grid-cols-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+                <CardDescription>Manage your daily tasks</CardDescription>
+              </CardHeader>
+              <CardContent>
+                 <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 flex items-center gap-3">
+                    <AlertCircle size={20} />
+                    <span>
+                      Attendance and Class Management features are coming soon. 
+                      Currently, please use the <b>Upload Marks</b> section.
+                    </span>
+                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
