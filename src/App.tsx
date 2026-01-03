@@ -4,12 +4,47 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 
-// --- Hooks ---
+// --- Error Boundary (Crash Catcher) ---
+class ErrorBoundary extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, errorInfo: "" };
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("CRASH REPORT:", error, errorInfo);
+    this.setState({ errorInfo: error.toString() });
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-10 bg-red-50 text-red-900 h-screen">
+          <h1 className="text-2xl font-bold">Something went wrong!</h1>
+          <p className="mt-2">React crashed due to an Object/Invalid Child error.</p>
+          <div className="mt-4 p-4 bg-white border border-red-300 rounded font-mono text-sm">
+            {this.state.errorInfo}
+          </div>
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Reload App
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// --- Imports ---
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile, useGetCallerUserRole } from './hooks/useQueries';
 
 // --- Backend Helper ---
-// Make sure ye file exist karti ho, nahi to ise hata dein aur strings use karein
+// Agar ye import error de, to ise hata dein aur code me niche 'admin' string use karein
 import { UserRole } from './backend'; 
 
 // --- Pages ---
@@ -22,16 +57,15 @@ import AdminDashboard from './pages/AdminDashboard';
 import AddTeacher from './pages/AddTeacher';
 import AddStudent from './pages/AddStudent';
 import UploadResult from './pages/UploadResult';
-import ManageFees from './pages/ManageFees'; // <--- Yeh wahi file hai jo humne abhi fix ki thi
+import ManageFees from './pages/ManageFees';
 
 // Other Dashboards
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 
-// 1. Query Client Setup
 const queryClient = new QueryClient();
 
-// 2. Auth Redirector (Login Check Logic)
+// --- Auth Logic ---
 const AuthRedirector = () => {
   const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
@@ -39,30 +73,18 @@ const AuthRedirector = () => {
 
   const isAuthenticated = !!identity;
 
-  // Loading State
   if (isInitializing || (isAuthenticated && (profileLoading || roleLoading))) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto" />
-          <p className="text-gray-500">System Loading...</p>
-        </div>
+        <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full" />
       </div>
     );
   }
 
-  // Case 1: Login nahi hai -> Login page par bhejo
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (isAuthenticated && !userProfile) return <Navigate to="/setup" replace />;
 
-  // Case 2: Login hai par Profile nahi -> Setup page par bhejo
-  if (isAuthenticated && !userProfile) {
-    return <Navigate to="/setup" replace />;
-  }
-
-  // Case 3: Sab set hai -> Role ke hisab se Dashboard par bhejo
-  // Note: Agar 'UserRole' import error de, to yahan direct string check karein e.g. userRole === 'admin'
+  // Role Check
   const isAdmin = userRole === (UserRole?.admin || 'admin'); 
   const userType = userProfile?.userType || '';
 
@@ -70,49 +92,47 @@ const AuthRedirector = () => {
   if (userType === 'teacher') return <Navigate to="/teacher/dashboard" replace />;
   if (userType === 'student') return <Navigate to="/student/dashboard" replace />;
 
-  return <div className="p-10 text-center">Access Pending or Unknown Role. Contact Admin.</div>;
+  return <div className="p-10 text-center">Role Unknown. Please contact support.</div>;
 };
 
-// 3. Main App Component
+// --- Main App ---
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        
-        <BrowserRouter>
-          <Toaster position="top-center" richColors />
-          
-          <Routes>
-            {/* Root Route - Decides where to go */}
-            <Route path="/" element={<AuthRedirector />} />
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <BrowserRouter>
+            <Toaster position="top-center" richColors />
             
-            {/* Public Routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            
-            {/* Setup */}
-            <Route path="/setup" element={<ProfileSetupPage />} />
-            
-            {/* --- ADMIN ROUTES --- */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/add-teacher" element={<AddTeacher />} />
-            <Route path="/admin/add-student" element={<AddStudent />} />
-            <Route path="/admin/upload-result" element={<UploadResult />} />
-            <Route path="/admin/manage-fees" element={<ManageFees />} />
+            <Routes>
+              {/* Root */}
+              <Route path="/" element={<AuthRedirector />} />
+              
+              {/* Public */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/setup" element={<ProfileSetupPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/add-teacher" element={<AddTeacher />} />
+              <Route path="/admin/add-student" element={<AddStudent />} />
+              <Route path="/admin/upload-result" element={<UploadResult />} />
+              <Route path="/admin/manage-fees" element={<ManageFees />} />
 
-            {/* --- TEACHER ROUTES --- */}
-            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            
-            {/* --- STUDENT ROUTES --- */}
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            
-            {/* Fallback for unknown routes (404) */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        
-        </BrowserRouter>
-      
-      </ThemeProvider>
-    </QueryClientProvider>
+              {/* Teacher Routes */}
+              <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+              
+              {/* Student Routes */}
+              <Route path="/student/dashboard" element={<StudentDashboard />} />
+              
+              {/* 404 */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          
+          </BrowserRouter>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
