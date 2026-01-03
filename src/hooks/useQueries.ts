@@ -45,12 +45,11 @@ export const useInternetIdentity = () => {
 };
 
 // --- 2. PROFILE & ROLES ---
-// Is hisse ko useQueries.ts mein update karein
 export const useGetCallerUserProfile = () => {
   return { 
     data: { 
       userType: 'admin', 
-      name: 'Principal Dinesh', // Dashboard isi 'name' ko dhoond raha hai
+      name: 'Principal Dinesh', 
       email: 'principal@adarsh.com' 
     }, 
     isLoading: false, 
@@ -58,11 +57,12 @@ export const useGetCallerUserProfile = () => {
   };
 };
 
-
-
+// Sirf ye ek baar hona chahiye puri file mein 👇
 export const useGetCallerUserRole = () => {
-  return { data: UserRole.admin, isLoading: false };
+  return { data: 'admin', isLoading: false }; 
 };
+
+
 
 // ✅ YE RAHA WO MISSING FUNCTION (Jiska Error Aa Raha Tha)
 export const useSaveCallerUserProfile = () => {
