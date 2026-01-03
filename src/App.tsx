@@ -7,6 +7,8 @@ import ResetPassword from './pages/ResetPassword';
 // Imports add karein
 import AddStudent from './pages/AddStudent';
 import StudentDashboard from './pages/StudentDashboard';
+import ManageFees from './pages/ManageFees';
+
 
 // Hooks
 import { useInternetIdentity } from './hooks/useInternetIdentity';
@@ -100,6 +102,8 @@ export default function App() {
 // Routes section mein ye jodein:
 <Route path="/admin/add-student" element={<AddStudent />} />
 <Route path="/student/dashboard" element={<StudentDashboard />} />
+// ...
+<Route path="/admin/manage-fees" element={<ManageFees />} />
 
           </Routes>
         
