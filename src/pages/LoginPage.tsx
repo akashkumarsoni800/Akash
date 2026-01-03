@@ -25,7 +25,7 @@ const Login = () => {
       return;
     }
 
-    // 2. Role Check karo aur Redirect karo
+        // 2. Role Check karo aur Redirect karo
     if (data.user) {
       const { data: profile } = await supabase
         .from('profiles')
@@ -36,14 +36,18 @@ const Login = () => {
       const userRole = profile?.role;
       toast.success(`Welcome back, ${userRole}!`);
 
+      // 👇 Teacher ka condition yahan add karein
       if (userRole === 'admin') {
         navigate('/admin/dashboard');
+      } else if (userRole === 'teacher') {
+        navigate('/teacher/dashboard'); // Teacher ko unke dashboard bhejo
       } else if (userRole === 'student') {
         navigate('/student/dashboard');
       } else {
-        navigate('/'); // Agar role nahi mila to Home
+        navigate('/'); 
       }
     }
+
     setLoading(false);
   };
 
