@@ -1,87 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
+// Supabase import ko abhi ke liye ignore karein
+// import { supabase } from '../supabaseClient'; 
 
 const ManageFees = () => {
-  const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      // Data fetch query
-      const { data, error } = await supabase
-        .from('students')
-        .select(`
-          id, full_name, class_name, roll_number,
-          fees ( id, total_amount, paid_amount, status, fee_structure )
-        `)
-        .order('class_name', { ascending: true });
-
-      if (error) throw error;
-      console.log("FRESH DATA:", data);
-      setStudents(data || []);
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Error loading data");
-    } finally {
-      setLoading(false);
+  // 1. HAMNE SUPABASE BAND KAR DIYA HAI
+  // 2. YE NAKLI DATA HAI CHECK KARNE KE LIYE
+  const [students, setStudents] = useState([
+    {
+      id: "1",
+      full_name: "Rohan Kumar",
+      class_name: "10th",
+      roll_number: "101",
+      fees: [
+        {
+          id: "fee_1",
+          total_amount: 5000,
+          paid_amount: 2000,
+          status: "Partial",
+          fee_structure: { tuition: 4000, exam: 500, van: 500, other: 0 }
+        }
+      ]
+    },
+    {
+      id: "2",
+      full_name: "Sita Kumari",
+      class_name: "9th",
+      roll_number: "22",
+      fees: [] // Empty fee check
     }
+  ]);
+
+  const handleSaveFee = (studentId: string, structure: any, paid: string) => {
+    console.log("Save clicked for:", studentId, structure, paid);
+    toast.success("Test Mode: Save Button Works!");
   };
-
-  const handleSaveFee = async (studentId: string, structure: any, paid: string) => {
-    // Save logic same as before...
-    const cleanNum = (val: any) => { const n = Number(val); return isNaN(n) ? 0 : n; };
-    const total = cleanNum(structure.tuition) + cleanNum(structure.exam) + cleanNum(structure.van) + cleanNum(structure.other);
-    const paidNum = cleanNum(paid);
-    
-    let status = 'Pending';
-    if (paidNum >= total && total > 0) status = 'Paid';
-    else if (paidNum > 0) status = 'Partial';
-
-    try {
-      const { data: existingFee } = await supabase.from('fees').select('id').eq('student_id', studentId).maybeSingle();
-      const payload = { student_id: studentId, total_amount: total, paid_amount: paidNum, fee_structure: structure, status: status };
-
-      if (existingFee?.id) await supabase.from('fees').update(payload).eq('student_id', studentId);
-      else await supabase.from('fees').insert([payload]);
-
-      toast.success("Saved!");
-      fetchData();
-    } catch (err: any) { toast.error("Failed: " + err.message); }
-  };
-
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-4 text-red-600">DEBUG MODE (Won't Crash)</h1>
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+        <p className="font-bold">Test Mode Active</p>
+        <p>Agar ye list dikh rahi hai, to Code sahi hai. Problem Supabase Data me hai.</p>
+      </div>
+
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Fee Management (Test)</h1>
       
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="min-w-full text-sm border-collapse">
-          <thead className="bg-black text-white">
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-blue-900 text-white">
             <tr>
-              <th className="p-2 border">Student Name</th>
-              <th className="p-2 border">Class</th>
-              <th className="p-2 border">Tuition</th>
-              <th className="p-2 border">Exam</th>
-              <th className="p-2 border">Van</th>
-              <th className="p-2 border">Other</th>
-              <th className="p-2 border">Total</th>
-              <th className="p-2 border">Paid</th>
-              <th className="p-2 border">Action</th>
+              <th className="px-4 py-3 text-left">Student</th>
+              <th className="px-2 py-3 text-left">Tuition</th>
+              <th className="px-2 py-3 text-left">Exam</th>
+              <th className="px-2 py-3 text-left">Van</th>
+              <th className="px-2 py-3 text-left">Other</th>
+              <th className="px-4 py-3 text-left">Total</th>
+              <th className="px-4 py-3 text-left">Paid</th>
+              <th className="px-4 py-3 text-left">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200">
             {students.map((student) => {
-              // Safety: Ensure fees is an array
-              const feesArr = Array.isArray(student.fees) ? student.fees : [];
-              const feeData = feesArr[0] || {};
-              
+              const feeData = (student.fees && student.fees.length > 0) ? student.fees[0] : {};
               return (
                 <FeeRow 
                   key={student.id} 
@@ -98,44 +78,26 @@ const ManageFees = () => {
   );
 };
 
-// --- CRASH PROOF ROW COMPONENT ---
+// --- Child Component ---
 const FeeRow = ({ student, existingFee, onSave }: any) => {
   
-  // *** MAGIC FUNCTION ***
-  // Ye function kisi bhi value ko string bana dega.
-  // Agar Object hoga, to use JSON string bana kar dikhayega (Crash nahi hone dega)
-  const safeRender = (val: any) => {
+  // Safe parsing helper
+  const safeStr = (val: any) => {
     if (val === null || val === undefined) return "";
-    if (typeof val === 'object') return JSON.stringify(val); // <--- YE CRASH ROKEGA
-    return String(val);
+    return String(val); // Convert everything to string
   };
 
-  const rawStructure = existingFee?.fee_structure || {};
-  
-  // State me bhi safeRender use karein
+  const raw = existingFee?.fee_structure || {};
+
+  // State
   const [fees, setFees] = useState({
-    tuition: safeRender(rawStructure.tuition).replace(/[^0-9.]/g, ''), // Sirf number rakhega
-    exam: safeRender(rawStructure.exam).replace(/[^0-9.]/g, ''),
-    van: safeRender(rawStructure.van).replace(/[^0-9.]/g, ''),
-    other: safeRender(rawStructure.other).replace(/[^0-9.]/g, ''),
+    tuition: safeStr(raw.tuition),
+    exam: safeStr(raw.exam),
+    van: safeStr(raw.van),
+    other: safeStr(raw.other),
   });
 
-  const [paid, setPaid] = useState(safeRender(existingFee?.paid_amount).replace(/[^0-9.]/g, ''));
-
-  useEffect(() => {
-    const newStr = existingFee?.fee_structure || {};
-    setFees({
-      tuition: safeRender(newStr.tuition).replace(/[^0-9.]/g, ''),
-      exam: safeRender(newStr.exam).replace(/[^0-9.]/g, ''),
-      van: safeRender(newStr.van).replace(/[^0-9.]/g, ''),
-      other: safeRender(newStr.other).replace(/[^0-9.]/g, ''),
-    });
-    setPaid(safeRender(existingFee?.paid_amount).replace(/[^0-9.]/g, ''));
-  }, [existingFee]);
-
-  const handleChange = (field: string, val: string) => {
-    setFees(prev => ({ ...prev, [field]: val }));
-  };
+  const [paid, setPaid] = useState(safeStr(existingFee?.paid_amount));
 
   const total = 
     (Number(fees.tuition) || 0) + 
@@ -144,31 +106,26 @@ const FeeRow = ({ student, existingFee, onSave }: any) => {
     (Number(fees.other) || 0);
 
   return (
-    <tr className="border-b hover:bg-yellow-50">
-      <td className="p-2 border text-blue-800 font-bold">
-        {/* Name render check */}
-        {safeRender(student.full_name)}
-      </td>
-      <td className="p-2 border">
-        {safeRender(student.class_name)} <br/>
-        <span className="text-xs text-gray-400">Roll: {safeRender(student.roll_number)}</span>
+    <tr className="hover:bg-gray-50">
+      <td className="px-4 py-3">
+        <div className="font-bold">{safeStr(student.full_name)}</div>
+        <div className="text-xs text-gray-500">{safeStr(student.class_name)}</div>
       </td>
       
-      {/* Input Fields */}
-      <td className="p-1 border"><input className="w-16 border p-1 bg-white" value={fees.tuition} onChange={e => handleChange('tuition', e.target.value)} /></td>
-      <td className="p-1 border"><input className="w-16 border p-1 bg-white" value={fees.exam} onChange={e => handleChange('exam', e.target.value)} /></td>
-      <td className="p-1 border"><input className="w-16 border p-1 bg-white" value={fees.van} onChange={e => handleChange('van', e.target.value)} /></td>
-      <td className="p-1 border"><input className="w-16 border p-1 bg-white" value={fees.other} onChange={e => handleChange('other', e.target.value)} /></td>
+      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.tuition} onChange={e => setFees({...fees, tuition: e.target.value})} /></td>
+      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.exam} onChange={e => setFees({...fees, exam: e.target.value})} /></td>
+      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.van} onChange={e => setFees({...fees, van: e.target.value})} /></td>
+      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.other} onChange={e => setFees({...fees, other: e.target.value})} /></td>
       
-      <td className="p-2 border font-bold">₹{total}</td>
+      <td className="px-4 py-3 font-bold text-blue-700">₹{total}</td>
       
-      <td className="p-1 border">
-        <input className="w-20 border p-1 bg-green-50" value={paid} onChange={e => setPaid(e.target.value)} />
+      <td className="px-2">
+        <input type="number" className="w-20 border border-green-300 bg-green-50 p-1" value={paid} onChange={e => setPaid(e.target.value)} />
       </td>
       
-      <td className="p-2 border">
-        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-2 py-1 rounded text-xs">
-          Save
+      <td className="px-4 py-3">
+        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">
+          Test Save
         </button>
       </td>
     </tr>
