@@ -114,10 +114,18 @@ const AdminDashboard = () => {
         {/* Section 2: Quick Stats & Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Card 1: Students */}
-          <div className="bg-blue-100 p-6 rounded-lg text-blue-900 shadow-sm border border-blue-200">
-            <h3 className="font-bold uppercase text-xs tracking-wider">Total Students</h3>
-            <p className="text-4xl font-extrabold mt-2">{totalStudentCount}</p>
+          {/* Card 1: Students (Yahan Button Add Kiya Hai) */}
+  <div className="bg-blue-100 p-6 rounded-lg text-blue-900 shadow-sm border border-blue-200">
+    <h3 className="font-bold uppercase text-xs tracking-wider">Total Students</h3>
+    <p className="text-4xl font-extrabold mt-2">{totalStudentCount}</p>
+    
+    {/* 👇 Ye Button ab Student Registration page par le jayega */}
+    <Link 
+      to="/admin/add-student" 
+      className="text-xs font-bold underline mt-3 block hover:text-blue-700 flex items-center gap-1"
+    >
+      <span>+</span> Add New Student
+    </Link>
           </div>
 
           {/* Card 2: Teachers */}
