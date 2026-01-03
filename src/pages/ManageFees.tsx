@@ -1,53 +1,69 @@
-import React, { useState } from 'react';
-import { toast } from 'sonner'; // ✅ Toast wapas aa gaya
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner'; 
+import { supabase } from '../supabaseClient'; // ✅ Supabase Import kiya
 
 const ManageFees = () => {
-  // --- DUMMY DATA ---
-  const [students, setStudents] = useState([
-    {
-      id: "1",
-      full_name: "Rohan Kumar",
-      class_name: "10th",
-      roll_number: "101",
-      fees: [
-        {
-          id: "fee_1",
-          total_amount: 5000,
-          paid_amount: 2000,
-          status: "Partial",
-          fee_structure: { tuition: 4000, exam: 500, van: 500, other: 0 }
-        }
-      ]
-    },
-    {
-      id: "2",
-      full_name: "Sita Kumari",
-      class_name: "9th",
-      roll_number: "22",
-      fees: [] 
-    }
-  ]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSaveFee = (studentId: string, structure: any, paid: string) => {
-    console.log("Saving data:", studentId, structure, paid);
-    // ✅ Toast chalega kyunki baki pages par chal raha hai
-    toast.success("Fee Updated Successfully (Test Mode)");
+  // --- 1. REAL DATA FETCHING ---
+  const fetchStudents = async () => {
+    try {
+      setLoading(true);
+      // 'students' table se data la rahe hain
+      // Agar apke paas 'fees' table alag hai, to hame join lagana padega
+      // Filhal hum students list la rahe hain
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .order('full_name', { ascending: true });
+
+      if (error) throw error;
+
+      if (data) {
+        setStudents(data);
+      }
+    } catch (error: any) {
+      console.error("Error fetching students:", error);
+      toast.error("Failed to load students list.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Page load hote hi data layega
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const handleSaveFee = async (studentId: string, structure: any, paid: string) => {
+    console.log("Saving data for:", studentId);
+    // Yahan hum Database Update ka logic baad me lagayenge
+    toast.success("Save function clicked (Database logic pending)");
+  };
+
+  // --- SAFE VALUE HELPER ---
+  const safeVal = (v: any) => {
+    if (v === null || v === undefined) return "";
+    if (typeof v === 'object') return ""; 
+    return String(v);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6">
-        <p className="font-bold">Info</p>
-        <p>Checking Fee Module with Toast Notifications.</p>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Fee Management</h1>
+        <button onClick={fetchStudents} className="text-sm text-blue-600 underline">
+          Refresh List
+        </button>
       </div>
-
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Fee Management</h1>
       
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="px-4 py-3 text-left">Student Name</th>
+              <th className="px-2 py-3 text-left">Class</th>
               <th className="px-2 py-3 text-left">Tuition</th>
               <th className="px-2 py-3 text-left">Exam</th>
               <th className="px-2 py-3 text-left">Other</th>
@@ -57,95 +73,59 @@ const ManageFees = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {/* --- SAFE LOOP START --- */}
-            {Array.isArray(students) && students.map((student) => {
-               // Agar student null/undefined hai to ignore karein
-               if (!student) return null;
-
-               // Safe check for fees array
-               const feeData = (student.fees && Array.isArray(student.fees) && student.fees.length > 0) 
-                  ? student.fees[0] 
-                  : null;
-               
-               return (
-                 <FeeRow 
-                   key={student.id} 
-                   student={student} 
-                   existingFee={feeData} 
-                   onSave={handleSaveFee} 
-                 />
-               );
-            })}
-            {/* --- SAFE LOOP END --- */}
+            {loading ? (
+              <tr>
+                <td colSpan={8} className="p-6 text-center text-gray-500">
+                  Loading students... ⏳
+                </td>
+              </tr>
+            ) : (
+              // --- REAL DATA LOOP ---
+              Array.isArray(students) && students.length > 0 ? (
+                students.map((student) => {
+                  if (!student) return null;
+                  
+                  // Filhal Fees data empty maan rahe hain, kyunki join query abhi nahi lagayi
+                  // Jab aap fees table bana lenge, tab hum usse jod denge
+                  const tVal = "0"; 
+                  const eVal = "0";
+                  const oVal = "0";
+                  const pVal = "0";
+                  const total = 0;
+  
+                  return (
+                    <tr key={student.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-bold">{safeVal(student?.full_name)}</td>
+                      <td className="px-2 text-gray-500">{safeVal(student?.class_name)}</td>
+                      
+                      <td className="px-2"><input className="w-16 border p-1" placeholder="0" /></td>
+                      <td className="px-2"><input className="w-16 border p-1" placeholder="0" /></td>
+                      <td className="px-2"><input className="w-16 border p-1" placeholder="0" /></td>
+                      
+                      <td className="px-4 py-3 font-bold text-blue-700">₹{total}</td>
+                      
+                      <td className="px-2"><input className="w-16 border bg-green-50 p-1" placeholder="0" /></td>
+                      
+                      <td className="px-4 py-3">
+                        <button onClick={() => handleSaveFee(student.id, {}, "0")} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                          Save
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={8} className="p-6 text-center text-red-500">
+                    No students found in Database.
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
     </div>
-  );
-};
-
-// --- Child Component ---
-const FeeRow = ({ student, existingFee, onSave }: any) => {
-  
-  // --- CRASH PREVENTER FUNCTION ---
-  // Ye function kisi bhi Object ko string me badal dega taki app crash na ho
-  const safeVal = (v: any) => {
-    if (v === null || v === undefined) return "";
-    if (typeof v === 'object') return ""; // Agar galti se object aa gaya to blank return karega
-    return String(v);
-  };
-
-  const raw = existingFee?.fee_structure || {};
-
-  // State with Safe Values
-  const [fees, setFees] = useState({
-    tuition: safeVal(raw.tuition),
-    exam: safeVal(raw.exam),
-    other: safeVal(raw.other),
-  });
-
-  const [paid, setPaid] = useState(safeVal(existingFee?.paid_amount));
-
-  // Calculation (Safe Number conversion)
-  const total = (Number(fees.tuition)||0) + (Number(fees.exam)||0) + (Number(fees.other)||0);
-
-  return (
-    <tr className="hover:bg-gray-50">
-      <td className="px-4 py-3">
-        {/* Yahan 'safeVal' use kiya hai taki object print na ho */}
-        <div className="font-bold text-gray-800">{safeVal(student?.full_name)}</div>
-        <div className="text-xs text-gray-500">Class: {safeVal(student?.class_name)}</div>
-      </td>
-      
-      {/* Inputs Controlled using || "" */}
-      <td className="px-2">
-        <input type="number" className="w-16 border p-1 rounded" 
-               value={fees.tuition || ""} onChange={e=>setFees({...fees, tuition: e.target.value})} />
-      </td>
-      <td className="px-2">
-        <input type="number" className="w-16 border p-1 rounded" 
-               value={fees.exam || ""} onChange={e=>setFees({...fees, exam: e.target.value})} />
-      </td>
-      <td className="px-2">
-        <input type="number" className="w-16 border p-1 rounded" 
-               value={fees.other || ""} onChange={e=>setFees({...fees, other: e.target.value})} />
-      </td>
-      
-      <td className="px-4 py-3 font-bold text-blue-700">₹{total}</td>
-      
-      <td className="px-2">
-        <input type="number" className="w-20 border border-green-300 bg-green-50 p-1 rounded" 
-               value={paid || ""} onChange={e=>setPaid(e.target.value)} />
-      </td>
-      
-      <td className="px-4 py-3">
-        <button 
-          onClick={() => onSave(student?.id, fees, paid)} 
-          className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 shadow-sm transition">
-          Update
-        </button>
-      </td>
-    </tr>
   );
 };
 
