@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
-import ResetPassword from './pages/ResetPassword;
+import ResetPassword from './pages/ResetPassword';
 
 // Hooks
 import { useInternetIdentity } from './hooks/useInternetIdentity';
