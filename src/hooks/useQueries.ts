@@ -58,9 +58,6 @@ export const useGetCallerUserProfile = () => {
   };
 };
 
-export const useGetCallerUserRole = () => {
-  return { data: 'admin', isLoading: false };
-};
 
 
 export const useGetCallerUserRole = () => {
