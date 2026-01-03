@@ -35,34 +35,39 @@ const fetchStudent = async () => {
   setLoading(false);
 };
 
-// 2. Return statement mein ye UI add karein (Exam Result ke paas)
-{student?.fees?.[0] && (
+{/* Safe Fee Section Logic */}
+{/* Agar fees data hai aur kam se kam ek record hai, tabhi dikhayein */}
+{student?.fees && student.fees.length > 0 ? (
   <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mt-6">
     <h3 className="text-lg font-bold text-gray-800 mb-4">Fee Status 💰</h3>
     <div className="grid grid-cols-3 gap-4 text-center">
       <div className="bg-gray-50 p-3 rounded">
         <p className="text-xs text-gray-500">Total Fee</p>
-        <p className="font-bold text-lg">₹{student.fees[0].total_amount}</p>
+        <p className="font-bold text-lg">₹{student.fees[0].total_amount || 0}</p>
       </div>
       <div className="bg-green-50 p-3 rounded">
         <p className="text-xs text-green-600">Paid Amount</p>
-        <p className="font-bold text-green-700 text-lg">₹{student.fees[0].paid_amount}</p>
+        <p className="font-bold text-green-700 text-lg">₹{student.fees[0].paid_amount || 0}</p>
       </div>
       <div className="bg-red-50 p-3 rounded">
         <p className="text-xs text-red-600">Due Amount</p>
         <p className="font-bold text-red-700 text-lg">
-          ₹{student.fees[0].total_amount - student.fees[0].paid_amount}
+          ₹{(student.fees[0].total_amount || 0) - (student.fees[0].paid_amount || 0)}
         </p>
       </div>
     </div>
     <div className={`mt-4 text-center p-2 rounded font-bold text-white ${
       student.fees[0].status === 'Paid' ? 'bg-green-500' : 'bg-red-500'
     }`}>
-      Status: {student.fees[0].status}
+      Status: {student.fees[0].status || 'Pending'}
     </div>
   </div>
+) : (
+  /* Agar Fee Record nahi hai, toh ye dikhayein (Crash ki jagah message) */
+  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-6 text-center text-yellow-800">
+    Fees info not available yet. Please contact Admin.
+  </div>
 )}
-
   // --- YAHAN SE CHANGES HAIN (Simple Div Wrapper) ---
   return (
     <div className="min-h-screen bg-gray-100 p-6 font-sans">
