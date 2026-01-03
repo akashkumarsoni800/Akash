@@ -4,14 +4,12 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/',
-  
-  // --- YE PART ADD KARO ---
+  base: './', // <--- "/" ki jagah "./" karein (Relative path)
   build: {
-    sourcemap: true, // Isse asli line number dikhega
-    minify: false,   // Isse variable ke asli naam dikhenge (ve, gw nahi dikhega)
+    sourcemap: true,
+    minify: false,
   },
   server: {
-    host: true, // Network par chalane ke liye
+    host: true,
   }
 })
