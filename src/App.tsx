@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 
-// --- Error Boundary (Crash Catcher) ---
+// --- Crash Catcher (Error Boundary) ---
 class ErrorBoundary extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -14,23 +14,20 @@ class ErrorBoundary extends React.Component<any, any> {
     return { hasError: true };
   }
   componentDidCatch(error: any, errorInfo: any) {
-    console.error("CRASH REPORT:", error, errorInfo);
+    console.error("CRASH REPORT:", error);
     this.setState({ errorInfo: error.toString() });
   }
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-10 bg-red-50 text-red-900 h-screen">
-          <h1 className="text-2xl font-bold">Something went wrong!</h1>
-          <p className="mt-2">React crashed due to an Object/Invalid Child error.</p>
-          <div className="mt-4 p-4 bg-white border border-red-300 rounded font-mono text-sm">
-            {this.state.errorInfo}
-          </div>
+        <div className="p-6 bg-red-50 text-red-900 min-h-screen flex flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">App Crashed</h1>
+          <p className="mt-2 text-sm text-red-700">Please check console for details.</p>
           <button 
             onClick={() => window.location.href = '/'}
-            className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            Reload App
+            Reload Home
           </button>
         </div>
       );
@@ -43,29 +40,21 @@ class ErrorBoundary extends React.Component<any, any> {
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile, useGetCallerUserRole } from './hooks/useQueries';
 
-// --- Backend Helper ---
-// Agar ye import error de, to ise hata dein aur code me niche 'admin' string use karein
-import { UserRole } from './backend'; 
-
 // --- Pages ---
 import LoginPage from './pages/LoginPage';
 import ProfileSetupPage from './pages/ProfileSetupPage';
 import ResetPassword from './pages/ResetPassword';
-
-// Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
 import AddTeacher from './pages/AddTeacher';
 import AddStudent from './pages/AddStudent';
 import UploadResult from './pages/UploadResult';
 import ManageFees from './pages/ManageFees';
-
-// Other Dashboards
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 
 const queryClient = new QueryClient();
 
-// --- Auth Logic ---
+// --- Auth Logic (Safe Mode) ---
 const AuthRedirector = () => {
   const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
@@ -73,26 +62,24 @@ const AuthRedirector = () => {
 
   const isAuthenticated = !!identity;
 
+  // 1. Loading Check
   if (isInitializing || (isAuthenticated && (profileLoading || roleLoading))) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full" />
-      </div>
-    );
+    return <div className="p-10 text-center">Loading System...</div>;
   }
 
+  // 2. Login Check
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (isAuthenticated && !userProfile) return <Navigate to="/setup" replace />;
 
-  // Role Check
-  const isAdmin = userRole === (UserRole?.admin || 'admin'); 
-  const userType = userProfile?.userType || '';
+  // 3. Role Check (Converted to String to prevent crash)
+  const safeRole = String(userRole || ""); 
+  const safeType = String(userProfile?.userType || "");
 
-  if (isAdmin || userType === 'admin') return <Navigate to="/admin/dashboard" replace />;
-  if (userType === 'teacher') return <Navigate to="/teacher/dashboard" replace />;
-  if (userType === 'student') return <Navigate to="/student/dashboard" replace />;
+  if (safeRole === 'admin' || safeType === 'admin') return <Navigate to="/admin/dashboard" replace />;
+  if (safeType === 'teacher') return <Navigate to="/teacher/dashboard" replace />;
+  if (safeType === 'student') return <Navigate to="/student/dashboard" replace />;
 
-  return <div className="p-10 text-center">Role Unknown. Please contact support.</div>;
+  return <div className="p-10 text-center">Role Unknown. Contact Admin.</div>;
 };
 
 // --- Main App ---
@@ -104,29 +91,23 @@ export default function App() {
           <BrowserRouter>
             <Toaster position="top-center" richColors />
             
+            {/* Routes Block: No comments allowed here */}
             <Routes>
-              {/* Root */}
               <Route path="/" element={<AuthRedirector />} />
               
-              {/* Public */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/setup" element={<ProfileSetupPage />} />
               
-              {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/add-teacher" element={<AddTeacher />} />
               <Route path="/admin/add-student" element={<AddStudent />} />
               <Route path="/admin/upload-result" element={<UploadResult />} />
               <Route path="/admin/manage-fees" element={<ManageFees />} />
 
-              {/* Teacher Routes */}
               <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-              
-              {/* Student Routes */}
               <Route path="/student/dashboard" element={<StudentDashboard />} />
               
-              {/* 404 */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           
