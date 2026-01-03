@@ -92,6 +92,8 @@ export default function App() {
             <Route path="/admin/upload-result" element={<UploadResult />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/login" element={<LoginPage />} />
+<Route path="/reset-password" element={<ResetPassword />} />
+
           </Routes>
         
         </BrowserRouter>
