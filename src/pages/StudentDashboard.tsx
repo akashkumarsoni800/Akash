@@ -17,6 +17,51 @@ const StudentDashboard = () => {
       toast.error("Please enter a Student ID");
     }
   };
+// 1. Data fetch karte waqt fees bhi layein
+const fetchStudent = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data, error } = await supabase
+      .from('students')
+      .select(`
+        *,
+        fees ( total_amount, paid_amount, status )
+      `)
+      .eq('auth_id', user.id)
+      .single();
+    
+    if (data) setStudent(data);
+  }
+  setLoading(false);
+};
+
+// 2. Return statement mein ye UI add karein (Exam Result ke paas)
+{student?.fees?.[0] && (
+  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mt-6">
+    <h3 className="text-lg font-bold text-gray-800 mb-4">Fee Status 💰</h3>
+    <div className="grid grid-cols-3 gap-4 text-center">
+      <div className="bg-gray-50 p-3 rounded">
+        <p className="text-xs text-gray-500">Total Fee</p>
+        <p className="font-bold text-lg">₹{student.fees[0].total_amount}</p>
+      </div>
+      <div className="bg-green-50 p-3 rounded">
+        <p className="text-xs text-green-600">Paid Amount</p>
+        <p className="font-bold text-green-700 text-lg">₹{student.fees[0].paid_amount}</p>
+      </div>
+      <div className="bg-red-50 p-3 rounded">
+        <p className="text-xs text-red-600">Due Amount</p>
+        <p className="font-bold text-red-700 text-lg">
+          ₹{student.fees[0].total_amount - student.fees[0].paid_amount}
+        </p>
+      </div>
+    </div>
+    <div className={`mt-4 text-center p-2 rounded font-bold text-white ${
+      student.fees[0].status === 'Paid' ? 'bg-green-500' : 'bg-red-500'
+    }`}>
+      Status: {student.fees[0].status}
+    </div>
+  </div>
+)}
 
   // --- YAHAN SE CHANGES HAIN (Simple Div Wrapper) ---
   return (
