@@ -22,19 +22,21 @@ const AddTeacher = () => {
       // 1. Supabase Auth se Invitation bhejna
       // Note: SignUp karne par teacher ko confirmation email jayega
       const { data, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: 'TempPassword123!', // Ye temporary hai, teacher reset kar lega
-        options: {
-          data: {
-            full_name: formData.name,
-            role: 'teacher'
-          },
-          // Verify karne ke baad kahan jaye (Apni site ka link dein)
-          emailRedirectTo: window.location.origin + '/login', 
-        }
-      });
+  email: formData.email,
+  password: 'Teacher@123', // Ek default password rakh dein
+  options: {
+    data: {
+      full_name: formData.name,
+      role: 'teacher'
+    }
+  }
+});
 
-      if (authError) throw authError;
+if (!authError) {
+  toast.success("Teacher added! They can login with: Teacher@123");
+  // Email nahi bhi aaya toh wo is password se login kar payenge
+}
+
 
       // 2. Teacher ki entry Database Table mein karna
       const { error: dbError } = await supabase.from('teachers').insert([{
