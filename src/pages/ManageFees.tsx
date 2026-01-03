@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+
 // Supabase import ko abhi ke liye ignore karein
 // import { supabase } from '../supabaseClient'; 
 
@@ -60,17 +61,27 @@ const ManageFees = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {students.map((student) => {
-              const feeData = (student.fees && student.fees.length > 0) ? student.fees[0] : {};
-              return (
-                <FeeRow 
-                  key={student.id} 
-                  student={student} 
-                  existingFee={feeData} 
-                  onSave={handleSaveFee} 
-                />
-              );
-            })}
+            {/* FIX 1: Array Check Lagaya Hai */}
+            {Array.isArray(students) && students.length > 0 ? (
+              students.map((student) => {
+                // Safe Data Extraction
+                const feeData = (student.fees && student.fees.length > 0) ? student.fees[0] : null;
+                return (
+                  <FeeRow 
+                    key={student.id} 
+                    student={student} 
+                    existingFee={feeData} 
+                    onSave={handleSaveFee} 
+                  />
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={8} className="p-4 text-center text-gray-500">
+                  No students found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -87,6 +98,7 @@ const FeeRow = ({ student, existingFee, onSave }: any) => {
     return String(val); // Convert everything to string
   };
 
+  // Safe Access using Optional Chaining (?.)
   const raw = existingFee?.fee_structure || {};
 
   // State
@@ -108,28 +120,54 @@ const FeeRow = ({ student, existingFee, onSave }: any) => {
   return (
     <tr className="hover:bg-gray-50">
       <td className="px-4 py-3">
-        <div className="font-bold">{safeStr(student.full_name)}</div>
-        <div className="text-xs text-gray-500">{safeStr(student.class_name)}</div>
+        <div className="font-bold">{safeStr(student?.full_name)}</div>
+        <div className="text-xs text-gray-500">{safeStr(student?.class_name)}</div>
       </td>
       
-      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.tuition} onChange={e => setFees({...fees, tuition: e.target.value})} /></td>
-      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.exam} onChange={e => setFees({...fees, exam: e.target.value})} /></td>
-      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.van} onChange={e => setFees({...fees, van: e.target.value})} /></td>
-      <td className="px-2"><input type="number" className="w-16 border p-1" value={fees.other} onChange={e => setFees({...fees, other: e.target.value})} /></td>
+      {/* FIX 2: Added || "" in all inputs to prevent crashes */}
+      <td className="px-2">
+        <input 
+            type="number" 
+            className="w-16 border p-1" 
+            value={fees.tuition || ""} 
+            onChange={e => setFees({...fees, tuition: e.target.value})} 
+        />
+      </td>
+      <td className="px-2">
+        <input 
+            type="number" 
+            className="w-16 border p-1" 
+            value={fees.exam || ""} 
+            onChange={e => setFees({...fees, exam: e.target.value})} 
+        />
+      </td>
+      <td className="px-2">
+        <input 
+            type="number" 
+            className="w-16 border p-1" 
+            value={fees.van || ""} 
+            onChange={e => setFees({...fees, van: e.target.value})} 
+        />
+      </td>
+      <td className="px-2">
+        <input 
+            type="number" 
+            className="w-16 border p-1" 
+            value={fees.other || ""} 
+            onChange={e => setFees({...fees, other: e.target.value})} 
+        />
+      </td>
       
       <td className="px-4 py-3 font-bold text-blue-700">₹{total}</td>
       
       <td className="px-2">
-        <input type="number" className="w-20 border border-green-300 bg-green-50 p-1" value={paid} onChange={e => setPaid(e.target.value)} />
+        <input 
+            type="number" 
+            className="w-20 border border-green-300 bg-green-50 p-1" 
+            value={paid || ""} 
+            onChange={e => setPaid(e.target.value)} 
+        />
       </td>
       
       <td className="px-4 py-3">
-        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">
-          Test Save
-        </button>
-      </td>
-    </tr>
-  );
-};
-
-export default ManageFees;
+        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-
