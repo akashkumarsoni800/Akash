@@ -22,30 +22,31 @@ const ManageFees = () => {
         .order('class_name', { ascending: true });
 
       if (error) throw error;
+      
+      console.log("Supabase Data:", data); // F12 daba kar Console check karein
       setStudents(data || []);
     } catch (err: any) {
-      // FIX 1: Error object ko string me badla taaki crash na ho
-      console.error(err); 
-      toast.error("Failed to load data. Check console.");
+      console.error("Fetch Error:", err);
+      toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
   };
 
   const handleSaveFee = async (studentId: string, structure: any, paid: string) => {
-    // FIX 2: Numbers ko safe tarike se convert karna
-    const cleanNum = (val: any) => {
+    // 1. Convert everything to Number safely
+    const toNum = (val: any) => {
       const n = Number(val);
       return isNaN(n) ? 0 : n;
     };
 
     const total = 
-      cleanNum(structure.tuition) + 
-      cleanNum(structure.exam) + 
-      cleanNum(structure.van) + 
-      cleanNum(structure.other);
+      toNum(structure.tuition) + 
+      toNum(structure.exam) + 
+      toNum(structure.van) + 
+      toNum(structure.other);
 
-    const paidNum = cleanNum(paid);
+    const paidNum = toNum(paid);
     
     let status = 'Pending';
     if (paidNum >= total && total > 0) status = 'Paid';
@@ -62,7 +63,7 @@ const ManageFees = () => {
         student_id: studentId,
         total_amount: total,
         paid_amount: paidNum,
-        fee_structure: structure,
+        fee_structure: structure, // Saving JSON object
         status: status
       };
 
@@ -72,38 +73,38 @@ const ManageFees = () => {
         await supabase.from('fees').insert([payload]);
       }
 
-      toast.success("Updated Successfully!");
+      toast.success("Saved!");
       fetchData(); 
 
     } catch (err: any) {
-      toast.error("Save Failed");
       console.error(err);
+      toast.error("Failed to save");
     }
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500">Loading Student Data...</div>;
+  if (loading) return <div className="p-10 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Fee Management</h1>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <h1 className="text-2xl font-bold mb-4">Fee Manager</h1>
       
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+      <div className="bg-white shadow rounded overflow-x-auto">
+        <table className="min-w-full text-sm">
           <thead className="bg-blue-900 text-white">
             <tr>
-              <th className="px-4 py-3 text-left">Student</th>
-              <th className="px-2 py-3 text-left">Tuition</th>
-              <th className="px-2 py-3 text-left">Exam</th>
-              <th className="px-2 py-3 text-left">Van</th>
-              <th className="px-2 py-3 text-left">Other</th>
-              <th className="px-4 py-3 text-left">Total</th>
-              <th className="px-4 py-3 text-left">Paid</th>
-              <th className="px-4 py-3 text-left">Action</th>
+              <th className="p-3 text-left">Student</th>
+              <th className="p-2">Tuition</th>
+              <th className="p-2">Exam</th>
+              <th className="p-2">Van</th>
+              <th className="p-2">Other</th>
+              <th className="p-3">Total</th>
+              <th className="p-3">Paid</th>
+              <th className="p-3">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody>
             {students.map((student) => {
-              // FIX 3: Safe Data Extraction
+              // Safety: Ensure we don't crash if fees is missing
               const feesArr = Array.isArray(student.fees) ? student.fees : [];
               const feeData = feesArr.length > 0 ? feesArr[0] : {};
               
@@ -123,36 +124,42 @@ const ManageFees = () => {
   );
 };
 
-// --- Child Component (Isi me crash ho raha tha) ---
+// --- ISOLATED COMPONENT TO PREVENT CRASH ---
 const FeeRow = ({ student, existingFee, onSave }: any) => {
   
-  // Safe parsing function
-  const getSafeVal = (val: any) => {
-    if (val === null || val === undefined || typeof val === 'object') return "";
+  // ULTRA SAFE VALUE FUNCTION
+  // Yeh function check karega ki value Object to nahi hai?
+  const safeVal = (val: any) => {
+    if (val === null || val === undefined) return "";
+    if (typeof val === 'object') {
+      console.warn("CRASH PREVENTED: Object found in input", val);
+      return ""; // Agar Object hai to blank return karo, crash nahi
+    }
     return val;
   };
 
-  const rawStructure = existingFee?.fee_structure || {};
-  
+  // Initial Structure
+  const rawStr = existingFee?.fee_structure || {};
+
   const [fees, setFees] = useState({
-    tuition: getSafeVal(rawStructure.tuition),
-    exam: getSafeVal(rawStructure.exam),
-    van: getSafeVal(rawStructure.van),
-    other: getSafeVal(rawStructure.other),
+    tuition: safeVal(rawStr.tuition),
+    exam: safeVal(rawStr.exam),
+    van: safeVal(rawStr.van),
+    other: safeVal(rawStr.other),
   });
 
-  const [paid, setPaid] = useState(getSafeVal(existingFee?.paid_amount));
+  const [paid, setPaid] = useState(safeVal(existingFee?.paid_amount));
 
-  // Sync state when data loads
+  // Sync with DB
   useEffect(() => {
     const newStr = existingFee?.fee_structure || {};
     setFees({
-      tuition: getSafeVal(newStr.tuition),
-      exam: getSafeVal(newStr.exam),
-      van: getSafeVal(newStr.van),
-      other: getSafeVal(newStr.other),
+      tuition: safeVal(newStr.tuition),
+      exam: safeVal(newStr.exam),
+      van: safeVal(newStr.van),
+      other: safeVal(newStr.other),
     });
-    setPaid(getSafeVal(existingFee?.paid_amount));
+    setPaid(safeVal(existingFee?.paid_amount));
   }, [existingFee]);
 
   const handleChange = (field: string, val: string) => {
@@ -166,28 +173,28 @@ const FeeRow = ({ student, existingFee, onSave }: any) => {
     (Number(fees.other) || 0);
 
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="px-4 py-3">
-        {/* FIX 4: Sirf strings display karein */}
-        <div className="font-medium text-gray-900">{String(student.full_name)}</div>
-        <div className="text-xs text-gray-500">{String(student.class_name)} ({String(student.roll_number)})</div>
+    <tr className="border-b hover:bg-gray-50">
+      <td className="p-3">
+        {/* Use safeVal here too just in case */}
+        <div className="font-bold">{safeVal(student.full_name)}</div>
+        <div className="text-xs text-gray-500">{safeVal(student.class_name)} ({safeVal(student.roll_number)})</div>
       </td>
       
-      <td className="px-2"><input type="number" className="w-16 border rounded p-1" value={fees.tuition} onChange={e => handleChange('tuition', e.target.value)} placeholder="0" /></td>
-      <td className="px-2"><input type="number" className="w-16 border rounded p-1" value={fees.exam} onChange={e => handleChange('exam', e.target.value)} placeholder="0" /></td>
-      <td className="px-2"><input type="number" className="w-16 border rounded p-1" value={fees.van} onChange={e => handleChange('van', e.target.value)} placeholder="0" /></td>
-      <td className="px-2"><input type="number" className="w-16 border rounded p-1" value={fees.other} onChange={e => handleChange('other', e.target.value)} placeholder="0" /></td>
+      <td className="p-2"><input type="number" className="w-16 border p-1 rounded" value={fees.tuition} onChange={e => handleChange('tuition', e.target.value)} placeholder="0" /></td>
+      <td className="p-2"><input type="number" className="w-16 border p-1 rounded" value={fees.exam} onChange={e => handleChange('exam', e.target.value)} placeholder="0" /></td>
+      <td className="p-2"><input type="number" className="w-16 border p-1 rounded" value={fees.van} onChange={e => handleChange('van', e.target.value)} placeholder="0" /></td>
+      <td className="p-2"><input type="number" className="w-16 border p-1 rounded" value={fees.other} onChange={e => handleChange('other', e.target.value)} placeholder="0" /></td>
       
-      <td className="px-4 py-3 font-bold text-blue-700">₹{total}</td>
+      <td className="p-3 font-bold text-blue-600">₹{total}</td>
       
-      <td className="px-2">
-        <input type="number" className="w-20 border border-green-300 bg-green-50 rounded p-1" value={paid} onChange={e => setPaid(e.target.value)} placeholder="0" />
+      <td className="p-2">
+        <input type="number" className="w-20 border border-green-400 bg-green-50 p-1 rounded" value={paid} onChange={e => setPaid(e.target.value)} placeholder="0" />
       </td>
       
-      <td className="px-4 py-3">
+      <td className="p-3">
         <button 
           onClick={() => onSave(student.id, fees, paid)}
-          className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-700"
+          className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
         >
           Save
         </button>
