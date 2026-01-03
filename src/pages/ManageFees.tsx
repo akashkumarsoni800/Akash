@@ -11,7 +11,7 @@ const ManageFees = () => {
   const fetchStudentsAndFees = async () => {
     try {
       setLoading(true);
-      // Dhyan dein: Hum 'contact_number' bhi mangwa rahe hain
+      // 'students' table se data layenge (phone column ke sath)
       const { data, error } = await supabase
         .from('students')
         .select('*, fees(*)')
@@ -32,8 +32,9 @@ const ManageFees = () => {
     fetchStudentsAndFees();
   }, []);
 
-  // --- 2. WHATSAPP SENDER FUNCTION 🟢 ---
-  const sendWhatsAppReminder = (student: any, total: number, paid: number, currentPayment: number) => {
+  // --- 2. WHATSAPP SENDER FUNCTION (Updated for 'phone') 🟢 ---
+  const sendWhatsAppReminder = (student: any, total: number, paid: number) => {
+    // 👉 CHANGE: Yahan 'contact_number' ki jagah 'phone' kar diya
     if (!student.phone) {
       toast.warning("Student ka mobile number nahi mila!");
       return;
@@ -42,14 +43,12 @@ const ManageFees = () => {
     const pending = total - paid;
     const date = new Date().toLocaleDateString('en-IN');
     
-    // Message Format (Hindi/English mix)
-    // Aap is message ko apne hisab se badal sakte hain
     const message = `
 🏫 *Adarsh Shishu Mandir* 🏫
 -----------------------------
 Hello *${student.full_name}*,
 
-Apki fees update ho gayi hai via Online System.
+Apki fees update ho gayi hai.
 
 📅 Date: ${date}
 💰 Total Fees: ₹${total}
@@ -61,11 +60,11 @@ Dhanyawad.
 -----------------------------
 `.trim();
 
-    // WhatsApp URL banana
+    // 👉 CHANGE: URL me bhi 'student.phone' use kiya
+    // Note: Humne 91 laga diya hai. Agar DB me pehle se +91 hai to hata dein.
     const encodedMsg = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/91${student.contact_number}?text=${encodedMsg}`;
+    const whatsappUrl = `https://wa.me/91${student.phone}?text=${encodedMsg}`;
 
-    // Nayi window me kholna
     window.open(whatsappUrl, '_blank');
   };
 
@@ -86,7 +85,7 @@ Dhanyawad.
       else if (paid > 0) status = 'Partial';
 
       const feeData = {
-        student_id: studentId, // Note: Ye ab BigInt hai database me
+        student_id: studentId,
         fee_structure: { tuition, exam, other },
         total_amount: total,
         paid_amount: paid,
@@ -94,7 +93,6 @@ Dhanyawad.
         updated_at: new Date()
       };
 
-      // Existing data check
       const student = students.find(s => s.id === studentId);
       const existingFeeId = (student?.fees && student.fees.length > 0) ? student.fees[0].id : null;
 
@@ -116,16 +114,16 @@ Dhanyawad.
 
       toast.success("✅ Fees Updated Successfully!");
       
-      // --- 4. ASK TO SEND WHATSAPP ---
-      if(window.confirm("Fees Save ho gayi hai! 📲 Kya Parent ko WhatsApp reminder bhejna hai?")) {
-        sendWhatsAppReminder(student, total, paid, paid);
+      // WhatsApp Reminder Popup
+      if(window.confirm("Fees Save ho gayi hai! 📲 Kya WhatsApp bhejna hai?")) {
+        sendWhatsAppReminder(student, total, paid);
       }
 
       await fetchStudentsAndFees(); 
 
     } catch (error: any) {
       console.error("Save Error:", error);
-      toast.error("Failed to save fees: " + error.message);
+      toast.error("Failed to save fees");
     } finally {
       setProcessingId(null);
     }
@@ -148,7 +146,7 @@ Dhanyawad.
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="px-4 py-3 text-left">Student Name</th>
-              <th className="px-2 py-3 text-left">Mobile</th> {/* Mobile Column Added */}
+              <th className="px-2 py-3 text-left">Mobile</th>
               <th className="px-2 py-3 text-left">Tuition</th>
               <th className="px-2 py-3 text-left">Exam</th>
               <th className="px-2 py-3 text-left">Other</th>
@@ -191,7 +189,6 @@ const FeeRow = ({ student, existingFee, onSave, isSaving }: any) => {
     other: raw.other || ""
   });
   const [paid, setPaid] = useState(existingFee?.paid_amount || "");
-
   const total = (Number(fees.tuition)||0) + (Number(fees.exam)||0) + (Number(fees.other)||0);
   
   const status = existingFee?.status || 'Pending';
@@ -204,9 +201,9 @@ const FeeRow = ({ student, existingFee, onSave, isSaving }: any) => {
         <div className="text-xs text-gray-500">{student.class_name}</div>
       </td>
       
-      {/* Mobile Number Display */}
+      {/* 👉 CHANGE: Display 'phone' instead of contact_number */}
       <td className="px-2 text-xs text-gray-600">
-        {student.contact_number || "N/A"}
+        {student.phone || "N/A"}
       </td>
 
       <td className="px-2"><input type="number" className="w-16 border p-1 rounded" placeholder="0" value={fees.tuition} onChange={e=>setFees({...fees, tuition: e.target.value})} /></td>
