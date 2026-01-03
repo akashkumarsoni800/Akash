@@ -14,50 +14,52 @@ const AddTeacher = () => {
     phone: ''
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsPending(true);
+  
+  
+      const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsPending(true);
 
-    try {
-      // 1. Supabase Auth se Invitation bhejna
-      // Note: SignUp karne par teacher ko confirmation email jayega
-      const { data, error: authError } = await supabase.auth.signUp({
-  email: formData.email,
-  password: 'Teacher@123', // Ek default password rakh dein
-  options: {
-    data: {
+  try {
+    // 1. Supabase Auth se Account banana
+    const { data, error: authError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: 'Teacher@123', 
+      options: {
+        data: {
+          full_name: formData.name,
+          role: 'teacher'
+        }
+      }
+    });
+
+    // Agar Auth mein error aaye (jaise user already exists) toh yahi ruk jao
+    if (authError) throw authError;
+
+    // 2. Teacher ki entry Database Table mein karna
+    const { error: dbError } = await supabase.from('teachers').insert([{
       full_name: formData.name,
-      role: 'teacher'
-    }
+      subject: formData.subject,
+      email: formData.email,
+      phone: formData.phone,
+      auth_id: data.user?.id // data.user ab safely milega
+    }]);
+
+    if (dbError) throw dbError;
+
+    // Sab sahi raha toh final message
+    toast.success("Teacher Registered! Login with: Teacher@123");
+    navigate('/admin/dashboard');
+
+  } catch (err: any) {
+    // Har tarah ka error yahan handle hoga
+    toast.error("Error: " + err.message);
+    console.error("Signup Error:", err);
+  } finally {
+    setIsPending(false);
   }
-});
+};
 
-if (!authError) {
-  toast.success("Teacher added! They can login with: Teacher@123");
-  // Email nahi bhi aaya toh wo is password se login kar payenge
-}
-
-
-      // 2. Teacher ki entry Database Table mein karna
-      const { error: dbError } = await supabase.from('teachers').insert([{
-        full_name: formData.name,
-        subject: formData.subject,
-        email: formData.email,
-        phone: formData.phone,
-        auth_id: data.user?.id
-      }]);
-
-      if (dbError) throw dbError;
-
-      toast.success("Invitation Sent! Teacher must verify their email.");
-      navigate('/admin/dashboard');
-
-    } catch (err: any) {
-      toast.error("Error: " + err.message);
-    } finally {
-      setIsPending(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 font-sans">
