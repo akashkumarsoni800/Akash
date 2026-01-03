@@ -34,7 +34,7 @@ const ManageFees = () => {
 
   // --- 2. WHATSAPP SENDER FUNCTION 🟢 ---
   const sendWhatsAppReminder = (student: any, total: number, paid: number, currentPayment: number) => {
-    if (!student.contact_number) {
+    if (!student.phone) {
       toast.warning("Student ka mobile number nahi mila!");
       return;
     }
