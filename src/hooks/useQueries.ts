@@ -56,6 +56,10 @@ export const useGetCallerUserProfile = () => {
     isFetched: true 
   };
 };
+export const useGetCallerUserRole = () => {
+  return { data: 'admin', isLoading: false }; 
+};
+
 
 
 
