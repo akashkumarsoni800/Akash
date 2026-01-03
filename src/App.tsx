@@ -3,31 +3,35 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
-import ResetPassword from './pages/ResetPassword';
-// Imports add karein
-import AddStudent from './pages/AddStudent';
-import StudentDashboard from './pages/StudentDashboard';
-import ManageFees from './pages/ManageFees';
 
-
-// Hooks
+// --- Hooks ---
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile, useGetCallerUserRole } from './hooks/useQueries';
 
-// Pages
+// --- Backend Helper ---
+// Make sure ye file exist karti ho, nahi to ise hata dein aur strings use karein
+import { UserRole } from './backend'; 
+
+// --- Pages ---
 import LoginPage from './pages/LoginPage';
 import ProfileSetupPage from './pages/ProfileSetupPage';
+import ResetPassword from './pages/ResetPassword';
+
+// Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
-import TeacherDashboard from './pages/TeacherDashboard'; // Ensure file exists
-import StudentDashboard from './pages/StudentDashboard'; // Ensure file exists
 import AddTeacher from './pages/AddTeacher';
+import AddStudent from './pages/AddStudent';
 import UploadResult from './pages/UploadResult';
-import { UserRole } from './backend';
+import ManageFees from './pages/ManageFees'; // <--- Yeh wahi file hai jo humne abhi fix ki thi
+
+// Other Dashboards
+import TeacherDashboard from './pages/TeacherDashboard';
+import StudentDashboard from './pages/StudentDashboard';
 
 // 1. Query Client Setup
 const queryClient = new QueryClient();
 
-// 2. Ye Component decide karega ki user ko kahan bhejna hai (Aapka main logic)
+// 2. Auth Redirector (Login Check Logic)
 const AuthRedirector = () => {
   const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
@@ -58,14 +62,15 @@ const AuthRedirector = () => {
   }
 
   // Case 3: Sab set hai -> Role ke hisab se Dashboard par bhejo
-  const isAdmin = userRole === UserRole.admin;
+  // Note: Agar 'UserRole' import error de, to yahan direct string check karein e.g. userRole === 'admin'
+  const isAdmin = userRole === (UserRole?.admin || 'admin'); 
   const userType = userProfile?.userType || '';
 
   if (isAdmin || userType === 'admin') return <Navigate to="/admin/dashboard" replace />;
   if (userType === 'teacher') return <Navigate to="/teacher/dashboard" replace />;
   if (userType === 'student') return <Navigate to="/student/dashboard" replace />;
 
-  return <div>Access Pending or Unknown Role</div>;
+  return <div className="p-10 text-center">Access Pending or Unknown Role. Contact Admin.</div>;
 };
 
 // 3. Main App Component
@@ -74,37 +79,35 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         
-        {/* IMPORTANT: BrowserRouter sabse bahar hona chahiye */}
         <BrowserRouter>
           <Toaster position="top-center" richColors />
           
           <Routes>
-            {/* Jab koi "/" par aaye, to AuthRedirector decide karega kahan jana hai */}
+            {/* Root Route - Decides where to go */}
             <Route path="/" element={<AuthRedirector />} />
             
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             
-            {/* Protected Routes */}
+            {/* Setup */}
             <Route path="/setup" element={<ProfileSetupPage />} />
+            
+            {/* --- ADMIN ROUTES --- */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/add-teacher" element={<AddTeacher />} />
+            <Route path="/admin/add-student" element={<AddStudent />} />
+            <Route path="/admin/upload-result" element={<UploadResult />} />
+            <Route path="/admin/manage-fees" element={<ManageFees />} />
+
+            {/* --- TEACHER ROUTES --- */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            
+            {/* --- STUDENT ROUTES --- */}
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             
-            {/* Fallback for unknown routes */}
+            {/* Fallback for unknown routes (404) */}
             <Route path="*" element={<Navigate to="/" replace />} />
-           
-            <Route path="/admin/add-teacher" element={<AddTeacher />} />
-            <Route path="/admin/upload-result" element={<UploadResult />} />
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-<Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/login" element={<LoginPage />} />
-// Routes section mein ye jodein:
-<Route path="/admin/add-student" element={<AddStudent />} />
-<Route path="/student/dashboard" element={<StudentDashboard />} />
-// ...
-<Route path="/admin/manage-fees" element={<ManageFees />} />
-
           </Routes>
         
         </BrowserRouter>
