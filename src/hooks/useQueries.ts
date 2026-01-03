@@ -57,10 +57,6 @@ export const useGetCallerUserProfile = () => {
   };
 };
 
-// Sirf ye ek baar hona chahiye puri file mein 👇
-export const useGetCallerUserRole = () => {
-  return { data: 'admin', isLoading: false }; 
-};
 
 
 
