@@ -1,164 +1,145 @@
-import React, { useState } from 'react';
-import { useGetStudentResults } from '../hooks/useQueries';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { LogOut, User, GraduationCap } from 'lucide-react';
 
 const StudentDashboard = () => {
-  const [studentId, setStudentId] = useState('');
-  const [searchId, setSearchId] = useState<any>(null);
+  const navigate = useNavigate();
+  const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Hook tabhi chalega jab searchId set hoga
-  const { data: results, isLoading } = useGetStudentResults(searchId);
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data, error } = await supabase
+            .from('students')
+            .select(`
+              *,
+              fees ( total_amount, paid_amount, status, fee_structure )
+            `)
+            .eq('auth_id', user.id)
+            .single();
+          
+          if (data) setStudent(data);
+        }
+      } catch (e) {
+        console.error("Error loading profile", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudent();
+  }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (studentId) {
-      setSearchId(studentId);
-    } else {
-      toast.error("Please enter a Student ID");
-    }
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem("adarsh_school_login");
+    navigate('/login');
   };
-// 1. Data fetch karte waqt fees bhi layein
-const fetchStudent = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data, error } = await supabase
-      .from('students')
-      .select(`
-        *,
-        fees ( total_amount, paid_amount, status )
-      `)
-      .eq('auth_id', user.id)
-      .single();
-    
-    if (data) setStudent(data);
-  }
-  setLoading(false);
-};
 
-{/* Safe Fee Section Logic */}
-{/* Agar fees data hai aur kam se kam ek record hai, tabhi dikhayein */}
-{student?.fees && student.fees.length > 0 ? (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mt-6">
-    <h3 className="text-lg font-bold text-gray-800 mb-4">Fee Status 💰</h3>
-    <div className="grid grid-cols-3 gap-4 text-center">
-      <div className="bg-gray-50 p-3 rounded">
-        <p className="text-xs text-gray-500">Total Fee</p>
-        <p className="font-bold text-lg">₹{student.fees[0].total_amount || 0}</p>
-      </div>
-      <div className="bg-green-50 p-3 rounded">
-        <p className="text-xs text-green-600">Paid Amount</p>
-        <p className="font-bold text-green-700 text-lg">₹{student.fees[0].paid_amount || 0}</p>
-      </div>
-      <div className="bg-red-50 p-3 rounded">
-        <p className="text-xs text-red-600">Due Amount</p>
-        <p className="font-bold text-red-700 text-lg">
-          ₹{(student.fees[0].total_amount || 0) - (student.fees[0].paid_amount || 0)}
-        </p>
-      </div>
-    </div>
-    <div className={`mt-4 text-center p-2 rounded font-bold text-white ${
-      student.fees[0].status === 'Paid' ? 'bg-green-500' : 'bg-red-500'
-    }`}>
-      Status: {student.fees[0].status || 'Pending'}
-    </div>
-  </div>
-) : (
-  /* Agar Fee Record nahi hai, toh ye dikhayein (Crash ki jagah message) */
-  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-6 text-center text-yellow-800">
-    Fees info not available yet. Please contact Admin.
-  </div>
-)}
-  // --- YAHAN SE CHANGES HAIN (Simple Div Wrapper) ---
+  if (loading) return <div className="p-10 text-center animate-pulse">Loading Profile...</div>;
+
+  // Safe variables create karein taaki crash na ho
+  const feeRecord = student?.fees?.[0];
+  const structure = feeRecord?.fee_structure || {}; 
+  // Agar structure null hai to empty object {} use karega
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6 font-sans">
-      <div className="max-w-3xl mx-auto">
-        
-        {/* Header */}
-        <div className="bg-blue-900 text-white p-6 rounded-t-lg text-center shadow-lg">
-          <h1 className="text-2xl font-bold">Adarsh Shishu Mandir</h1>
-          <p className="opacity-80">Student Result Portal</p>
+    <div className="min-h-screen bg-gray-100 p-6">
+      {/* Header */}
+      <div className="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-blue-900">Student Portal</h1>
+          <p className="text-sm text-gray-500">Adarsh Shishu Mandir</p>
         </div>
+        <button onClick={handleLogout} className="text-red-500 flex items-center gap-2 text-sm font-semibold">
+          <LogOut size={16} /> Logout
+        </button>
+      </div>
 
-        {/* Search Box */}
-        <div className="bg-white p-6 shadow-md border-b">
-          <form onSubmit={handleSearch} className="flex gap-4 items-end justify-center">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enter Student ID
-              </label>
-              <input 
-                type="number" 
-                placeholder="e.g. 1, 2, 3"
-                className="p-2 border rounded w-40 text-center text-lg"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-              />
+      {/* Profile Card */}
+      {student ? (
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl p-6 shadow-lg mb-8">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/20 p-3 rounded-full">
+              <User size={32} />
             </div>
-            <button 
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition h-11"
-            >
-              View Result
-            </button>
-          </form>
-          <p className="text-xs text-center text-gray-500 mt-2">
-            (Hint: Apni ID ke liye School Admin se sampark karein)
-          </p>
+            <div>
+              <h2 className="text-2xl font-bold">{student.full_name}</h2>
+              <p className="opacity-90">Class: {student.class_name} | Roll No: {student.roll_number}</p>
+            </div>
+          </div>
         </div>
+      ) : (
+        <div className="text-center text-red-500">Student Profile Not Found</div>
+      )}
 
-        {/* Results Area */}
-        <div className="bg-white p-6 rounded-b-lg shadow-lg min-h-[300px]">
-          {isLoading ? (
-            <div className="text-center py-10">Loading Results...</div>
-          ) : results && results.length > 0 ? (
-            <div className="space-y-6">
-              <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
-                Exam Performance
-              </h2>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-100 text-gray-700">
-                      <th className="p-3 border">Exam Name</th>
-                      <th className="p-3 border">Subject</th>
-                      <th className="p-3 border text-center">Marks</th>
-                      <th className="p-3 border text-center">Total</th>
-                      <th className="p-3 border text-center">Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((res: any) => (
-                      <tr key={res.id} className="hover:bg-gray-50">
-                        <td className="p-3 border font-medium">{res.exams?.exam_name}</td>
-                        <td className="p-3 border">{res.exams?.subject}</td>
-                        <td className="p-3 border text-center font-bold text-blue-700">
-                          {res.marks_obtained}
-                        </td>
-                        <td className="p-3 border text-center text-gray-600">
-                          {res.exams?.total_marks}
-                        </td>
-                        <td className="p-3 border text-center text-sm">
-                          {res.remarks || '-'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+      {/* Fee Receipt Card (CRASH PROOF VERSION) */}
+      {feeRecord ? (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 mt-6 overflow-hidden">
+          <div className="bg-gray-800 text-white p-4 flex justify-between items-center">
+            <h3 className="text-lg font-bold">📜 Fee Breakdown</h3>
+            <span className={`px-3 py-1 rounded text-xs font-bold ${
+              feeRecord.status === 'Paid' ? 'bg-green-500' : 'bg-red-500'
+            }`}>
+              {feeRecord.status?.toUpperCase() || 'PENDING'}
+            </span>
+          </div>
+
+          <div className="p-6">
+            <table className="w-full text-left border-collapse mb-6">
+              <thead>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="py-2 text-gray-500 uppercase text-xs">Description</th>
+                  <th className="py-2 text-right text-gray-500 uppercase text-xs">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-700">
+                <tr className="border-b">
+                  <td className="py-3">Tuition Fee</td>
+                  <td className="py-3 text-right font-medium">{structure.tuition || 0}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3">Exam Fee</td>
+                  <td className="py-3 text-right font-medium">{structure.exam || 0}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3">Van / Transport</td>
+                  <td className="py-3 text-right font-medium">{structure.van || 0}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3">Other Charges</td>
+                  <td className="py-3 text-right font-medium">{structure.other || 0}</td>
+                </tr>
+                <tr className="bg-gray-50 font-bold text-lg">
+                  <td className="py-3 pl-2">Total Payable</td>
+                  <td className="py-3 text-right pr-2 text-blue-900">₹{feeRecord.total_amount || 0}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+              <div>
+                <p className="text-xs text-gray-500">Paid Amount</p>
+                <p className="text-xl font-bold text-green-600">₹{feeRecord.paid_amount || 0}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Remaining Dues</p>
+                <p className="text-xl font-bold text-red-600">
+                  ₹{(feeRecord.total_amount || 0) - (feeRecord.paid_amount || 0)}
+                </p>
               </div>
             </div>
-          ) : searchId ? (
-            <div className="text-center py-10 text-red-500">
-              No results found for Student ID: {searchId}
-            </div>
-          ) : (
-            <div className="text-center py-10 text-gray-400">
-              Enter your ID above to see results.
-            </div>
-          )}
+          </div>
         </div>
-
-      </div>
+      ) : (
+        <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-200 mt-6 text-center text-yellow-800">
+          Fees details not updated yet by Admin.
+        </div>
+      )}
     </div>
   );
 };
