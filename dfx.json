@@ -3,13 +3,23 @@
     "backend": {
       "type": "motoko",
       "main": "main.mo"
+    },
+    "frontend": {
+      "dependencies": [
+        "backend"
+      ],
+      "source": [
+        "dist"
+      ],
+      "type": "assets"
     }
   },
-  "networks": {
-    "local": {
-      "bind": "127.0.0.1:4943",
-      "type": "ephemeral"
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
     }
   },
+  "output_env_file": ".env",
   "version": 1
 }
