@@ -29,6 +29,20 @@ const AdminDashboard = () => {
     await supabase.auth.signOut(); // Supabase clear
     window.location.href = "/"; // Force Reload
   };
+{/* Fees Section */}
+<div className="bg-yellow-100 p-6 rounded-lg text-yellow-900 shadow-sm border border-yellow-200">
+  <h3 className="font-bold uppercase text-xs tracking-wider">Accounts</h3>
+  <p className="text-sm mt-1 opacity-80">Check pending dues</p>
+  
+  <Link 
+    to="/admin/manage-fees" 
+    className="mt-4 inline-block bg-yellow-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-yellow-700"
+  >
+    Manage Fees 💰
+  </Link>
+</div>
+
+
 
   // 3. Counts Calculation
   const totalStudentCount = approvedStudents?.length || 0;
