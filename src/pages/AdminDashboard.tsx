@@ -4,13 +4,13 @@ import { toast } from 'sonner';
 import { supabase } from "../supabaseClient"; 
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
-// 👇 Yahan saare zaroori Hooks import kiye gaye hain
+// Hooks Imports
 import { 
   useListApprovals, 
   useApproveStudent, 
   useGetAllApprovedStudents,
   useGetAllTeachers,
-  useGetCallerUserProfile // <-- Ye missing tha, ab add kar diya hai
+  useGetCallerUserProfile
 } from "../hooks/useQueries"; 
 
 const AdminDashboard = () => {
@@ -29,26 +29,12 @@ const AdminDashboard = () => {
     await supabase.auth.signOut(); // Supabase clear
     window.location.href = "/"; // Force Reload
   };
-{/* Fees Section */}
-<div className="bg-yellow-100 p-6 rounded-lg text-yellow-900 shadow-sm border border-yellow-200">
-  <h3 className="font-bold uppercase text-xs tracking-wider">Accounts</h3>
-  <p className="text-sm mt-1 opacity-80">Check pending dues</p>
-  
-  <Link 
-    to="/admin/manage-fees" 
-    className="mt-4 inline-block bg-yellow-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-yellow-700"
-  >
-    Manage Fees 💰
-  </Link>
-</div>
-
-
 
   // 3. Counts Calculation
   const totalStudentCount = approvedStudents?.length || 0;
   const totalTeacherCount = teachers?.length || 0;
 
-  // 4. Loading State (Crash rokne ke liye check)
+  // 4. Loading State
   if (!profile) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -64,7 +50,7 @@ const AdminDashboard = () => {
         <div>
           <h1 className="text-xl font-bold">Adarsh Shishu Mandir</h1>
           <p className="text-xs text-gray-300">
-            Welcome, {profile.name || "Admin"} {/* Naam yahan dikhega */}
+            Welcome, {profile.name || "Admin"}
           </p>
         </div>
         <button 
@@ -76,7 +62,7 @@ const AdminDashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6">
         
         {/* Section 1: Pending Approvals */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
@@ -125,28 +111,27 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        {/* Section 2: Quick Stats & Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Section 2: Quick Stats & Actions (GRID UPDATED) */}
+        {/* Yahan maine grid-cols-2 aur lg:grid-cols-4 kar diya hai taaki 4 cards fit ho jayein */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          {/* Card 1: Students (Yahan Button Add Kiya Hai) */}
-  <div className="bg-blue-100 p-6 rounded-lg text-blue-900 shadow-sm border border-blue-200">
-    <h3 className="font-bold uppercase text-xs tracking-wider">Total Students</h3>
-    <p className="text-4xl font-extrabold mt-2">{totalStudentCount}</p>
-    
-    {/* 👇 Ye Button ab Student Registration page par le jayega */}
-    <Link 
-      to="/admin/add-student" 
-      className="text-xs font-bold underline mt-3 block hover:text-blue-700 flex items-center gap-1"
-    >
-      <span>+</span> Add New Student
-    </Link>
+          {/* Card 1: Students */}
+          <div className="bg-blue-100 p-6 rounded-lg text-blue-900 shadow-sm border border-blue-200">
+            <h3 className="font-bold uppercase text-xs tracking-wider">Total Students</h3>
+            <p className="text-4xl font-extrabold mt-2">{totalStudentCount}</p>
+            <Link 
+              to="/admin/add-student" 
+              className="text-xs font-bold underline mt-3 block hover:text-blue-700 flex items-center gap-1"
+            >
+              <span>+</span> Add New Student
+            </Link>
           </div>
 
           {/* Card 2: Teachers */}
           <div className="bg-green-100 p-6 rounded-lg text-green-900 shadow-sm border border-green-200">
             <h3 className="font-bold uppercase text-xs tracking-wider">Teachers</h3>
             <p className="text-4xl font-extrabold mt-2">{totalTeacherCount}</p>
-            <Link to="/admin/add-teacher" className="text-xs underline mt-2 block hover:text-green-700">
+            <Link to="/admin/add-teacher" className="text-xs font-bold underline mt-3 block hover:text-green-700">
               + Add New Teacher
             </Link>
           </div>
@@ -155,13 +140,27 @@ const AdminDashboard = () => {
           <div className="bg-purple-100 p-6 rounded-lg text-purple-900 shadow-sm border border-purple-200 flex flex-col justify-between">
             <div>
               <h3 className="font-bold uppercase text-xs tracking-wider">Exam Dept.</h3>
-              <p className="text-sm mt-1 opacity-80">Manage Marks & Results</p>
+              <p className="text-sm mt-1 opacity-80">Manage Marks</p>
             </div>
             <Link 
               to="/admin/upload-result" 
               className="mt-4 bg-purple-600 text-white text-center py-2 rounded text-sm hover:bg-purple-700 transition shadow"
             >
               Upload Marks 📤
+            </Link>
+          </div>
+
+          {/* Card 4: Fees Section (Jo pehle bahar tha, ab andar hai) */}
+          <div className="bg-yellow-100 p-6 rounded-lg text-yellow-900 shadow-sm border border-yellow-200 flex flex-col justify-between">
+            <div>
+                <h3 className="font-bold uppercase text-xs tracking-wider">Accounts</h3>
+                <p className="text-sm mt-1 opacity-80">Check pending dues</p>
+            </div>
+            <Link 
+                to="/admin/manage-fees" 
+                className="mt-4 inline-block bg-yellow-600 text-white text-center py-2 rounded text-sm font-bold hover:bg-yellow-700"
+            >
+                Manage Fees 💰
             </Link>
           </div>
 
