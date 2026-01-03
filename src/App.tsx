@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import ResetPassword from './pages/ResetPassword';
+// Imports add karein
+import AddStudent from './pages/AddStudent';
+import StudentDashboard from './pages/StudentDashboard';
 
 // Hooks
 import { useInternetIdentity } from './hooks/useInternetIdentity';
@@ -94,7 +97,9 @@ export default function App() {
             <Route path="/student/dashboard" element={<StudentDashboard />} />
 <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/login" element={<LoginPage />} />
-
+// Routes section mein ye jodein:
+<Route path="/admin/add-student" element={<AddStudent />} />
+<Route path="/student/dashboard" element={<StudentDashboard />} />
 
           </Routes>
         
