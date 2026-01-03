@@ -170,4 +170,12 @@ const FeeRow = ({ student, existingFee, onSave }: any) => {
       </td>
       
       <td className="px-4 py-3">
-        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-
+        <button onClick={() => onSave(student.id, fees, paid)} className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">
+          Test Save
+        </button>
+      </td>
+    </tr>
+  );
+};
+
+export default ManageFees;
