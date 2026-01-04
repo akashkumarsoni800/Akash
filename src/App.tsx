@@ -14,7 +14,10 @@ import UploadResult from './pages/UploadResult';
 import ManageFees from './pages/ManageFees'; // Ye abhi fix kiya tha humne
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
-import CreateExam from './pages/CreateExam'; // Import karein
+import CreateExam from './pages/CreateExam'; 
+import AddEvent from './pages/AddEvent';
+
+// Import karein
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -48,6 +51,8 @@ export default function App() {
           {/* Agar koi galat link dale to Login par wapas bhej do */}
           <Route path="*" element={<Navigate to="/login" replace />} />
 <Route path="/admin/create-exam" element={<CreateExam />} />
+<Route path="/admin/add-event" element={<AddEvent />} />
+
         </Routes>
         
       </ThemeProvider>
