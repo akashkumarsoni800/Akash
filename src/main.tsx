@@ -1,13 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css' // Agar ye file nahi h to is line ko hata dein
-import { BrowserRouter } from 'react-router-dom' // ✅ Router YAHAN hona chahiye
+import App from './App'
+import './index.css' // Ye line hata dena agar index.css nahi hai to
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter> {/* ✅ Yahan Router lagaya */}
-      <App />
-    </BrowserRouter>
+    <App />
   </React.StrictMode>,
 )
