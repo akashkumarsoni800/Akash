@@ -7,36 +7,36 @@ const StudentDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<any>(null);
-  
-  // Debugging Variable
   const [debugLog, setDebugLog] = useState<string>("");
 
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        // 1. LocalStorage Check (Fast Load)
+        // 1. Check LocalStorage
         const savedProfile = localStorage.getItem('student_profile');
         if (savedProfile) {
           setStudent(JSON.parse(savedProfile));
           setLoading(false);
         }
 
-        // 2. Fresh Data from Supabase
+        // 2. Auth User Check
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          const authPhone = user.phone || "";
-          
-          // Clean Number: +91 hatake last 10 digit nikalo
-          const cleanPhone = authPhone.replace(/\D/g, '').slice(-10);
+          const authEmail = user.email; // ✅ Ab hum Email uthayenge
+          setDebugLog(`Searching for Email: ${authEmail}`);
 
-          setDebugLog(`Checking contact_number for: ${cleanPhone}`);
+          if (!authEmail) {
+             setDebugLog("No Email found in session.");
+             setLoading(false);
+             return;
+          }
 
-          // Ab sirf 'contact_number' check karenge (kyunki SQL ne sab data wahan dal diya hai)
+          // ✅ Query: Find student by EMAIL
           const { data: studentData, error } = await supabase
             .from('students')
             .select('*')
-            .or(`contact_number.eq.${cleanPhone},contact_number.eq.${authPhone}`)
+            .eq('email', authEmail) // Phone hata kar Email laga diya
             .maybeSingle();
 
           if (error) {
@@ -49,12 +49,11 @@ const StudentDashboard = () => {
             localStorage.setItem('student_profile', JSON.stringify(studentData));
           } else {
             console.warn("Student not found.");
-            setDebugLog(`Not Found! DB me 'contact_number' check karein. Searching for: ${cleanPhone}`);
+            setDebugLog(`Student not found! Please check if '${authEmail}' is added in 'students' table.`);
           }
         }
       } catch (error: any) {
         console.error("Error loading data", error);
-        setDebugLog("Error: " + error.message);
       } finally {
         setLoading(false);
       }
@@ -64,12 +63,9 @@ const StudentDashboard = () => {
   }, []);
 
   const handleLogout = async () => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-      await supabase.auth.signOut();
-      localStorage.clear();
-      window.location.href = "/";
-    }
+    await supabase.auth.signOut();
+    localStorage.clear();
+    window.location.href = "/";
   };
 
   if (loading) {
@@ -106,7 +102,7 @@ const StudentDashboard = () => {
             {/* SUCCESS PROFILE CARD */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100">
               <div className="bg-gradient-to-r from-blue-800 to-blue-600 p-6 text-white flex items-center gap-6">
-                <div className="w-16 h-16 bg-white text-blue-900 rounded-full flex items-center justify-center text-2xl font-bold border-4 border-blue-200 uppercase">
+                <div className="w-16 h-16 bg-white text-blue-900 rounded-full flex items-center justify-center text-3xl font-bold border-4 border-blue-200 uppercase">
                   {student.full_name?.charAt(0) || "S"}
                 </div>
                 <div>
@@ -143,12 +139,14 @@ const StudentDashboard = () => {
           // ERROR STATE
           <div className="bg-red-50 border border-red-200 p-6 rounded-xl text-center">
             <h3 className="text-xl font-bold text-red-700">⚠️ Profile Not Found</h3>
-            <p className="text-gray-600 text-sm mb-4">We checked for your number but couldn't find the record.</p>
+            <p className="text-gray-600 text-sm mb-4">You are logged in, but we couldn't find your student record.</p>
             
             <div className="bg-black text-green-400 p-4 rounded text-left text-xs font-mono overflow-auto mb-4">
               <p><strong>Debug Info:</strong></p>
               <p>{debugLog}</p>
-              <p className="mt-2 text-gray-400">Please verify that 'contact_number' column exists and has data.</p>
+              <p className="mt-2 text-white font-bold border-t border-gray-600 pt-2">
+                Solution: Go to Supabase > 'students' table and add this email to your row.
+              </p>
             </div>
             
             <button onClick={() => window.location.reload()} className="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">
