@@ -55,4 +55,35 @@ function App() {
         {/* Sidebar sirf Admin Pages par dikhega */}
         <Route element={<Sidebar />}>
           
-          {
+          {/* Main Dashboard */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          {/* People Management */}
+          <Route path="/admin/add-student" element={<AddStudent />} />
+          <Route path="/admin/add-teacher" element={<AddTeacher />} />
+
+          {/* Academic & Events */}
+          <Route path="/admin/create-exam" element={<CreateExam />} />
+          <Route path="/admin/upload-result" element={<UploadResult />} />
+          <Route path="/admin/add-event" element={<AddEvent />} />
+
+          {/* Finance */}
+          <Route path="/admin/manage-fees" element={<ManageFees />} />
+
+        </Route>
+
+        {/* ========================== */}
+        {/* 🔴 404 PAGE                */}
+        {/* ========================== */}
+        <Route path="*" element={
+          <div className="flex h-screen items-center justify-center text-red-600 font-bold text-xl bg-gray-100">
+            🚫 404 - Page Not Found
+          </div>
+        } />
+
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
