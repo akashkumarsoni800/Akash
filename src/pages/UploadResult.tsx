@@ -8,17 +8,17 @@ const UploadResult = () => {
   // Data States
   const [exams, setExams] = useState<any[]>([]);
   const [allStudents, setAllStudents] = useState<any[]>([]);
-  const [classes, setClasses] = useState<string[]>([]); // Class List
+  const [classes, setClasses] = useState<string[]>([]);
 
   // Selection States
   const [selectedExamId, setSelectedExamId] = useState('');
-  const [selectedClass, setSelectedClass] = useState(''); // New Class Filter
+  const [selectedClass, setSelectedClass] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
   
   // Marks State
   const [marksData, setMarksData] = useState<Record<string, string>>({});
 
-  // 1. Load Data (Exams & Students)
+  // 1. LOAD DATA (Debug Mode ON)
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -26,36 +26,58 @@ const UploadResult = () => {
         const { data: examsData } = await supabase.from('exams').select('*');
         if (examsData) setExams(examsData);
 
-        // Fetch Students (Name, Class, Roll No)
-        const { data: studentsData } = await supabase
+        // Fetch Students
+        const { data: studentsData, error } = await supabase
           .from('students')
-          .select('id, full_name, class_name, roll_no') // Roll No bhi mangwa liya
-          .order('class_name', { ascending: true }); // Class wise sort
+          .select('*') // Sab kuch mangwa rahe hain
+          .order('full_name', { ascending: true });
+
+        if (error) throw error;
 
         if (studentsData) {
+          console.log("Raw Student Data:", studentsData); // Console me check karein
           setAllStudents(studentsData);
           
-          // Unique Classes nikalna (Duplicate hata kar)
-          const uniqueClasses = [...new Set(studentsData.map(s => s.class_name).filter(Boolean))];
-          setClasses(uniqueClasses as string[]);
+          // --- CLASS EXTRACT LOGIC (Improved) ---
+          // Hum check karenge ki class ka data kahan chupa hai
+          const extractedClasses = studentsData
+            .map(s => s.class_name || s.Class_Name || s.Class || s.standard) // Alag alag naam try karein
+            .filter(c => c !== null && c !== undefined && c !== '') // Sirf bhare hue classes lein
+            .map(c => String(c).trim()); // Space hatayein
+
+          // Duplicate hatana
+          const uniqueClasses = [...new Set(extractedClasses)];
+          
+          console.log("Found Classes:", uniqueClasses); // Dekhein kya mila
+          
+          if (uniqueClasses.length === 0) {
+            toast.warning("Students mil gaye, par unki Class nahi mili. Database check karein.");
+          }
+          
+          setClasses(uniqueClasses.sort());
         }
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error loading data:", error);
+        toast.error("Data load nahi hua: " + error.message);
       }
     };
     loadData();
   }, []);
 
-  // 2. Filter Students based on Selected Class
+  // 2. Filter Students
   const filteredStudents = selectedClass
-    ? allStudents.filter(s => s.class_name === selectedClass)
+    ? allStudents.filter(s => {
+        // Match karne ke liye wahi logic lagayein
+        const sClass = s.class_name || s.Class_Name || s.Class || s.standard;
+        return String(sClass).trim() === selectedClass;
+      })
     : [];
 
-  // 3. Find Selected Exam (Subject list ke liye)
+  // 3. Find Exam
   const currentExam = exams.find(e => e.id === selectedExamId);
 
-  // 4. Handle Mark Input
+  // 4. Handle Marks
   const handleMarkChange = (subject: string, value: string) => {
     setMarksData(prev => ({ ...prev, [subject]: value }));
   };
@@ -63,7 +85,7 @@ const UploadResult = () => {
   // 5. Save Result
   const handleSaveResult = async () => {
     if (!selectedExamId || !selectedStudentId) {
-      toast.error("Please select Exam, Class and Student first!");
+      toast.error("Please select Exam, Class and Student!");
       return;
     }
 
@@ -72,7 +94,6 @@ const UploadResult = () => {
       let totalObtained = 0;
       let totalSubjects = 0;
       
-      // Marks Total Calculation
       Object.values(marksData).forEach(val => {
         totalObtained += Number(val) || 0;
         totalSubjects++;
@@ -82,7 +103,7 @@ const UploadResult = () => {
 
       const resultPayload = {
         exam_id: selectedExamId,
-        student_id: selectedStudentId, // Note: Ye BigInt hona chahiye DB me
+        student_id: selectedStudentId,
         marks: marksData,
         total_marks: totalObtained,
         percentage: percentage.toFixed(2)
@@ -93,14 +114,12 @@ const UploadResult = () => {
       if (error) throw error;
       
       toast.success("Result Uploaded Successfully! 🏆");
-      
-      // Reset Marks Only (Taaki next student ka bhar sakein)
       setMarksData({});
-      setSelectedStudentId(''); // Student hatayein par class wahi rakhein
+      setSelectedStudentId('');
 
     } catch (error: any) {
       console.error(error);
-      toast.error("Failed to upload result: " + error.message);
+      toast.error("Failed to upload result.");
     } finally {
       setLoading(false);
     }
@@ -112,57 +131,51 @@ const UploadResult = () => {
       
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl">
         
-        {/* Filters Section */}
+        {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           
-          {/* 1. Exam Select */}
+          {/* Exam Select */}
           <div>
             <label className="block font-bold mb-2 text-gray-700">Select Exam</label>
             <select 
               className="w-full border p-2 rounded bg-blue-50"
               value={selectedExamId}
-              onChange={(e) => {
-                setSelectedExamId(e.target.value);
-                setMarksData({});
-              }}
+              onChange={(e) => { setSelectedExamId(e.target.value); setMarksData({}); }}
             >
               <option value="">-- Choose Exam --</option>
               {exams.map(ex => <option key={ex.id} value={ex.id}>{ex.title}</option>)}
             </select>
           </div>
 
-          {/* 2. Class Select (Filter) */}
+          {/* Class Select */}
           <div>
             <label className="block font-bold mb-2 text-gray-700">Filter by Class</label>
             <select 
               className="w-full border p-2 rounded bg-green-50"
               value={selectedClass}
-              onChange={(e) => {
-                setSelectedClass(e.target.value);
-                setSelectedStudentId(''); // Class change hone par student reset
-              }}
+              onChange={(e) => { setSelectedClass(e.target.value); setSelectedStudentId(''); }}
             >
               <option value="">-- Choose Class --</option>
-              {classes.map((cls, idx) => (
-                <option key={idx} value={cls}>{cls}</option>
-              ))}
+              {classes.length > 0 ? (
+                classes.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)
+              ) : (
+                <option disabled>No Classes Found</option>
+              )}
             </select>
           </div>
 
-          {/* 3. Student Select (Filtered) */}
+          {/* Student Select */}
           <div>
             <label className="block font-bold mb-2 text-gray-700">Select Student</label>
             <select 
               className="w-full border p-2 rounded disabled:bg-gray-100"
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              disabled={!selectedClass} // Jab tak class select na ho, disable rakho
+              disabled={!selectedClass}
             >
               <option value="">
                 {selectedClass ? "-- Choose Student --" : "Select Class First"}
               </option>
-              
-              {/* Sirf Filtered Students dikhenge */}
               {filteredStudents.map(st => (
                 <option key={st.id} value={st.id}>
                   {st.full_name} (Roll: {st.roll_no || 'N/A'})
@@ -170,16 +183,14 @@ const UploadResult = () => {
               ))}
             </select>
           </div>
-
         </div>
 
-        {/* DYNAMIC SUBJECT INPUTS */}
+        {/* Subjects Input */}
         {currentExam && selectedStudentId ? (
           <div className="mb-6 border-t pt-6">
             <h3 className="font-bold text-lg text-blue-900 mb-4 bg-gray-100 p-2 rounded">
-              Enter Marks for: {currentExam.title}
+              Marks for: {currentExam.title}
             </h3>
-            
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {Array.isArray(currentExam.subjects) && currentExam.subjects.map((sub: string) => (
                 <div key={sub}>
@@ -187,7 +198,7 @@ const UploadResult = () => {
                   <input
                     type="number"
                     placeholder="0"
-                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 text-center font-bold"
+                    className="w-full border p-2 rounded text-center font-bold"
                     value={marksData[sub] || ''}
                     onChange={(e) => handleMarkChange(sub, e.target.value)}
                   />
@@ -201,11 +212,10 @@ const UploadResult = () => {
           </div>
         )}
 
-        {/* Save Button */}
         <button
           onClick={handleSaveResult}
           disabled={loading || !currentExam || !selectedStudentId}
-          className="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 disabled:bg-gray-400 shadow-lg transition-all"
+          className="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 disabled:bg-gray-400 shadow-lg"
         >
           {loading ? 'Uploading...' : '💾 Save Result'}
         </button>
