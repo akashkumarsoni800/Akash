@@ -163,6 +163,16 @@ const AdminDashboard = () => {
                 Manage Fees 💰
             </Link>
           </div>
+// Jahan baki cards hain wahan ye naya card jodein
+<div className="bg-indigo-100 p-6 rounded-lg text-indigo-900 shadow-sm border border-indigo-200">
+   <h3 className="font-bold uppercase text-xs tracking-wider">Exam Section</h3>
+   <Link 
+     to="/admin/create-exam" 
+     className="mt-4 block bg-indigo-600 text-white text-center py-2 rounded text-sm font-bold hover:bg-indigo-700"
+   >
+     ➕ Create New Exam
+   </Link>
+</div>
 
         </div>
 
