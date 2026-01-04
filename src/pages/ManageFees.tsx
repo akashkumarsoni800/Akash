@@ -32,40 +32,64 @@ const ManageFees = () => {
     fetchStudentsAndFees();
   }, []);
 
-  // --- 2. WHATSAPP SENDER FUNCTION (Updated for 'phone') 🟢 ---
+   // --- 2. WHATSAPP SENDER (Fixed & Robust) 🟢 ---
   const sendWhatsAppReminder = (student: any, total: number, paid: number) => {
-    // 👉 CHANGE: Yahan 'contact_number' ki jagah 'phone' kar diya
+    // 1. Phone number check
     if (!student.phone) {
-      toast.warning("Student ka mobile number nahi mila!");
+      toast.warning("Student ka mobile number database me nahi hai!");
       return;
     }
+
+    // 2. CLEAN PHONE NUMBER (Ye naya logic hai)
+    // Sirf digits rakhega, baki sab (space, +, -) hata dega
+    let cleanNumber = student.phone.toString().replace(/\D/g, '');
+
+    // Agar number ke aage 91 nahi laga, to laga do (Assuming India)
+    if (cleanNumber.length === 10) {
+      cleanNumber = '91' + cleanNumber;
+    } 
+    // Agar 91 se start nahi ho raha aur lamba hai, tab bhi check kar lo
+    else if (!cleanNumber.startsWith('91') && cleanNumber.length > 10) {
+      // Shayad user ne pura number likha ho bina 91 ke, par safe side 91 lagate hain
+      cleanNumber = '91' + cleanNumber; 
+    }
+
+    console.log("Original:", student.phone, "Cleaned:", cleanNumber); // Debugging ke liye
 
     const pending = total - paid;
     const date = new Date().toLocaleDateString('en-IN');
     
+    // Message Body
     const message = `
-🏫 *Adarsh Shishu Mandir* 🏫
+🏫 *Adarsh Shishu Mandir*
 -----------------------------
 Hello *${student.full_name}*,
 
-Apki fees update ho gayi hai.
-
+Fees Update:
 📅 Date: ${date}
-💰 Total Fees: ₹${total}
-✅ Paid So Far: ₹${paid}
-❌ *Pending Dues: ₹${pending}*
+💰 Total: ₹${total}
+✅ Paid: ₹${paid}
+❌ *Pending: ₹${pending}*
 
-Kripya samay par baki fees jama karein.
-Dhanyawad.
+Please clear dues on time.
 -----------------------------
 `.trim();
 
-    // 👉 CHANGE: URL me bhi 'student.phone' use kiya
-    // Note: Humne 91 laga diya hai. Agar DB me pehle se +91 hai to hata dein.
+    // 3. GENERATE URL
     const encodedMsg = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/91${student.phone}?text=${encodedMsg}`;
+    const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMsg}`;
 
-    window.open(whatsappUrl, '_blank');
+    // 4. OPEN WINDOW
+    // Try-Catch block taaki agar popup block ho to error na fatte
+    try {
+      const win = window.open(whatsappUrl, '_blank');
+      if (!win) {
+        alert("Pop-up blocked! Please allow pop-ups for this site.");
+      }
+    } catch (e) {
+      console.error("Link open error:", e);
+      toast.error("Link open nahi ho paya.");
+    }
   };
 
   // --- 3. SAVE LOGIC ---
