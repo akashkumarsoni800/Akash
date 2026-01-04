@@ -36,7 +36,7 @@ const StudentDashboard = () => {
           const { data: studentData, error } = await supabase
             .from('students')
             .select('*')
-            .eq('email', authEmail) // Phone hata kar Email laga diya
+            .eq('email', authEmail)
             .maybeSingle();
 
           if (error) {
@@ -145,7 +145,7 @@ const StudentDashboard = () => {
               <p><strong>Debug Info:</strong></p>
               <p>{debugLog}</p>
               <p className="mt-2 text-white font-bold border-t border-gray-600 pt-2">
-                Solution: Go to Supabase > 'students' table and add this email to your row.
+                Solution: Go to Supabase &gt; 'students' table and add this email to your row.
               </p>
             </div>
             
