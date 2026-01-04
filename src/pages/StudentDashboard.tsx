@@ -56,9 +56,10 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* 1. Stylish Header - Pass Student Data */}
       <DashboardHeader 
-        userName={student?.full_name || "Student"} 
-        userRole="Student" 
-      />
+  userName={student?.full_name || "Student"} 
+  userRole="Student"
+  avatarUrl={student?.avatar_url} // ✅ ये लाइन फोटो दिखाएगी
+/>
 
       {/* 2. Main Content Area (pt-20 used for fixed header offset) */}
       <div className="pt-20 p-6 max-w-4xl mx-auto space-y-6">
