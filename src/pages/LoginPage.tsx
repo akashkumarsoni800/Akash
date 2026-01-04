@@ -1,46 +1,81 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// 👇 DHYAN DE: Supabase aur Toast ko comment kar diya hai
-// import { supabase } from '../supabaseClient';
-// import { toast } from 'sonner';
+import { supabase } from '../supabaseClient'; // Ab ye kaam karega!
+import { toast } from 'sonner';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Abhi database check nahi karega, bas alert dega
-    alert("Test Login Button Clicked! ✅");
-    console.log("Email:", email, "Password:", password);
+    setLoading(true);
+
+    try {
+      // 1. Database se Login karo
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      // 2. Role Check karo
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        const role = profile?.role || 'student';
+        
+        toast.success("Welcome Back! 🎉");
+
+        // 3. Sahi dashboard par bhejo
+        if (role === 'admin') navigate('/admin/dashboard');
+        else navigate('/student/dashboard');
+      }
+
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Login Failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
         
-        <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">
-          TEST LOGIN PAGE
-        </h2>
-        
-        <form onSubmit={handleLogin} className="space-y-6">
+        <div className="bg-blue-900 p-6 text-center">
+          <h2 className="text-3xl font-bold text-white">Adarsh Shishu Mandir</h2>
+          <p className="text-blue-200 mt-2">Login Portal</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="p-8 space-y-6">
           <div>
-            <label className="block font-bold">Email</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
             <input
               type="email"
-              className="w-full border p-2 rounded"
+              required
+              className="w-full border p-3 rounded"
+              placeholder="Enter email..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block font-bold">Password</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Password</label>
             <input
               type="password"
-              className="w-full border p-2 rounded"
+              required
+              className="w-full border p-3 rounded"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -48,12 +83,12 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-900 text-white py-3 rounded font-bold"
+            disabled={loading}
+            className="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 disabled:opacity-50"
           >
-            Check System
+            {loading ? 'Checking...' : 'Login'}
           </button>
         </form>
-
       </div>
     </div>
   );
