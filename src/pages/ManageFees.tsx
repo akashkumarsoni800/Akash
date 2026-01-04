@@ -6,7 +6,7 @@ const ManageFees = () => {
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
   const [feeHeads, setFeeHeads] = useState<any[]>([]);
-  
+
   // New Fee Head banane ke liye
   const [newHeadName, setNewHeadName] = useState('');
 
@@ -21,21 +21,30 @@ const ManageFees = () => {
   }, []);
 
   const fetchInitialData = async () => {
-    // ✅ CHANGE 1: 'contact_number' bhi fetch karein
-    const { data: stdData } = await supabase
-      .from('students')
-      .select('id, full_name, class_name, contact_number') // contact_number zaroori h
-      .order('full_name');
+    try {
+      // ✅ FIX: Hum '.select('*')' use kar rahe hain taki 'contact_number' bhi aa jaye
+      const { data: stdData, error } = await supabase
+        .from('students')
+        .select('*') // <--- Yahan change kiya hai (Sab kuch layega)
+        .order('full_name');
+        
+      if (error) throw error;
       
-    if (stdData) setStudents(stdData);
+      if (stdData) {
+        console.log("🔥 Loaded Students:", stdData); // F12 me check karein
+        setStudents(stdData);
+      }
 
-    // Fee Heads lao
-    const { data: headData } = await supabase.from('fee_heads').select('*').order('id');
-    if (headData) {
-      setFeeHeads(headData);
-      const initialValues: any = {};
-      headData.forEach((h: any) => initialValues[h.name] = 0);
-      setFeeValues(initialValues);
+      // Fee Heads lao
+      const { data: headData } = await supabase.from('fee_heads').select('*').order('id');
+      if (headData) {
+        setFeeHeads(headData);
+        const initialValues: any = {};
+        headData.forEach((h: any) => initialValues[h.name] = 0);
+        setFeeValues(initialValues);
+      }
+    } catch (error: any) {
+      console.error("Error fetching data:", error.message);
     }
   };
 
@@ -52,34 +61,47 @@ const ManageFees = () => {
     }
   };
 
-  // ✅ NEW FUNCTION: WhatsApp Message Bhejne ke liye
+  // ✅ WhatsApp Message Logic
   const sendWhatsAppReminder = () => {
     if (!selectedStudent || !month) {
       toast.error("Please select Student and Month first.");
       return;
     }
 
-    // 1. Student dhoondo
+    // 1. Student dhoondo list me se
     const student = students.find(s => s.id === selectedStudent);
-    if (!student || !student.contact_number) {
-      toast.error("Student phone number not found!");
+    
+    // 👇 DEBUGGING LINE: Console me dekhein ki student data kya hai
+    console.log("🔍 Selected Student Data:", student);
+
+    if (!student) {
+      toast.error("Student not found in list!");
       return;
     }
 
-    // 2. Number clean karein (91 lagayein agar nahi h)
-    let phone = student.contact_number.replace(/\D/g, '').slice(-10);
-    phone = "91" + phone;
+    // 2. Number Check
+    if (!student.contact_number) {
+      // Agar number nahi mila, to Alert dikhao user ko
+      alert(`Error: Database me "${student.full_name}" ka phone number (contact_number) khali hai!`);
+      return;
+    }
 
-    // 3. Total Calculate
+    // 3. Number Clean karo (Spaces hatao, 91 lagao)
+    let phone = student.contact_number.toString().replace(/\D/g, ''); // Sirf digits rakho
+    if (phone.length === 10) {
+      phone = "91" + phone; // India code add karo
+    }
+
+    // 4. Total Amount
     const totalAmount = Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0);
     
-    // 4. Message Create karein
+    // 5. Message Banao
     let message = `🔔 *Fee Reminder - Adarsh Shishu Mandir*\n\n`;
     message += `Dear Parent,\nFee details for *${student.full_name}* (Class: ${student.class_name})\n`;
     message += `Month: *${month}*\n\n`;
     message += `*Breakdown:* \n`;
 
-    // Sirf wahi fees add karein jo 0 se zyada hai
+    // Sirf > 0 wali fees dikhao
     Object.entries(feeValues).forEach(([head, amount]: any) => {
         if (Number(amount) > 0) {
             message += `• ${head}: ₹${amount}\n`;
@@ -91,7 +113,7 @@ const ManageFees = () => {
     message += `------------------\n\n`;
     message += `Please pay via UPI or at school office.`;
 
-    // 5. WhatsApp Link Open
+    // 6. WhatsApp Open
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -150,7 +172,9 @@ const ManageFees = () => {
               >
                 <option value="">-- Select --</option>
                 {students.map(s => (
-                  <option key={s.id} value={s.id}>{s.full_name} ({s.class_name})</option>
+                  <option key={s.id} value={s.id}>
+                    {s.full_name} ({s.class_name}) {s.contact_number ? '✅' : '❌'}
+                  </option>
                 ))}
               </select>
             </div>
@@ -189,7 +213,7 @@ const ManageFees = () => {
             <div className="grid grid-cols-2 gap-3">
               {/* WhatsApp Button */}
               <button 
-                type="button" // Important: Type button rakhein taki form submit na ho
+                type="button" 
                 onClick={sendWhatsAppReminder}
                 className="bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition flex justify-center items-center gap-2"
               >
