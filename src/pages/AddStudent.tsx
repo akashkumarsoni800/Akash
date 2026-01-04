@@ -34,7 +34,7 @@ const AddStudent = () => {
         const { error: dbError } = await supabase.from('students').insert([{
           full_name: formData.name,
           class_name: formData.class,
-          roll_number: formData.roll,
+          roll_no: formData.roll,
           father_name: formData.father,
           phone: formData.phone,
           email: formData.email,
