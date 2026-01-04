@@ -24,19 +24,23 @@ const StudentDashboard = () => {
         // 2. Get User Phone
         const { data: { user } } = await supabase.auth.getUser();
         
+       
+        // ... baki code same rahega ...
+
         if (user) {
           const authPhone = user.phone || "";
           
-          // Clean Number (Last 10 Digits) - e.g. "9876543210"
+          // Clean Number: +91 hatake last 10 digit nikalo
           const cleanPhone = authPhone.replace(/\D/g, '').slice(-10);
 
-          setDebugLog(`Checking: ${authPhone} OR ${cleanPhone} in columns: phone, mobile_no, contact_no`);
+          setDebugLog(`Checking contact_number for: ${cleanPhone}`);
 
-          // 🔥 MAGIC QUERY: Check ALL 3 Columns + Both Formats (+91 & 10-digit)
+          // Ab sirf 'contact_number' check karenge (kyunki SQL ne sab data wahan dal diya hai)
+          // Hum 'ilike' use karenge taki partial match bhi pakad le
           const { data: studentData, error } = await supabase
             .from('students')
             .select('*')
-            .or(`phone.eq.${authPhone},phone.eq.${cleanPhone},mobile_no.eq.${authPhone},mobile_no.eq.${cleanPhone},contact_no.eq.${authPhone},contact_no.eq.${cleanPhone}`)
+            .or(`contact_number.eq.${cleanPhone},contact_number.eq.${authPhone}`) // Sirf contact_number check karo
             .maybeSingle();
 
           if (error) {
@@ -49,14 +53,12 @@ const StudentDashboard = () => {
             localStorage.setItem('student_profile', JSON.stringify(studentData));
           } else {
             console.warn("Student not found.");
+            // Agar abhi bhi nahi mila, to Debug info update karo
+            setDebugLog(`Not Found! DB me 'contact_number' check karein. Searching for: ${cleanPhone}`);
           }
         }
-      } catch (error: any) {
-        console.error("Error loading data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+
+// ... baki code same rahega ...
 
     fetchStudentData();
   }, []);
