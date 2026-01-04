@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
+import DashboardHeader from '../components/DashboardHeader';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -79,6 +80,19 @@ const StudentDashboard = () => {
   }
 
   return (
+  <div className="min-h-screen bg-gray-50">
+    {/* नया Header Component */}
+    <DashboardHeader 
+      userName={teacherProfile?.full_name || "Teacher"} 
+      userRole="Teacher" 
+    />
+
+    {/* पुराने Content को थोडा मार्जिन दें क्योंकि Header Fixed है */}
+    <div className="pt-20 p-6">
+       {/* आपका पुराना डैशबोर्ड कोड यहाँ रहेगा */}
+    </div>
+  </div>
+);
     <div className="min-h-screen bg-gray-50">
       
       {/* Navbar */}
