@@ -36,7 +36,7 @@ const AddStudent = () => {
           class_name: formData.class,
           roll_no: formData.roll,
           father_name: formData.father,
-          phone: formData.phone,
+          contact_number: formData.phone,
           email: formData.email,
           auth_id: data.user.id
         }]);
