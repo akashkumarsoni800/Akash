@@ -191,6 +191,20 @@ const StudentDashboard = () => {
               </div>
               <span className="ml-auto text-gray-300 group-hover:text-purple-600 transition">➔</span>
             </div>
+{/* Button 4: Fees (Updated) */}
+<div 
+  onClick={() => navigate('/student/fees')} // 👈 YE LINK ADD KIYA
+  className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer flex items-center gap-4 group"
+>
+  <div className="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition">
+    💰
+  </div>
+  <div>
+    <h4 className="font-bold text-gray-800 text-lg">Fee Status</h4>
+    <p className="text-xs text-gray-500">Check dues & payments</p>
+  </div>
+  <span className="ml-auto text-gray-300 group-hover:text-yellow-600 transition">➔</span>
+</div>
 
           </div>
         </div>
