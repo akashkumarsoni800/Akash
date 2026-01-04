@@ -6,28 +6,36 @@ import { toast } from 'sonner';
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [studentName, setStudentName] = useState("Student");
+  const [student, setStudent] = useState<any>(null);
 
-  // 1. Data Fetching (Student ka naam lane ke liye)
+  // 1. Data Fetching (Automatic Login Detection)
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
+        // Step A: Check kaun login hai
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          // Profile table ya Students table se naam dhundho
-          const { data: student } = await supabase
-            .from('students') // Ya 'profiles' agar wahan naam hai
-            .select('full_name')
-            .eq('contact_number', user.phone) // Ya email check karein agar email se login hai
-            .maybeSingle(); // single() ki jagah maybeSingle() safe hota hai
+          console.log("Logged In User Phone:", user.phone); // Debugging ke liye
 
-          if (student) {
-            setStudentName(student.full_name);
+          // Step B: Students table me wo phone number dhundho
+          // Note: Make sure aapke 'students' table me 'contact_number' wahi ho jo login me use hua h
+          const { data: studentData, error } = await supabase
+            .from('students')
+            .select('*')
+            .eq('contact_number', user.phone) // Ya .eq('email', user.email) agar email use kar rahe hain
+            .maybeSingle();
+
+          if (error) throw error;
+          
+          if (studentData) {
+            setStudent(studentData);
+          } else {
+            console.warn("Student data not found for this user.");
           }
         }
       } catch (error) {
-        console.error("Error loading student data", error);
+        console.error("Error loading data", error);
       } finally {
         setLoading(false);
       }
@@ -36,103 +44,155 @@ const StudentDashboard = () => {
     fetchStudentData();
   }, []);
 
-  // 2. ✅ LOGOUT FUNCTION (Ye sabse zaruri hai)
+  // 2. Logout Function
   const handleLogout = async () => {
-    try {
-      // 1. LocalStorage clear karein
-      localStorage.removeItem("adarsh_school_login");
-      
-      // 2. Supabase se sign out karein
-      await supabase.auth.signOut();
-      
-      // 3. Success Message
-      toast.success("Logged out successfully");
-
-      // 4. Login page par bhejein (Force Redirect)
-      window.location.href = "/"; 
-      
-    } catch (error) {
-      console.error("Logout failed:", error);
-      toast.error("Logout failed. Try again.");
-    }
+    await supabase.auth.signOut();
+    localStorage.removeItem("adarsh_school_login");
+    window.location.href = "/";
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center text-blue-600 font-bold animate-pulse">
-        Loading Student Portal...
+      <div className="flex h-screen items-center justify-center bg-blue-50">
+        <div className="text-xl font-bold text-blue-900 animate-pulse">
+          Loading Your Profile...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-gray-50">
       
-      {/* --- NAVBAR --- */}
-      <nav className="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="bg-white text-blue-600 p-2 rounded-full w-10 h-10 flex items-center justify-center font-bold">
-            🎓
+      {/* --- 1. NAVBAR --- */}
+      <nav className="bg-blue-900 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl">
+              🏫
+            </div>
+            <div>
+              <h1 className="text-lg font-bold leading-tight">Adarsh Shishu Mandir</h1>
+              <p className="text-xs text-blue-200">Student Portal</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold">Adarsh Shishu Mandir</h1>
-            <p className="text-xs text-blue-100">Student Portal</p>
-          </div>
+          <button 
+            onClick={handleLogout} 
+            className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-bold transition"
+          >
+            Logout
+          </button>
         </div>
-
-        {/* 👇 YE RAHA LOGOUT BUTTON */}
-        <button 
-          onClick={handleLogout} 
-          className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition shadow-sm"
-        >
-          Logout 🚪
-        </button>
       </nav>
 
-      {/* --- MAIN CONTENT --- */}
-      <div className="max-w-4xl mx-auto p-6">
-        
-        {/* Welcome Card */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">Welcome, {studentName}! 👋</h2>
-            <p className="text-gray-500 mt-1">Class: 10th - A (Example)</p>
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto p-6 space-y-8">
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* --- 2. STUDENT PROFILE CARD (Automatic) --- */}
+        {/* Ye wahi card hai jo Result page me tha, par yahan AUTOMATIC data dikhega */}
+        {student ? (
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100 transform transition hover:scale-[1.01] duration-300">
+            
+            {/* Top Blue Banner */}
+            <div className="bg-gradient-to-r from-blue-800 to-blue-600 p-6 text-white flex flex-col md:flex-row items-center gap-6">
+              
+              {/* Avatar */}
+              <div className="w-20 h-20 bg-white text-blue-900 rounded-full flex items-center justify-center text-3xl font-bold border-4 border-blue-200 shadow-lg">
+                {student.full_name?.charAt(0)}
+              </div>
+              
+              {/* Name & Details */}
+              <div className="text-center md:text-left flex-1">
+                <h2 className="text-2xl font-bold">{student.full_name}</h2>
+                <p className="text-blue-100 opacity-90">S/o {student.parent_name}</p>
+                <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-3">
+                  <span className="bg-blue-900 bg-opacity-40 px-3 py-1 rounded-full text-xs font-bold border border-blue-400">
+                    Class: {student.class_name}
+                  </span>
+                  <span className="bg-blue-900 bg-opacity-40 px-3 py-1 rounded-full text-xs font-bold border border-blue-400">
+                    Roll No: {student.roll_number || 'N/A'}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Attendance / Stats Strip (Optional decoration) */}
+            <div className="bg-blue-50 p-4 flex justify-around text-center text-blue-900 text-sm font-bold border-b border-gray-100">
+               <div>
+                 <span className="block text-xl">Active</span>
+                 <span className="text-xs font-normal text-gray-500">Status</span>
+               </div>
+               <div className="border-l border-gray-300"></div>
+               <div>
+                 <span className="block text-xl">Coming Soon</span>
+                 <span className="text-xs font-normal text-gray-500">Attendance</span>
+               </div>
+            </div>
+
+          </div>
+        ) : (
+          // Agar Student Database me nahi mila par login hai (Edge Case)
+          <div className="bg-red-50 p-6 rounded-xl border border-red-200 text-center">
+            <h3 className="text-red-700 font-bold text-lg">⚠️ Profile Not Found</h3>
+            <p className="text-red-600 text-sm">You are logged in, but your student details were not found. Please contact Admin.</p>
+          </div>
+        )}
+
+        {/* --- 3. MENU BUTTONS --- */}
+        <div>
+          <h3 className="text-gray-700 font-bold text-lg mb-4 flex items-center gap-2">
+            <span className="w-1 h-6 bg-blue-600 rounded-full"></span>
+            Quick Actions
+          </h3>
           
-          {/* Card 1: Result */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer">
-            <div className="text-4xl mb-3">📊</div>
-            <h3 className="text-lg font-bold text-gray-800">My Result</h3>
-            <p className="text-gray-500 text-sm mt-1">Check your exam marks and progress report.</p>
-            <button className="mt-4 text-blue-600 font-bold text-sm hover:underline">View Result →</button>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Button 1: Check Result */}
+            <div 
+              onClick={() => navigate('/student/result')}
+              className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer flex items-center gap-4 group"
+            >
+              <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                📊
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 text-lg">My Result</h4>
+                <p className="text-xs text-gray-500">View marksheet & grades</p>
+              </div>
+              <span className="ml-auto text-gray-300 group-hover:text-green-600 transition">➔</span>
+            </div>
 
-          {/* Card 2: Notice Board */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer">
-            <div className="text-4xl mb-3">📢</div>
-            <h3 className="text-lg font-bold text-gray-800">Notice Board</h3>
-            <p className="text-gray-500 text-sm mt-1">View school announcements and holidays.</p>
-            <button className="mt-4 text-blue-600 font-bold text-sm hover:underline">View Notices →</button>
-          </div>
+            {/* Button 2: Notice Board */}
+            <div 
+              onClick={() => navigate('/student/notices')}
+              className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer flex items-center gap-4 group"
+            >
+              <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                📢
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 text-lg">Notice Board</h4>
+                <p className="text-xs text-gray-500">School announcements</p>
+              </div>
+              <span className="ml-auto text-gray-300 group-hover:text-orange-600 transition">➔</span>
+            </div>
 
-          {/* Card 3: Profile */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer opacity-70">
-            <div className="text-4xl mb-3">👤</div>
-            <h3 className="text-lg font-bold text-gray-800">My Profile</h3>
-            <p className="text-gray-500 text-sm mt-1">View personal details (Coming Soon).</p>
-          </div>
+            {/* Button 3: Profile Update */}
+            <div 
+              onClick={() => navigate('/profile-setup')}
+              className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer flex items-center gap-4 group opacity-80"
+            >
+              <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                ⚙️
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-800 text-lg">Settings</h4>
+                <p className="text-xs text-gray-500">Update info (Coming Soon)</p>
+              </div>
+              <span className="ml-auto text-gray-300 group-hover:text-purple-600 transition">➔</span>
+            </div>
 
-          {/* Card 4: Fees */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition cursor-pointer opacity-70">
-            <div className="text-4xl mb-3">💰</div>
-            <h3 className="text-lg font-bold text-gray-800">Fee Status</h3>
-            <p className="text-gray-500 text-sm mt-1">Check pending dues (Coming Soon).</p>
           </div>
-
         </div>
 
       </div>
