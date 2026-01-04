@@ -106,3 +106,87 @@ const AdminDashboard = () => {
                           className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow-sm"
                         >
                           Approve
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Section 2: Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          {/* Card 1: Students */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase">Total Students</p>
+                <h3 className="text-3xl font-bold text-blue-900 mt-1">{totalStudentCount}</h3>
+              </div>
+              <span className="text-2xl">🎓</span>
+            </div>
+            <Link to="/admin/add-student" className="text-blue-600 text-sm font-bold mt-4 block hover:underline">
+              + Add New Student
+            </Link>
+          </div>
+
+          {/* Card 2: Teachers */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase">Total Teachers</p>
+                <h3 className="text-3xl font-bold text-green-900 mt-1">{totalTeacherCount}</h3>
+              </div>
+              <span className="text-2xl">👨‍🏫</span>
+            </div>
+            <Link to="/admin/add-teacher" className="text-green-600 text-sm font-bold mt-4 block hover:underline">
+              + Register Teacher
+            </Link>
+          </div>
+
+          {/* Card 3: Fees */}
+          <div className="bg-yellow-50 p-6 rounded-lg shadow-sm border border-yellow-200 hover:shadow-md transition">
+            <h3 className="font-bold text-yellow-900">💰 Accounts & Fees</h3>
+            <p className="text-sm text-yellow-800 mt-1 opacity-80">Manage student dues</p>
+            <Link to="/admin/manage-fees" className="mt-4 block w-full bg-yellow-600 text-white text-center py-2 rounded font-bold hover:bg-yellow-700">
+              Manage Fees
+            </Link>
+          </div>
+
+          {/* Card 4: Create Exam */}
+          <div className="bg-indigo-50 p-6 rounded-lg shadow-sm border border-indigo-200 hover:shadow-md transition">
+             <h3 className="font-bold text-indigo-900">📝 Exam Department</h3>
+             <p className="text-sm text-indigo-800 mt-1 opacity-80">Create Papers & Timetables</p>
+             <Link to="/admin/create-exam" className="mt-4 block w-full bg-indigo-600 text-white text-center py-2 rounded font-bold hover:bg-indigo-700">
+               Create Exam
+             </Link>
+          </div>
+
+          {/* Card 5: Upload Results */}
+          <div className="bg-purple-50 p-6 rounded-lg shadow-sm border border-purple-200 hover:shadow-md transition">
+            <h3 className="font-bold text-purple-900">📊 Results</h3>
+            <p className="text-sm text-purple-800 mt-1 opacity-80">Upload student marks</p>
+            <Link to="/admin/upload-result" className="mt-4 block w-full bg-purple-600 text-white text-center py-2 rounded font-bold hover:bg-purple-700">
+              Upload Marks
+            </Link>
+          </div>
+
+          {/* Card 6: Notice Board */}
+          <div className="bg-red-50 p-6 rounded-lg shadow-sm border border-red-200 hover:shadow-md transition">
+            <h3 className="font-bold text-red-900">📢 Announcements</h3>
+            <p className="text-sm text-red-800 mt-1 opacity-80">Events & Holidays</p>
+            <Link to="/admin/add-event" className="mt-4 block w-full bg-red-600 text-white text-center py-2 rounded font-bold hover:bg-red-700">
+              Add Notice
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
