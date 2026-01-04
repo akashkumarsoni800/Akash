@@ -173,6 +173,20 @@ const AdminDashboard = () => {
      ➕ Create New Exam
    </Link>
 </div>
+          {/* Card: Events & Notices */}
+          <div className="bg-red-50 p-6 rounded-lg text-red-900 shadow-sm border border-red-200 flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <h3 className="font-bold uppercase text-xs tracking-wider">Announcements</h3>
+              <p className="text-2xl font-bold mt-2">Notice Board</p>
+              <p className="text-sm mt-1 opacity-80">Events, Holidays & News</p>
+            </div>
+            <Link 
+              to="/admin/add-event" 
+              className="mt-4 block w-full bg-red-600 text-white text-center py-2 rounded text-sm font-bold hover:bg-red-700 shadow"
+            >
+              📢 Add Event
+            </Link>
+          </div>
 
         </div>
 
