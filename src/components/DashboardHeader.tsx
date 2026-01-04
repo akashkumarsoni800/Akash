@@ -8,40 +8,36 @@ interface HeaderProps {
   userRole: string;
 }
 
-const DashboardHeader = ({ userName, userRole }: HeaderProps) => {
+
+          
+             const DashboardHeader = ({ userName, userRole, avatarUrl }: { userName: string; userRole: string; avatarUrl?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem("adarsh_school_login");
-    toast.success("Logged out successfully");
-    navigate('/');
-  };
-
   return (
-    <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0">
+    <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0 shadow-sm">
       <div className="px-4 py-3 lg:px-6">
         <div className="flex items-center justify-between">
-          {/* School Brand */}
-          <div className="flex items-center justify-start">
-            <span className="text-xl font-bold text-blue-900 flex items-center gap-2">
-              🏫 <span className="hidden md:inline">Adarsh Shishu Mandir</span>
-            </span>
+          <div className="flex items-center gap-2">
+             <span className="text-xl font-bold text-blue-900">🏫 ASM</span>
           </div>
 
-          {/* User Profile Dropdown */}
           <div className="relative">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-3 focus:outline-none"
-            >
+            <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-3 focus:outline-none group">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-gray-800 leading-none">{userName}</p>
                 <p className="text-xs text-gray-500 capitalize">{userRole}</p>
               </div>
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-md hover:bg-blue-700 transition">
-                {userName.charAt(0).toUpperCase()}
+
+              {/* 🖼️ Profile Image Logic */}
+              <div className="w-10 h-10 bg-blue-600 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm group-hover:border-blue-500 transition-all">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
             </button>
 
