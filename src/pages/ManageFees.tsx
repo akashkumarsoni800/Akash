@@ -6,36 +6,26 @@ const ManageFees = () => {
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
   const [feeHeads, setFeeHeads] = useState<any[]>([]);
-
-  // New Fee Head banane ke liye
   const [newHeadName, setNewHeadName] = useState('');
-
-  // Fee Assign karne ke liye form data
   const [selectedStudent, setSelectedStudent] = useState('');
   const [month, setMonth] = useState('');
   const [feeValues, setFeeValues] = useState<any>({}); 
 
-  // 1. Data Load
   useEffect(() => {
     fetchInitialData();
   }, []);
 
   const fetchInitialData = async () => {
     try {
-      // ✅ FIX: Hum '.select('*')' use kar rahe hain taki 'contact_number' bhi aa jaye
+      // ✅ सभी कॉलम्स को खींचना सुनिश्चित करें
       const { data: stdData, error } = await supabase
         .from('students')
-        .select('*') // <--- Yahan change kiya hai (Sab kuch layega)
+        .select('*') 
         .order('full_name');
         
       if (error) throw error;
-      
-      if (stdData) {
-        console.log("🔥 Loaded Students:", stdData); // F12 me check karein
-        setStudents(stdData);
-      }
+      if (stdData) setStudents(stdData);
 
-      // Fee Heads lao
       const { data: headData } = await supabase.from('fee_heads').select('*').order('id');
       if (headData) {
         setFeeHeads(headData);
@@ -48,74 +38,43 @@ const ManageFees = () => {
     }
   };
 
-  const handleAddHead = async () => {
-    if (!newHeadName.trim()) return;
-    try {
-      const { error } = await supabase.from('fee_heads').insert([{ name: newHeadName }]);
-      if (error) throw error;
-      toast.success(`New Fee Type "${newHeadName}" Added!`);
-      setNewHeadName('');
-      fetchInitialData(); 
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
-
-  // ✅ WhatsApp Message Logic
   const sendWhatsAppReminder = () => {
     if (!selectedStudent || !month) {
       toast.error("Please select Student and Month first.");
       return;
     }
 
-    // 1. Student dhoondo list me se
-    const student = students.find(s => s.id === selectedStudent);
+    // ✅ ID Matching Fix: Number() का उपयोग करें क्योंकि ID bigint हो सकती है
+    const student = students.find(s => String(s.id) === String(selectedStudent));
     
-    // 👇 DEBUGGING LINE: Console me dekhein ki student data kya hai
-    console.log("🔍 Selected Student Data:", student);
-
     if (!student) {
-      toast.error("Student not found in list!");
+      toast.error("Student not found in the list! Try refreshing.");
       return;
     }
 
-    // 2. Number Check
     if (!student.contact_number) {
-      // Agar number nahi mila, to Alert dikhao user ko
-      alert(`Error: Database me "${student.full_name}" ka phone number (contact_number) khali hai!`);
+      toast.error(`Contact number missing for ${student.full_name}`);
       return;
     }
 
-    // 3. Number Clean karo (Spaces hatao, 91 lagao)
-    let phone = student.contact_number.toString().replace(/\D/g, ''); // Sirf digits rakho
-    if (phone.length === 10) {
-      phone = "91" + phone; // India code add karo
-    }
+    // नंबर क्लीनिंग और मैसेज जनरेशन
+    let phone = student.contact_number.toString().replace(/\D/g, '');
+    if (phone.length === 10) phone = "91" + phone;
 
-    // 4. Total Amount
     const totalAmount = Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0);
     
-    // 5. Message Banao
     let message = `🔔 *Fee Reminder - Adarsh Shishu Mandir*\n\n`;
     message += `Dear Parent,\nFee details for *${student.full_name}* (Class: ${student.class_name})\n`;
-    message += `Month: *${month}*\n\n`;
-    message += `*Breakdown:* \n`;
+    message += `Month: *${month}*\n\n*Breakdown:* \n`;
 
-    // Sirf > 0 wali fees dikhao
     Object.entries(feeValues).forEach(([head, amount]: any) => {
-        if (Number(amount) > 0) {
-            message += `• ${head}: ₹${amount}\n`;
-        }
+        if (Number(amount) > 0) message += `• ${head}: ₹${amount}\n`;
     });
 
-    message += `\n------------------\n`;
-    message += `*TOTAL PAYABLE: ₹${totalAmount}*\n`;
-    message += `------------------\n\n`;
+    message += `\n------------------\n*TOTAL PAYABLE: ₹${totalAmount}*\n------------------\n\n`;
     message += `Please pay via UPI or at school office.`;
 
-    // 6. WhatsApp Open
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleAssignFee = async (e: React.FormEvent) => {
@@ -153,16 +112,10 @@ const ManageFees = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-blue-900 mb-6">💰 Manage Fees & Reminders</h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* SECTION 1: ASSIGN FEE (Left Side) */}
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
           <h2 className="text-xl font-bold mb-4">Assign Fee to Student</h2>
-          
           <form onSubmit={handleAssignFee} className="space-y-4">
-            
-            {/* Student Select */}
             <div>
               <label className="block text-sm font-bold text-gray-700">Select Student</label>
               <select 
@@ -173,97 +126,48 @@ const ManageFees = () => {
                 <option value="">-- Select --</option>
                 {students.map(s => (
                   <option key={s.id} value={s.id}>
-                    {s.full_name} ({s.class_name}) {s.contact_number ? '✅' : '❌'}
+                    {/* ✅ UI में ही पता चल जाएगा कि किसका नंबर डेटाबेस में है */}
+                    {s.full_name} ({s.class_name}) {s.contact_number ? "✅" : "⚠️ No No."}
                   </option>
                 ))}
               </select>
             </div>
-
-            {/* Month */}
             <div>
               <label className="block text-sm font-bold text-gray-700">Month</label>
               <input type="month" className="w-full border p-2 rounded" value={month} onChange={e => setMonth(e.target.value)} />
             </div>
-
             <hr className="my-4" />
-
-            {/* 🔥 DYNAMIC INPUTS */}
             <div className="grid grid-cols-2 gap-4">
               {feeHeads.map((head) => (
                 <div key={head.id}>
                   <label className="block text-xs font-bold text-gray-600 mb-1">{head.name}</label>
                   <input 
-                    type="number" 
-                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500"
-                    placeholder="0"
+                    type="number" className="w-full border p-2 rounded" placeholder="0"
                     onChange={(e) => handleFeeValueChange(head.name, e.target.value)}
                   />
                 </div>
               ))}
             </div>
-
-            {/* Total Display */}
             <div className="bg-blue-50 p-3 rounded flex justify-between items-center">
-              <span className="font-bold text-blue-900">Total Amount:</span>
-              <span className="text-xl font-bold">
-                ₹{Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0)}
-              </span>
+              <span className="font-bold text-blue-900">Total: ₹{Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0)}</span>
             </div>
-
             <div className="grid grid-cols-2 gap-3">
-              {/* WhatsApp Button */}
-              <button 
-                type="button" 
-                onClick={sendWhatsAppReminder}
-                className="bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition flex justify-center items-center gap-2"
-              >
-                <span>💬 WhatsApp</span>
-              </button>
-
-              {/* Submit Button */}
-              <button disabled={loading} className="bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
-                {loading ? "Saving..." : "💾 Save Fee"}
-              </button>
+              <button type="button" onClick={sendWhatsAppReminder} className="bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600">💬 WhatsApp</button>
+              <button disabled={loading} className="bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">{loading ? "Saving..." : "💾 Save Fee"}</button>
             </div>
-
           </form>
         </div>
-
-        {/* SECTION 2: CREATE STRUCTURE (Right Side) */}
-        <div className="space-y-6">
-          
-          <div className="bg-white p-6 rounded-xl shadow-md border border-purple-200">
-            <h2 className="text-xl font-bold text-purple-900 mb-2">⚙️ Fee Settings</h2>
-            <p className="text-sm text-gray-500 mb-4">Create new fee columns dynamically here.</p>
-            
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                placeholder="Ex: Exam Fee" 
-                className="flex-1 border p-2 rounded"
-                value={newHeadName}
-                onChange={e => setNewHeadName(e.target.value)}
-              />
-              <button 
-                onClick={handleAddHead}
-                className="bg-purple-600 text-white px-4 py-2 rounded font-bold hover:bg-purple-700"
-              >
-                + Add
-              </button>
-            </div>
+        {/* Fee Settings Section */}
+        <div className="bg-white p-6 rounded-xl shadow-md border border-purple-200">
+          <h2 className="text-xl font-bold text-purple-900 mb-2">⚙️ Fee Settings</h2>
+          <div className="flex gap-2">
+            <input type="text" placeholder="Ex: Exam Fee" className="flex-1 border p-2 rounded" value={newHeadName} onChange={e => setNewHeadName(e.target.value)} />
+            <button onClick={async () => {
+              if(!newHeadName) return;
+              await supabase.from('fee_heads').insert([{ name: newHeadName }]);
+              setNewHeadName(''); fetchInitialData();
+            }} className="bg-purple-600 text-white px-4 py-2 rounded font-bold">+ Add</button>
           </div>
-
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="font-bold text-gray-700 mb-4">Active Fee Structures</h3>
-            <div className="flex flex-wrap gap-2">
-              {feeHeads.map(h => (
-                <span key={h.id} className="bg-gray-100 border border-gray-300 px-3 py-1 rounded-full text-sm font-medium">
-                  {h.name}
-                </span>
-              ))}
-            </div>
-          </div>
-
         </div>
       </div>
     </div>
