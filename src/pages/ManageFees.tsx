@@ -13,7 +13,7 @@ const ManageFees = () => {
   // Fee Assign karne ke liye form data
   const [selectedStudent, setSelectedStudent] = useState('');
   const [month, setMonth] = useState('');
-  const [feeValues, setFeeValues] = useState<any>({}); // Dynamic Values store karega
+  const [feeValues, setFeeValues] = useState<any>({}); 
 
   // 1. Data Load
   useEffect(() => {
@@ -21,22 +21,24 @@ const ManageFees = () => {
   }, []);
 
   const fetchInitialData = async () => {
-    // Students lao
-    const { data: stdData } = await supabase.from('students').select('id, full_name, class_name');
+    // ✅ CHANGE 1: 'contact_number' bhi fetch karein
+    const { data: stdData } = await supabase
+      .from('students')
+      .select('id, full_name, class_name, contact_number') // contact_number zaroori h
+      .order('full_name');
+      
     if (stdData) setStudents(stdData);
 
-    // Fee Heads lao (Jo Admin ne banaye hain)
+    // Fee Heads lao
     const { data: headData } = await supabase.from('fee_heads').select('*').order('id');
     if (headData) {
       setFeeHeads(headData);
-      // Form ke inputs initialize karo
       const initialValues: any = {};
       headData.forEach((h: any) => initialValues[h.name] = 0);
       setFeeValues(initialValues);
     }
   };
 
-  // 2. Create New Fee Column (Structure)
   const handleAddHead = async () => {
     if (!newHeadName.trim()) return;
     try {
@@ -44,13 +46,56 @@ const ManageFees = () => {
       if (error) throw error;
       toast.success(`New Fee Type "${newHeadName}" Added!`);
       setNewHeadName('');
-      fetchInitialData(); // Refresh list
+      fetchInitialData(); 
     } catch (error: any) {
       toast.error(error.message);
     }
   };
 
-  // 3. Assign Fee to Student
+  // ✅ NEW FUNCTION: WhatsApp Message Bhejne ke liye
+  const sendWhatsAppReminder = () => {
+    if (!selectedStudent || !month) {
+      toast.error("Please select Student and Month first.");
+      return;
+    }
+
+    // 1. Student dhoondo
+    const student = students.find(s => s.id === selectedStudent);
+    if (!student || !student.contact_number) {
+      toast.error("Student phone number not found!");
+      return;
+    }
+
+    // 2. Number clean karein (91 lagayein agar nahi h)
+    let phone = student.contact_number.replace(/\D/g, '').slice(-10);
+    phone = "91" + phone;
+
+    // 3. Total Calculate
+    const totalAmount = Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0);
+    
+    // 4. Message Create karein
+    let message = `🔔 *Fee Reminder - Adarsh Shishu Mandir*\n\n`;
+    message += `Dear Parent,\nFee details for *${student.full_name}* (Class: ${student.class_name})\n`;
+    message += `Month: *${month}*\n\n`;
+    message += `*Breakdown:* \n`;
+
+    // Sirf wahi fees add karein jo 0 se zyada hai
+    Object.entries(feeValues).forEach(([head, amount]: any) => {
+        if (Number(amount) > 0) {
+            message += `• ${head}: ₹${amount}\n`;
+        }
+    });
+
+    message += `\n------------------\n`;
+    message += `*TOTAL PAYABLE: ₹${totalAmount}*\n`;
+    message += `------------------\n\n`;
+    message += `Please pay via UPI or at school office.`;
+
+    // 5. WhatsApp Link Open
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
   const handleAssignFee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedStudent || !month) {
@@ -58,7 +103,6 @@ const ManageFees = () => {
       return;
     }
 
-    // Total Calculate karo
     const totalAmount = Object.values(feeValues).reduce((sum: number, val: any) => sum + Number(val || 0), 0);
 
     try {
@@ -66,7 +110,7 @@ const ManageFees = () => {
       const { error } = await supabase.from('fees').insert([{
         student_id: selectedStudent,
         month: month,
-        fee_breakdown: feeValues, // ✅ Sara structure JSON me jayega
+        fee_breakdown: feeValues,
         total_amount: totalAmount,
         status: 'Pending'
       }]);
@@ -80,14 +124,13 @@ const ManageFees = () => {
     }
   };
 
-  // Input Change Handler (Dynamic)
   const handleFeeValueChange = (headName: string, value: string) => {
     setFeeValues({ ...feeValues, [headName]: value });
   };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-blue-900 mb-6">💰 Manage Fees Structure</h1>
+      <h1 className="text-3xl font-bold text-blue-900 mb-6">💰 Manage Fees & Reminders</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
@@ -120,7 +163,7 @@ const ManageFees = () => {
 
             <hr className="my-4" />
 
-            {/* 🔥 DYNAMIC INPUTS (Jo Heads Admin ne banaye) */}
+            {/* 🔥 DYNAMIC INPUTS */}
             <div className="grid grid-cols-2 gap-4">
               {feeHeads.map((head) => (
                 <div key={head.id}>
@@ -143,16 +186,28 @@ const ManageFees = () => {
               </span>
             </div>
 
-            <button disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
-              {loading ? "Assigning..." : "Generate Fee Challan"}
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              {/* WhatsApp Button */}
+              <button 
+                type="button" // Important: Type button rakhein taki form submit na ho
+                onClick={sendWhatsAppReminder}
+                className="bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition flex justify-center items-center gap-2"
+              >
+                <span>💬 WhatsApp</span>
+              </button>
+
+              {/* Submit Button */}
+              <button disabled={loading} className="bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
+                {loading ? "Saving..." : "💾 Save Fee"}
+              </button>
+            </div>
+
           </form>
         </div>
 
         {/* SECTION 2: CREATE STRUCTURE (Right Side) */}
         <div className="space-y-6">
           
-          {/* Add New Fee Type */}
           <div className="bg-white p-6 rounded-xl shadow-md border border-purple-200">
             <h2 className="text-xl font-bold text-purple-900 mb-2">⚙️ Fee Settings</h2>
             <p className="text-sm text-gray-500 mb-4">Create new fee columns dynamically here.</p>
@@ -160,7 +215,7 @@ const ManageFees = () => {
             <div className="flex gap-2">
               <input 
                 type="text" 
-                placeholder="Ex: Computer Fee, Picnic Charge" 
+                placeholder="Ex: Exam Fee" 
                 className="flex-1 border p-2 rounded"
                 value={newHeadName}
                 onChange={e => setNewHeadName(e.target.value)}
@@ -174,7 +229,6 @@ const ManageFees = () => {
             </div>
           </div>
 
-          {/* List of Active Fee Heads */}
           <div className="bg-white p-6 rounded-xl shadow-md">
             <h3 className="font-bold text-gray-700 mb-4">Active Fee Structures</h3>
             <div className="flex flex-wrap gap-2">
