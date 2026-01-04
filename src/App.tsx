@@ -15,7 +15,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentResult from './pages/StudentResult';
-import StudentNotices from './pages/StudentNotices';
+import StudentNotices from './pages/StudentNotices';import StudentFees from './pages/StudentFees'; 
 
 // --- 4. ADMIN FEATURES ---
 import AddStudent from './pages/AddStudent';
@@ -72,7 +72,7 @@ function App() {
 
           {/* Finance */}
           <Route path="/admin/manage-fees" element={<ManageFees />} />
-
+<Route path="/student/fees" element={<StudentFees />} />
         </Route>
 
         {/* ========================== */}
