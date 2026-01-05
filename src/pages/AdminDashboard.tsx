@@ -26,7 +26,7 @@ const AdminDashboard = () => {
         const { data: pendingData } = await supabase
           .from('students')
           .select('*')
-          .eq('is_approved, 'pending');
+          .eq('is_approved', 'pending');
         
         if (pendingData) setPendingStudents(pendingData);
 
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
         const { count: studentCount } = await supabase
           .from('students')
           .select('*', { count: 'exact', head: true })
-          .eq('is_approved, 'approved');
+          .eq('is_approved', 'approved');
 
         // 4. Count Total Teachers
         const { count: teacherCount } = await supabase
