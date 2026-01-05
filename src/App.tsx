@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 
 // --- 1. COMPONENTS ---
 import Sidebar from './components/Sidebar';
-
+import StudentRegistration from './components/student/StudentRegistrationForm';
 // --- 2. PUBLIC PAGES (Auth) ---
 import LoginPage from './pages/LoginPage';
 import ResetPassword from './pages/ResetPassword';
@@ -38,7 +38,7 @@ function App() {
         {/* ========================== */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
+        <Route path="/register" element={<StudentRegistrationForm />} />
 
         {/* ========================== */}
         {/* 🟠 TEACHER & STUDENT ROUTES */}
