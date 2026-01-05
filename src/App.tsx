@@ -4,7 +4,6 @@ import { Toaster } from 'sonner';
 
 // --- 1. COMPONENTS ---
 import Sidebar from './components/Sidebar';
-// पक्का करें कि फ़ाइल का नाम और यहाँ लिखा नाम एक ही है
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
 
 // --- 2. PUBLIC PAGES ---
@@ -18,9 +17,12 @@ import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentResult from './pages/StudentResult';
 import StudentNotices from './pages/StudentNotices';
-import StudentFees from './pages/StudentFees'; // ✅ सही जगह इम्पोर्ट
+import StudentFees from './pages/StudentFees';
 
-// --- 4. ADMIN FEATURES ---
+// --- 4. TEACHER FEATURES ---
+import TeacherAttendance from './pages/TeacherAttendance'; // ✅ New Import
+
+// --- 5. ADMIN FEATURES ---
 import AddStudent from './pages/AddStudent';
 import AddTeacher from './pages/AddTeacher';
 import AddEvent from './pages/AddEvent';
@@ -31,23 +33,36 @@ import UploadResult from './pages/UploadResult';
 function App() {
   return (
     <Router>
+      {/* Global Notifications */}
       <Toaster position="top-right" richColors />
 
       <Routes>
-        {/* 🟢 PUBLIC ROUTES */}
+        {/* ========================== */}
+        {/* 🟢 PUBLIC ROUTES           */}
+        {/* ========================== */}
         <Route path="/" element={<LoginPage />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<StudentRegistrationForm />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* 🟠 STUDENT & TEACHER ROUTES (Full Screen) */}
-        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        {/* ========================== */}
+        {/* 🟠 STUDENT ROUTES           */}
+        {/* ========================== */}
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/profile-setup" element={<ProfileSetupPage />} />
         <Route path="/student/result" element={<StudentResult />} />
         <Route path="/student/notices" element={<StudentNotices />} />
-        <Route path="/student/fees" element={<StudentFees />} /> {/* ✅ अब यहाँ सही है */}
+        <Route path="/student/fees" element={<StudentFees />} />
 
-        {/* 🔵 ADMIN ROUTES (With Sidebar) */}
+        {/* ========================== */}
+        {/* 🟡 TEACHER ROUTES          */}
+        {/* ========================== */}
+        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+        <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+        <Route path="/teacher/upload-result" element={<UploadResult />} />
+
+        {/* ========================== */}
+        {/* 🔵 ADMIN ROUTES (Sidebar)  */}
+        {/* ========================== */}
         <Route element={<Sidebar />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/add-student" element={<AddStudent />} />
@@ -58,7 +73,9 @@ function App() {
           <Route path="/admin/manage-fees" element={<ManageFees />} />
         </Route>
 
-        {/* 🔴 404 PAGE */}
+        {/* ========================== */}
+        {/* 🔴 404 PAGE                */}
+        {/* ========================== */}
         <Route path="*" element={
           <div className="flex h-screen items-center justify-center text-red-600 font-bold text-xl bg-gray-100">
             🚫 404 - Page Not Found
