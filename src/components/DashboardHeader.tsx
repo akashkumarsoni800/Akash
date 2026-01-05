@@ -3,29 +3,35 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
-interface HeaderProps {
-  userName: string;
-  userRole: string;
-}
-
-
-          
-             const DashboardHeader = ({ userName, userRole, avatarUrl }: { userName: string; userRole: string; avatarUrl?: string }) => {
+const DashboardHeader = ({ userName, userRole, avatarUrl }: { userName: string; userRole: string; avatarUrl?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  // ✅ Logout Function जोड़ना ज़रूरी है
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Logout failed");
+    } else {
+      toast.success("Logged out successfully");
+      navigate('/');
+    }
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0 shadow-sm">
       <div className="px-4 py-3 lg:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          {/* Logo - Click to go Dashboard */}
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
              <span className="text-xl font-bold text-blue-900">🏫 ASM</span>
           </div>
 
           <div className="relative">
             <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-3 focus:outline-none group">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-800 leading-none">{userName}</p>
+                {/* ✅ Safe Navigation (Optional Chaining) */}
+                <p className="text-sm font-bold text-gray-800 leading-none">{userName || "Student"}</p>
                 <p className="text-xs text-gray-500 capitalize">{userRole}</p>
               </div>
 
@@ -34,8 +40,9 @@ interface HeaderProps {
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white font-bold">
-                    {userName.charAt(0).toUpperCase()}
+                  <div className="w-full h-full flex items-center justify-center text-white font-bold bg-blue-900">
+                    {/* ✅ charAt से पहले चेक ताकि व्हाइट स्क्रीन न आए */}
+                    {userName ? userName.charAt(0).toUpperCase() : "S"}
                   </div>
                 )}
               </div>
@@ -48,14 +55,14 @@ interface HeaderProps {
                   className="fixed inset-0 z-10" 
                   onClick={() => setIsOpen(false)}
                 ></div>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 z-20 py-1">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 z-20 py-1 animate-in fade-in zoom-in duration-100">
                   <div className="px-4 py-2 border-b border-gray-100 sm:hidden">
                     <p className="text-sm font-bold text-gray-800">{userName}</p>
                     <p className="text-xs text-gray-500 capitalize">{userRole}</p>
                   </div>
-                  
+
                   <button
-                    onClick={() => { navigate('/profile-setup'); setIsOpen(false); }}
+                    onClick={() => { navigate('/student/profile-setup'); setIsOpen(false); }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                   >
                     👤 My Profile
