@@ -38,8 +38,7 @@ function App() {
         {/* ========================== */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/profile-setup" element={<ProfileSetupPage />} />
-
+        
 
         {/* ========================== */}
         {/* 🟠 TEACHER & STUDENT ROUTES */}
@@ -48,7 +47,8 @@ function App() {
         
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
         
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+       <Route path="/student/profile-setup" element={<ProfileSetupPage />} />
+ <Route path="/student/dashboard" element={<StudentDashboard />} />
 <Route path="/student/result" element={<StudentResult />} />
         <Route path="/student/notices" element={<StudentNotices />} />
 
