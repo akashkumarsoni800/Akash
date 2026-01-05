@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
 // props में onMenuClick को जोड़ें
-const DashboardHeader = ({ userName, userRole, avatarUrl, onMenuClick }: { userName: string; userRole: string; avatarUrl?: string; onMenuClick?: () => void }) => {
+const DashboardHeader = ({ full_name, userRole, avatarUrl, onMenuClick }: { full_name: string; userRole: string; avatarUrl?: string; onMenuClick?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
