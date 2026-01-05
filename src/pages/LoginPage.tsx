@@ -130,12 +130,9 @@ const LoginPage = () => {
            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
              <p className="text-xs text-gray-600 font-bold uppercase tracking-wider mb-2">New to our School?</p>
              {/* ✅ 'Update Profile' की जगह 'Register for Admission' बटन */}
-             <button 
-                onClick={() => navigate('/register')} 
-                className="text-blue-900 font-black text-lg hover:underline underline-offset-4 decoration-2"
-             >
-               Apply for Admission 📝
-             </button>
+             <button onClick={() => navigate('/reset-password')} className="text-blue-600 text-sm font-medium hover:underline">
+             Register Student
+           </button>
            </div>
         </div>
       </div>
