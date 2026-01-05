@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 
 // --- 1. COMPONENTS ---
 import Sidebar from './components/Sidebar';
-import StudentRegistration from './components/student/StudentRegistrationForm';
+import StudentRegistrationForm from './components/student/StudentRegistrationForm';
 // --- 2. PUBLIC PAGES (Auth) ---
 import LoginPage from './pages/LoginPage';
 import ResetPassword from './pages/ResetPassword';
