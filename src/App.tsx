@@ -67,4 +67,33 @@ function App() {
           <Route path="/teacher/upload-result" element={<UploadResult />} />
 
           {/* --- Admin Section --- */}
-          <Route path="/admin/dashboard" element={
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/manage-fees" element={<ManageFees />} />
+          <Route path="/admin/create-exam" element={<CreateExam />} />
+          <Route path="/admin/upload-result" element={<UploadResult />} />
+          <Route path="/admin/add-student" element={<AddStudent />} />
+          <Route path="/admin/add-teacher" element={<AddTeacher />} />
+          <Route path="/admin/add-event" element={<AddEvent />} />
+        </Route>
+
+        {/* ========================== */}
+        {/* 🔴 404 - PAGE NOT FOUND    */}
+        {/* ========================== */}
+        <Route path="*" element={
+          <div className="flex h-screen flex-col items-center justify-center bg-gray-50 text-center p-6">
+            <span className="text-6xl mb-4">🚫</span>
+            <h1 className="text-2xl font-bold text-red-600 mb-2">404 - Page Not Found</h1>
+            <button 
+              onClick={() => window.location.href = '/'}
+              className="mt-4 bg-blue-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-blue-800 transition shadow-lg"
+            >
+              Go to Login
+            </button>
+          </div>
+        } />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
