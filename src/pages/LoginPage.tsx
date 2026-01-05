@@ -122,7 +122,7 @@ const LoginPage = () => {
         </form>
 
         {/* Footer Links & New Registration Feature */}
-        <div className="mt-6 text-center space-y-4">
+        
            <button onClick={() => navigate('/reset-password')} className="text-blue-600 text-sm font-medium hover:underline">
              Forgot Password?
            </button>
@@ -133,7 +133,7 @@ const LoginPage = () => {
              <button onClick={() => navigate('/reset-password')} className="text-blue-600 text-sm font-medium hover:underline">
              Register Student
            </button>
-           </div>
+           
         </div>
       </div>
     </div>
