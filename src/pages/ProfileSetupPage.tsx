@@ -3,16 +3,17 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
-// ❌ IMPORT REMOVED: DashboardHeader यहाँ नहीं चाहिए
-
 const ProfileSetupPage = () => {
   const { id } = useParams(); 
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  
+  // ✅ Missing Variable Fixed
+  const [currentAuthEmail, setCurrentAuthEmail] = useState('');
   
   const [viewerRole, setViewerRole] = useState<string | null>(null);
   const [targetType, setTargetType] = useState<'student' | 'teacher' | null>(null);
@@ -30,14 +31,17 @@ const ProfileSetupPage = () => {
 
   useEffect(() => {
     const initPage = async () => {
-      // (पुराना useEffect लॉजिक सेम रहेगा, बस UI में बदलाव है)
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return navigate('/');
 
-        // 1. Viewer Role Logic
+        // ✅ 1. Set Auth Email (Fix for "not defined" error)
+        setCurrentAuthEmail(user.email || '');
+
+        // 2. Identify Viewer Role
         let detectedRole = 'guest';
         const { data: teacherData } = await supabase.from('teachers').select('*').eq('email', user.email).maybeSingle();
+        
         if (teacherData) {
           detectedRole = teacherData.role === 'admin' ? 'admin' : 'teacher';
         } else {
@@ -46,7 +50,7 @@ const ProfileSetupPage = () => {
         }
         setViewerRole(detectedRole);
 
-        // 2. Target Logic
+        // 3. Determine Target (Who to edit?)
         let tableToFetch = '';
         let idToFetch = id;
 
@@ -55,7 +59,7 @@ const ProfileSetupPage = () => {
         } else if (location.pathname.includes('/edit-student')) {
           tableToFetch = 'students'; setTargetType('student');
         } else {
-          // Self Edit
+          // Self Edit Logic
           if (detectedRole === 'admin' || detectedRole === 'teacher') {
             tableToFetch = 'teachers'; setTargetType('teacher'); idToFetch = teacherData?.id;
           } else if (detectedRole === 'student') {
@@ -67,13 +71,19 @@ const ProfileSetupPage = () => {
           }
         }
 
-        if (!tableToFetch || !idToFetch) return;
+        if (!tableToFetch || !idToFetch) {
+            setLoading(false);
+            return;
+        }
 
-        // 3. Fetch Data
+        // 4. Fetch Profile Data
         const { data: profile } = await supabase.from(tableToFetch).select('*').eq('id', idToFetch).maybeSingle();
 
         if (profile) {
           setProfileId(profile.id);
+          // ✅ Also set email from DB profile to compare later
+          if (!id) setCurrentAuthEmail(profile.email || user.email); 
+
           setFormData({
             full_name: profile.full_name || '',
             email: profile.email || '',
@@ -84,73 +94,71 @@ const ProfileSetupPage = () => {
             subject: profile.subject || ''
           });
         }
-      } catch (err) { console.error(err); }
+      } catch (err) { console.error(err); } finally { setLoading(false); }
     };
     initPage();
   }, [id, location.pathname, navigate]);
 
+  // 🖼️ Avatar Upload
   const uploadAvatar = async (event: any) => {
-    if (viewerRole === 'student' && !id) return toast.error("Not allowed.");
     try {
       setUploading(true);
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
       const fileName = `${profileId}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
+
       const { error } = await supabase.storage.from('avatars').upload(filePath, file);
       if (error) throw error;
       const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
       setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
-      toast.success("Image uploaded!");
+      toast.success("Image selected! Click Save to apply.");
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
   };
 
-  // ProfileSetupPage.tsx के अंदर handleUpdate फंक्शन को इससे बदलें:
-
-const handleUpdate = async (e: React.FormEvent) => {
+  // 💾 Handle Update (Using RPC to bypass RLS)
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
 
     try {
-      // 1. Auth Email Update (Optional but recommended)
-      if (formData.email !== currentAuthEmail) {
-        const { error: authError } = await supabase.auth.updateUser({ 
-            email: formData.email 
-        });
-        if (authError) console.log("Auth update notice:", authError.message);
-        // Auth error को ignore कर सकते हैं अगर सिर्फ DB update करना है
-      }
+      console.log("Updating ID:", profileId, "Target:", targetType);
 
-      // 2. Magic RPC Call (For Admin & Self Edit)
+      // 1. Database Update via RPC (Secure Function)
       const { error } = await supabase.rpc('update_user_profile', {
         user_id: profileId,
         new_full_name: formData.full_name,
         new_email: formData.email,
         new_phone: formData.phone,
         new_subject: targetType === 'teacher' ? formData.subject : '',
-        new_address: formData.address,          // ✅ अब Address भी पास होगा
-        new_parent_name: formData.parent_name,  // ✅ अब Parent Name भी पास होगा
+        new_address: formData.address,
+        new_parent_name: formData.parent_name,
         new_avatar: formData.avatar_url,
         target_table: targetType === 'teacher' ? 'teachers' : 'students'
       });
 
       if (error) throw error;
 
+      // 2. Auth Email Update (Only if changed)
+      if (formData.email && formData.email !== currentAuthEmail) {
+         const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
+         if (!authError) toast.info("Check your new email for confirmation link!");
+      }
+
       toast.success("Profile Updated Successfully! ✅");
-      
-      // अगर एडमिन डैशबोर्ड से आया है, तो वापस भेजें
       if (id) navigate('/admin/dashboard');
 
     } catch (err: any) {
-      console.error("Update Failed:", err);
-      toast.error("Error: " + err.message);
+      console.error(err);
+      toast.error(err.message);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
-};
+  };
+
+  if (loading) return <div className="h-screen flex items-center justify-center font-bold">Loading Profile...</div>;
 
   return (
-    // ❌ यहाँ <DashboardHeader /> हटा दिया गया है
     <div className="max-w-xl mx-auto p-6 md:p-10">
       <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-gray-100 mt-6">
         
@@ -159,7 +167,7 @@ const handleUpdate = async (e: React.FormEvent) => {
             {id ? `Edit ${targetType}` : "My Profile"}
           </h2>
           <div className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full mt-2 uppercase">
-            {viewerRole} Access
+            {viewerRole} Mode
           </div>
         </div>
 
@@ -170,33 +178,31 @@ const handleUpdate = async (e: React.FormEvent) => {
               <img 
                 src={formData.avatar_url || `https://ui-avatars.com/api/?name=${formData.full_name}`} 
                 className="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-lg"
+                alt="Avatar"
               />
-              {(viewerRole !== 'student' || id) && (
-                <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:scale-110 transition border-2 border-white">
-                  <span className="text-[10px] font-bold">📷</span>
-                  <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
-                </label>
-              )}
+              <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:scale-110 transition border-2 border-white shadow-md">
+                <span className="text-[10px] font-bold">📷</span>
+                <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
+              </label>
             </div>
           </div>
 
           {/* Inputs */}
           <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Name</label>
-            <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} disabled={viewerRole === 'student' && !id} />
+            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Full Name</label>
+            <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
           </div>
 
           <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Email</label>
-            <input type="email" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} disabled={viewerRole === 'student' && !id} />
+            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Email Address</label>
+            <input type="email" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
           </div>
 
           <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Mobile</label>
-            <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} disabled={viewerRole === 'student' && !id} />
+            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Mobile Number</label>
+            <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
           </div>
 
-          {/* Teacher Subject */}
           {targetType === 'teacher' && (
             <div>
               <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Subject</label>
@@ -204,28 +210,22 @@ const handleUpdate = async (e: React.FormEvent) => {
             </div>
           )}
 
-          {/* Student Fields */}
           {targetType === 'student' && (
             <>
               <div>
                 <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Parent Name</label>
-                <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.parent_name} onChange={e => setFormData({...formData, parent_name: e.target.value})} disabled={viewerRole === 'student' && !id} />
+                <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.parent_name} onChange={e => setFormData({...formData, parent_name: e.target.value})} />
               </div>
               <div>
                 <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Address</label>
-                <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} disabled={viewerRole === 'student' && !id} />
+                <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
               </div>
             </>
           )}
 
-          {/* Button */}
-          {(viewerRole !== 'student' || id) ? (
-            <button type="submit" disabled={saving || uploading} className="w-full bg-blue-900 text-white py-4 rounded-2xl font-black uppercase shadow-lg hover:bg-black transition mt-4">
-              {saving ? "Updating..." : "Save Changes"}
-            </button>
-          ) : (
-            <div className="bg-orange-50 p-4 rounded-xl text-center text-xs font-bold text-orange-600">ReadOnly Mode</div>
-          )}
+          <button type="submit" disabled={saving || uploading} className="w-full bg-blue-900 text-white py-4 rounded-2xl font-black uppercase shadow-lg hover:bg-black transition mt-4">
+            {saving ? "Updating..." : "Save Changes"}
+          </button>
         </form>
       </div>
     </div>
