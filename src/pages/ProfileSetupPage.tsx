@@ -11,13 +11,12 @@ const ProfileSetupPage = () => {
   
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [loggedInRole, setLoggedInRole] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  
+  // Roles & Target logic
+  const [viewerRole, setViewerRole] = useState<string | null>(null); // लॉग-इन यूजर कौन है?
+  const [targetType, setTargetType] = useState<'student' | 'teacher'>('student'); // डेटा किसका है?
   const [profileId, setProfileId] = useState<any>(null);
-
-  // ✅ URL की पहचान (Dynamic Check)
-  const isEditingTeacher = location.pathname.includes('/edit-teacher');
-  const isEditingStudent = location.pathname.includes('/edit-student');
-  const isSelfEditing = !id; 
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -30,30 +29,36 @@ const ProfileSetupPage = () => {
   });
 
   useEffect(() => {
-    const initialize = async () => {
+    const fetchFullData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return navigate('/');
 
-        // 1. लॉग-इन यूजर का रोल पता करें
-        const { data: myData } = await supabase.from('teachers').select('role').eq('email', user.email).maybeSingle();
-        const myRole = myData?.role || 'student';
-        setLoggedInRole(myRole);
+        // 1. लॉग-इन यूजर का रोल पता करें (Admin, Teacher, या Student)
+        const { data: teacherCheck } = await supabase.from('teachers').select('role').eq('email', user.email).maybeSingle();
+        const role = teacherCheck?.role === 'admin' ? 'admin' : (teacherCheck ? 'teacher' : 'student');
+        setViewerRole(role);
 
-        // 2. डेटाबेस टेबल चुनें
-        let targetTable = 'students';
-        if (isEditingTeacher || (myRole !== 'student' && isSelfEditing)) {
-          targetTable = 'teachers';
-        }
-
-        // 3. सही ID के साथ डेटा फेच करें
+        // 2. तय करें कि कौन सी टेबल से डेटा उठाना है
+        let tableToFetch: 'students' | 'teachers' = 'students';
         let fetchId = id;
-        if (isSelfEditing) {
-          const { data: selfData } = await supabase.from(targetTable).select('id').eq('email', user.email).maybeSingle();
-          fetchId = selfData?.id;
+
+        if (location.pathname.includes('/edit-teacher')) {
+          tableToFetch = 'teachers';
+          setTargetType('teacher');
+        } else if (location.pathname.includes('/edit-student')) {
+          tableToFetch = 'students';
+          setTargetType('student');
+        } else {
+          // खुद की प्रोफाइल देख रहा है
+          tableToFetch = (role === 'admin' || role === 'teacher') ? 'teachers' : 'students';
+          setTargetType(tableToFetch === 'teachers' ? 'teacher' : 'student');
+          const { data: self } = await supabase.from(tableToFetch).select('id').eq('email', user.email).maybeSingle();
+          fetchId = self?.id;
         }
 
-        const { data: profile } = await supabase.from(targetTable).select('*').eq('id', fetchId).maybeSingle();
+        // 3. डेटा फेच करें
+        const { data: profile } = await supabase.from(tableToFetch).select('*').eq('id', fetchId).maybeSingle();
 
         if (profile) {
           setProfileId(profile.id);
@@ -73,14 +78,42 @@ const ProfileSetupPage = () => {
         setInitialLoading(false);
       }
     };
-    initialize();
-  }, [id, location.pathname, navigate]);
+    fetchFullData();
+  }, [id, location.pathname]);
+
+  // 🖼️ PROFILE PIC UPLOAD
+  const uploadAvatar = async (event: any) => {
+    if (viewerRole === 'student' && !id) return toast.error("Editing disabled for students.");
+    
+    try {
+      setUploading(true);
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profileId}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
+      toast.success("Image uploaded! Click Save.");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (viewerRole === 'student' && !id) return;
+
     setLoading(true);
     try {
-      const targetTable = (isEditingStudent || (loggedInRole === 'student' && isSelfEditing)) ? 'students' : 'teachers';
+      const table = targetType === 'teacher' ? 'teachers' : 'students';
       
       let updateData: any = {
         full_name: formData.full_name,
@@ -88,19 +121,16 @@ const ProfileSetupPage = () => {
         avatar_url: formData.avatar_url,
       };
 
-      if (targetTable === 'teachers') {
+      if (targetType === 'teacher') {
         updateData.phone = formData.phone;
-        // Subject सिर्फ टीचर के लिए अपडेट होगा
-        if (isEditingTeacher || loggedInRole === 'teacher') {
-          updateData.subject = formData.subject;
-        }
+        updateData.subject = formData.subject;
       } else {
         updateData.contact_number = formData.phone;
         updateData.address = formData.address;
         updateData.parent_name = formData.parent_name;
       }
 
-      const { error } = await supabase.from(targetTable).update(updateData).eq('id', profileId);
+      const { error } = await supabase.from(table).update(updateData).eq('id', profileId);
       if (error) throw error;
 
       toast.success("Profile Updated! ✅");
@@ -112,78 +142,94 @@ const ProfileSetupPage = () => {
     }
   };
 
-  if (initialLoading) return <div className="h-screen flex items-center justify-center font-black">ASM Loading...</div>;
+  if (initialLoading) return <div className="h-screen flex items-center justify-center font-black uppercase text-blue-900">ASM Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
-      <DashboardHeader full_name={formData.full_name} userRole={loggedInRole} avatarUrl={formData.avatar_url} onMenuClick={() => {}} />
+      <DashboardHeader full_name={formData.full_name} userRole={viewerRole} avatarUrl={formData.avatar_url} onMenuClick={() => {}} />
 
       <div className="pt-24 px-4 max-w-xl mx-auto">
-        <div className="bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-gray-100">
+        <div className="bg-white rounded-[3rem] shadow-2xl p-10 border border-gray-100">
           
-          <h2 className="text-2xl font-black text-blue-900 uppercase text-center mb-10 italic">
-            {isEditingTeacher ? "Edit Teacher" : (isEditingStudent ? "Edit Student" : "Profile Settings")}
-          </h2>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black text-gray-800 uppercase tracking-tighter">
+              {id ? `Edit ${targetType}` : "Profile Settings"}
+            </h2>
+            <p className="text-[10px] font-black text-blue-600 bg-blue-50 inline-block px-4 py-1 rounded-full mt-2 uppercase">
+              {viewerRole} Access
+            </p>
+          </div>
 
-          <form onSubmit={handleUpdate} className="space-y-5">
+          <form onSubmit={handleUpdate} className="space-y-6">
             
-            {/* 1. Name (Universal) */}
-            <div>
-              <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Full Name</label>
-              <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} 
-                disabled={loggedInRole === 'student' && isSelfEditing} />
-            </div>
-
-            {/* 2. Email (Universal) */}
-            <div>
-              <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Email Address</label>
-              <input type="email" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} 
-                disabled={loggedInRole === 'student' && isSelfEditing} />
-            </div>
-
-            {/* 3. Mobile (Universal) */}
-            <div>
-              <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Mobile Number</label>
-              <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} 
-                disabled={loggedInRole === 'student' && isSelfEditing} />
-            </div>
-
-            {/* 4. Subject (Dynamic: Only for Teacher Edit or Teacher Self-Edit) */}
-            {(isEditingTeacher || (loggedInRole === 'teacher' && isSelfEditing)) && (
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Specialist Subject</label>
-                <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                  value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
+            {/* 🖼️ Avatar Section (RESTORED) */}
+            <div className="flex flex-col items-center">
+              <div className="relative group">
+                <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl overflow-hidden bg-gray-100">
+                  {formData.avatar_url ? (
+                    <img src={formData.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-5xl font-black text-gray-200 uppercase">{formData.full_name[0]}</div>
+                  )}
+                </div>
+                {(viewerRole !== 'student' || id) && (
+                  <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:scale-110 transition active:scale-95 border-4 border-white">
+                    <span className="text-xs font-black">EDIT</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
+                  </label>
+                )}
               </div>
-            )}
+              {uploading && <p className="text-[10px] font-black text-blue-500 mt-2 animate-pulse uppercase">Uploading Image...</p>}
+            </div>
 
-            {/* 5. Student Specific Fields (Dynamic) */}
-            {(isEditingStudent || (loggedInRole === 'student' && isSelfEditing)) && (
-              <>
+            <div className="space-y-4">
+              {/* Universal Fields */}
+              <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Parent Name</label>
-                  <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                    value={formData.parent_name} onChange={e => setFormData({...formData, parent_name: e.target.value})} disabled={loggedInRole === 'student' && isSelfEditing} />
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Full Name</label>
+                  <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} disabled={viewerRole === 'student' && !id} />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Residential Address</label>
-                  <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                    value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} disabled={loggedInRole === 'student' && isSelfEditing} />
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Email</label>
+                  <input type="email" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} disabled={viewerRole === 'student' && !id} />
                 </div>
-              </>
-            )}
+                <div>
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Mobile Number</label>
+                  <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} disabled={viewerRole === 'student' && !id} />
+                </div>
+              </div>
 
-            {/* Action Button */}
-            {(loggedInRole !== 'student' || !isSelfEditing) ? (
-              <button type="submit" disabled={loading} className="w-full bg-blue-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl transition hover:bg-black mt-4">
-                {loading ? "SAVING..." : "CONFIRM UPDATE"}
+              {/* 👨‍🏫 Teacher Specific: Subject */}
+              {targetType === 'teacher' && (
+                <div>
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Specialist Subject</label>
+                  <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
+                </div>
+              )}
+
+              {/* 🎓 Student Specific: Address & Parent */}
+              {targetType === 'student' && (
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Parent Name</label>
+                    <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.parent_name} onChange={e => setFormData({...formData, parent_name: e.target.value})} disabled={viewerRole === 'student' && !id} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Home Address</label>
+                    <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} disabled={viewerRole === 'student' && !id} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Save Button Logic */}
+            {(viewerRole !== 'student' || id) ? (
+              <button type="submit" disabled={loading || uploading} className="w-full bg-blue-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all transform active:scale-95 hover:bg-black mt-6">
+                {loading ? "SAVING..." : "UPDATE PROFILE"}
               </button>
             ) : (
-              <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-center font-bold text-[10px] text-orange-600 uppercase">
-                Self-editing is disabled for students.
+              <div className="p-5 bg-orange-50 rounded-2xl border border-orange-100 text-center">
+                <p className="text-xs font-bold text-orange-600 italic tracking-tight">"Self-editing is disabled for students. Contact office for changes."</p>
               </div>
             )}
           </form>
