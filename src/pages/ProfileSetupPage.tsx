@@ -7,9 +7,6 @@ const ProfileSetupPage = () => {
   const navigate = useNavigate();
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  
-  // ✅ Role States
   const [userRole, setUserRole] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<any>(null);
   const [currentAuthEmail, setCurrentAuthEmail] = useState('');
@@ -18,7 +15,7 @@ const ProfileSetupPage = () => {
     full_name: '',
     email: '',
     phone: '',
-    address: '',
+    address: '', // सिर्फ स्टूडेंट के लिए इस्तेमाल होगा
     avatar_url: '',
     subject: '',
     parent_name: ''
@@ -31,12 +28,8 @@ const ProfileSetupPage = () => {
         if (!user) return navigate('/');
         setCurrentAuthEmail(user.email || '');
 
-        // ✅ 1. सबसे पहले TEACHERS टेबल चेक करें (ताकि टीचर को स्टूडेंट न दिखाए)
-        const { data: teacher } = await supabase
-          .from('teachers')
-          .select('*')
-          .eq('email', user.email)
-          .maybeSingle();
+        // 1. पहले Teachers चेक करें
+        const { data: teacher } = await supabase.from('teachers').select('*').eq('email', user.email).maybeSingle();
 
         if (teacher) {
           setUserRole(teacher.role === 'admin' ? 'admin' : 'teacher');
@@ -45,19 +38,14 @@ const ProfileSetupPage = () => {
             full_name: teacher.full_name || '',
             email: user.email || '',
             phone: teacher.phone || '',
-            address: teacher.address || '',
+            address: '', // टीचर में एड्रेस नहीं है, इसे खाली रखें
             avatar_url: teacher.avatar_url || '',
             subject: teacher.subject || '',
             parent_name: ''
           });
         } else {
-          // ✅ 2. अगर टीचर नहीं है, तब STUDENTS टेबल चेक करें
-          const { data: student } = await supabase
-            .from('students')
-            .select('*')
-            .eq('email', user.email)
-            .maybeSingle();
-
+          // 2. फिर Students चेक करें
+          const { data: student } = await supabase.from('students').select('*').eq('email', user.email).maybeSingle();
           if (student) {
             setUserRole('student');
             setProfileId(student.id);
@@ -73,7 +61,7 @@ const ProfileSetupPage = () => {
           }
         }
       } catch (err) {
-        console.error("Error loading profile:", err);
+        console.error("Error:", err);
       } finally {
         setInitialLoading(false);
       }
@@ -81,70 +69,48 @@ const ProfileSetupPage = () => {
     fetchProfile();
   }, [navigate]);
 
-  // 🖼️ Avatar Upload (Admin/Teacher Only)
-  const uploadAvatar = async (event: any) => {
-    if (userRole === 'student') return toast.error("Students cannot change profile pictures.");
-    
-    try {
-      setUploading(true);
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${profileId}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
-      toast.success("Image selected! Click Save.");
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // ✅ Student Edit Restriction
-    if (userRole === 'student') {
-      toast.error("Access Denied: Students cannot update profiles.");
-      return;
-    }
+    if (userRole === 'student') return toast.error("Admin can only change this.");
 
     setLoading(true);
     try {
-      // 1. Direct Email Update in Supabase Auth
+      // ✅ 1. Auth Email Update (Rate Limit Handling)
       if (formData.email !== currentAuthEmail) {
         const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
-        if (authError) throw authError;
+        if (authError) {
+          // अगर बार-बार रिक्वेस्ट भेजेंगे तो ये एरर आएगा
+          if (authError.status === 429) throw new Error("Security Lock: Too many requests. Please wait 5-10 minutes.");
+          throw authError;
+        }
+        toast.info("Email confirmation sent!");
       }
 
-      // 2. Database Table Update
+      // ✅ 2. Schema Fix: Role के हिसाब से डेटा तैयार करें
       const isTeacherOrAdmin = userRole === 'teacher' || userRole === 'admin';
       const table = isTeacherOrAdmin ? 'teachers' : 'students';
       
-      const updateData: any = {
+      // सिर्फ वही कॉलम भेजें जो उस टेबल में मौजूद हैं
+      let updateData: any = {
         full_name: formData.full_name,
         email: formData.email,
-        address: formData.address,
         avatar_url: formData.avatar_url,
       };
 
       if (isTeacherOrAdmin) {
         updateData.phone = formData.phone;
         updateData.subject = formData.subject;
+        // ❌ यहाँ 'address' को हटा दिया गया है क्योंकि teachers टेबल में यह नहीं है
       } else {
         updateData.contact_number = formData.phone;
         updateData.parent_name = formData.parent_name;
+        updateData.address = formData.address; // स्टूडेंट में एड्रेस है
       }
 
       const { error } = await supabase.from(table).update(updateData).eq('id', profileId);
       if (error) throw error;
 
-      toast.success("Profile updated successfully!");
+      toast.success("Profile Updated! ✅");
       setCurrentAuthEmail(formData.email);
     } catch (error: any) {
       toast.error(error.message);
@@ -153,71 +119,40 @@ const ProfileSetupPage = () => {
     }
   };
 
-  if (initialLoading) return <div className="h-screen flex items-center justify-center font-black text-blue-900">ASM Loading...</div>;
+  if (initialLoading) return <div className="p-20 text-center font-black uppercase">ASM Security Check...</div>;
 
   return (
-    <div className="max-w-xl mx-auto p-6 md:p-10 bg-white rounded-[2.5rem] shadow-2xl mt-10 border border-gray-100">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter">My Profile</h2>
-          <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{userRole} Account</p>
-        </div>
-        <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase shadow-sm ${userRole === 'student' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-          {userRole === 'student' ? '🚫 View Only' : '✅ Edit Access'}
-        </span>
+    <div className="max-w-xl mx-auto p-10 bg-white rounded-[2rem] shadow-2xl mt-10 border border-gray-100">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-black text-blue-900 uppercase italic">Edit Profile</h2>
+        <p className="text-[10px] font-black bg-blue-50 text-blue-600 inline-block px-3 py-1 rounded-full mt-2 uppercase">{userRole} MODE</p>
       </div>
 
-      <form onSubmit={handleUpdate} className="space-y-5">
-        {/* Avatar Section */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-28 h-28 rounded-full border-4 border-blue-50 overflow-hidden shadow-xl bg-gray-50 relative group">
-            {formData.avatar_url ? (
-              <img src={formData.avatar_url} className="w-full h-full object-cover" alt="Profile" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-4xl font-black text-gray-300">
-                {formData.full_name?.charAt(0) || "U"}
-              </div>
-            )}
-            {userRole !== 'student' && (
-              <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
-                <span className="text-white text-[10px] font-black">EDIT</span>
-                <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
-              </label>
-            )}
-          </div>
+      <form onSubmit={handleUpdate} className="space-y-4">
+        <div>
+          <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Full Name</label>
+          <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} disabled={userRole === 'student'} />
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Login Email</label>
-            <input type="email" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold focus:border-blue-500 outline-none transition" 
-              value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} disabled={userRole === 'student'} />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Full Name</label>
-            <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold focus:border-blue-500 outline-none transition" 
-              value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} disabled={userRole === 'student'} />
-          </div>
-
-          {userRole !== 'student' && userRole !== 'admin' && (
-             <div>
-               <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Subject</label>
-               <input type="text" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold" 
-                 value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
-             </div>
-          )}
+        <div>
+          <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Email (Auth ID)</label>
+          <input type="email" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} disabled={userRole === 'student'} />
         </div>
 
-        {/* ✅ Button Fix: Only Admin/Teacher can see SAVE button */}
+        {/* ✅ Address Field: सिर्फ स्टूडेंट को दिखेगा */}
+        {userRole === 'student' && (
+          <div>
+            <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Address</label>
+            <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.address} disabled={true} />
+          </div>
+        )}
+
         {userRole !== 'student' ? (
-          <button type="submit" disabled={loading || uploading} className="w-full bg-blue-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition transform active:scale-95 mt-6">
-            {loading ? "Saving Changes..." : "Update Profile & Auth"}
+          <button type="submit" disabled={loading} className="w-full bg-blue-900 text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">
+            {loading ? "PROCESSING..." : "SAVE CHANGES"}
           </button>
         ) : (
-          <div className="p-5 bg-orange-50 rounded-2xl border border-orange-100 text-center">
-             <p className="text-xs font-bold text-orange-600 italic">"Profile editing is disabled for students. Please contact the school office for any changes."</p>
-          </div>
+          <p className="p-4 bg-red-50 text-red-600 text-[10px] font-black text-center rounded-xl uppercase">Profile update is locked for students</p>
         )}
       </form>
     </div>
