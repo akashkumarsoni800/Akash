@@ -7,15 +7,15 @@ const ProfileSetupPage = () => {
   const { id } = useParams(); 
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
-  // ✅ Missing Variable Fixed
+
+  // Auth Email State
   const [currentAuthEmail, setCurrentAuthEmail] = useState('');
-  
-  const [viewerRole, setViewerRole] = useState<string | null>(null);
+
+  const [viewerRole, setViewerRole] = useState<string>('checking...');
   const [targetType, setTargetType] = useState<'student' | 'teacher' | null>(null);
   const [profileId, setProfileId] = useState<any>(null);
 
@@ -31,97 +31,131 @@ const ProfileSetupPage = () => {
 
   useEffect(() => {
     const initPage = async () => {
+      setLoading(true);
       try {
+        // 1. Get Logged In User
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return navigate('/');
+        if (!user) {
+           navigate('/');
+           return;
+        }
 
-        // ✅ 1. Set Auth Email (Fix for "not defined" error)
         setCurrentAuthEmail(user.email || '');
 
-        // 2. Identify Viewer Role
-        let detectedRole = 'guest';
-        const { data: teacherData } = await supabase.from('teachers').select('*').eq('email', user.email).maybeSingle();
-        
+        // 2. Identify Role (Check Teachers Table First using ID)
+        // ID se check karna jyada safe h
+        let detectedRole = 'student'; // Default assume student
+        const { data: teacherData } = await supabase
+          .from('teachers')
+          .select('*')
+          .eq('id', user.id) // ✅ Email ki jagah ID se check kiya
+          .maybeSingle();
+
         if (teacherData) {
           detectedRole = teacherData.role === 'admin' ? 'admin' : 'teacher';
-        } else {
-          const { data: studentData } = await supabase.from('students').select('*').eq('email', user.email).maybeSingle();
-          if (studentData) detectedRole = 'student';
         }
+        
         setViewerRole(detectedRole);
 
-        // 3. Determine Target (Who to edit?)
+        // 3. Determine WHO to Edit (Target)
         let tableToFetch = '';
-        let idToFetch = id;
+        let idToFetch = id; // URL se ID li (agar admin kisi aur ko edit kar rha h)
 
         if (location.pathname.includes('/edit-teacher')) {
           tableToFetch = 'teachers'; setTargetType('teacher');
         } else if (location.pathname.includes('/edit-student')) {
           tableToFetch = 'students'; setTargetType('student');
         } else {
-          // Self Edit Logic
+          // Self Edit Mode (Khud ki profile)
           if (detectedRole === 'admin' || detectedRole === 'teacher') {
-            tableToFetch = 'teachers'; setTargetType('teacher'); idToFetch = teacherData?.id;
-          } else if (detectedRole === 'student') {
-            tableToFetch = 'students'; setTargetType('student'); 
-            if (!idToFetch) {
-               const { data: self } = await supabase.from('students').select('id').eq('email', user.email).maybeSingle();
-               idToFetch = self?.id;
-            }
+            tableToFetch = 'teachers'; 
+            setTargetType('teacher'); 
+            idToFetch = user.id; // Khud ki ID
+          } else {
+            tableToFetch = 'students'; 
+            setTargetType('student'); 
+            idToFetch = user.id; // Khud ki ID
           }
         }
 
-        if (!tableToFetch || !idToFetch) {
-            setLoading(false);
-            return;
-        }
-
         // 4. Fetch Profile Data
-        const { data: profile } = await supabase.from(tableToFetch).select('*').eq('id', idToFetch).maybeSingle();
+        if (tableToFetch && idToFetch) {
+          const { data: profile, error } = await supabase
+            .from(tableToFetch)
+            .select('*')
+            .eq('id', idToFetch)
+            .maybeSingle();
 
-        if (profile) {
-          setProfileId(profile.id);
-          // ✅ Also set email from DB profile to compare later
-          if (!id) setCurrentAuthEmail(profile.email || user.email); 
-
-          setFormData({
-            full_name: profile.full_name || '',
-            email: profile.email || '',
-            phone: profile.phone || profile.contact_number || '',
-            address: profile.address || '',
-            avatar_url: profile.avatar_url || '',
-            parent_name: profile.parent_name || '',
-            subject: profile.subject || ''
-          });
+          if (profile) {
+            setProfileId(profile.id);
+            setFormData({
+              full_name: profile.full_name || '',
+              email: profile.email || '',
+              phone: profile.phone || profile.contact_number || '', // Teacher me phone, Student me contact_number
+              address: profile.address || '',
+              avatar_url: profile.avatar_url || '',
+              parent_name: profile.parent_name || '',
+              subject: profile.subject || ''
+            });
+          }
         }
-      } catch (err) { console.error(err); } finally { setLoading(false); }
+
+      } catch (err) { 
+        console.error("Init Error:", err); 
+      } finally { 
+        setLoading(false); 
+      }
     };
+
     initPage();
   }, [id, location.pathname, navigate]);
 
-  // 🖼️ Avatar Upload
-  // handleUpdate function correction:
+  // ✅ 5. Avatar Upload Function (Jo Missing Tha)
+  const uploadAvatar = async (event: any) => {
+    try {
+      setUploading(true);
+      if (!event.target.files || event.target.files.length === 0) {
+        throw new Error('You must select an image to upload.');
+      }
 
-const handleUpdate = async (e: React.FormEvent) => {
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      
+      setFormData((prev) => ({ ...prev, avatar_url: data.publicUrl }));
+      toast.success("Image uploaded! Click Save to apply.");
+      
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ✅ 6. Handle Update (Saving Data)
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      // 🛑 STEP 1: पहले AUTH (Login) ईमेल अपडेट करें
+      // Step A: Update Auth Email (if changed)
       if (formData.email && formData.email !== currentAuthEmail) {
-         const { data, error: authError } = await supabase.auth.updateUser({ 
+         const { error: authError } = await supabase.auth.updateUser({ 
            email: formData.email 
          });
-         
-         if (authError) {
-           throw new Error("Auth Update Failed: " + authError.message);
-         }
-         
-         // अगर "Secure email change" OFF है, तो data.user.email में नया ईमेल होगा
-         console.log("Auth Updated:", data);
+         if (authError) throw new Error("Auth Update Failed: " + authError.message);
       }
 
-      // ✅ STEP 2: अगर Auth पास हो गया, तभी DB अपडेट करें
+      // Step B: Update Database via RPC
       const { error } = await supabase.rpc('update_user_profile', {
         user_id: profileId,
         new_full_name: formData.full_name,
@@ -136,13 +170,14 @@ const handleUpdate = async (e: React.FormEvent) => {
 
       if (error) throw error;
 
-      toast.success("Login Email & Profile Updated! Please Login again.");
-      
-      // ईमेल बदलने पर अक्सर सेशन लॉगआउट हो जाता है, इसलिए सेफ साइड:
+      toast.success("Profile Updated Successfully! ✅");
+
+      // Redirect Logic
       if (formData.email !== currentAuthEmail) {
           await supabase.auth.signOut();
           navigate('/');
       } else if (id) {
+          // Agar Admin edit kar rha tha, to wapas dashboard
           navigate('/admin/dashboard');
       }
 
@@ -152,30 +187,31 @@ const handleUpdate = async (e: React.FormEvent) => {
     } finally {
       setSaving(false);
     }
-};
-  if (loading) return <div className="h-screen flex items-center justify-center font-bold">Loading Profile...</div>;
+  };
+
+  if (loading) return <div className="h-screen flex items-center justify-center font-bold text-blue-600">Loading Profile...</div>;
 
   return (
-    <div className="max-w-xl mx-auto p-6 md:p-10">
+    <div className="max-w-xl mx-auto p-6 md:p-10 pb-20">
       <div className="bg-white rounded-[2.5rem] shadow-xl p-8 border border-gray-100 mt-6">
-        
+
         <div className="text-center mb-8">
           <h2 className="text-2xl font-black text-blue-900 uppercase italic">
             {id ? `Edit ${targetType}` : "My Profile"}
           </h2>
           <div className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full mt-2 uppercase">
-            {viewerRole} Mode
+            {viewerRole === 'checking...' ? 'Loading...' : viewerRole} Mode
           </div>
         </div>
 
         <form onSubmit={handleUpdate} className="space-y-5">
-          {/* Avatar */}
+          {/* Avatar Section */}
           <div className="flex justify-center mb-4">
             <div className="relative group w-28 h-28">
               <img 
                 src={formData.avatar_url || `https://ui-avatars.com/api/?name=${formData.full_name}`} 
                 className="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-lg"
-                alt="Avatar"
+                alt="Profile"
               />
               <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:scale-110 transition border-2 border-white shadow-md">
                 <span className="text-[10px] font-bold">📷</span>
@@ -184,7 +220,7 @@ const handleUpdate = async (e: React.FormEvent) => {
             </div>
           </div>
 
-          {/* Inputs */}
+          {/* Common Inputs */}
           <div>
             <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Full Name</label>
             <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
@@ -200,6 +236,7 @@ const handleUpdate = async (e: React.FormEvent) => {
             <input type="text" className="w-full p-4 bg-gray-50 border rounded-2xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
           </div>
 
+          {/* Teacher Only Input */}
           {targetType === 'teacher' && (
             <div>
               <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Subject</label>
@@ -207,6 +244,7 @@ const handleUpdate = async (e: React.FormEvent) => {
             </div>
           )}
 
+          {/* Student Only Inputs */}
           {targetType === 'student' && (
             <>
               <div>
@@ -221,7 +259,7 @@ const handleUpdate = async (e: React.FormEvent) => {
           )}
 
           <button type="submit" disabled={saving || uploading} className="w-full bg-blue-900 text-white py-4 rounded-2xl font-black uppercase shadow-lg hover:bg-black transition mt-4">
-            {saving ? "Updating..." : "Save Changes"}
+            {saving ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>
