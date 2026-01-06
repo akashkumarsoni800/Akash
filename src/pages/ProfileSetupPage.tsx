@@ -100,31 +100,28 @@ const ProfileSetupPage = () => {
   }, [id, location.pathname, navigate]);
 
   // 🖼️ Avatar Upload
-  const uploadAvatar = async (event: any) => {
-    try {
-      setUploading(true);
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${profileId}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+  // handleUpdate function correction:
 
-      const { error } = await supabase.storage.from('avatars').upload(filePath, file);
-      if (error) throw error;
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
-      toast.success("Image selected! Click Save to apply.");
-    } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
-  };
-
-  // 💾 Handle Update (Using RPC to bypass RLS)
-  const handleUpdate = async (e: React.FormEvent) => {
+const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      console.log("Updating ID:", profileId, "Target:", targetType);
+      // 🛑 STEP 1: पहले AUTH (Login) ईमेल अपडेट करें
+      if (formData.email && formData.email !== currentAuthEmail) {
+         const { data, error: authError } = await supabase.auth.updateUser({ 
+           email: formData.email 
+         });
+         
+         if (authError) {
+           throw new Error("Auth Update Failed: " + authError.message);
+         }
+         
+         // अगर "Secure email change" OFF है, तो data.user.email में नया ईमेल होगा
+         console.log("Auth Updated:", data);
+      }
 
-      // 1. Database Update via RPC (Secure Function)
+      // ✅ STEP 2: अगर Auth पास हो गया, तभी DB अपडेट करें
       const { error } = await supabase.rpc('update_user_profile', {
         user_id: profileId,
         new_full_name: formData.full_name,
@@ -139,14 +136,15 @@ const ProfileSetupPage = () => {
 
       if (error) throw error;
 
-      // 2. Auth Email Update (Only if changed)
-      if (formData.email && formData.email !== currentAuthEmail) {
-         const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
-         if (!authError) toast.info("Check your new email for confirmation link!");
+      toast.success("Login Email & Profile Updated! Please Login again.");
+      
+      // ईमेल बदलने पर अक्सर सेशन लॉगआउट हो जाता है, इसलिए सेफ साइड:
+      if (formData.email !== currentAuthEmail) {
+          await supabase.auth.signOut();
+          navigate('/');
+      } else if (id) {
+          navigate('/admin/dashboard');
       }
-
-      toast.success("Profile Updated Successfully! ✅");
-      if (id) navigate('/admin/dashboard');
 
     } catch (err: any) {
       console.error(err);
@@ -154,8 +152,7 @@ const ProfileSetupPage = () => {
     } finally {
       setSaving(false);
     }
-  };
-
+};
   if (loading) return <div className="h-screen flex items-center justify-center font-bold">Loading Profile...</div>;
 
   return (
