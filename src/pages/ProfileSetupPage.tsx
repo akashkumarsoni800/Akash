@@ -142,52 +142,46 @@ const ProfileSetupPage = () => {
   };
 
   // ✅ 6. Handle Update (Saving Data)
-  const handleUpdate = async (e: React.FormEvent) => {
+  
+      
+          const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      // Step A: Update Auth Email (if changed)
-      if (formData.email && formData.email !== currentAuthEmail) {
-         const { error: authError } = await supabase.auth.updateUser({ 
-           email: formData.email 
-         });
-         if (authError) throw new Error("Auth Update Failed: " + authError.message);
-      }
-
-      // Step B: Update Database via RPC
-      const { error } = await supabase.rpc('update_user_profile', {
-        user_id: profileId,
-        new_full_name: formData.full_name,
+      // ✅ सिर्फ ये एक RPC कॉल दोनों जगह (Auth + Table) डेटा बदल देगी
+      const { error } = await supabase.rpc('sync_user_update', {
+        u_id: profileId, // ये आपकी UUID होनी चाहिए
         new_email: formData.email,
+        new_name: formData.full_name,
         new_phone: formData.phone,
         new_subject: targetType === 'teacher' ? formData.subject : '',
         new_address: formData.address,
-        new_parent_name: formData.parent_name,
+        new_parent: formData.parent_name,
         new_avatar: formData.avatar_url,
-        target_table: targetType === 'teacher' ? 'teachers' : 'students'
+        t_table: targetType === 'teacher' ? 'teachers' : 'students'
       });
 
       if (error) throw error;
 
-      toast.success("Profile Updated Successfully! ✅");
+      toast.success("Login & Profile both updated! ✅");
 
-      // Redirect Logic
+      // अगर ईमेल बदला है, तो सेशन रिफ्रेश करने के लिए लॉगआउट करना अच्छा है
       if (formData.email !== currentAuthEmail) {
-          await supabase.auth.signOut();
-          navigate('/');
-      } else if (id) {
-          // Agar Admin edit kar rha tha, to wapas dashboard
-          navigate('/admin/dashboard');
+        await supabase.auth.signOut();
+        navigate('/');
+      } else {
+        navigate(viewerRole === 'admin' ? '/admin/dashboard' : '/student/dashboard');
       }
 
     } catch (err: any) {
-      console.error(err);
+      console.error("RPC Error:", err.message);
       toast.error(err.message);
     } finally {
       setSaving(false);
     }
-  };
+};
+
 
   if (loading) return <div className="h-screen flex items-center justify-center font-bold text-blue-600">Loading Profile...</div>;
 
