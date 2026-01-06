@@ -1,66 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import DashboardHeader from '../components/DashboardHeader';
 
-const TeacherDashboard = () => {
+export default function TeacherDashboard() {
   const navigate = useNavigate();
   const [teacher, setTeacher] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getProfile = async () => {
+    const fetchTeacher = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase.from('teachers').select('*').eq('email', user.email).maybeSingle();
-        setTeacher(data);
-      }
+      if (!user) return navigate('/');
+
+      const { data } = await supabase.from('teachers')
+        .select('*')
+        .eq('email', user.email)
+        .maybeSingle();
+
+      setTeacher(data);
+      setLoading(false);
     };
-    getProfile();
-  }, []);
+    fetchTeacher();
+  }, [navigate]);
+
+  if (loading) return <div className="p-10 text-center font-bold">Loading Teacher Panel...</div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* --- SIDEBAR --- */}
-      <div className="w-64 bg-blue-900 text-white hidden md:flex flex-col sticky top-0 h-screen">
-        <div className="p-6 border-b border-blue-800 flex items-center gap-3">
-          <span className="text-3xl">🏫</span>
-          <h1 className="font-black tracking-tighter text-xl">ASM PORTAL</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black text-gray-800 uppercase">Teacher Dashboard</h1>
+          <p className="text-sm text-gray-500 font-bold">Manage your class and students</p>
         </div>
-        <nav className="flex-1 p-4 space-y-2 mt-4">
-          <Link to="/teacher/dashboard" className="block p-3 bg-blue-800 rounded-xl font-bold">🏠 Dashboard</Link>
-          <Link to="/teacher/attendance" className="block p-3 hover:bg-blue-800 rounded-xl transition">📅 Daily Attendance</Link>
-          <Link to="/teacher/upload-result" className="block p-3 hover:bg-blue-800 rounded-xl transition">📊 Upload Marks</Link>
-          <Link to="/student/profile-setup" className="block p-3 hover:bg-blue-800 rounded-xl transition">👤 My Profile</Link>
-        </nav>
       </div>
 
-      {/* --- MAIN CONTENT --- */}
-      <div className="flex-1">
-        <DashboardHeader userName={teacher?.full_name} userRole="Teacher" avatarUrl={teacher?.avatar_url} />
-        
-        <div className="pt-24 p-8">
-          <div className="mb-8">
-            <h2 className="text-3xl font-black text-gray-800 uppercase">Teacher Panel</h2>
-            <p className="text-gray-500">Welcome, {teacher?.full_name || 'Teacher'}</p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Attendance Action */}
+        <div 
+          onClick={() => navigate('/teacher/attendance')}
+          className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all group"
+        >
+          <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-blue-100 transition">📅</div>
+          <h3 className="font-black text-xl text-gray-800">Daily Attendance</h3>
+          <p className="text-sm text-gray-400 mt-2">Mark student presence for today</p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div onClick={() => navigate('/teacher/attendance')} className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all">
-              <span className="text-4xl block mb-4">📝</span>
-              <h3 className="font-black text-xl text-blue-900">Take Attendance</h3>
-              <p className="text-sm text-gray-400 mt-2 font-bold">Mark daily P/A status</p>
-            </div>
+        {/* Marks Upload Action */}
+        <div 
+          onClick={() => navigate('/teacher/upload-result')}
+          className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-green-500 cursor-pointer transition-all group"
+        >
+          <div className="bg-green-50 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-green-100 transition">📊</div>
+          <h3 className="font-black text-xl text-gray-800">Upload Marks</h3>
+          <p className="text-sm text-gray-400 mt-2">Enter exam scores for your subjects</p>
+        </div>
 
-            <div onClick={() => navigate('/teacher/upload-result')} className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-green-500 cursor-pointer transition-all">
-              <span className="text-4xl block mb-4">📤</span>
-              <h3 className="font-black text-xl text-green-700">Upload Marks</h3>
-              <p className="text-sm text-gray-400 mt-2 font-bold">Submit student results</p>
-            </div>
-          </div>
+        {/* Profile Info */}
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div className="bg-purple-50 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4">👤</div>
+          <h3 className="font-black text-xl text-gray-800">{teacher?.full_name || 'Teacher'}</h3>
+          <p className="text-sm text-gray-400 mt-2 uppercase font-bold tracking-tighter">Subject: {teacher?.subject || 'General'}</p>
         </div>
       </div>
     </div>
   );
-};
-
-export default TeacherDashboard;
+}
