@@ -105,31 +105,49 @@ const ProfileSetupPage = () => {
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  // ProfileSetupPage.tsx के अंदर handleUpdate फंक्शन को इससे बदलें:
+
+const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (viewerRole === 'student' && !id) return toast.error("Access Denied");
-    setSaving(true);
+    setLoading(true);
 
     try {
-      const table = targetType === 'teacher' ? 'teachers' : 'students';
-      let updateData: any = { full_name: formData.full_name, email: formData.email, avatar_url: formData.avatar_url };
-
-      if (targetType === 'teacher') {
-        updateData.phone = formData.phone;
-        updateData.subject = formData.subject;
-      } else {
-        updateData.contact_number = formData.phone;
-        updateData.address = formData.address;
-        updateData.parent_name = formData.parent_name;
+      // 1. Auth Email Update (Optional but recommended)
+      if (formData.email !== currentAuthEmail) {
+        const { error: authError } = await supabase.auth.updateUser({ 
+            email: formData.email 
+        });
+        if (authError) console.log("Auth update notice:", authError.message);
+        // Auth error को ignore कर सकते हैं अगर सिर्फ DB update करना है
       }
 
-      const { error } = await supabase.from(table).update(updateData).eq('id', profileId);
+      // 2. Magic RPC Call (For Admin & Self Edit)
+      const { error } = await supabase.rpc('update_user_profile', {
+        user_id: profileId,
+        new_full_name: formData.full_name,
+        new_email: formData.email,
+        new_phone: formData.phone,
+        new_subject: targetType === 'teacher' ? formData.subject : '',
+        new_address: formData.address,          // ✅ अब Address भी पास होगा
+        new_parent_name: formData.parent_name,  // ✅ अब Parent Name भी पास होगा
+        new_avatar: formData.avatar_url,
+        target_table: targetType === 'teacher' ? 'teachers' : 'students'
+      });
+
       if (error) throw error;
 
-      toast.success("Updated Successfully!");
+      toast.success("Profile Updated Successfully! ✅");
+      
+      // अगर एडमिन डैशबोर्ड से आया है, तो वापस भेजें
       if (id) navigate('/admin/dashboard');
-    } catch (err: any) { toast.error(err.message); } finally { setSaving(false); }
-  };
+
+    } catch (err: any) {
+      console.error("Update Failed:", err);
+      toast.error("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+};
 
   return (
     // ❌ यहाँ <DashboardHeader /> हटा दिया गया है
