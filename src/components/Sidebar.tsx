@@ -25,13 +25,14 @@ useEffect(() => {
         return;
       }
 
-      const user = session.user;
+      // User ki email se uska role fetch karein
+      const userEmail = session.user.email;
 
-      // 1. Check Teachers table (Admin aur Teacher dono ke liye)
+      // 1. Check Teachers table (For Admin & Teacher)
       const { data: staff } = await supabase
         .from('teachers')
         .select('full_name, role, avatar_url')
-        .eq('id', user.id)
+        .eq('email', userEmail)
         .maybeSingle();
 
       if (staff) {
@@ -39,14 +40,14 @@ useEffect(() => {
           setProfile({ name: staff.full_name, role: staff.role, avatar: staff.avatar_url });
           setLoading(false);
         }
-        return; // Staff mil gaya toh aage student check karne ki zarurat nahi
+        return;
       }
 
-      // 2. Agar staff nahi mila, toh Student check karein
+      // 2. Fallback to Student
       const { data: student } = await supabase
         .from('students')
         .select('full_name, avatar_url')
-        .eq('id', user.id)
+        .eq('email', userEmail)
         .maybeSingle();
 
       if (isMounted) {
@@ -57,9 +58,7 @@ useEffect(() => {
         });
         setLoading(false);
       }
-
-    } catch (error) {
-      console.error("Sidebar Error:", error);
+    } catch (err) {
       if (isMounted) setLoading(false);
     }
   }
