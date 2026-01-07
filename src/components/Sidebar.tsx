@@ -13,62 +13,60 @@ const Sidebar = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({ name: 'User', role: '', avatar: '' });
 
-  useEffect(() => {
-    let isMounted = true;
+  // Sidebar.tsx ke useEffect mein ye update karein
+useEffect(() => {
+  let isMounted = true;
 
-    async function getUserData() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session) {
-          if (isMounted) setLoading(false);
-          return; 
-        }
-
-        const user = session.user;
-
-        // 1. Sabse pehle Teachers Table check karein (Admin aur Teacher dono isi mein hain)
-        const { data: staffData, error: staffError } = await supabase
-          .from('teachers')
-          .select('full_name, role, avatar_url')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        if (staffData) {
-          // Agar record mil gaya, toh role 'admin' ho ya 'teacher', wahi set hoga
-          if (isMounted) {
-            setProfile({ 
-              name: staffData.full_name, 
-              role: staffData.role, // 'admin' ya 'teacher'
-              avatar: staffData.avatar_url || '' 
-            });
-          }
-        } else {
-          // 2. Agar staff mein nahi mila, toh Student Table check karein
-          const { data: studentData } = await supabase
-            .from('students')
-            .select('full_name, avatar_url')
-            .eq('id', user.id)
-            .maybeSingle();
-
-          if (isMounted) {
-            setProfile({ 
-              name: studentData?.full_name || 'Student', 
-              role: 'student', 
-              avatar: studentData?.avatar_url || '' 
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Sidebar Auth Error:", error);
-      } finally {
-        if (isMounted) setLoading(false);
+  async function getUserData() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || !isMounted) {
+        setLoading(false);
+        return;
       }
-    }
 
-    getUserData();
-    return () => { isMounted = false; };
-  }, []); // Empty dependency array loop ko rokta hai
+      const user = session.user;
+
+      // 1. Check Teachers table (Admin aur Teacher dono ke liye)
+      const { data: staff } = await supabase
+        .from('teachers')
+        .select('full_name, role, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (staff) {
+        if (isMounted) {
+          setProfile({ name: staff.full_name, role: staff.role, avatar: staff.avatar_url });
+          setLoading(false);
+        }
+        return; // Staff mil gaya toh aage student check karne ki zarurat nahi
+      }
+
+      // 2. Agar staff nahi mila, toh Student check karein
+      const { data: student } = await supabase
+        .from('students')
+        .select('full_name, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (isMounted) {
+        setProfile({ 
+          name: student?.full_name || 'User', 
+          role: 'student', 
+          avatar: student?.avatar_url || '' 
+        });
+        setLoading(false);
+      }
+
+    } catch (error) {
+      console.error("Sidebar Error:", error);
+      if (isMounted) setLoading(false);
+    }
+  }
+
+  getUserData();
+  return () => { isMounted = false; };
+}, []);
 
   if (loading) {
     return (
