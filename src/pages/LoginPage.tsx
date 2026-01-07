@@ -9,72 +9,69 @@ const LoginPage = () => {
   const [role, setRole] = useState('student');
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  // handleLogin function ke andar ka updated logic
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
 
-      if (authError) throw authError;
+    if (authError) throw authError;
 
-      if (role === 'student') {
-        const { data: studentRecord, error: dbError } = await supabase
-          .from('students')
-          .select('is_approved, full_name')
-          .eq('email', formData.email.trim())
-          .maybeSingle();
+    // --- STUDENT LOGIC ---
+    if (role === 'student') {
+      const { data: studentRecord, error: dbError } = await supabase
+        .from('students')
+        .select('is_approved, full_name')
+        .eq('email', formData.email.trim())
+        .maybeSingle();
 
-        if (!studentRecord) {
-          await supabase.auth.signOut();
-          toast.error("Student record not found!");
-          setLoading(false);
-          return;
-        }
-
-        if (studentRecord.is_approved !== 'approved') {
-          await supabase.auth.signOut();
-          toast.error("⏳ Account Approval Pending!");
-          setLoading(false);
-          return;
-        }
-
-        toast.success(`Welcome back, ${studentRecord.full_name}!`);
-        navigate('/student/dashboard');
-      } 
-      else if (role === 'admin') {
-        if (formData.email === 'admin@school.com') {
-           navigate('/admin/dashboard');
-           toast.success("Welcome Admin!");
-        } else {
-           throw new Error("You are not an Admin!");
-        }
+      if (!studentRecord || studentRecord.is_approved !== 'approved') {
+        await supabase.auth.signOut();
+        toast.error(!studentRecord ? "Student record not found!" : "⏳ Account Approval Pending!");
+        setLoading(false);
+        return;
       }
-      else if (role === 'teacher') {
-        const { data: teacher } = await supabase
-           .from('teachers')
-           .select('id')
-           .eq('email', formData.email)
-           .maybeSingle();
+      toast.success(`Welcome, ${studentRecord.full_name}!`);
+      navigate('/student/dashboard');
+    } 
+    // --- ADMIN & TEACHER LOGIC (Same Table: teachers) ---
+    else {
+      const { data: userData, error: dbError } = await supabase
+        .from('teachers')
+        .select('full_name, role')
+        .eq('email', formData.email.trim())
+        .maybeSingle();
 
-        if (teacher) {
-           navigate('/teacher/dashboard');
-           toast.success("Welcome Teacher!");
-        } else {
-           throw new Error("Teacher record not found.");
-        }
+      if (!userData) {
+        throw new Error("User record not found in staff database.");
       }
 
-    } catch (error: any) {
-      toast.error(error.message || "Login failed");
-      await supabase.auth.signOut();
-    } finally {
-      setLoading(false);
+      // Role check: Kya UI par select kiya hua role DB ke role se match karta hai?
+      if (userData.role !== role) {
+        throw new Error(`You are registered as a ${userData.role}, not a ${role}.`);
+      }
+
+      if (userData.role === 'admin') {
+        toast.success("Welcome Admin!");
+        navigate('/admin/dashboard');
+      } else {
+        toast.success("Welcome Teacher!");
+        navigate('/teacher/dashboard');
+      }
     }
-  };
+
+  } catch (error: any) {
+    toast.error(error.message || "Login failed");
+    await supabase.auth.signOut();
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
