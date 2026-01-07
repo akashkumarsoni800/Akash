@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
 import { 
   X, LayoutDashboard, FileText, CreditCard, Calendar, 
-  UserPlus, Users, ClipboardList, ShieldCheck, LogIn 
+  UserPlus, Users, ClipboardList, ShieldCheck, LogIn, AlertTriangle 
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -12,51 +12,49 @@ const Sidebar = () => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // 1. Loading & Error States
+  // States
   const [loading, setLoading] = useState(true);
   const [sessionError, setSessionError] = useState(false);
+  const [profile, setProfile] = useState({ name: '', avatar: '', role: '' });
 
-  // 2. Profile State (Default empty)
-  const [profile, setProfile] = useState({ 
-    name: '', 
-    avatar: '', 
-    role: '' // Role ab Database se aayega
-  });
-
+  // 🛑 1. Sirf ek baar Data Fetch karo (Loop Risk: 0%)
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
 
-    const checkUserRoleAndRedirect = async () => {
+    const fetchUserData = async () => {
       try {
         setLoading(true);
 
-        // A. Check Session
+        // A. Session Check
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
-          if (mounted) { setSessionError(true); setLoading(false); }
+          if (isMounted) {
+             setSessionError(true); 
+             setLoading(false);
+          }
           return;
         }
 
+        // B. Database Role Check
         const user = session.user;
-        let userRole = 'student'; // Default assume student
-        let fullName = user.user_metadata?.full_name || 'User';
+        let role = 'student'; // Default
+        let name = user.user_metadata?.full_name || 'User';
         let avatar = user.user_metadata?.avatar_url || '';
 
-        // B. Check Teachers Table (For Admin or Teacher)
+        // Check Teachers Table
         const { data: teacherData } = await supabase
           .from('teachers')
-          .select('full_name, avatar_url, role')
+          .select('role, full_name, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
 
         if (teacherData) {
-          // Agar Teacher table me mila
-          userRole = teacherData.role === 'admin' ? 'admin' : 'teacher';
-          fullName = teacherData.full_name;
+          role = teacherData.role === 'admin' ? 'admin' : 'teacher';
+          name = teacherData.full_name;
           avatar = teacherData.avatar_url;
         } else {
-          // Agar Teacher nahi hai, to Student check karo
+          // Check Student Table
           const { data: studentData } = await supabase
             .from('students')
             .select('full_name, avatar_url')
@@ -64,71 +62,62 @@ const Sidebar = () => {
             .maybeSingle();
             
           if (studentData) {
-            fullName = studentData.full_name;
+            name = studentData.full_name;
             avatar = studentData.avatar_url;
           }
         }
 
-        // C. Update State
-        if (mounted) {
-          setProfile({ name: fullName, avatar, role: userRole });
+        if (isMounted) {
+          setProfile({ name, avatar, role });
           setSessionError(false);
         }
 
-        // D. SECURITY REDIRECT (User ko sahi dashboard par bhejo)
-        // Sirf tab redirect karo agar wo GALAT jagah par hai
-        const currentPath = location.pathname;
-
-        if (userRole === 'admin' && !currentPath.startsWith('/admin') && !currentPath.startsWith('/profile')) {
-           navigate('/admin/dashboard', { replace: true });
-        } 
-        else if (userRole === 'teacher' && !currentPath.startsWith('/teacher') && !currentPath.startsWith('/profile')) {
-           navigate('/teacher/dashboard', { replace: true });
-        } 
-        else if (userRole === 'student' && !currentPath.startsWith('/student') && !currentPath.startsWith('/profile')) {
-           navigate('/student/dashboard', { replace: true });
-        }
-
       } catch (error) {
-        console.error("Role Check Error:", error);
+        console.error("Auth Error:", error);
       } finally {
-        if (mounted) setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
-    checkUserRoleAndRedirect();
+    fetchUserData();
 
-    return () => { mounted = false; };
-  }, []); // Empty array ka matlab ye sirf ek baar chalega (Reload par)
+    // Cleanup function
+    return () => { isMounted = false; };
+  }, []); // ⚠️ Empty Array: Matlab ye zindgi me sirf 1 baar chalega (No Loop)
 
-  // -------------------------------------------
-  // UI LOGIC
-  // -------------------------------------------
 
+  // 🛑 2. Agar Loading hai to Shanti se wait karo
   if (loading) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-gray-50">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-        <div className="text-blue-900 font-bold animate-pulse">Loading Your Dashboard...</div>
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div className="text-gray-500 font-bold">Verifying Access...</div>
       </div>
     );
   }
 
+  // 🛑 3. Agar Session Expire ho gya
   if (sessionError) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50 p-6">
-         <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm">
-            <h2 className="text-xl font-black text-red-600 mb-2">Session Expired</h2>
-            <button onClick={() => { supabase.auth.signOut(); window.location.href = '/'; }} className="bg-blue-900 text-white px-6 py-3 rounded-xl font-bold mt-4 w-full">Go to Login</button>
-         </div>
+      <div className="h-screen w-full flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm">
+          <AlertTriangle size={40} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Session Expired</h2>
+          <button 
+            onClick={() => { supabase.auth.signOut(); window.location.href = '/'; }} 
+            className="bg-blue-900 text-white w-full py-3 rounded-xl font-bold mt-4 hover:bg-black transition"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Display Role Name properly
-  const displayRole = profile.role === 'admin' ? 'Administrator' : 
-                      profile.role === 'teacher' ? 'Teacher' : 'Student';
-
+  // ----------------------------------------
+  // UI LOGIC (No Navigation Here)
+  // ----------------------------------------
+  
   const navLinkClass = (path: string) => `
     flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 mb-1
     ${location.pathname === path 
@@ -138,11 +127,10 @@ const Sidebar = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-
       {/* HEADER */}
       <DashboardHeader 
         full_name={profile.name} 
-        userRole={displayRole} 
+        userRole={profile.role === 'admin' ? 'Administrator' : profile.role === 'teacher' ? 'Teacher' : 'Student'} 
         avatarUrl={profile.avatar}
         onMenuClick={() => setIsSidebarOpen(true)} 
       />
@@ -155,7 +143,6 @@ const Sidebar = () => {
       {/* SIDEBAR DRAWER */}
       <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
-        {/* Sidebar Header */}
         <div className="h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6 rounded-br-[3rem]">
           <div className="absolute top-4 right-4 cursor-pointer p-1 bg-blue-800 rounded-full hover:bg-blue-700" onClick={() => setIsSidebarOpen(false)}>
             <X size={20} />
@@ -164,11 +151,11 @@ const Sidebar = () => {
           <h2 className="font-black text-sm tracking-widest uppercase opacity-90">Adarsh Shishu Mandir</h2>
         </div>
 
-        {/* 🟢 DYNAMIC MENU BASED ON DB ROLE */}
+        {/* 🟢 MENU ITEMS (Database Role ke hisab se) */}
         <nav className="p-5 space-y-1 overflow-y-auto h-[calc(100vh-160px)] scrollbar-hide">
           <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 mt-2 tracking-widest">Main Menu</div>
 
-          {/* 1. ADMIN MENU */}
+          {/* ADMIN LINKS */}
           {profile.role === 'admin' && (
             <>
               <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={()=>setIsSidebarOpen(false)}>
@@ -180,11 +167,11 @@ const Sidebar = () => {
               <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")} onClick={()=>setIsSidebarOpen(false)}><Calendar size={18}/> Events</Link>
               <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={()=>setIsSidebarOpen(false)}><UserPlus size={18}/> Add Student</Link>
               <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")} onClick={()=>setIsSidebarOpen(false)}><Users size={18}/> Add Staff</Link>
-              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={()=>setIsSidebarOpen(false)}><ShieldCheck size={18}/> Create Admin</Link>
+              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={()=>setIsSidebarOpen(false)}><ShieldCheck size={18}/> New Admin</Link>
             </>
           )}
 
-          {/* 2. TEACHER MENU */}
+          {/* TEACHER LINKS */}
           {profile.role === 'teacher' && (
             <>
               <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={()=>setIsSidebarOpen(false)}>
@@ -196,7 +183,7 @@ const Sidebar = () => {
             </>
           )}
 
-          {/* 3. STUDENT MENU */}
+          {/* STUDENT LINKS */}
           {profile.role === 'student' && (
             <>
               <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={()=>setIsSidebarOpen(false)}>
@@ -207,6 +194,11 @@ const Sidebar = () => {
               <Link to="/student/result" className={navLinkClass("/student/result")} onClick={()=>setIsSidebarOpen(false)}><FileText size={18}/> My Results</Link>
               <Link to="/student/notices" className={navLinkClass("/student/notices")} onClick={()=>setIsSidebarOpen(false)}><Calendar size={18}/> Notice Board</Link>
             </>
+          )}
+
+          {/* Default/Fallback (Agar role load nahi hua) */}
+          {!profile.role && (
+             <div className="p-4 text-xs text-gray-400 text-center">Identifying Role...</div>
           )}
 
         </nav>
