@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
 
 // --- 2. PUBLIC PAGES (Auth) ---
+import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import ResetPassword from './pages/ResetPassword';
 import ProfileSetupPage from './pages/ProfileSetupPage';
@@ -46,7 +47,8 @@ function App() {
         {/* ========================== */}
         {/* 🟢 PUBLIC ROUTES (No Sidebar) */}
         {/* ========================== */}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<StudentRegistrationForm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
