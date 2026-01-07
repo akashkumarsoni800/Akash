@@ -19,23 +19,21 @@ const Sidebar = () => {
 
   async function getUserData() {
     try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (sessionError || !session) {
-        if (isMounted) {
-          setLoading(false);
-          navigate('/'); 
-        }
+      if (!session) {
+        if (isMounted) navigate('/'); 
         return;
       }
 
       const userEmail = session.user.email;
+      console.log("Checking DB for:", userEmail);
 
-      // 1. Staff Check
-      const { data: staff, error: staffErr } = await supabase
+      // 1. Staff/Admin check (Case-insensitive check using ilike)
+      const { data: staff } = await supabase
         .from('teachers')
         .select('full_name, role')
-        .eq('email', userEmail)
+        .ilike('email', userEmail) // ✅ .eq ki jagah .ilike
         .maybeSingle();
 
       if (staff) {
@@ -46,11 +44,11 @@ const Sidebar = () => {
         return;
       }
 
-      // 2. Student Check
+      // 2. Student check
       const { data: student } = await supabase
         .from('students')
         .select('full_name')
-        .eq('email', userEmail)
+        .ilike('email', userEmail)
         .maybeSingle();
 
       if (student) {
@@ -59,8 +57,8 @@ const Sidebar = () => {
           setLoading(false);
         }
       } else {
-        // 🛑 Sabse Zaruri: Agar user kisi table me nahi hai
-        console.warn("User not found in database. Cleaning up session...");
+        // 🛑 Agar table me user nahi mila
+        console.error("User missing in tables. Signing out...");
         await supabase.auth.signOut();
         if (isMounted) {
           setLoading(false);
@@ -68,14 +66,14 @@ const Sidebar = () => {
         }
       }
     } catch (err) {
-      console.error("Critical Sidebar Error:", err);
+      console.error(err);
       if (isMounted) setLoading(false);
     }
   }
 
   getUserData();
   return () => { isMounted = false; };
-}, [navigate]);
+}, []); // ✅ Dependency array khali rakhein taaki loop na bane
 
   if (loading) {
     return (
