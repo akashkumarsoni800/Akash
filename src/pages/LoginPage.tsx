@@ -40,30 +40,32 @@ const handleLogin = async (e: React.FormEvent) => {
       navigate('/student/dashboard');
     } 
     // --- ADMIN & TEACHER LOGIC (Same Table: teachers) ---
-    else {
-      const { data: userData, error: dbError } = await supabase
-        .from('teachers')
-        .select('full_name, role')
-        .eq('email', formData.email.trim())
-        .maybeSingle();
+   // handleLogin function ke andar ka staff check logic
+else if (role === 'admin' || role === 'teacher') {
+  const { data: staffRecord, error: staffError } = await supabase
+    .from('teachers')
+    .select('role, full_name')
+    .eq('email', formData.email.trim())
+    .maybeSingle();
 
-      if (!userData) {
-        throw new Error("User record not found in staff database.");
-      }
+  if (staffError || !staffRecord) {
+    throw new Error("Staff record not found. Please check your email.");
+  }
 
-      // Role check: Kya UI par select kiya hua role DB ke role se match karta hai?
-      if (userData.role !== role) {
-        throw new Error(`You are registered as a ${userData.role}, not a ${role}.`);
-      }
+  // 🛑 Security Check: Kya selected role DB role se match karta hai?
+  if (staffRecord.role !== role) {
+    throw new Error(`Access Denied: You are registered as ${staffRecord.role}, not ${role}.`);
+  }
 
-      if (userData.role === 'admin') {
-        toast.success("Welcome Admin!");
-        navigate('/admin/dashboard');
-      } else {
-        toast.success("Welcome Teacher!");
-        navigate('/teacher/dashboard');
-      }
-    }
+  // ✅ Sahi dashboard par bhejein
+  if (staffRecord.role === 'admin') {
+    toast.success("Welcome Admin!");
+    navigate('/admin/dashboard');
+  } else {
+    toast.success("Welcome Teacher!");
+    navigate('/teacher/dashboard');
+  }
+}
 
   } catch (error: any) {
     toast.error(error.message || "Login failed");
