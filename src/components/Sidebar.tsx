@@ -7,33 +7,39 @@ import { X, LayoutDashboard, FileText, CreditCard, Calendar, UserPlus, Users, Cl
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // 🟢 STATE FOR SIDEBAR DRAWER (Left Menu)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  // ✅ LOADING STATE ADDED (Ye crash rokega)
+  const [authLoading, setAuthLoading] = useState(true);
 
   // Role Logic
   const isAdminPath = location.pathname.startsWith('/admin');
   const isTeacherPath = location.pathname.startsWith('/teacher');
   const isStudentPath = location.pathname.startsWith('/student');
 
-  // Default Role Logic (URL Based)
   const defaultRole = isAdminPath ? 'Administrator' : (isTeacherPath ? 'Teacher' : 'Student');
   
   const [profile, setProfile] = useState({ 
-    name: 'Loading...', 
+    name: '', 
     avatar: '', 
     role: defaultRole 
   });
 
-  // Profile Fetching Logic
   useEffect(() => {
     const fetchProfile = async () => {
+      setAuthLoading(true); // Loading Start
+      
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      
+      // 🛑 SAFETY CHECK: Agar user login hi nahi hai, to turant Login page par bhejo
+      if (!user) {
+        navigate('/');
+        return;
+      }
 
       let fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
       let avatar = user.user_metadata?.avatar_url || '';
-      let detectedRole = defaultRole; // Fallback to URL role
+      let detectedRole = defaultRole;
 
       try {
         if (isAdminPath || isTeacherPath) {
@@ -49,12 +55,12 @@ const Sidebar = () => {
       } catch (err) { console.error(err); }
 
       setProfile({ name: fullName, avatar, role: detectedRole });
+      setAuthLoading(false); // Loading Finish
     };
 
     fetchProfile();
-    // URL change hone par Sidebar band kar do
     setIsSidebarOpen(false); 
-  }, [location.pathname]);
+  }, [location.pathname, navigate]); // Dependencies updated
 
   const navLinkClass = (path: string) => `
     flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 mb-1
@@ -63,20 +69,27 @@ const Sidebar = () => {
       : 'text-gray-500 hover:bg-blue-50 hover:text-blue-800'}
   `;
 
+  // 🛑 AGAR LOADING HAI TO CONTENT MAT DIKHAO (CRASH FIX)
+  if (authLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="text-blue-600 font-bold text-xl animate-pulse">Loading Dashboard...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
-      {/* 🟢 1. HEADER (Pass Handler) */}
+      {/* HEADER */}
       <DashboardHeader 
         full_name={profile.name} 
         userRole={profile.role} 
         avatarUrl={profile.avatar}
-        // 👇 Jab Hamburger click hoga, ye 'true' karega
         onMenuClick={() => setIsSidebarOpen(true)} 
       />
 
-      {/* 🟢 2. SIDEBAR DRAWER (Sliding Panel) */}
-      {/* Overlay (Black Background) */}
+      {/* SIDEBAR DRAWER */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm transition-opacity" 
@@ -84,10 +97,8 @@ const Sidebar = () => {
         ></div>
       )}
 
-      {/* Drawer Itself */}
       <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
-        {/* Sidebar Header */}
         <div className="h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6 rounded-br-[3rem]">
           <div className="absolute top-4 right-4 cursor-pointer p-1 bg-blue-800 rounded-full hover:bg-blue-700 transition" onClick={() => setIsSidebarOpen(false)}>
             <X size={20} />
@@ -100,7 +111,6 @@ const Sidebar = () => {
           </h2>
         </div>
 
-        {/* Navigation Links */}
         <nav className="p-5 space-y-1 overflow-y-auto h-[calc(100vh-160px)] scrollbar-hide">
           <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 mt-2 tracking-widest">Main Menu</div>
 
@@ -118,8 +128,6 @@ const Sidebar = () => {
               <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")}><Calendar size={18}/> Events</Link>
               <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")}><UserPlus size={18}/> Add Student</Link>
               <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")}><Users size={18}/> Add Staff</Link>
-              
-              {/* ✅ NEW ADMIN FUNCTION ADDED HERE */}
               <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")}><ShieldCheck size={18}/> New Admin</Link>
             </>
           )}
@@ -146,7 +154,7 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      {/* 🟢 3. CONTENT AREA */}
+      {/* CONTENT AREA */}
       <main className="flex-1 pt-20 p-4 md:p-8 overflow-x-hidden w-full max-w-7xl mx-auto">
         <Outlet />
       </main>
