@@ -1,151 +1,118 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import DashboardHeader from './DashboardHeader';
-import { 
-  X, LayoutDashboard, FileText, CreditCard, Calendar, 
-  UserPlus, Users, ClipboardList, ShieldCheck 
-} from 'lucide-react';
+import { Menu, LogOut, User, ChevronDown, ShieldCheck, GraduationCap } from 'lucide-react';
 
-const Sidebar = () => {
-  const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false); 
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' });
+interface HeaderProps {
+  full_name: string;
+  avatarUrl: string;
+  userRole: string;
+  onMenuClick: () => void;
+}
 
-  // ✅ FIX: Isme se 'navigate' aur 'location.pathname' dependency hata di hai
-  // Isse Loop 100% khatam ho jayega
-  useEffect(() => {
-    let isMounted = true;
+const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: HeaderProps) => {
+  const navigate = useNavigate();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-    const fetchProfile = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          if (isMounted) setLoading(false);
-          return;
-        }
+  // Logout Function
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
-        // Database se data lao
-        let fullName = user.email?.split('@')[0]; 
-        let avatar = '';
-        let detectedRole = 'student';
-
-        // 1. Check Teachers/Admin
-        const { data: teacherData } = await supabase
-          .from('teachers')
-          .select('full_name, avatar_url, role')
-          .eq('email', user.email)
-          .maybeSingle();
-
-        if (teacherData) { 
-          fullName = teacherData.full_name; 
-          avatar = teacherData.avatar_url;
-          detectedRole = teacherData.role === 'admin' ? 'admin' : 'teacher';
-        } else {
-          // 2. Check Students
-          const { data: studentData } = await supabase
-            .from('students')
-            .select('full_name, avatar_url')
-            .eq('email', user.email)
-            .maybeSingle();
-          if (studentData) { 
-            fullName = studentData.full_name; 
-            avatar = studentData.avatar_url; 
-            detectedRole = 'student';
-          }
-        }
-
-        if (isMounted) {
-          setProfile({ name: fullName || 'User', avatar, role: detectedRole });
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error(err);
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchProfile();
-    return () => { isMounted = false; };
-  }, []); // ⚠️ Empty dependency array: Sirf ek baar chalega
-
-  // Jab bhi link click ho, Sidebar close ho jaye (Mobile ke liye)
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
-
-  if (loading) return (
-    <div className="h-screen flex items-center justify-center font-bold text-blue-900">
-      Verifying Access...
-    </div>
-  );
-
-  const navLinkClass = (path: string) => `
-    flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-    ${location.pathname === path ? 'bg-blue-900 text-white shadow-lg' : 'text-gray-500 hover:bg-blue-50'}
-  `;
+  // Role display logic
+  const roleLabel = userRole === 'admin' ? 'Administrator' : userRole === 'teacher' ? 'Teacher' : 'Student';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <DashboardHeader 
-        full_name={profile.name} 
-        userRole={profile.role === 'admin' ? 'Administrator' : profile.role === 'teacher' ? 'Teacher' : 'Student'} 
-        avatarUrl={profile.avatar}
-        onMenuClick={() => setIsOpen(true)} 
-      />
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-40 flex items-center justify-between px-4 md:px-6 shadow-sm">
+      
+      {/* 🟢 LEFT: HAMBURGER & LOGO */}
+      <div className="flex items-center gap-4">
+        {/* Hamburger Menu Button - Sirf Sidebar open karne ke liye */}
+        <button 
+          onClick={onMenuClick}
+          className="p-2 hover:bg-gray-100 rounded-xl transition active:scale-90 md:hidden"
+        >
+          <Menu size={24} className="text-gray-700" />
+        </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm" onClick={() => setIsOpen(false)}></div>
-      )}
-
-      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-2 shadow-xl">
-             <span className="text-blue-900 font-black text-2xl">ASM</span>
+        {/* Brand Logo */}
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/admin/dashboard')}>
+          <div className="w-10 h-10 bg-blue-900 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-100">
+            ASM
           </div>
-          <h2 className="font-black text-xs tracking-widest uppercase opacity-90 text-center">Adarsh Shishu Mandir</h2>
-          <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white"><X size={20}/></button>
+          <div className="hidden sm:block">
+            <h1 className="text-sm font-black text-gray-800 leading-none uppercase tracking-tighter">Adarsh</h1>
+            <p className="text-[9px] font-bold text-blue-600 uppercase">Shishu Mandir</p>
+          </div>
         </div>
-
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-160px)]">
-          <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2">Main Menu</div>
-
-          {/* Role Based Logic */}
-          {profile.role === 'admin' && (
-            <>
-              <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")}> <CreditCard size={18}/> Fees Management </Link>
-              <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")}> <ClipboardList size={18}/> Results </Link>
-              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")}> <UserPlus size={18}/> Add Student </Link>
-              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")}> <Users size={18}/> Add Staff </Link>
-              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")}> <ShieldCheck size={18}/> New Admin </Link>
-            </>
-          )}
-
-          {profile.role === 'teacher' && (
-            <>
-              <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")}> <Calendar size={18}/> Attendance </Link>
-              <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")}> <FileText size={18}/> Marks Entry </Link>
-            </>
-          )}
-
-          {profile.role === 'student' && (
-            <>
-              <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/student/fees" className={navLinkClass("/student/fees")}> <CreditCard size={18}/> My Fees </Link>
-              <Link to="/student/result" className={navLinkClass("/student/result")}> <FileText size={18}/> My Results </Link>
-            </>
-          )}
-        </nav>
       </div>
 
-      <main className="flex-1 pt-20 p-4 w-full max-w-7xl mx-auto">
-        <Outlet />
-      </main>
-    </div>
+      {/* 🟢 RIGHT: PROFILE DROPDOWN */}
+      <div className="relative">
+        <button 
+          onClick={() => setIsProfileOpen(!isProfileOpen)}
+          className="flex items-center gap-3 p-1 hover:bg-gray-50 rounded-full transition group"
+        >
+          <div className="text-right hidden md:block">
+            <p className="text-xs font-bold text-gray-800">{full_name || 'User'}</p>
+            <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{roleLabel}</p>
+          </div>
+          
+          <div className="relative">
+            <img 
+              src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}&background=1e3a8a&color=fff`} 
+              alt="Profile" 
+              className="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover ring-1 ring-gray-100"
+            />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+          </div>
+          <ChevronDown size={14} className={`text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* 🔻 PROFILE DROPDOWN MENU */}
+        {isProfileOpen && (
+          <>
+            {/* Overlay to close dropdown when clicking outside */}
+            <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)}></div>
+            
+            <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-20 animate-in fade-in slide-in-from-top-2 origin-top-right">
+              
+              <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                <p className="text-sm font-black text-gray-800 truncate">{full_name}</p>
+                <p className="text-[10px] font-bold text-gray-400 truncate">{roleLabel}</p>
+              </div>
+
+              {/* Profile Link */}
+              <button 
+                onClick={() => { navigate('/profile-setup'); setIsProfileOpen(false); }}
+                className="flex w-full items-center gap-3 px-4 py-3 text-xs font-bold text-gray-700 hover:bg-blue-50 rounded-xl transition"
+              >
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                  <User size={16} />
+                </div>
+                Edit Profile
+              </button>
+
+              <div className="h-px bg-gray-50 my-1"></div>
+
+              {/* Logout Button */}
+              <button 
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 px-4 py-3 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition"
+              >
+                <div className="p-2 bg-red-100 text-red-500 rounded-lg">
+                  <LogOut size={16} />
+                </div>
+                Logout Session
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+    </header>
   );
 };
 
-export default Sidebar;
+export default DashboardHeader;
