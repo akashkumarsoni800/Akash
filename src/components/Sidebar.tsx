@@ -1,161 +1,165 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
-import { toast } from 'sonner';
+import { 
+  X, LayoutDashboard, FileText, CreditCard, Calendar, 
+  UserPlus, Users, ClipboardList, ShieldCheck, AlertCircle 
+} from 'lucide-react';
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false); 
-  const [loading, setLoading] = useState(true); // ✅ Crash rokne ke liye loading state
-  const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // States for Data
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState({ name: 'User', role: 'student', avatar: '' });
 
-  // 1. Role Detection Logic based on URL
-  const isAdmin = location.pathname.startsWith('/admin');
-  const isTeacher = location.pathname.startsWith('/teacher');
-  const isStudent = location.pathname.startsWith('/student');
-
+  // 🛑 FIX: Yahan 'navigate' use nahi kiya hai, isliye Loop nahi banega
   useEffect(() => {
     let isMounted = true;
 
-    const fetchProfile = async () => {
+    async function getUserData() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
-          if (isMounted) navigate('/');
-          return;
+          if (isMounted) setLoading(false);
+          return; 
         }
 
         const user = session.user;
-        let fullName = user.email?.split('@')[0]; 
-        let avatar = '';
-        let detectedRole = isAdmin ? 'Admin' : (isTeacher ? 'Teacher' : 'Student');
+        
+        // Default Data
+        let userRole = 'student';
+        let userName = user.user_metadata?.full_name || 'User';
+        let userAvatar = user.user_metadata?.avatar_url || '';
 
-        // 2. Database Integration (Fixing the empty blocks)
-        if (isStudent) {
-          const { data } = await supabase.from('students').select('full_name, avatar_url').eq('email', user.email).maybeSingle();
-          if (data) { fullName = data.full_name; avatar = data.avatar_url; }
-        } 
-        else if (isTeacher || isAdmin) {
-          // ✅ FIXED: Ab ye block teachers table se data fetch karega
-          const { data } = await supabase.from('teachers').select('full_name, avatar_url, role').eq('email', user.email).maybeSingle();
-          if (data) { 
-            fullName = data.full_name; 
-            avatar = data.avatar_url;
-            // Agar Admin path par hai par role teacher hai, ya vice versa, toh yahan logic handle hoga
-            if (data.role === 'admin') detectedRole = 'Admin';
-            else detectedRole = 'Teacher';
-          } else {
-            // 🛑 SAFETY: Agar DB mein user nahi mila toh loop break karein
-            console.error("User not found in Teachers table");
-            if (isMounted) {
-               setLoading(false);
-               // Yahan redirect na karein warna loop ban sakta hai, bas error dikhayein
-            }
+        // 1. Check Teachers Table (Admin/Teacher)
+        const { data: teacher } = await supabase
+          .from('teachers')
+          .select('full_name, role, avatar_url')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (teacher) {
+          userRole = teacher.role === 'admin' ? 'admin' : 'teacher';
+          userName = teacher.full_name;
+          userAvatar = teacher.avatar_url;
+        } else {
+          // 2. Check Student Table
+          const { data: student } = await supabase
+            .from('students')
+            .select('full_name, avatar_url')
+            .eq('id', user.id)
+            .maybeSingle();
+
+          if (student) {
+            userRole = 'student';
+            userName = student.full_name;
+            userAvatar = student.avatar_url;
           }
         }
 
         if (isMounted) {
-          setProfile({ name: fullName || 'User', avatar: avatar, role: detectedRole });
+          setProfile({ name: userName, role: userRole, avatar: userAvatar });
           setLoading(false);
-          setIsOpen(false); 
         }
-      } catch (err) {
-        console.error("Profile fetch error:", err);
+
+      } catch (error) {
+        console.error("Sidebar Error:", error);
         if (isMounted) setLoading(false);
       }
-    };
+    }
 
-    fetchProfile();
+    getUserData();
+
     return () => { isMounted = false; };
-  }, [location.pathname]); // ✅ Sirf pathname change par chalega
+  }, []); // ⚠️ Empty Array = Ye code sirf 1 baar chalega
 
+  // ---------------- UI RENDERING ----------------
+
+  // Loading Screen (Crash Rokne ke liye)
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="text-blue-900 font-bold animate-pulse">Loading Menu...</div>
+      </div>
+    );
+  }
+
+  // Display Name for Role
+  const roleDisplay = profile.role === 'admin' ? 'Administrator' : 
+                      profile.role === 'teacher' ? 'Teacher' : 'Student';
+
+  // Helper Class for Links
   const navLinkClass = (path: string) => `
-    flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200
-    ${location.pathname === path 
-      ? 'bg-blue-900 text-white shadow-lg translate-x-2' 
-      : 'text-gray-500 hover:bg-blue-50 hover:text-blue-900'}
+    flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all mb-1
+    ${location.pathname === path ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-blue-50'}
   `;
-
-  // ✅ Important: Jab tak data load na ho, kuch render na karein (Crash prevention)
-  if (loading) return <div className="h-screen flex items-center justify-center font-bold text-blue-900">ASM PORTAL LOADING...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      
+      {/* 1. Header */}
       <DashboardHeader 
         full_name={profile.name} 
-        userRole={profile.role} 
+        userRole={roleDisplay} 
         avatarUrl={profile.avatar}
-        onMenuClick={() => setIsOpen(true)} 
+        onMenuClick={() => setIsSidebarOpen(true)} 
       />
 
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity" onClick={() => setIsOpen(false)}></div>
+      {/* 2. Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setIsSidebarOpen(false)} />
       )}
 
-      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-48 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6">
-          <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center overflow-hidden mb-3 shadow-2xl border-2 border-blue-400/30">
-             <img 
-               src="/logo.png" 
-               alt="Logo" 
-               className="w-full h-full object-cover" 
-               onError={(e) => { e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/2602/2602414.png" }} 
-             />
+      {/* 3. Sidebar Drawer */}
+      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        
+        <div className="p-6 bg-blue-900 text-white flex justify-between items-start">
+          <div>
+             <h2 className="font-black text-xl">ASM SYSTEM</h2>
+             <p className="text-xs opacity-70">School Management</p>
           </div>
-          <h2 className="font-black text-sm tracking-tighter uppercase text-center leading-tight">Adarsh Shishu Mandir</h2>
-          <p className="text-[9px] font-bold text-blue-300 uppercase tracking-[0.2em] mt-1">Education Excellence</p>
-          <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white text-xl">✕</button>
+          <button onClick={() => setIsSidebarOpen(false)}><X size={20}/></button>
         </div>
 
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-192px)] scrollbar-hide">
-          <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Main Menu</div>
-          
-          <Link to={isAdmin ? "/admin/dashboard" : (isTeacher ? "/teacher/dashboard" : "/student/dashboard")} className={navLinkClass(isAdmin ? "/admin/dashboard" : (isTeacher ? "/teacher/dashboard" : "/student/dashboard"))}>
-            <span>🏠</span> Dashboard
-          </Link>
+        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-100px)]">
+          <p className="text-[10px] font-bold text-gray-400 uppercase px-4 mb-2">Menu</p>
 
-          {isAdmin && (
+          {/* ADMIN MENU */}
+          {profile.role === 'admin' && (
             <>
-              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Management</div>
-              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")}><span>💰</span> Fees Management</Link>
-              <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")}><span>📤</span> Result Center</Link>
-              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")}><span>🎓</span> New Student</Link>
-              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")}><span>👨‍🏫</span> Add Staff</Link>
+              <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
+              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")} onClick={() => setIsSidebarOpen(false)}> <CreditCard size={18}/> Fees </Link>
+              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={() => setIsSidebarOpen(false)}> <UserPlus size={18}/> Students </Link>
+              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")} onClick={() => setIsSidebarOpen(false)}> <Users size={18}/> Teachers </Link>
+              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsSidebarOpen(false)}> <ShieldCheck size={18}/> Create Admin </Link>
             </>
           )}
 
-          {isTeacher && (
+          {/* TEACHER MENU */}
+          {profile.role === 'teacher' && (
             <>
-              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Teacher Tools</div>
-              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")}><span>📅</span> Attendance</Link>
-              <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")}><span>📝</span> Marks Entry</Link>
+              <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
+              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")} onClick={() => setIsSidebarOpen(false)}> <Calendar size={18}/> Attendance </Link>
             </>
           )}
 
-          {isStudent && (
+          {/* STUDENT MENU */}
+          {profile.role === 'student' && (
             <>
-              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Student Portal</div>
-              <Link to="/student/fees" className={navLinkClass("/student/fees")}><span>💸</span> My Fees</Link>
-              <Link to="/student/result" className={navLinkClass("/student/result")}><span>📊</span> My Results</Link>
+              <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
+              <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsSidebarOpen(false)}> <CreditCard size={18}/> My Fees </Link>
             </>
           )}
 
-          <div className="border-t border-gray-100 my-6"></div>
-          <Link to="/profile-setup" className={navLinkClass("/profile-setup")}><span>👤</span> My Profile</Link>
-          
-          <button 
-            onClick={async () => { await supabase.auth.signOut(); navigate('/'); }} 
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all mt-4"
-          >
-            <span>🚪</span> Logout Session
-          </button>
         </nav>
       </div>
 
-      <main className="flex-1 pt-16 p-4 md:p-8 overflow-x-hidden">
+      {/* 4. CONTENT AREA */}
+      <main className="flex-1 pt-20 p-4 w-full max-w-7xl mx-auto">
         <Outlet />
       </main>
     </div>
