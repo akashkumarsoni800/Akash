@@ -1,165 +1,171 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
+import { toast } from 'sonner';
 import { 
   X, LayoutDashboard, FileText, CreditCard, Calendar, 
-  UserPlus, Users, ClipboardList, ShieldCheck, AlertCircle 
+  UserPlus, Users, ClipboardList, ShieldCheck 
 } from 'lucide-react';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  // States for Data
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState({ name: 'User', role: 'student', avatar: '' });
+  const [isOpen, setIsOpen] = useState(false); 
+  const [loading, setLoading] = useState(true); // Loading state loop rokne ke liye
+  const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' });
 
-  // 🛑 FIX: Yahan 'navigate' use nahi kiya hai, isliye Loop nahi banega
+  // ✅ 1. Check User Role Only Once (No Loops)
   useEffect(() => {
     let isMounted = true;
 
-    async function getUserData() {
+    const fetchProfile = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        setLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
         
-        if (!session) {
-          if (isMounted) setLoading(false);
-          return; 
+        if (!user) {
+          // Agar user nahi hai to hi login par bhejo
+          if (isMounted) navigate('/');
+          return;
         }
 
-        const user = session.user;
-        
-        // Default Data
-        let userRole = 'student';
-        let userName = user.user_metadata?.full_name || 'User';
-        let userAvatar = user.user_metadata?.avatar_url || '';
+        let fullName = user.email?.split('@')[0]; 
+        let avatar = '';
+        let detectedRole = 'student'; // Default
 
-        // 1. Check Teachers Table (Admin/Teacher)
-        const { data: teacher } = await supabase
+        // Teachers/Admin Table Check
+        const { data: teacherData } = await supabase
           .from('teachers')
-          .select('full_name, role, avatar_url')
-          .eq('id', user.id)
+          .select('full_name, avatar_url, role')
+          .eq('email', user.email)
           .maybeSingle();
 
-        if (teacher) {
-          userRole = teacher.role === 'admin' ? 'admin' : 'teacher';
-          userName = teacher.full_name;
-          userAvatar = teacher.avatar_url;
+        if (teacherData) { 
+          fullName = teacherData.full_name; 
+          avatar = teacherData.avatar_url;
+          detectedRole = teacherData.role === 'admin' ? 'admin' : 'teacher';
         } else {
-          // 2. Check Student Table
-          const { data: student } = await supabase
+          // Students Table Check
+          const { data: studentData } = await supabase
             .from('students')
             .select('full_name, avatar_url')
-            .eq('id', user.id)
+            .eq('email', user.email)
             .maybeSingle();
-
-          if (student) {
-            userRole = 'student';
-            userName = student.full_name;
-            userAvatar = student.avatar_url;
+            
+          if (studentData) { 
+            fullName = studentData.full_name; 
+            avatar = studentData.avatar_url; 
+            detectedRole = 'student';
           }
         }
 
         if (isMounted) {
-          setProfile({ name: userName, role: userRole, avatar: userAvatar });
+          setProfile({ name: fullName || 'User', avatar: avatar, role: detectedRole });
           setLoading(false);
         }
-
-      } catch (error) {
-        console.error("Sidebar Error:", error);
+      } catch (err) {
+        console.error("Profile fetch error:", err);
         if (isMounted) setLoading(false);
       }
-    }
+    };
 
-    getUserData();
-
+    fetchProfile();
     return () => { isMounted = false; };
-  }, []); // ⚠️ Empty Array = Ye code sirf 1 baar chalega
+  }, []); // ⚠️ Empty dependency: Yeh loop ko 100% rok dega
 
-  // ---------------- UI RENDERING ----------------
-
-  // Loading Screen (Crash Rokne ke liye)
-  if (loading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
-        <div className="text-blue-900 font-bold animate-pulse">Loading Menu...</div>
-      </div>
-    );
-  }
-
-  // Display Name for Role
-  const roleDisplay = profile.role === 'admin' ? 'Administrator' : 
-                      profile.role === 'teacher' ? 'Teacher' : 'Student';
-
-  // Helper Class for Links
+  // ✅ Active link highlight logic
   const navLinkClass = (path: string) => `
-    flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all mb-1
-    ${location.pathname === path ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-blue-50'}
+    flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200
+    ${location.pathname === path 
+      ? 'bg-blue-900 text-white shadow-lg translate-x-2' 
+      : 'text-gray-500 hover:bg-blue-50 hover:text-blue-900'}
   `;
+
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center font-bold text-blue-900 animate-pulse">
+      ASM Loading...
+    </div>
+  );
+
+  const roleName = profile.role === 'admin' ? 'Administrator' : profile.role === 'teacher' ? 'Teacher' : 'Student';
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      
-      {/* 1. Header */}
+
+      {/* 🟢 1. Dashboard Header */}
       <DashboardHeader 
         full_name={profile.name} 
-        userRole={roleDisplay} 
+        userRole={roleName} 
         avatarUrl={profile.avatar}
-        onMenuClick={() => setIsSidebarOpen(true)} 
+        onMenuClick={() => setIsOpen(true)} 
       />
 
-      {/* 2. Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setIsSidebarOpen(false)} />
+      {/* 🟢 2. Sidebar Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity" 
+          onClick={() => setIsOpen(false)}
+        ></div>
       )}
 
-      {/* 3. Sidebar Drawer */}
-      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        
-        <div className="p-6 bg-blue-900 text-white flex justify-between items-start">
-          <div>
-             <h2 className="font-black text-xl">ASM SYSTEM</h2>
-             <p className="text-xs opacity-70">School Management</p>
+      {/* 🟢 3. Sliding Sidebar Drawer */}
+      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+
+        {/* Sidebar Header */}
+        <div className="h-48 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-xl">
+             <span className="text-blue-900 font-black text-2xl">ASM</span>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)}><X size={20}/></button>
+          <h2 className="font-black text-sm tracking-tighter uppercase text-center leading-tight">
+            Adarsh Shishu Mandir
+          </h2>
+          <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition">✕</button>
         </div>
 
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-100px)]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase px-4 mb-2">Menu</p>
+        {/* Navigation Links (Role Based) */}
+        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-192px)] scrollbar-hide">
 
-          {/* ADMIN MENU */}
+          {/* --- ADMIN LINKS --- */}
           {profile.role === 'admin' && (
             <>
-              <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")} onClick={() => setIsSidebarOpen(false)}> <CreditCard size={18}/> Fees </Link>
-              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={() => setIsSidebarOpen(false)}> <UserPlus size={18}/> Students </Link>
-              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")} onClick={() => setIsSidebarOpen(false)}> <Users size={18}/> Teachers </Link>
-              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsSidebarOpen(false)}> <ShieldCheck size={18}/> Create Admin </Link>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Admin Dashboard</div>
+              <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsOpen(false)}><LayoutDashboard size={18}/> Overview</Link>
+              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")} onClick={() => setIsOpen(false)}><CreditCard size={18}/> Fees Management</Link>
+              <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")} onClick={() => setIsOpen(false)}><ClipboardList size={18}/> Result Center</Link>
+              <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")} onClick={() => setIsOpen(false)}><Calendar size={18}/> School Events</Link>
+              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={() => setIsOpen(false)}><UserPlus size={18}/> New Student</Link>
+              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")} onClick={() => setIsOpen(false)}><Users size={18}/> Add Staff</Link>
+              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsOpen(false)}><ShieldCheck size={18}/> New Admin</Link>
             </>
           )}
 
-          {/* TEACHER MENU */}
-          {profile.role === 'teacher' && (
-            <>
-              <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")} onClick={() => setIsSidebarOpen(false)}> <Calendar size={18}/> Attendance </Link>
-            </>
-          )}
-
-          {/* STUDENT MENU */}
+          {/* --- STUDENT LINKS --- */}
           {profile.role === 'student' && (
             <>
-              <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsSidebarOpen(false)}> <CreditCard size={18}/> My Fees </Link>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Student Portal</div>
+              <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsOpen(false)}><LayoutDashboard size={18}/> Dashboard</Link>
+              <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsOpen(false)}><CreditCard size={18}/> My Fees</Link>
+              <Link to="/student/result" className={navLinkClass("/student/result")} onClick={() => setIsOpen(false)}><FileText size={18}/> My Results</Link>
+              <Link to="/student/notices" className={navLinkClass("/student/notices")} onClick={() => setIsOpen(false)}><Calendar size={18}/> Notice Board</Link>
+            </>
+          )}
+
+          {/* --- TEACHER LINKS --- */}
+          {profile.role === 'teacher' && (
+            <>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Teacher Tools</div>
+              <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsOpen(false)}><LayoutDashboard size={18}/> Dashboard</Link>
+              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")} onClick={() => setIsOpen(false)}><Calendar size={18}/> Attendance</Link>
+              <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")} onClick={() => setIsOpen(false)}><FileText size={18}/> Marks Entry</Link>
             </>
           )}
 
         </nav>
       </div>
 
-      {/* 4. CONTENT AREA */}
-      <main className="flex-1 pt-20 p-4 w-full max-w-7xl mx-auto">
+      {/* 🟢 4. Content Area */}
+      <main className="flex-1 pt-16 p-4 md:p-8 overflow-x-hidden">
         <Outlet />
       </main>
     </div>
