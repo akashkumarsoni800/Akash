@@ -1,76 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'; // ✅ useNavigate added
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
 import { 
   X, LayoutDashboard, CreditCard, Calendar, 
-  UserPlus, Users, ShieldCheck, FileText
+  UserPlus, Users, ShieldCheck, FileText 
 } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // ✅ Ise initialize karna zaruri tha
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({ name: 'User', role: '', avatar: '' });
 
-  // Sidebar.tsx ke useEffect mein ye update karein
-useEffect(() => {
-  let isMounted = true;
+  useEffect(() => {
+    let isMounted = true;
 
-  async function getUserData() {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        if (isMounted) navigate('/'); 
-        return;
-      }
-
-      const userEmail = session.user.email;
-
-      // 1. Staff/Admin check
-      const { data: staff } = await supabase
-        .from('teachers')
-        .select('full_name, role')
-        .eq('email', userEmail)
-        .maybeSingle();
-
-      if (staff) {
-        if (isMounted) {
-          setProfile({ name: staff.full_name, role: staff.role, avatar: '' });
-          setLoading(false);
+    async function getUserData() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          if (isMounted) navigate('/'); 
+          return;
         }
-        return;
-      }
 
-      // 2. Student check
-      const { data: student } = await supabase
-        .from('students')
-        .select('full_name')
-        .eq('email', userEmail)
-        .maybeSingle();
+        const userEmail = session.user.email;
 
-      if (student) {
-        if (isMounted) {
-          setProfile({ name: student.full_name, role: 'student', avatar: '' });
-          setLoading(false);
+        // 1. Staff/Admin check (teachers table)
+        const { data: staff } = await supabase
+          .from('teachers')
+          .select('full_name, role')
+          .eq('email', userEmail)
+          .maybeSingle();
+
+        if (staff) {
+          if (isMounted) {
+            setProfile({ name: staff.full_name, role: staff.role, avatar: '' });
+            setLoading(false);
+          }
+          return;
         }
-      } else {
-        // 🛑 AGAR KAHI NAHI MILA: Logout kar do taaki loop na bane
-        console.error("User not found in any table!");
-        await supabase.auth.signOut();
-        if (isMounted) navigate('/');
+
+        // 2. Student check
+        const { data: student } = await supabase
+          .from('students')
+          .select('full_name')
+          .eq('email', userEmail)
+          .maybeSingle();
+
+        if (student) {
+          if (isMounted) {
+            setProfile({ name: student.full_name, role: 'student', avatar: '' });
+            setLoading(false);
+          }
+        } else {
+          // 🛑 User nahi mila: Loop rokne ke liye signout karein
+          console.error("User not found in database tables.");
+          await supabase.auth.signOut();
+          if (isMounted) navigate('/');
+        }
+      } catch (err) {
+        console.error("Sidebar Error:", err);
+        if (isMounted) setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      if (isMounted) setLoading(false);
     }
-  }
 
-  getUserData();
-  return () => { isMounted = false; };
-}, [navigate]);
-  
+    getUserData();
+    return () => { isMounted = false; };
+  }, [navigate]);
+
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-gray-50">
@@ -92,7 +92,6 @@ useEffect(() => {
       <DashboardHeader 
         full_name={profile.name} 
         userRole={roleDisplay} 
-        avatarUrl={profile.avatar}
         onMenuClick={() => setIsSidebarOpen(true)} 
       />
 
@@ -100,6 +99,7 @@ useEffect(() => {
         <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setIsSidebarOpen(false)} />
       )}
 
+      {/* Sidebar Drawer */}
       <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 bg-blue-900 text-white flex justify-between items-start">
           <div>
@@ -110,9 +110,7 @@ useEffect(() => {
         </div>
 
         <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-100px)]">
-          <p className="text-[10px] font-black text-gray-400 uppercase px-4 mb-2 tracking-widest">Main Menu</p>
-
-          {/* ADMIN MENU (Role Based) */}
+          {/* Menu Items (Same as your code) */}
           {profile.role === 'admin' && (
             <>
               <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
@@ -122,8 +120,6 @@ useEffect(() => {
               <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsSidebarOpen(false)}> <ShieldCheck size={18}/> Security </Link>
             </>
           )}
-
-          {/* TEACHER MENU (Role Based) */}
           {profile.role === 'teacher' && (
             <>
               <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
@@ -131,13 +127,10 @@ useEffect(() => {
               <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")} onClick={() => setIsSidebarOpen(false)}> <FileText size={18}/> Results </Link>
             </>
           )}
-
-          {/* STUDENT MENU */}
           {profile.role === 'student' && (
             <>
               <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsSidebarOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
               <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsSidebarOpen(false)}> <CreditCard size={18}/> My Fees </Link>
-              <Link to="/student/result" className={navLinkClass("/student/result")} onClick={() => setIsSidebarOpen(false)}> <FileText size={18}/> Report Card </Link>
             </>
           )}
         </nav>
