@@ -1,43 +1,14 @@
-import React, { useState, useEffect } from 'react';
+0import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Menu, X, LogOut, User, LayoutDashboard, ShieldCheck, GraduationCap } from 'lucide-react';
+import { Menu, LogOut, User, ChevronDown, ShieldCheck, GraduationCap } from 'lucide-react';
 
-const DashboardHeader = ({ full_name, avatarUrl }: any) => {
+// Props:
+// 1. full_name, role, avatarUrl -> Data dikhane ke liye
+// 2. onMenuClick -> Sidebar kholne ka signal dene ke liye
+const DashboardHeader = ({ full_name, userRole, avatarUrl, onMenuClick }: any) => {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // ✅ Role State
-  const [realRole, setRealRole] = useState('Checking...');
-  const [homeLink, setHomeLink] = useState('#');
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // 1. Teacher Table Check
-      const { data: teacher } = await supabase
-        .from('teachers')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (teacher) {
-        if (teacher.role === 'admin') {
-          setRealRole('Administrator');
-          setHomeLink('/admin/dashboard');
-        } else {
-          setRealRole('Teacher');
-          setHomeLink('/teacher/dashboard');
-        }
-      } else {
-        setRealRole('Student');
-        setHomeLink('/student/dashboard');
-      }
-    };
-    fetchUserRole();
-  }, []);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -45,100 +16,95 @@ const DashboardHeader = ({ full_name, avatarUrl }: any) => {
   };
 
   return (
-    <div className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50 px-4 md:px-6 py-3 border-b border-gray-100">
-      <div className="flex justify-between items-center">
+    <div className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-40 px-4 md:px-6 py-3 border-b border-gray-100 flex justify-between items-center h-16">
+      
+      {/* 🟢 LEFT SIDE: HAMBURGER & LOGO */}
+      <div className="flex items-center gap-3">
         
-        {/* ✅ LEFT SECTION: Hamburger + Logo */}
-        <div className="flex items-center gap-3 md:gap-4">
-          
-          {/* 1. MOBILE HAMBURGER (Left Side) */}
-          <button 
-            className="md:hidden p-2 text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl active:scale-95 transition" 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+        {/* HAMBURGER BUTTON (Mobile Only) */}
+        {/* Is par click karne se Sidebar.tsx ka function chalega */}
+        <button 
+          className="md:hidden p-2 text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl active:scale-95 transition border border-gray-200" 
+          onClick={onMenuClick} 
+        >
+          <Menu size={24} />
+        </button>
 
-          {/* 2. BRAND LOGO (Next to Hamburger) */}
-          <div 
-            className="flex items-center gap-2 cursor-pointer group" 
-            onClick={() => navigate(homeLink)}
-          >
-            <div className="w-9 h-9 md:w-10 md:h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-blue-200 shadow-lg group-hover:scale-105 transition">
-              ASM
-            </div>
-            <div>
-              <h1 className="text-base md:text-lg font-black text-gray-800 leading-none">ADARSH</h1>
-              <p className="text-[9px] md:text-[10px] font-bold text-blue-500 tracking-wider">SHISHU MANDIR</p>
-            </div>
+        {/* LOGO */}
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(0)}>
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-blue-200 shadow-lg">
+            ASM
+          </div>
+          <div>
+            <h1 className="text-lg font-black text-gray-800 leading-none">ADARSH</h1>
+            <p className="text-[10px] font-bold text-blue-500 tracking-wider">SHISHU MANDIR</p>
           </div>
         </div>
-
-        {/* ✅ RIGHT SECTION: Desktop Profile Only */}
-        <div className="hidden md:flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-bold text-gray-800">{full_name || 'User'}</p>
-            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-              realRole === 'Administrator' ? 'bg-purple-100 text-purple-600' :
-              realRole === 'Student' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'
-            }`}>
-              {realRole}
-            </span>
-          </div>
-          <div className="w-11 h-11 rounded-full bg-gray-100 p-0.5 border border-gray-200 overflow-hidden cursor-pointer hover:ring-2 ring-blue-100 transition">
-             <img src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}`} className="w-full h-full object-cover rounded-full" />
-          </div>
-        </div>
-
       </div>
 
-      {/* ✅ MOBILE MENU DROPDOWN (Left Side Alignment) */}
-      {isMenuOpen && (
-        <>
-          {/* Backdrop to close menu when clicking outside */}
-          <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setIsMenuOpen(false)} />
+      {/* 🟢 RIGHT SIDE: PROFILE DROPDOWN ONLY */}
+      <div className="relative">
+        
+        {/* Profile Trigger Button */}
+        <button 
+          onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+          className="flex items-center gap-2 md:gap-3 p-1.5 pr-3 rounded-full hover:bg-gray-50 border border-transparent hover:border-gray-100 transition cursor-pointer"
+        >
+          <div className="text-right hidden md:block">
+            <p className="text-xs font-bold text-gray-800">{full_name || 'User'}</p>
+            <p className="text-[9px] font-black text-blue-500 uppercase tracking-wide bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full inline-block">
+              {userRole}
+            </button>
+          </div>
           
-          {/* Menu Box - Now aligned to LEFT (left-4) */}
-          <div className="absolute top-16 left-4 w-72 bg-white shadow-2xl rounded-2xl border border-gray-100 p-5 flex flex-col gap-2 z-50 animate-in fade-in slide-in-from-left-5">
+          <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
+             <img 
+               src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}&background=random`} 
+               className="w-full h-full object-cover" 
+               alt="Profile"
+             />
+          </div>
+          <ChevronDown size={16} className="text-gray-400 hidden md:block" />
+        </button>
+
+        {/* 🔻 ACTUAL DROPDOWN (Logout & Edit Profile) */}
+        {isProfileDropdownOpen && (
+          <>
+            {/* Backdrop to close when clicking outside */}
+            <div className="fixed inset-0 z-30 cursor-default" onClick={() => setIsProfileDropdownOpen(false)} />
+            
+            {/* The Menu Box */}
+            <div className="absolute right-0 top-14 w-56 bg-white shadow-2xl rounded-2xl border border-gray-100 p-2 z-40 animate-in fade-in slide-in-from-top-2 origin-top-right">
               
-              {/* Profile Info inside Menu */}
-              <div className="flex items-center gap-4 border-b border-gray-100 pb-4 mb-2">
-                <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
-                  <img src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}`} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <p className="text-base font-bold text-gray-800">{full_name || 'User'}</p>
-                  <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">{realRole}</p>
+              {/* Mobile Info (Only visible on mobile inside dropdown) */}
+              <div className="px-3 py-3 border-b border-gray-50 mb-1 md:hidden bg-gray-50 rounded-xl">
+                <p className="text-sm font-bold text-gray-800">{full_name}</p>
+                <div className="flex items-center gap-1 mt-1">
+                   {userRole === 'Administrator' ? <ShieldCheck size={12} className="text-purple-500"/> : <GraduationCap size={12} className="text-green-500"/>}
+                   <p className="text-[10px] font-black text-gray-500 uppercase">{userRole}</p>
                 </div>
               </div>
-
-              {/* Links */}
+              
               <button 
-                onClick={() => { setIsMenuOpen(false); navigate(homeLink); }} 
-                className="flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl text-gray-700 font-bold text-sm transition"
+                onClick={() => { setIsProfileDropdownOpen(false); navigate('/profile-setup'); }} 
+                className="flex w-full items-center gap-3 p-3 hover:bg-blue-50 rounded-xl text-xs font-bold text-gray-700 transition"
               >
-                <LayoutDashboard size={20} className="text-blue-600" />
-                Dashboard
+                <User size={18} className="text-blue-600" /> Edit Profile
               </button>
-
-              <button 
-                onClick={() => { setIsMenuOpen(false); navigate('/profile-setup'); }} 
-                className="flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl text-gray-700 font-bold text-sm transition"
-              >
-                <User size={20} className="text-blue-600" />
-                Edit Profile
-              </button>
+              
+              <div className="h-px bg-gray-100 my-1"></div>
 
               <button 
                 onClick={handleLogout} 
-                className="flex items-center gap-3 p-3 hover:bg-red-50 text-red-600 rounded-xl font-bold text-sm mt-2 border-t border-gray-50 transition"
+                className="flex w-full items-center gap-3 p-3 hover:bg-red-50 rounded-xl text-xs font-bold text-red-600 transition"
               >
-                <LogOut size={20} />
-                Logout
+                <LogOut size={18} /> Logout Session
               </button>
-          </div>
-        </>
-      )}
+            </div>
+          </>
+        )}
+      </div>
+
     </div>
   );
 };
