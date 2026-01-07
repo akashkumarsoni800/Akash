@@ -1,112 +1,157 @@
-0import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Menu, LogOut, User, ChevronDown, ShieldCheck, GraduationCap } from 'lucide-react';
+import DashboardHeader from './DashboardHeader';
+import { X, LayoutDashboard, FileText, CreditCard, Calendar, UserPlus, Users, ClipboardList, ShieldCheck } from 'lucide-react';
 
-// Props:
-// 1. full_name, role, avatarUrl -> Data dikhane ke liye
-// 2. onMenuClick -> Sidebar kholne ka signal dene ke liye
-const DashboardHeader = ({ full_name, userRole, avatarUrl, onMenuClick }: any) => {
+const Sidebar = () => {
   const navigate = useNavigate();
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const location = useLocation();
+  
+  // 🟢 STATE FOR SIDEBAR DRAWER (Left Menu)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
+  // Role Logic
+  const isAdminPath = location.pathname.startsWith('/admin');
+  const isTeacherPath = location.pathname.startsWith('/teacher');
+  const isStudentPath = location.pathname.startsWith('/student');
+
+  // Default Role Logic (URL Based)
+  const defaultRole = isAdminPath ? 'Administrator' : (isTeacherPath ? 'Teacher' : 'Student');
+  
+  const [profile, setProfile] = useState({ 
+    name: 'Loading...', 
+    avatar: '', 
+    role: defaultRole 
+  });
+
+  // Profile Fetching Logic
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      let fullName = user.user_metadata?.full_name || user.email?.split('@')[0];
+      let avatar = user.user_metadata?.avatar_url || '';
+      let detectedRole = defaultRole; // Fallback to URL role
+
+      try {
+        if (isAdminPath || isTeacherPath) {
+          const { data } = await supabase.from('teachers').select('full_name, avatar_url, role').eq('id', user.id).maybeSingle();
+          if (data) {
+             fullName = data.full_name; avatar = data.avatar_url;
+             detectedRole = data.role === 'admin' ? 'Administrator' : 'Teacher';
+          }
+        } else if (isStudentPath) {
+          const { data } = await supabase.from('students').select('full_name, avatar_url').eq('id', user.id).maybeSingle();
+          if (data) { fullName = data.full_name; avatar = data.avatar_url; detectedRole = 'Student'; }
+        }
+      } catch (err) { console.error(err); }
+
+      setProfile({ name: fullName, avatar, role: detectedRole });
+    };
+
+    fetchProfile();
+    // URL change hone par Sidebar band kar do
+    setIsSidebarOpen(false); 
+  }, [location.pathname]);
+
+  const navLinkClass = (path: string) => `
+    flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 mb-1
+    ${location.pathname === path 
+      ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 translate-x-1' 
+      : 'text-gray-500 hover:bg-blue-50 hover:text-blue-800'}
+  `;
 
   return (
-    <div className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-40 px-4 md:px-6 py-3 border-b border-gray-100 flex justify-between items-center h-16">
-      
-      {/* 🟢 LEFT SIDE: HAMBURGER & LOGO */}
-      <div className="flex items-center gap-3">
-        
-        {/* HAMBURGER BUTTON (Mobile Only) */}
-        {/* Is par click karne se Sidebar.tsx ka function chalega */}
-        <button 
-          className="md:hidden p-2 text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl active:scale-95 transition border border-gray-200" 
-          onClick={onMenuClick} 
-        >
-          <Menu size={24} />
-        </button>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
 
-        {/* LOGO */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(0)}>
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-blue-200 shadow-lg">
+      {/* 🟢 1. HEADER (Pass Handler) */}
+      <DashboardHeader 
+        full_name={profile.name} 
+        userRole={profile.role} 
+        avatarUrl={profile.avatar}
+        // 👇 Jab Hamburger click hoga, ye 'true' karega
+        onMenuClick={() => setIsSidebarOpen(true)} 
+      />
+
+      {/* 🟢 2. SIDEBAR DRAWER (Sliding Panel) */}
+      {/* Overlay (Black Background) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm transition-opacity" 
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Drawer Itself */}
+      <div className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        
+        {/* Sidebar Header */}
+        <div className="h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6 rounded-br-[3rem]">
+          <div className="absolute top-4 right-4 cursor-pointer p-1 bg-blue-800 rounded-full hover:bg-blue-700 transition" onClick={() => setIsSidebarOpen(false)}>
+            <X size={20} />
+          </div>
+          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-blue-900 font-black text-xl mb-2 shadow-lg">
             ASM
           </div>
-          <div>
-            <h1 className="text-lg font-black text-gray-800 leading-none">ADARSH</h1>
-            <p className="text-[10px] font-bold text-blue-500 tracking-wider">SHISHU MANDIR</p>
-          </div>
+          <h2 className="font-black text-sm tracking-widest uppercase text-center leading-tight opacity-90">
+            Adarsh Shishu Mandir
+          </h2>
         </div>
+
+        {/* Navigation Links */}
+        <nav className="p-5 space-y-1 overflow-y-auto h-[calc(100vh-160px)] scrollbar-hide">
+          <div className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 mt-2 tracking-widest">Main Menu</div>
+
+          <Link to={isAdminPath ? "/admin/dashboard" : (isTeacherPath ? "/teacher/dashboard" : "/student/dashboard")} 
+            className={navLinkClass(isAdminPath ? "/admin/dashboard" : (isTeacherPath ? "/teacher/dashboard" : "/student/dashboard"))}>
+             <LayoutDashboard size={18} /> Dashboard
+          </Link>
+
+          {/* ADMIN TOOLS */}
+          {isAdminPath && (
+            <>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Admin Tools</div>
+              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")}><CreditCard size={18}/> Manage Fees</Link>
+              <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")}><ClipboardList size={18}/> Result Center</Link>
+              <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")}><Calendar size={18}/> Events</Link>
+              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")}><UserPlus size={18}/> Add Student</Link>
+              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")}><Users size={18}/> Add Staff</Link>
+              
+              {/* ✅ NEW ADMIN FUNCTION ADDED HERE */}
+              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")}><ShieldCheck size={18}/> New Admin</Link>
+            </>
+          )}
+
+          {/* STUDENT TOOLS */}
+          {isStudentPath && (
+            <>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Academics</div>
+              <Link to="/student/fees" className={navLinkClass("/student/fees")}><CreditCard size={18}/> My Fees</Link>
+              <Link to="/student/result" className={navLinkClass("/student/result")}><FileText size={18}/> My Results</Link>
+              <Link to="/student/notices" className={navLinkClass("/student/notices")}><Calendar size={18}/> Notice Board</Link>
+            </>
+          )}
+
+           {/* TEACHER TOOLS */}
+           {isTeacherPath && (
+            <>
+              <div className="text-[10px] font-black text-gray-300 uppercase px-4 mt-6 mb-2 tracking-widest">Classroom</div>
+              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")}><Calendar size={18}/> Attendance</Link>
+              <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")}><FileText size={18}/> Marks Entry</Link>
+            </>
+          )}
+
+        </nav>
       </div>
 
-      {/* 🟢 RIGHT SIDE: PROFILE DROPDOWN ONLY */}
-      <div className="relative">
-        
-        {/* Profile Trigger Button */}
-        <button 
-          onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-          className="flex items-center gap-2 md:gap-3 p-1.5 pr-3 rounded-full hover:bg-gray-50 border border-transparent hover:border-gray-100 transition cursor-pointer"
-        >
-          <div className="text-right hidden md:block">
-            <p className="text-xs font-bold text-gray-800">{full_name || 'User'}</p>
-            <p className="text-[9px] font-black text-blue-500 uppercase tracking-wide bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full inline-block">
-              {userRole}
-            </button>
-          </div>
-          
-          <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
-             <img 
-               src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}&background=random`} 
-               className="w-full h-full object-cover" 
-               alt="Profile"
-             />
-          </div>
-          <ChevronDown size={16} className="text-gray-400 hidden md:block" />
-        </button>
-
-        {/* 🔻 ACTUAL DROPDOWN (Logout & Edit Profile) */}
-        {isProfileDropdownOpen && (
-          <>
-            {/* Backdrop to close when clicking outside */}
-            <div className="fixed inset-0 z-30 cursor-default" onClick={() => setIsProfileDropdownOpen(false)} />
-            
-            {/* The Menu Box */}
-            <div className="absolute right-0 top-14 w-56 bg-white shadow-2xl rounded-2xl border border-gray-100 p-2 z-40 animate-in fade-in slide-in-from-top-2 origin-top-right">
-              
-              {/* Mobile Info (Only visible on mobile inside dropdown) */}
-              <div className="px-3 py-3 border-b border-gray-50 mb-1 md:hidden bg-gray-50 rounded-xl">
-                <p className="text-sm font-bold text-gray-800">{full_name}</p>
-                <div className="flex items-center gap-1 mt-1">
-                   {userRole === 'Administrator' ? <ShieldCheck size={12} className="text-purple-500"/> : <GraduationCap size={12} className="text-green-500"/>}
-                   <p className="text-[10px] font-black text-gray-500 uppercase">{userRole}</p>
-                </div>
-              </div>
-              
-              <button 
-                onClick={() => { setIsProfileDropdownOpen(false); navigate('/profile-setup'); }} 
-                className="flex w-full items-center gap-3 p-3 hover:bg-blue-50 rounded-xl text-xs font-bold text-gray-700 transition"
-              >
-                <User size={18} className="text-blue-600" /> Edit Profile
-              </button>
-              
-              <div className="h-px bg-gray-100 my-1"></div>
-
-              <button 
-                onClick={handleLogout} 
-                className="flex w-full items-center gap-3 p-3 hover:bg-red-50 rounded-xl text-xs font-bold text-red-600 transition"
-              >
-                <LogOut size={18} /> Logout Session
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
+      {/* 🟢 3. CONTENT AREA */}
+      <main className="flex-1 pt-20 p-4 md:p-8 overflow-x-hidden w-full max-w-7xl mx-auto">
+        <Outlet />
+      </main>
     </div>
   );
 };
 
-export default DashboardHeader;
+export default Sidebar;
