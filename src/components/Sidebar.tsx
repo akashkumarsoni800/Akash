@@ -20,53 +20,57 @@ useEffect(() => {
   async function getUserData() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session || !isMounted) {
-        setLoading(false);
+      
+      if (!session) {
+        if (isMounted) navigate('/'); 
         return;
       }
 
-      // User ki email se uska role fetch karein
       const userEmail = session.user.email;
 
-      // 1. Check Teachers table (For Admin & Teacher)
+      // 1. Staff/Admin check
       const { data: staff } = await supabase
         .from('teachers')
-        .select('full_name, role, avatar_url')
+        .select('full_name, role')
         .eq('email', userEmail)
         .maybeSingle();
 
       if (staff) {
         if (isMounted) {
-          setProfile({ name: staff.full_name, role: staff.role, avatar: staff.avatar_url });
+          setProfile({ name: staff.full_name, role: staff.role, avatar: '' });
           setLoading(false);
         }
         return;
       }
 
-      // 2. Fallback to Student
+      // 2. Student check
       const { data: student } = await supabase
         .from('students')
-        .select('full_name, avatar_url')
+        .select('full_name')
         .eq('email', userEmail)
         .maybeSingle();
 
-      if (isMounted) {
-        setProfile({ 
-          name: student?.full_name || 'User', 
-          role: 'student', 
-          avatar: student?.avatar_url || '' 
-        });
-        setLoading(false);
+      if (student) {
+        if (isMounted) {
+          setProfile({ name: student.full_name, role: 'student', avatar: '' });
+          setLoading(false);
+        }
+      } else {
+        // 🛑 AGAR KAHI NAHI MILA: Logout kar do taaki loop na bane
+        console.error("User not found in any table!");
+        await supabase.auth.signOut();
+        if (isMounted) navigate('/');
       }
     } catch (err) {
+      console.error(err);
       if (isMounted) setLoading(false);
     }
   }
 
   getUserData();
   return () => { isMounted = false; };
-}, []);
-
+}, [navigate]);
+  
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-gray-50">
