@@ -15,61 +15,67 @@ const Sidebar = () => {
   const [profile, setProfile] = useState({ name: 'User', role: '', avatar: '' });
 
   useEffect(() => {
-    let isMounted = true;
+  let isMounted = true;
 
-    async function getUserData() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          if (isMounted) navigate('/'); 
-          return;
+  async function getUserData() {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        if (isMounted) {
+          setLoading(false);
+          navigate('/'); 
         }
-
-        const userEmail = session.user.email;
-
-        // 1. Staff/Admin check (teachers table)
-        const { data: staff } = await supabase
-          .from('teachers')
-          .select('full_name, role')
-          .eq('email', userEmail)
-          .maybeSingle();
-
-        if (staff) {
-          if (isMounted) {
-            setProfile({ name: staff.full_name, role: staff.role, avatar: '' });
-            setLoading(false);
-          }
-          return;
-        }
-
-        // 2. Student check
-        const { data: student } = await supabase
-          .from('students')
-          .select('full_name')
-          .eq('email', userEmail)
-          .maybeSingle();
-
-        if (student) {
-          if (isMounted) {
-            setProfile({ name: student.full_name, role: 'student', avatar: '' });
-            setLoading(false);
-          }
-        } else {
-          // 🛑 User nahi mila: Loop rokne ke liye signout karein
-          console.error("User not found in database tables.");
-          await supabase.auth.signOut();
-          if (isMounted) navigate('/');
-        }
-      } catch (err) {
-        console.error("Sidebar Error:", err);
-        if (isMounted) setLoading(false);
+        return;
       }
-    }
 
-    getUserData();
-    return () => { isMounted = false; };
-  }, [navigate]);
+      const userEmail = session.user.email;
+
+      // 1. Staff Check
+      const { data: staff, error: staffErr } = await supabase
+        .from('teachers')
+        .select('full_name, role')
+        .eq('email', userEmail)
+        .maybeSingle();
+
+      if (staff) {
+        if (isMounted) {
+          setProfile({ name: staff.full_name, role: staff.role, avatar: '' });
+          setLoading(false);
+        }
+        return;
+      }
+
+      // 2. Student Check
+      const { data: student } = await supabase
+        .from('students')
+        .select('full_name')
+        .eq('email', userEmail)
+        .maybeSingle();
+
+      if (student) {
+        if (isMounted) {
+          setProfile({ name: student.full_name, role: 'student', avatar: '' });
+          setLoading(false);
+        }
+      } else {
+        // 🛑 Sabse Zaruri: Agar user kisi table me nahi hai
+        console.warn("User not found in database. Cleaning up session...");
+        await supabase.auth.signOut();
+        if (isMounted) {
+          setLoading(false);
+          navigate('/');
+        }
+      }
+    } catch (err) {
+      console.error("Critical Sidebar Error:", err);
+      if (isMounted) setLoading(false);
+    }
+  }
+
+  getUserData();
+  return () => { isMounted = false; };
+}, [navigate]);
 
   if (loading) {
     return (
