@@ -67,7 +67,7 @@ const Home = () => {
         {/* 🟢 Right Decoration Section */}
         <div className="relative animate__animated animate__fadeInRight flex justify-center">
             {/* School Illustration or Image Placeholder */}
-            <div className="h-550px w-[550px]  rounded-[3rem] border-0 border-white shadow-2xl relative overflow-hidden flex items-center justify-center">
+            <div className=" rounded-[3rem] border-0 border-white shadow-2xl relative overflow-hidden flex items-center justify-center">
                  <div className="text-blue-200 font-black text-9xl select-none"><img src="/logo.png"/></div>
                  {/* Floating Card UI Mockup */}
                  <div className="absolute bottom-10 left-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce flex items-center gap-3">
@@ -95,6 +95,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 
