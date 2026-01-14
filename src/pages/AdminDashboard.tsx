@@ -38,6 +38,8 @@ const AdminDashboard = () => {
   const [classes, setClasses] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<any>(null);
+  const [isTeacherEditModalOpen, setIsTeacherEditModalOpen] = useState(false);
+const [editingTeacher, setEditingTeacher] = useState<any>(null);
 
   useEffect(() => {
     fetchInitialData();
@@ -94,6 +96,30 @@ const handleUpdate = async (e: React.FormEvent) => {
     toast.success("Student updated successfully!");
     setIsEditModalOpen(false); // मॉडल बंद करें
     fetchInitialData(); // लिस्ट रिफ्रेश करें
+  } catch (error: any) {
+    toast.error("Update failed: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+  const handleTeacherUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
+    const { error } = await supabase
+      .from('teachers')
+      .update({
+        full_name: editingTeacher.full_name,
+        subject: editingTeacher.subject,
+        phone: editingTeacher.phone,
+      })
+      .eq('id', editingTeacher.id);
+
+    if (error) throw error;
+
+    toast.success("Teacher updated successfully!");
+    setIsTeacherEditModalOpen(false);
+    fetchInitialData(); // लिस्ट को रिफ्रेश करें
   } catch (error: any) {
     toast.error("Update failed: " + error.message);
   } finally {
@@ -235,6 +261,22 @@ const handleUpdate = async (e: React.FormEvent) => {
                       <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
                       <td className="p-4 text-xs font-bold text-gray-500 uppercase">{t.subject || 'Staff'}</td>
                       <td className="p-4 text-right flex justify-end gap-2">
+                        <td className="p-4 text-right flex justify-end gap-2">
+  {/* 📝 Edit Teacher Button */}
+  <button 
+    onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} 
+    className="p-2 bg-gray-50 hover:bg-blue-50 text-blue-600 rounded-lg transition-all"
+  >
+    📝
+  </button>
+  
+  <button 
+    onClick={() => handleRemove('teachers', t.id)} 
+    className="p-2 bg-gray-50 hover:bg-red-50 text-red-500 rounded-lg transition-all"
+  >
+    🗑️
+  </button>
+</td>
                          <button onClick={() => handleRemove('teachers', t.id)} className="p-2 bg-gray-50 hover:bg-red-50 text-red-500 rounded-lg transition-all">🗑️ Remove</button>
                       </td>
                     </tr>
@@ -288,6 +330,68 @@ const handleUpdate = async (e: React.FormEvent) => {
             type="button"
             onClick={() => setIsEditModalOpen(false)}
             className="flex-1 bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-xs uppercase hover:bg-gray-200 transition"
+          >
+            Cancel
+          </button>
+          
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+      {isTeacherEditModalOpen && editingTeacher && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl border border-gray-100">
+      <div className="mb-6">
+        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Edit Teacher</h2>
+        <p className="text-xs font-bold text-gray-400">Update staff information</p>
+      </div>
+      
+      <form onSubmit={handleTeacherUpdate} className="space-y-4">
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Full Name</label>
+          <input 
+            type="text" 
+            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100"
+            value={editingTeacher.full_name}
+            onChange={(e) => setEditingTeacher({...editingTeacher, full_name: e.target.value})}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Subject / Role</label>
+          <input 
+            type="text" 
+            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100"
+            value={editingTeacher.subject}
+            onChange={(e) => setEditingTeacher({...editingTeacher, subject: e.target.value})}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Phone Number</label>
+          <input 
+            type="text" 
+            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100"
+            value={editingTeacher.phone || ''}
+            onChange={(e) => setEditingTeacher({...editingTeacher, phone: e.target.value})}
+          />
+        </div>
+
+        <div className="flex gap-3 mt-8">
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="flex-1 bg-blue-900 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-black transition transform active:scale-95"
+          >
+            {loading ? 'Saving...' : 'Update Staff'}
+          </button>
+          <button 
+            type="button"
+            onClick={() => setIsTeacherEditModalOpen(false)}
+            className="flex-1 bg-gray-100 text-gray-500 py-4 rounded-2xl font-black text-xs uppercase hover:bg-gray-200 transition"
           >
             Cancel
           </button>
