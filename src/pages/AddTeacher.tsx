@@ -54,21 +54,84 @@ const AddTeacher = () => {
     }
   };
 
-  return (
-    // ... (Aapka baki UI code same rahega)
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Add Teacher</h2>
-            <input className="w-full border p-2 mb-2" placeholder="Name" onChange={e => setFormData({...formData, name: e.target.value})} required />
-            <input className="w-full border p-2 mb-2" placeholder="Subject" onChange={e => setFormData({...formData, subject: e.target.value})} required />
-            <input className="w-full border p-2 mb-2" placeholder="Email" type="email" onChange={e => setFormData({...formData, email: e.target.value})} required />
-            <input className="w-full border p-2 mb-4" placeholder="Phone" onChange={e => setFormData({...formData, phone: e.target.value})} required />
-            <button disabled={isPending} className="w-full bg-blue-600 text-white p-2 rounded">
-                {isPending ? "Creating..." : "Create Teacher"}
-            </button>
-        </form>
+ return (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 notranslate">
+    <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 w-full max-w-md">
+      
+      {/* Header Section */}
+      <div className="mb-8">
+        <h2 className="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+          Add Teacher
+        </h2>
+        <p className="text-sm font-bold text-gray-400 mt-1">Register new staff member</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Full Name</label>
+          <input 
+            className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
+            placeholder="Ex: Rajesh Kumar" 
+            onChange={e => setFormData({...formData, name: e.target.value})} 
+            required 
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Subject / Role</label>
+          <input 
+            className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
+            placeholder="Ex: Mathematics" 
+            onChange={e => setFormData({...formData, subject: e.target.value})} 
+            required 
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Email Address</label>
+          <input 
+            className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
+            placeholder="teacher@school.com" 
+            type="email" 
+            onChange={e => setFormData({...formData, email: e.target.value})} 
+            required 
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Phone Number</label>
+          <input 
+            className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
+            placeholder="91XXXXXXXX" 
+            onChange={e => setFormData({...formData, phone: e.target.value})} 
+            required 
+          />
+        </div>
+
+        <div className="pt-4 flex flex-col gap-3">
+          <button 
+            disabled={isPending} 
+            className="w-full bg-blue-900 hover:bg-black text-white p-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg transition transform active:scale-95 disabled:opacity-50"
+          >
+            {isPending ? "🚀 Processing..." : "💾 Create Teacher Account"}
+          </button>
+          
+          <button 
+            type="button"
+            onClick={() => navigate('/admin/dashboard')}
+            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 p-4 rounded-2xl font-black uppercase tracking-widest text-xs transition"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      {/* Info Note */}
+      <p className="mt-6 text-[10px] text-center font-bold text-gray-400 uppercase tracking-tighter">
+        Default Password will be: <span className="text-blue-600">Teacher@123</span>
+      </p>
     </div>
-  );
-};
+  </div>
+);
 
 export default AddTeacher;
