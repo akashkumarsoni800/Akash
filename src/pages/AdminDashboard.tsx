@@ -224,7 +224,14 @@ const handleUpdate = async (e: React.FormEvent) => {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {allTeachers.map(t => (
-                    <tr key={t.id} className="hover:bg-gray-50 transition">
+                    <tr 
+  key={s.id} 
+  onClick={() => navigate(`/admin/student/${s.id}`)} // क्लिक करने पर नए पेज पर ले जाएगा
+  className="hover:bg-blue-50 transition cursor-pointer"
+>
+  <td className="p-4 font-bold text-gray-800 underline decoration-blue-200 underline-offset-4">
+    {s.full_name}
+  </td>
                       <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
                       <td className="p-4 text-xs font-bold text-gray-500 uppercase">{t.subject || 'Staff'}</td>
                       <td className="p-4 text-right flex justify-end gap-2">
