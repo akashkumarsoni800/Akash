@@ -116,6 +116,12 @@ const handleUpdate = async (e: React.FormEvent) => {
           </div>
           <div className="flex flex-wrap gap-2">
             {/* ✅ RE-ADDED EVENT BUTTON */}
+            <button 
+    onClick={() => navigate('/admin/create-exam')} 
+    className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg transition transform active:scale-95 flex items-center gap-2"
+  >
+    <span>📝</span> CREATE EXAM
+  </button>
             <button onClick={() => navigate('/admin/add-event')} className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg transition transform active:scale-95 flex items-center gap-2">
               <span>📢</span> ADD EVENT / NOTICE
             </button>
