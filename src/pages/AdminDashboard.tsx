@@ -76,7 +76,30 @@ const AdminDashboard = () => {
       if (!error) { toast.success("Deleted!"); fetchInitialData(); }
     }
   };
+const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
+    const { error } = await supabase
+      .from('students')
+      .update({
+        full_name: editingStudent.full_name,
+        class_name: editingStudent.class_name,
+        contact_number: editingStudent.contact_number, // यदि अन्य फील्ड्स हैं तो यहाँ जोड़ें
+      })
+      .eq('id', editingStudent.id);
 
+    if (error) throw error;
+
+    toast.success("Student updated successfully!");
+    setIsEditModalOpen(false); // मॉडल बंद करें
+    fetchInitialData(); // लिस्ट रिफ्रेश करें
+  } catch (error: any) {
+    toast.error("Update failed: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
   const filteredStudents = classFilter === 'All' ? allStudents : allStudents.filter(s => s.class_name === classFilter);
 
   if (loading && !isEditModalOpen) return <div className="h-screen flex items-center justify-center font-bold">ASM Loading...</div>;
@@ -212,6 +235,54 @@ const AdminDashboard = () => {
 
       </div>
       {/* (Modal code goes here - same as before) */}
+      {isEditModalOpen && editingStudent && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+      <h2 className="text-2xl font-black mb-6 uppercase tracking-tighter">Edit Student</h2>
+      
+      <form onSubmit={handleUpdate} className="space-y-4">
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400">Full Name</label>
+          <input 
+            type="text" 
+            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl font-bold"
+            value={editingStudent.full_name}
+            onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] font-black uppercase text-gray-400">Class Name</label>
+          <input 
+            type="text" 
+            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl font-bold"
+            value={editingStudent.class_name}
+            onChange={(e) => setEditingStudent({...editingStudent, class_name: e.target.value})}
+            required
+          />
+        </div>
+
+        <div className="flex gap-3 mt-8">
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="flex-1 bg-blue-900 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg hover:bg-black transition"
+          >
+            {loading ? 'Saving...' : 'Save Changes'}
+          </button>
+          <button 
+            type="button"
+            onClick={() => setIsEditModalOpen(false)}
+            className="flex-1 bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-xs uppercase hover:bg-gray-200 transition"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 };
