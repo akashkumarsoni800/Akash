@@ -29,9 +29,10 @@ const ManageFees = () => {
       const { data: headData } = await supabase.from('fee_heads').select('*').order('id');
       if (headData) {
         setFeeHeads(headData);
-        const initialValues: any = {};
-        headData.forEach((h: any) => initialValues[h.name] = 0);
-        setFeeValues(initialValues);
+        // initialValues में नाम की जगह id इस्तेमाल करें
+const initialValues: any = {};
+headData.forEach((h: any) => initialValues[h.id] = 0); // h.name की जगह h.id
+setFeeValues(initialValues);
       }
     } catch (error: any) {
       console.error("Error fetching data:", error.message);
@@ -105,12 +106,12 @@ const ManageFees = () => {
     }
   };
 
-  const handleFeeValueChange = (headName: string, value: string) => {
-    setFeeValues({ ...feeValues, [headName]: value });
-  };
-
+ const handleFeeValueChange = (headId: string, value: string) => {
+  setFeeValues({ ...feeValues, [headId]: value });
+};
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+   <div className="p-6 bg-gray-50 min-h-screen notranslate">
+  
       <h1 className="text-3xl font-bold text-blue-900 mb-6">💰 Manage Fees & Reminders</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
@@ -118,11 +119,12 @@ const ManageFees = () => {
           <form onSubmit={handleAssignFee} className="space-y-4">
             <div>
               <label className="block text-sm font-bold text-gray-700">Select Student</label>
-              <select 
-                className="w-full border p-2 rounded" 
-                value={selectedStudent}
-                onChange={e => setSelectedStudent(e.target.value)}
-              >
+             <select 
+  className="w-full border p-2 rounded" 
+  value={selectedStudent}
+  onChange={e => setSelectedStudent(e.target.value)}
+  translate="no" // यहाँ जोड़ें ताकि ID और नाम न बदलें
+>
                 <option value="">-- Select --</option>
                 {students.map(s => (
                   <option key={s.id} value={s.id}>
@@ -141,10 +143,13 @@ const ManageFees = () => {
               {feeHeads.map((head) => (
                 <div key={head.id}>
                   <label className="block text-xs font-bold text-gray-600 mb-1">{head.name}</label>
-                  <input 
-                    type="number" className="w-full border p-2 rounded" placeholder="0"
-                    onChange={(e) => handleFeeValueChange(head.name, e.target.value)}
-                  />
+                 <input 
+  type="number" 
+  className="w-full border p-2 rounded" 
+  placeholder="0"
+  value={feeValues[head.name] || ''} // यह लाइन जोड़ें
+  onChange={(e) => handleFeeValueChange(head.name, e.target.value)}
+/>
                 </div>
               ))}
             </div>
