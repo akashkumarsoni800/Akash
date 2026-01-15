@@ -34,14 +34,14 @@ import CreateAdmin from './pages/CreateAdmin';
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* 🟢 Main Container - strictly using one Router */}
-      <div className="min-h-screen bg-gray-50 notranslate">
+   <BrowserRouter>
+      {/* 🟢 यह मुख्य कंटेनर है जो पूरी ऐप को कंट्रोल करेगा */}
+      <div className="min-h-screen bg-gray-50 notranslate flex flex-col">
         
         {/* ग्लोबल नोटिफिकेशन */}
         <Toaster position="top-right" richColors closeButton />
 
-        {/* 🖼️ Slideshow - Top Level (Har page par dikhega) */}
+        {/* 🖼️ GALLERY SLIDER: इसे Routes के बाहर रखा है ताकि यह हर पेज पर दिखे */}
         <GallerySlider />
 
         <Routes>
