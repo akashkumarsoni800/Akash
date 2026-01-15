@@ -151,10 +151,7 @@ const AdminDashboard = () => {
           <StatCard icon="⌛" title="Pending Admissions" value={counts.pending} color="yellow" />
           <StatCard icon="👨‍🏫" title="Total Teachers" value={counts.teachers} color="green" />
         </div>
-{/* 🖼️ MIDDLE: Gallery Slider (अब यह बीच में है) */}
-    <div className="mb-10">
-      <GallerySlider />
-    </div>
+
         {/* Tabs System */}
         <div className="flex space-x-6 border-b border-gray-200 mb-8">
           {['overview', 'students', 'teachers'].map(tab => (
