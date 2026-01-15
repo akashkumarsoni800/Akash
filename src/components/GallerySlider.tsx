@@ -87,51 +87,49 @@ const GallerySlider = () => {
   };
 
   return (
-    <div className="w-full relative group notranslate mb-8 px-4 max-w-7xl mx-auto">
-      {isAdminDashboard && (
-        <div className="absolute top-4 right-12 z-20">
-          <label className="bg-white/90 backdrop-blur-md text-blue-900 px-4 py-2 rounded-2xl text-[10px] font-black cursor-pointer shadow-xl hover:bg-blue-900 hover:text-white transition-all">
-            {uploading ? "UPLOADING..." : "+ ADD PHOTO"}
-            <input type="file" className="hidden" onChange={handleUpload} disabled={uploading} />
-          </label>
+  <div className="w-full relative group notranslate mb-8 px-4 max-w-7xl mx-auto">
+    
+    {/* ... (Add Photo Button Code) ... */}
+
+    <div className="relative h-48 md:h-80 overflow-hidden rounded-[40px] shadow-2xl bg-white border border-gray-100">
+      {gallery.map((img, i) => (
+        <div 
+          key={img.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+        >
+          <img src={img.url} className="w-full h-full object-cover" alt="School" />
         </div>
+      ))}
+
+      {/* ✅ MANUAL CONTROLS: Left & Right Buttons */}
+      {gallery.length > 0 && (
+        <>
+          <button 
+            onClick={() => setCurrentIndex((prev) => (prev - 1 + gallery.length) % gallery.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 backdrop-blur-md p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/50"
+          >
+            ❮
+          </button>
+          <button 
+            onClick={() => setCurrentIndex((prev) => (prev + 1) % gallery.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 backdrop-blur-md p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/50"
+          >
+            ❯
+          </button>
+        </>
       )}
 
-      <div className="relative h-48 md:h-64 overflow-hidden rounded-[40px] shadow-2xl bg-white border border-gray-100">
-        {gallery.length > 0 ? (
-          gallery.map((img, i) => (
-            <div 
-              key={img.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-            >
-              <img 
-                src={img.url} 
-                className="w-full h-full object-cover" 
-                alt="School" 
-                loading="eager" // ✅ रेंडरिंग सुधारने के लिए
-                onError={(e) => {
-                  e.currentTarget.src = "https://via.placeholder.com/800x400?text=Error+Loading+Image";
-                }}
-              />
-              
-              {isAdminDashboard && (
-                <button 
-                  onClick={() => deleteImage(img.id)}
-                  className="absolute top-4 left-4 bg-red-600 text-white p-2 rounded-xl shadow-lg z-30"
-                >
-                  🗑️
-                </button>
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="h-full flex items-center justify-center text-gray-300 font-bold uppercase tracking-widest text-xs">
-            No Photos in Gallery
-          </div>
-        )}
+      {/* ✅ INDICATORS: Dots at bottom */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+        {gallery.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`h-1.5 rounded-full transition-all ${i === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/50'}`}
+          />
+        ))}
       </div>
     </div>
-  );
-};
-
+  </div>
+);
 export default GallerySlider;
