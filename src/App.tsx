@@ -59,6 +59,10 @@ function App() {
           {/* 🔵 UNIVERSAL SIDEBAR ROUTES */}
           {/* ========================== */}
           <Route element={<Sidebar />}>
+                    {/* 🖼️ GALLERY SLIDER: इसे Routes के बाहर रखा है ताकि यह हर पेज पर दिखे */}
+         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-6">
+          <GallerySlider />
+        </div>
             <Route path="/profile-setup" element={<ProfileSetupPage />} />
 
             {/* Student Section */}
