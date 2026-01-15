@@ -132,4 +132,5 @@ const GallerySlider = () => {
     </div>
   </div>
 );
+};
 export default GallerySlider;
