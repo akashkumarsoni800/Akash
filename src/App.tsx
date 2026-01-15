@@ -44,11 +44,6 @@ function App() {
         {/* ग्लोबल नोटिफिकेशन */}
         <Toaster position="top-right" richColors closeButton />
 
-        {/* 🖼️ GALLERY SLIDER: इसे Routes के बाहर रखा है ताकि यह हर पेज पर दिखे */}
-         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-6">
-          <GallerySlider />
-        </div>
-
         <Routes>
           {/* ========================== */}
           {/* 🟢 PUBLIC ROUTES (No Sidebar) */}
