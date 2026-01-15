@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
-import GallerySlider from '../components/GallerySlider'; // ✅ यह लाइन जोड़ना सबसे ज़रूरी है
+//import GallerySlider from '../components/GallerySlider'; // ✅ यह लाइन जोड़ना सबसे ज़रूरी है
 // --- UI Components ---
 const StatCard = ({ icon, title, value, color = 'blue' }) => {
   const colors = {
