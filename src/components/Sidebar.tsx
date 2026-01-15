@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
+import GallerySlider from './GallerySlider'; // ✅ 1. GallerySlider इम्पोर्ट किया गया
 import { 
   X, LayoutDashboard, CreditCard, UserPlus, Users, 
   ShieldCheck, ClipboardList, Calendar, FileText 
@@ -20,7 +21,6 @@ const Sidebar = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // DB Se role nikalein
         const { data: teacherData } = await supabase
           .from('teachers')
           .select('full_name, avatar_url, role')
@@ -69,7 +69,7 @@ const Sidebar = () => {
         <div className="fixed inset-0 bg-black/60 z-[90] lg:hidden backdrop-blur-sm" onClick={() => setIsMobileOpen(false)}></div>
       )}
 
-      {/* SIDEBAR DRAWER (Fixed on Desktop) */}
+      {/* SIDEBAR DRAWER */}
       <aside className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out 
         lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
@@ -82,7 +82,6 @@ const Sidebar = () => {
         <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-160px)] scrollbar-hide">
           <p className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Navigation</p>
           
-          {/* Admin Menu */}
           {profile.role === 'admin' && (
             <>
               <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Overview </Link>
@@ -94,7 +93,6 @@ const Sidebar = () => {
             </>
           )}
 
-          {/* Teacher Menu */}
           {profile.role === 'teacher' && (
             <>
               <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
@@ -103,7 +101,6 @@ const Sidebar = () => {
             </>
           )}
 
-          {/* Student Menu */}
           {profile.role === 'student' && (
             <>
               <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> My Dashboard </Link>
@@ -114,9 +111,16 @@ const Sidebar = () => {
         </nav>
       </aside>
 
-      {/* CONTENT AREA (Shifted on Desktop) */}
+      {/* CONTENT AREA */}
       <main className={`transition-all duration-300 pt-16 min-h-screen lg:ml-72`}>
         <div className="p-4 md:p-8 w-full max-w-7xl mx-auto">
+          
+          {/* ✅ 2. यहाँ स्लाइडर जोड़ा गया है। यह Outlet (पेज कंटेंट) के ठीक ऊपर रहेगा, 
+                 जिससे हर पेज पर यह Header के नीचे और बाकी कंटेंट के ऊपर "बीच में" दिखेगा */}
+          <div className="mb-6">
+            <GallerySlider />
+          </div>
+
           <Outlet />
         </div>
       </main>
