@@ -5,7 +5,7 @@ import { Toaster } from 'sonner';
 // --- 1. COMPONENTS ---
 import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
-
+import GallerySlider from './components/GallerySlider'; // ✅ Import ensure karein
 // --- 2. PUBLIC PAGES (Auth) ---
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
@@ -42,7 +42,10 @@ function App() {
     <BrowserRouter>
       {/* 🟢 यह Main Div पूरी ऐप को 'notranslate' रखेगा */}
       <div className="min-h-screen bg-gray-50 notranslate">
-        
+      
+      {/* ग्लोबल नोटिफिकेशन सिस्टम */}
+      <Toaster position="top-right" richColors closeButton />
+
         {/* 🖼️ स्लाइडर यहाँ रहेगा ताकि यह हर पेज पर दिखे */}
         {/* लेकिन अगर आप चाहते हैं कि यह सिर्फ एडमिन पेजेस पर दिखे, तो इसे Dashboard के अंदर ही रखें */}
         <GallerySlider />
@@ -111,7 +114,7 @@ function App() {
           </div>
         } />
       </Routes>
-    </Router>
+   </BrowserRouter>
         
   );
 }
