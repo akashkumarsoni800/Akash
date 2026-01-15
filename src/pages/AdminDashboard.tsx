@@ -50,10 +50,10 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const [stdCountRes, tchCountRes, penCountRes] = await Promise.all([
-      const { count: stdCount } = await supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved');
-      const { count: tchCount } = await supabase.from('teachers').select('*', { count: 'exact', head: true });
-      const { count: penCount } = await supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending');
-      
+      supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved'),
+      supabase.from('teachers').select('*', { count: 'exact', head: true }),
+      supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending')
+    ]);
       setCounts({ students: stdCount || 0, teachers: tchCount || 0, pending: penCount || 0 });
 
       const { data: pending } = await supabase.from('students').select('*').eq('is_approved', 'pending');
