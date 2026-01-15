@@ -128,6 +128,10 @@ const AdminDashboard = () => {
             <button onClick={() => navigate('/admin/manage-fees')} className="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg">💰 MANAGE FEES</button>
           </div>
         </div>
+        {/* 2. SLIDESHOW SECTION (Middle - Exactly where you want) */}
+      <div className="mb-8">
+        <GallerySlider /> 
+      </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
