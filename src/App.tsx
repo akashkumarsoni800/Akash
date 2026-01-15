@@ -33,17 +33,7 @@ import StudentProfile from './pages/StudentProfile';
 import CreateAdmin from './pages/CreateAdmin';
 
 
-// ✅ एक छोटा 'Wrapper' कंपोनेंट ताकि स्लाइडर बीच में दिखे
-const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex flex-col w-full">
-    {/* पेज का ऊपर का हिस्सा यहाँ लोड होगा */}
-    {children}
-    {/* 🖼️ स्लाइडर अब हर पेज पर कंटेंट के बीच में दिखेगा */}
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-6">
-      <GallerySlider />
-    </div>
-  </div>
-);
+
 
 function App() {
   return (
