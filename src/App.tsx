@@ -39,6 +39,13 @@ import CreateAdmin from './pages/CreateAdmin';
 
 function App() {
   return (
+    <BrowserRouter>
+      {/* 🟢 यह Main Div पूरी ऐप को 'notranslate' रखेगा */}
+      <div className="min-h-screen bg-gray-50 notranslate">
+        
+        {/* 🖼️ स्लाइडर यहाँ रहेगा ताकि यह हर पेज पर दिखे */}
+        {/* लेकिन अगर आप चाहते हैं कि यह सिर्फ एडमिन पेजेस पर दिखे, तो इसे Dashboard के अंदर ही रखें */}
+        <GallerySlider />
     <Router>
       {/* ग्लोबल नोटिफिकेशन सिस्टम */}
       <Toaster position="top-right" richColors closeButton />
@@ -86,6 +93,7 @@ function App() {
           <Route path="/admin/create-admin" element={<CreateAdmin />} />
 
         </Route>
+        </BrowserRouter>
 
         {/* ========================== */}
         {/* 🔴 404 - PAGE NOT FOUND    */}
@@ -104,6 +112,7 @@ function App() {
         } />
       </Routes>
     </Router>
+        
   );
 }
 
