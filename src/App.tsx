@@ -32,7 +32,7 @@ import AddEvent from './pages/AddEvent';
 import CreateExam from './pages/CreateExam';
 import ManageFees from './pages/ManageFees';
 import UploadResult from './pages/UploadResult';
-
+import StudentProfile from './pages/StudentProfile';
 // ✅ NEW IMPORT (Make sure file path is correct)
 import CreateAdmin from './pages/CreateAdmin'; 
 // Agar aapne ise 'pages/admin/CreateAdmin.tsx' me rakha h to path change kar lena
@@ -80,6 +80,7 @@ function App() {
           <Route path="/admin/add-student" element={<AddStudent />} />
           <Route path="/admin/add-teacher" element={<AddTeacher />} />
           <Route path="/admin/add-event" element={<AddEvent />} />
+          <Route path="/admin/student/:id" element={<StudentProfile />} />
           
           {/* ✅ NEW ADMIN ROUTE ADDED */}
           <Route path="/admin/create-admin" element={<CreateAdmin />} />
