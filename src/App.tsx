@@ -42,7 +42,9 @@ function App() {
         <Toaster position="top-right" richColors closeButton />
 
         {/* 🖼️ GALLERY SLIDER: इसे Routes के बाहर रखा है ताकि यह हर पेज पर दिखे */}
-        <GallerySlider />
+         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-6">
+          <GallerySlider />
+        </div>
 
         <Routes>
           {/* ========================== */}
@@ -81,7 +83,7 @@ function App() {
             <Route path="/admin/student/:id" element={<StudentProfile />} />
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
           </Route>
-
+         
           {/* ========================== */}
           {/* 🔴 404 - PAGE NOT FOUND    */}
           {/* ========================== */}
