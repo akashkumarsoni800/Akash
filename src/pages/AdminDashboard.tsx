@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
+import GallerySlider from '../components/GallerySlider'; // ✅ यह लाइन जोड़ना सबसे ज़रूरी है
 // --- UI Components ---
 const StatCard = ({ icon, title, value, color = 'blue' }) => {
   const colors = {
@@ -48,6 +49,7 @@ const AdminDashboard = () => {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
+      const [stdCountRes, tchCountRes, penCountRes] = await Promise.all([
       const { count: stdCount } = await supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved');
       const { count: tchCount } = await supabase.from('teachers').select('*', { count: 'exact', head: true });
       const { count: penCount } = await supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending');
