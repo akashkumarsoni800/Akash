@@ -5,7 +5,7 @@ import { Toaster } from 'sonner';
 // --- COMPONENTS ---
 import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
-import GallerySlider from './components/GallerySlider'; // ✅ Import ensure karein
+//import GallerySlider from './components/GallerySlider'; // ✅ Import ensure karein
 
 // --- PUBLIC PAGES ---
 import Home from './pages/Home';
