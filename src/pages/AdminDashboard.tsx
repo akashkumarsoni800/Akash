@@ -199,6 +199,53 @@ const handleApprove = async (id: any) => {
               </table>
            </div>
         )}
+      {/* --- TEACHERS TAB --- */}
+{activeTab === 'teachers' && (
+  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+    <table className="w-full text-left">
+      <thead>
+        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
+          <th className="pb-4">Teacher Name</th>
+          <th className="pb-4">Subject</th>
+          <th className="pb-4">Mobile</th>
+          <th className="pb-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-100">
+        {allTeachers.map(t => (
+          <tr key={t.id} 
+            {/* ✅ टीचर प्रोफाइल पर जाने के लिए यहाँ क्लिक इवेंट जोड़ें */}
+            onClick={() => navigate(`/admin/teacher/${t.id}`)} 
+            className="hover:bg-blue-50 transition cursor-pointer group"
+          >
+            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
+            <td className="p-4">
+              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
+                {t.subject}
+              </span>
+            </td>
+            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
+            <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
+              {/* ✅ टीचर एडिट बटन: यह 'isTeacherEditModalOpen' को True करेगा */}
+              <button 
+                onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} 
+                className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
+              >
+                📝 Edit
+              </button>
+              <button 
+                onClick={() => handleRemove('teachers', t.id)} 
+                className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-600 hover:text-white transition"
+              >
+                🗑️ Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
 
         {/* ... (Teachers और Overview का कोड यहाँ आएगा) ... */}
       {/* --- OVERVIEW TAB: यहाँ Pending Students (Approval) दिखेंगे --- */}
@@ -312,6 +359,51 @@ const handleApprove = async (id: any) => {
         <div className="flex gap-4 pt-4">
           <button type="submit" className="flex-1 bg-blue-900 text-white font-black py-4 rounded-2xl uppercase text-xs">Save</button>
           <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-4 rounded-2xl uppercase text-xs">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+      {/* ========================== */}
+{/* 🛠️ TEACHER EDIT MODAL       */}
+{/* ========================== */}
+{isTeacherEditModalOpen && editingTeacher && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
+      <h2 className="text-2xl font-black text-green-900 uppercase mb-6 tracking-tighter">Edit Teacher</h2>
+      <form onSubmit={handleTeacherUpdate} className="space-y-4">
+        <div>
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Full Name</label>
+          <input 
+            type="text" 
+            value={editingTeacher.full_name}
+            onChange={(e) => setEditingTeacher({...editingTeacher, full_name: e.target.value})}
+            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
+            required
+          />
+        </div>
+        <div>
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Subject</label>
+          <input 
+            type="text" 
+            value={editingTeacher.subject}
+            onChange={(e) => setEditingTeacher({...editingTeacher, subject: e.target.value})}
+            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
+            required
+          />
+        </div>
+        <div>
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Mobile Phone</label>
+          <input 
+            type="text" 
+            value={editingTeacher.phone}
+            onChange={(e) => setEditingTeacher({...editingTeacher, phone: e.target.value})}
+            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
+          />
+        </div>
+        <div className="flex gap-4 pt-4">
+          <button type="submit" className="flex-1 bg-green-700 text-white font-black py-4 rounded-2xl uppercase text-xs shadow-lg">Update Staff</button>
+          <button type="button" onClick={() => setIsTeacherEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-4 rounded-2xl uppercase text-xs">Cancel</button>
         </div>
       </form>
     </div>
