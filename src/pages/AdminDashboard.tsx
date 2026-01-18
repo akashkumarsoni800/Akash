@@ -43,7 +43,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchInitialData();
   }, []);
-
+ 
   const fetchInitialData = async () => {
     try {
       setLoading(true);
@@ -258,6 +258,65 @@ const handleApprove = async (id: any) => {
 )}
 
         {/* Modals को यहाँ रखें (Student और Teacher वाले) */}
+      {activeTab === 'teachers' && (
+  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+    <table className="w-full text-left">
+      <thead>
+        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
+          <th className="pb-4">Teacher Name</th>
+          <th className="pb-4">Subject</th>
+          <th className="pb-4">Mobile</th>
+          <th className="pb-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-100">
+        {allTeachers.map(t => (
+          <tr key={t.id} className="hover:bg-blue-50 transition cursor-pointer">
+            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
+            <td className="p-4">
+              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
+                {t.subject}
+              </span>
+            </td>
+            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
+            <td className="p-4 flex gap-2">
+              <button onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} className="hover:scale-125 transition">📝</button>
+              <button onClick={() => handleRemove('teachers', t.id)} className="hover:scale-125 transition">🗑️</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+      {isEditModalOpen && editingStudent && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
+      <h2 className="text-2xl font-black text-blue-900 uppercase mb-6">Edit Student</h2>
+      <form onSubmit={handleUpdate} className="space-y-4">
+        <input 
+          type="text" 
+          placeholder="Full Name"
+          value={editingStudent.full_name}
+          onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})}
+          className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3"
+          required
+        />
+        <select 
+          value={editingStudent.class_name}
+          onChange={(e) => setEditingStudent({...editingStudent, class_name: e.target.value})}
+          className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3"
+        >
+          {classes.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <div className="flex gap-4 pt-4">
+          <button type="submit" className="flex-1 bg-blue-900 text-white font-black py-4 rounded-2xl uppercase text-xs">Save</button>
+          <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-4 rounded-2xl uppercase text-xs">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 };
