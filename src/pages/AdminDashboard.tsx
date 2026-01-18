@@ -84,7 +84,24 @@ const AdminDashboard = () => {
       if (!error) { toast.success("Deleted!"); fetchInitialData(); }
     }
   };
+const handleApprove = async (id: any) => {
+  try {
+    setLoading(true);
+    const { error } = await supabase
+      .from('students')
+      .update({ is_approved: 'approved' })
+      .eq('id', id);
 
+    if (error) throw error;
+
+    toast.success("Student Approved Successfully!");
+    fetchInitialData(); // डेटा रिफ्रेश करें
+  } catch (error: any) {
+    toast.error(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
   // Student Update Logic
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,6 +201,61 @@ const AdminDashboard = () => {
         )}
 
         {/* ... (Teachers और Overview का कोड यहाँ आएगा) ... */}
+      {/* --- OVERVIEW TAB: यहाँ Pending Students (Approval) दिखेंगे --- */}
+{activeTab === 'overview' && (
+  <div className="space-y-6">
+    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Pending Approvals</h2>
+        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">
+          {pendingStudents.length} New Requests
+        </span>
+      </div>
+
+      {pendingStudents.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                <th className="pb-4">Student Name</th>
+                <th className="pb-4">Applied Class</th>
+                <th className="pb-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {pendingStudents.map((s) => (
+                <tr key={s.id} className="group">
+                  <td className="py-4 font-bold text-gray-800">{s.full_name}</td>
+                  <td className="py-4 text-sm text-gray-500">{s.class_name}</td>
+                  <td className="py-4 flex gap-2">
+                    {/* Approve Button */}
+                    <button 
+                      onClick={() => handleApprove(s.id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-green-100"
+                    >
+                      Approve
+                    </button>
+                    {/* Reject/Delete Button */}
+                    <button 
+                      onClick={() => handleRemove('students', s.id)}
+                      className="bg-gray-100 text-gray-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-50 hover:text-red-600 transition-colors"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="text-center py-10">
+          <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">No pending admissions found</p>
+        </div>
+      )}
+    </div>
+  </div>
+)}
 
         {/* Modals को यहाँ रखें (Student और Teacher वाले) */}
     </div>
