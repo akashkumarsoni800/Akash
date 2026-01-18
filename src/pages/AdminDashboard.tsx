@@ -198,54 +198,7 @@ const handleApprove = async (id: any) => {
                  </tbody>
               </table>
            </div>
-        )}
-      {/* --- TEACHERS TAB --- */}
-{activeTab === 'teachers' && (
-  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-    <table className="w-full text-left">
-      <thead>
-        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
-          <th className="pb-4">Teacher Name</th>
-          <th className="pb-4">Subject</th>
-          <th className="pb-4">Mobile</th>
-          <th className="pb-4">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-100">
-        {allTeachers.map(t => (
-          <tr key={t.id} 
-            {/* ✅ टीचर प्रोफाइल पर जाने के लिए यहाँ क्लिक इवेंट जोड़ें */}
-            onClick={() => navigate(`/admin/teacher/${t.id}`)} 
-            className="hover:bg-blue-50 transition cursor-pointer group"
-          >
-            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
-            <td className="p-4">
-              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
-                {t.subject}
-              </span>
-            </td>
-            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
-            <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-              {/* ✅ टीचर एडिट बटन: यह 'isTeacherEditModalOpen' को True करेगा */}
-              <button 
-                onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} 
-                className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
-              >
-                📝 Edit
-              </button>
-              <button 
-                onClick={() => handleRemove('teachers', t.id)} 
-                className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-600 hover:text-white transition"
-              >
-                🗑️ Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+  
 
         {/* ... (Teachers और Overview का कोड यहाँ आएगा) ... */}
       {/* --- OVERVIEW TAB: यहाँ Pending Students (Approval) दिखेंगे --- */}
@@ -301,6 +254,53 @@ const handleApprove = async (id: any) => {
         </div>
       )}
     </div>
+  </div>
+)}
+            {/* --- TEACHERS TAB --- */}
+{activeTab === 'teachers' && (
+  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+    <table className="w-full text-left">
+      <thead>
+        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
+          <th className="pb-4">Teacher Name</th>
+          <th className="pb-4">Subject</th>
+          <th className="pb-4">Mobile</th>
+          <th className="pb-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-100">
+        {allTeachers.map(t => (
+          <tr key={t.id} 
+            {/* ✅ टीचर प्रोफाइल पर जाने के लिए यहाँ क्लिक इवेंट जोड़ें */}
+            onClick={() => navigate(`/admin/teacher/${t.id}`)} 
+            className="hover:bg-blue-50 transition cursor-pointer group"
+          >
+            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
+            <td className="p-4">
+              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
+                {t.subject}
+              </span>
+            </td>
+            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
+            <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
+              {/* ✅ टीचर एडिट बटन: यह 'isTeacherEditModalOpen' को True करेगा */}
+              <button 
+                onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} 
+                className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
+              >
+                📝 Edit
+              </button>
+              <button 
+                onClick={() => handleRemove('teachers', t.id)} 
+                className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-600 hover:text-white transition"
+              >
+                🗑️ Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 )}
 
