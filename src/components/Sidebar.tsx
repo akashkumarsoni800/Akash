@@ -15,37 +15,55 @@ const Sidebar = () => {
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' });
 
   useEffect(() => {
-    let isMounted = true;
-    const fetchProfile = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+  let isMounted = true;
+  const fetchProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !isMounted) return;
 
-        const { data: teacherData } = await supabase
-          .from('teachers')
-          .select('full_name, avatar_url, role')
-          .eq('email', user.email)
-          .maybeSingle();
+      // ✅ पहले Students टेबल चेक करें (क्योंकि नए रजिस्ट्रेशन छात्र के ही हैं)
+      const { data: studentData } = await supabase
+        .from('students')
+        .select('full_name, avatar_url, is_approved')
+        .eq('email', user.email)
+        .maybeSingle();
 
-        if (teacherData) { 
-          setProfile({ name: teacherData.full_name, avatar: teacherData.avatar_url, role: teacherData.role });
-        } else {
-          const { data: studentData } = await supabase
-            .from('students')
-            .select('full_name, avatar_url')
-            .eq('email', user.email)
-            .maybeSingle();
-          if (studentData) {
-            setProfile({ name: studentData.full_name, avatar: studentData.avatar_url, role: 'student' });
-          }
+      if (studentData && studentData.is_approved === 'approved') {
+        if (isMounted) {
+          setProfile({ 
+            name: studentData.full_name, 
+            avatar: studentData.avatar_url, 
+            role: 'student' 
+          });
+          setLoading(false);
         }
-      } finally {
-        if (isMounted) setLoading(false);
+        return; // छात्र मिल गया तो यहीं रुक जाएं
       }
-    };
-    fetchProfile();
-    return () => { isMounted = false; };
-  }, []);
+
+      // ✅ अगर छात्र नहीं है या अप्रूव नहीं है, तब Teachers टेबल चेक करें
+      const { data: staffData } = await supabase
+        .from('teachers')
+        .select('full_name, avatar_url, role')
+        .eq('email', user.email)
+        .maybeSingle();
+
+      if (staffData && isMounted) {
+        setProfile({ 
+          name: staffData.full_name, 
+          avatar: staffData.avatar_url, 
+          role: staffData.role 
+        });
+      }
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
+
+  fetchProfile();
+  return () => { isMounted = false; };
+}, []);
 
   const navLinkClass = (path: string) => `
     flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all
