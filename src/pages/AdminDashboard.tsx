@@ -169,140 +169,111 @@ const handleApprove = async (id: any) => {
           <StatCard icon="👨‍🏫" title="Total Teachers" value={counts.teachers} color="green" />
         </div>
 
-        {/* Tabs System */}
+      {/* Tabs System */}
         <div className="flex space-x-6 border-b border-gray-200 mb-8">
           {['overview', 'students', 'teachers'].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`pb-4 px-2 text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'border-b-4 border-blue-900 text-blue-900' : 'text-gray-400'}`}>
+            <button 
+              key={tab} 
+              onClick={() => setActiveTab(tab)} 
+              className={`pb-4 px-2 text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'border-b-4 border-blue-900 text-blue-900' : 'text-gray-400'}`}
+            >
               {tab}
             </button>
           ))}
         </div>
 
-        {/* Tab Content Logic (जैसे आपका पहले था) */}
-        {activeTab === 'students' && (
-           /* Students Table Code */
-           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-              {/* टेबल का हिस्सा */}
-              <table className="w-full text-left">
-                 <tbody className="divide-y divide-gray-100">
-                    {filteredStudents.map(s => (
-                       <tr key={s.id} onClick={() => navigate(`/admin/student/${s.id}`)} className="hover:bg-blue-50 transition cursor-pointer">
-                          <td className="p-4 font-bold text-gray-800 underline decoration-blue-200">{s.full_name}</td>
-                          <td className="p-4"><span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black">{s.class_name}</span></td>
-                          <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-                             <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }}>📝</button>
-                             <button onClick={() => handleRemove('students', s.id)}>🗑️</button>
+        {/* --- Tab Content Logic --- */}
+        <div className="min-h-[400px]">
+          {/* 1. Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
+              <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Pending Approvals</h2>
+              {pendingStudents.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <tbody className="divide-y divide-gray-100">
+                      {pendingStudents.map(s => (
+                        <tr key={s.id}>
+                          <td className="p-4 font-bold text-gray-800">{s.full_name} ({s.class_name})</td>
+                          <td className="p-4 flex gap-2">
+                            <button onClick={() => handleApprove(s.id)} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-green-100">Approve</button>
+                            <button onClick={() => handleRemove('students', s.id)} className="bg-gray-100 text-gray-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Reject</button>
                           </td>
-                       </tr>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-gray-400 text-xs font-bold uppercase py-10 text-center">No pending requests</p>
+              )}
+            </div>
+          )}
+
+          {/* 2. Students Tab */}
+          {activeTab === 'students' && (
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Approved Students</h2>
+                <select 
+                  onChange={(e) => setClassFilter(e.target.value)}
+                  className="bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase"
+                >
+                  {classes.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <tbody className="divide-y divide-gray-100">
+                    {filteredStudents.map(s => (
+                      <tr key={s.id} onClick={() => navigate(`/admin/student/${s.id}`)} className="hover:bg-blue-50 transition cursor-pointer">
+                        <td className="p-4 font-bold text-gray-800 underline decoration-blue-200">{s.full_name}</td>
+                        <td className="p-4"><span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black">{s.class_name}</span></td>
+                        <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-2 hover:bg-gray-100 rounded-lg transition">📝</button>
+                          <button onClick={() => handleRemove('students', s.id)} className="p-2 hover:bg-gray-100 rounded-lg transition">🗑️</button>
+                        </td>
+                      </tr>
                     ))}
-                 </tbody>
-              </table>
-           </div>
-  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
-        {/* ... (Teachers और Overview का कोड यहाँ आएगा) ... */}
-      {/* --- OVERVIEW TAB: यहाँ Pending Students (Approval) दिखेंगे --- */}
-{activeTab === 'overview' && (
-  <div className="space-y-6">
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Pending Approvals</h2>
-        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">
-          {pendingStudents.length} New Requests
-        </span>
-      </div>
+          {/* 3. Teachers Tab */}
+          {activeTab === 'teachers' && (
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
+              <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Staff Directory</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                      <th className="pb-4 pl-4">Name</th>
+                      <th className="pb-4">Subject</th>
+                      <th className="pb-4">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {allTeachers.map(t => (
+                      <tr key={t.id} onClick={() => navigate(`/admin/teacher/${t.id}`)} className="hover:bg-blue-50 transition cursor-pointer">
+                        <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
+                        <td className="p-4"><span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">{t.subject}</span></td>
+                        <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} className="p-2 hover:bg-gray-100 rounded-lg transition">📝</button>
+                          <button onClick={() => handleRemove('teachers', t.id)} className="p-2 hover:bg-gray-100 rounded-lg transition">🗑️</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
 
-      {pendingStudents.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                <th className="pb-4">Student Name</th>
-                <th className="pb-4">Applied Class</th>
-                <th className="pb-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {pendingStudents.map((s) => (
-                <tr key={s.id} className="group">
-                  <td className="py-4 font-bold text-gray-800">{s.full_name}</td>
-                  <td className="py-4 text-sm text-gray-500">{s.class_name}</td>
-                  <td className="py-4 flex gap-2">
-                    {/* Approve Button */}
-                    <button 
-                      onClick={() => handleApprove(s.id)}
-                      className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-green-100"
-                    >
-                      Approve
-                    </button>
-                    {/* Reject/Delete Button */}
-                    <button 
-                      onClick={() => handleRemove('students', s.id)}
-                      className="bg-gray-100 text-gray-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-50 hover:text-red-600 transition-colors"
-                    >
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="text-center py-10">
-          <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">No pending admissions found</p>
-        </div>
-      )}
-    </div>
-  </div>
-)}
-            {/* --- TEACHERS TAB --- */}
-{activeTab === 'teachers' && (
-  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-    <table className="w-full text-left">
-      <thead>
-        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
-          <th className="pb-4">Teacher Name</th>
-          <th className="pb-4">Subject</th>
-          <th className="pb-4">Mobile</th>
-          <th className="pb-4">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-100">
-        {allTeachers.map(t => (
-          <tr key={t.id} 
-            {/* ✅ टीचर प्रोफाइल पर जाने के लिए यहाँ क्लिक इवेंट जोड़ें */}
-            onClick={() => navigate(`/admin/teacher/${t.id}`)} 
-            className="hover:bg-blue-50 transition cursor-pointer group"
-          >
-            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
-            <td className="p-4">
-              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
-                {t.subject}
-              </span>
-            </td>
-            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
-            <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-              {/* ✅ टीचर एडिट बटन: यह 'isTeacherEditModalOpen' को True करेगा */}
-              <button 
-                onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} 
-                className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
-              >
-                📝 Edit
-              </button>
-              <button 
-                onClick={() => handleRemove('teachers', t.id)} 
-                className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-600 hover:text-white transition"
-              >
-                🗑️ Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+        {/* --- MODALS (Make sure these are inside the main return div) --- */}
+        {/* ... (Your Student & Teacher Edit Modals Code) ... */}
 
         {/* Modals को यहाँ रखें (Student और Teacher वाले) */}
       {activeTab === 'teachers' && (
