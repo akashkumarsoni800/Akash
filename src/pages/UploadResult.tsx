@@ -183,4 +183,106 @@ const UploadResult = () => {
                   <div className="relative">
                     <select 
                       required
-                      className="w-full bg-blue-50 border-2 border-blue-100 rounded-3xl px-6 py-5 font-black text-blue-900 appearance-none focus:ring-4 focus:ring-blue-1
+                      className="w-full bg-blue-50 border-2 border-blue-100 rounded-3xl px-6 py-5 font-black text-blue-900 appearance-none focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer"
+                      value={selectedExam}
+                      onChange={(e) => handleExamChange(e.target.value)}
+                      style={{ color: '#1e3a8a' }}
+                    >
+                      <option value="">SELECT EXAM TYPE</option>
+                      {exams.map(ex => (
+                        <option key={ex.id} value={ex.id}>{ex.exam_name.toUpperCase()}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 text-blue-900" size={20} />
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-[2rem] p-6 flex items-center gap-4 border border-gray-100">
+                  <div className="bg-white p-3 rounded-2xl shadow-sm"><Calculator className="text-blue-900" size={24}/></div>
+                  <div>
+                    <p className="text-2xl font-black text-gray-900">{stats.percentage}%</p>
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Calculated Performance</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Marks Table */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between px-2">
+                  <p className="text-[10px] font-black text-blue-900 uppercase tracking-widest flex items-center gap-2">
+                    <span className="h-4 w-4 rounded-full bg-blue-900 text-white flex items-center justify-center text-[8px]">3</span> 
+                    Subject-wise Marks
+                  </p>
+                  <button 
+                    type="button" 
+                    onClick={() => setResults([...results, { subject: '', marks: '', max_marks: '100' }])}
+                    className="bg-blue-900 text-white px-5 py-2 rounded-2xl text-[10px] font-black uppercase hover:scale-105 transition-all flex items-center gap-2 shadow-lg shadow-blue-100"
+                  >
+                    <Plus size={14}/> Add Subject
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {results.map((res, idx) => (
+                    <div key={idx} className="flex flex-wrap md:flex-nowrap gap-3 items-center bg-gray-50/50 p-4 rounded-3xl border border-gray-100 hover:border-blue-200 transition-all group">
+                      <div className="bg-white p-3 rounded-2xl text-blue-900 shadow-sm border border-gray-100 group-hover:bg-blue-900 group-hover:text-white transition-colors">
+                        <BookOpen size={18}/>
+                      </div>
+                      <input 
+                        placeholder="SUBJECT NAME" value={res.subject}
+                        className="flex-1 min-w-[150px] bg-white border-none rounded-2xl px-5 py-3 text-xs font-black text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-900 uppercase"
+                        onChange={(e) => {
+                          const n = [...results]; n[idx].subject = e.target.value; setResults(n);
+                        }}
+                      />
+                      <div className="flex items-center gap-3 bg-white px-5 rounded-2xl shadow-sm border border-gray-100">
+                        <input 
+                          placeholder="00" value={res.marks} type="number"
+                          className="w-12 bg-transparent border-none py-3 text-sm font-black text-blue-900 text-center focus:ring-0"
+                          onChange={(e) => {
+                            const n = [...results]; n[idx].marks = e.target.value; setResults(n);
+                          }}
+                        />
+                        <span className="text-gray-300 font-bold">/</span>
+                        <input 
+                          placeholder="100" value={res.max_marks}
+                          className="w-12 bg-transparent border-none py-3 text-xs font-bold text-gray-400 text-center focus:ring-0"
+                          onChange={(e) => {
+                            const n = [...results]; n[idx].max_marks = e.target.value; setResults(n);
+                          }}
+                        />
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => setResults(results.filter((_, i) => i !== idx))}
+                        className="p-3 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all"
+                      >
+                        <Trash2 size={18}/>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total Footer */}
+              <div className="mt-8 p-6 bg-blue-900 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-center text-white shadow-2xl shadow-blue-200">
+                 <div className="text-center md:text-left mb-4 md:mb-0">
+                    <p className="text-[10px] font-black uppercase text-blue-200 tracking-widest">Aggregate Score</p>
+                    <h2 className="text-3xl font-black">{stats.totalObtained} <span className="text-lg opacity-50">/ {stats.totalMax}</span></h2>
+                 </div>
+                 <button 
+                  type="submit" disabled={loading}
+                  className="bg-white text-blue-900 px-10 py-5 rounded-3xl font-black uppercase text-xs tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-xl disabled:opacity-50"
+                >
+                  {loading ? 'PUBLISHING...' : 'PUBLISH NOW'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UploadResult;
