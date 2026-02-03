@@ -32,23 +32,28 @@ const UploadResult = () => {
       const { data: examData } = await supabase.from('exams').select('*').order('created_at', { ascending: false });
       if (examData) setExams(examData);
     } catch (error) {
-      toast.error("Failed to load data");
+      console.error("Fetch error:", error);
     }
   };
 
   const handleExamChange = (examId) => {
-    const exam = exams.find(e => e.id === examId);
     setSelectedExam(examId);
+    if (!examId) return;
+
+    const exam = exams.find(e => e.id === examId);
     
-    if (exam && exam.subjects) {
-      // ✅ Crash Fix: 'sub' ki jagah 'exam.subjects' use kiya
+    // ✅ Crash Fix: Check if exam and subjects exist
+    if (exam && Array.isArray(exam.subjects)) {
       const autoSubjects = exam.subjects.map(subName => ({
         subject: subName,
         marks: '',
         max_marks: exam.max_marks || '100'
       }));
       setResults(autoSubjects);
-      toast.success(`${exam.subjects.length} Subjects Loaded!`);
+      toast.success(`${exam.subjects.length} Subjects Loaded`);
+    } else {
+      // Agar subjects nahi hain to empty row rakhein
+      setResults([{ subject: '', marks: '', max_marks: '100' }]);
     }
   };
 
@@ -65,7 +70,7 @@ const UploadResult = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!selectedStudent || !selectedExam) return toast.error("Please select both Student and Exam");
+    if(!selectedStudent || !selectedExam) return toast.error("Select Student & Exam first!");
     
     setLoading(true);
     try {
@@ -79,6 +84,7 @@ const UploadResult = () => {
       if (error) throw error;
       toast.success("Result Published!");
       setSelectedStudent(null);
+      setSelectedExam('');
       setResults([{ subject: '', marks: '', max_marks: '100' }]);
     } catch (error) {
       toast.error(error.message);
@@ -113,20 +119,20 @@ const UploadResult = () => {
                   />
                 </div>
                 <select 
-                  className="w-full bg-gray-50 border-none rounded-xl py-3 text-xs font-black text-blue-900"
+                  className="w-full bg-gray-50 border-none rounded-xl py-3 text-xs font-black text-blue-900 appearance-none"
                   value={classFilter} onChange={(e) => { setClassFilter(e.target.value); handleFilter(search, e.target.value); }}
                 >
-                  {classes.map(c => <option key={c} value={c} className="text-blue-900 font-bold">{c}</option>)}
+                  {classes.map(c => <option key={c} value={c} className="text-blue-900">{c}</option>)}
                 </select>
               </div>
 
-              <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2">
+              <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
                 {filteredStudents.map(s => (
                   <button 
-                    key={s.id} onClick={() => setSelectedStudent(s)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all ${selectedStudent?.id === s.id ? 'bg-blue-900 text-white' : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}
+                    key={s.id} type="button" onClick={() => setSelectedStudent(s)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all ${selectedStudent?.id === s.id ? 'bg-blue-900 text-white shadow-lg shadow-blue-100' : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}
                   >
-                    <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center font-black">{s.full_name[0]}</div>
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center font-black ${selectedStudent?.id === s.id ? 'bg-white/20' : 'bg-blue-100 text-blue-900'}`}>{s.full_name[0]}</div>
                     <div className="text-left">
                       <p className="text-[10px] font-black uppercase leading-none">{s.full_name}</p>
                       <p className="text-[8px] font-bold opacity-60">CLASS: {s.class_name}</p>
@@ -143,22 +149,24 @@ const UploadResult = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
                   <label className="text-[10px] font-black text-blue-900 uppercase tracking-widest ml-2 italic">Step 2: Choose Exam</label>
+                  {/* ✅ Select Dropdown with Forced Color */}
                   <select 
                     required
-                    className="w-full bg-blue-50 border-2 border-blue-100 rounded-2xl px-5 py-4 mt-1 font-black text-blue-900 focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer"
+                    style={{ color: '#1e3a8a', fontWeight: '900' }} 
+                    className="w-full bg-blue-50 border-2 border-blue-100 rounded-2xl px-5 py-4 mt-1 focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer block"
                     value={selectedExam}
                     onChange={(e) => handleExamChange(e.target.value)}
                   >
-                    <option value="" className="text-gray-400">CHOOSE FROM LIST...</option>
-                    {exams.map(ex => (
-                      <option key={ex.id} value={ex.id} className="text-blue-900 font-bold bg-white">
+                    <option value="" className="text-gray-400">SELECT EXAM...</option>
+                    {exams.length > 0 && exams.map(ex => (
+                      <option key={ex.id} value={ex.id} style={{ color: '#1e3a8a' }}>
                         {ex.exam_name.toUpperCase()}
                       </option>
                     ))}
                   </select>
                 </div>
                 {selectedStudent && (
-                  <div className="bg-emerald-50 p-4 rounded-2xl flex items-center gap-4 border border-emerald-100 self-end">
+                  <div className="bg-emerald-50 p-4 rounded-2xl flex items-center gap-4 border border-emerald-100 self-end animate-in fade-in zoom-in">
                     <UserCircle size={24} className="text-emerald-600"/>
                     <div>
                       <p className="text-[10px] font-black text-emerald-900 uppercase leading-none">{selectedStudent.full_name}</p>
@@ -177,7 +185,7 @@ const UploadResult = () => {
                 <div className="bg-gray-50/50 p-4 rounded-3xl space-y-3 border border-gray-100">
                   {results.map((res, idx) => (
                     <div key={idx} className="flex gap-3 items-center group animate-in slide-in-from-right-2">
-                      <div className="bg-white p-3 rounded-xl text-blue-900 shadow-sm"><BookOpen size={16}/></div>
+                      <div className="bg-white p-3 rounded-xl text-blue-900 shadow-sm border border-gray-100"><BookOpen size={16}/></div>
                       <input 
                         placeholder="Subject" value={res.subject}
                         className="flex-1 bg-white border-none rounded-xl px-4 py-3 text-xs font-black text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-900"
@@ -210,7 +218,7 @@ const UploadResult = () => {
 
               <button 
                 type="submit" disabled={loading}
-                className="w-full bg-blue-900 text-white font-black py-5 rounded-3xl mt-8 uppercase tracking-[0.2em] shadow-xl shadow-blue-100 hover:bg-black transition-all active:scale-95"
+                className="w-full bg-blue-900 text-white font-black py-5 rounded-3xl mt-8 uppercase tracking-[0.2em] shadow-xl shadow-blue-100 hover:bg-black transition-all active:scale-95 disabled:opacity-50"
               >
                 {loading ? 'PUBLISHING...' : 'SAVE & PUBLISH RESULT'}
               </button>
