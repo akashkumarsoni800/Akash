@@ -181,4 +181,56 @@ const UploadResult = () => {
                   <p className="text-[11px] font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2">
                     <BookOpen size={16} className="text-[#1E3A8A]"/> Marks Entry Panel
                   </p>
-                  <button type="button" onClick={add
+                  <button type="button" onClick={addSubjectField} className="bg-gray-100 hover:bg-[#1E3A8A] hover:text-white text-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-1">
+                    <Plus size={14}/> Add Subject
+                  </button>
+                </div>
+
+                <div className="bg-gray-50/50 p-4 rounded-[2rem] border border-gray-100 space-y-3">
+                  {results.map((res, idx) => (
+                    <div key={idx} className="flex gap-3 items-center bg-white p-3 rounded-2xl shadow-sm border border-gray-100 group transition-all hover:border-blue-200">
+                      <input 
+                        placeholder="Subject Name" value={res.subject}
+                        className="flex-1 bg-transparent border-none px-2 py-1 text-xs font-black text-[#1E3A8A] uppercase placeholder:text-gray-300"
+                        onChange={(e) => {
+                          const n = [...results]; n[idx].subject = e.target.value; setResults(n);
+                        }}
+                      />
+                      <div className="flex items-center gap-2 bg-blue-50/50 px-3 py-2 rounded-xl">
+                        <input 
+                          placeholder="00" value={res.marks} type="number"
+                          className="w-12 bg-transparent border-none p-0 text-center text-sm font-black text-[#1E3A8A]"
+                          onChange={(e) => {
+                            const n = [...results]; n[idx].marks = e.target.value; setResults(n);
+                          }}
+                        />
+                        <span className="text-blue-200 font-bold">/</span>
+                        <input 
+                          placeholder="100" value={res.max_marks}
+                          className="w-10 bg-transparent border-none p-0 text-center text-[10px] font-bold text-blue-400"
+                          onChange={(e) => {
+                            const n = [...results]; n[idx].max_marks = e.target.value; setResults(n);
+                          }}
+                        />
+                      </div>
+                      <button type="button" onClick={() => removeSubjectField(idx)} className="p-2 text-gray-200 hover:text-red-500 transition-colors"><Trash2 size={16}/></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                type="submit" disabled={loading}
+                className="w-full bg-[#1E3A8A] text-white font-black py-6 rounded-[2rem] mt-10 uppercase tracking-[0.2em] shadow-2xl shadow-blue-100 hover:bg-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {loading ? 'PROCESSING...' : 'PUBLISH SCORECARD'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UploadResult;
