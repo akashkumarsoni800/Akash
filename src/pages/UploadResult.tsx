@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
-import { FileUp, Search, UserCircle, Plus, Trash2, BookOpen } from 'lucide-react';
+import { FileUp, Search, UserCircle, Plus, Trash2, BookOpen, ChevronDown } from 'lucide-react';
 
 const UploadResult = () => {
   const [loading, setLoading] = useState(false);
   const [students, setAllStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
-  const [exams, setExams] = useState([]); // Database se exams store karne ke liye
+  const [exams, setExams] = useState([]); 
   const [search, setSearch] = useState('');
   const [classFilter, setClassFilter] = useState('All');
   const [classes, setClasses] = useState([]);
@@ -22,7 +22,7 @@ const UploadResult = () => {
 
   const fetchInitialData = async () => {
     try {
-      // 1. Students Fetch Karna
+      // 1. Fetch Students
       const { data: stdData, error: stdError } = await supabase
         .from('students')
         .select('*')
@@ -33,12 +33,11 @@ const UploadResult = () => {
       if (stdData) {
         setAllStudents(stdData);
         setFilteredStudents(stdData);
-        // Unique classes nikalna filter ke liye
         const uniqueClasses = ['All', ...new Set(stdData.map(s => s.class_name))];
         setClasses(uniqueClasses);
       }
 
-      // 2. Exams Fetch Karna (Dynamic List ke liye)
+      // 2. Fetch Exams
       const { data: examData, error: examError } = await supabase
         .from('exams')
         .select('*')
@@ -48,31 +47,25 @@ const UploadResult = () => {
       if (examData) setExams(examData);
 
     } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Data load karne mein error aayi");
+      console.error(error);
+      toast.error("Error loading data");
     }
   };
 
-  // ✅ CRASH FIX & DYNAMIC LOGIC
   const handleExamChange = (examId) => {
     setSelectedExam(examId);
-    
-    // Find the full exam object based on ID
     const exam = exams.find(e => e.id === examId);
     
-    // Check agar exam exist karta hai aur usme subjects array hai
+    // ✅ CRASH FIX: Safe check for subjects
     if (exam && Array.isArray(exam.subjects)) {
       const autoSubjects = exam.subjects.map(subName => ({
         subject: subName,
         marks: '',
         max_marks: exam.max_marks || '100'
       }));
-      
       setResults(autoSubjects);
-      // ✅ Yahan pehle 'sub.length' tha jo crash kar raha tha, ab 'exam.subjects.length' hai
-      toast.success(`${exam.subjects.length} Subjects Auto-Loaded!`);
+      toast.success(`${exam.subjects.length} Subjects Loaded!`);
     } else {
-      // Agar subjects nahi mile to reset karein
       setResults([{ subject: '', marks: '', max_marks: '100' }]);
     }
   };
@@ -90,11 +83,10 @@ const UploadResult = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!selectedStudent || !selectedExam) return toast.error("Please select a Student and an Exam!");
+    if(!selectedStudent || !selectedExam) return toast.error("Please select both Student & Exam");
     
-    // Validation: Check karo ki marks bhare hain ya nahi
     const invalidEntry = results.some(r => r.marks === '' || r.subject === '');
-    if(invalidEntry) return toast.warning("Please fill all subject names and marks.");
+    if(invalidEntry) return toast.warning("Please fill all marks fields.");
 
     setLoading(true);
     try {
@@ -106,16 +98,12 @@ const UploadResult = () => {
       });
 
       if (error) throw error;
-
-      toast.success("Result Published Successfully!");
-      // Reset form logic
+      toast.success("Result Published!");
       setSelectedStudent(null);
       setSelectedExam('');
       setResults([{ subject: '', marks: '', max_marks: '100' }]);
-      
     } catch (error) {
-      console.error(error);
-      toast.error("Result upload failed: " + error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -124,7 +112,6 @@ const UploadResult = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <div className="h-12 w-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white shadow-lg">
             <FileUp size={24} />
@@ -134,7 +121,7 @@ const UploadResult = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* LEFT: Student Selection with Class Filter */}
+          {/* LEFT: Student Selection */}
           <div className="lg:col-span-4 space-y-4">
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Step 1: Select Student</p>
@@ -144,18 +131,23 @@ const UploadResult = () => {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
                   <input 
                     type="text" placeholder="Search name..."
-                    className="w-full bg-gray-50 border-none rounded-xl pl-10 py-3 text-xs font-bold focus:ring-2 focus:ring-blue-900"
+                    className="w-full bg-gray-50 border-none rounded-xl pl-10 py-3 text-xs font-bold focus:ring-2 focus:ring-blue-900 text-black"
                     value={search} onChange={(e) => handleFilter(e.target.value, classFilter)}
                   />
                 </div>
-                {/* Class Filter Dropdown */}
-                <select 
-                  className="w-full bg-gray-50 border-none rounded-xl py-3 px-4 text-xs font-black text-blue-900 appearance-none cursor-pointer"
-                  value={classFilter} 
-                  onChange={(e) => { setClassFilter(e.target.value); handleFilter(search, e.target.value); }}
-                >
-                  {classes.map(c => <option key={c} value={c} className="text-blue-900">{c}</option>)}
-                </select>
+                
+                {/* ✅ CLASS FILTER FIXED */}
+                <div className="relative">
+                  <select 
+                    className="w-full bg-gray-100 border-none rounded-xl py-3 px-4 text-xs font-bold text-black appearance-none cursor-pointer"
+                    style={{ color: 'black' }}
+                    value={classFilter} 
+                    onChange={(e) => { setClassFilter(e.target.value); handleFilter(search, e.target.value); }}
+                  >
+                    {classes.map(c => <option key={c} value={c} style={{ color: 'black' }}>{c}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={14} />
+                </div>
               </div>
 
               <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
@@ -167,8 +159,8 @@ const UploadResult = () => {
                     >
                       <div className={`h-8 w-8 rounded-lg flex items-center justify-center font-black ${selectedStudent?.id === s.id ? 'bg-white/20' : 'bg-blue-100 text-blue-900'}`}>{s.full_name.charAt(0)}</div>
                       <div className="text-left">
-                        <p className="text-[10px] font-black uppercase leading-none">{s.full_name}</p>
-                        <p className="text-[8px] font-bold opacity-60 mt-1">CLASS: {s.class_name}</p>
+                        <p className={`text-[10px] font-black uppercase leading-none ${selectedStudent?.id === s.id ? 'text-white' : 'text-gray-900'}`}>{s.full_name}</p>
+                        <p className={`text-[8px] font-bold mt-1 ${selectedStudent?.id === s.id ? 'text-blue-200' : 'text-gray-400'}`}>CLASS: {s.class_name}</p>
                       </div>
                     </button>
                   ))
@@ -186,21 +178,24 @@ const UploadResult = () => {
                 <div>
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Step 2: Choose Exam</label>
                   
-                  {/* Exam Dropdown - Styling Fixed */}
-                  <select 
-                    required
-                    className="w-full bg-blue-50 border-2 border-blue-100 rounded-2xl px-5 py-4 mt-1 font-black text-blue-900 focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer block"
-                    style={{ color: '#1e3a8a' }} // Force Dark Blue Text
-                    value={selectedExam}
-                    onChange={(e) => handleExamChange(e.target.value)}
-                  >
-                    <option value="" className="text-gray-400">--- SELECT EXAM ---</option>
-                    {exams.map(ex => (
-                      <option key={ex.id} value={ex.id} className="text-blue-900 font-bold">
-                        {ex.exam_name}
-                      </option>
-                    ))}
-                  </select>
+                  {/* ✅ EXAM DROPDOWN FIXED - High Contrast */}
+                  <div className="relative mt-1">
+                    <select 
+                      required
+                      className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 font-bold text-black appearance-none focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer"
+                      style={{ color: '#000000', backgroundColor: '#F9FAFB' }} // Forced Black Text on Light Grey
+                      value={selectedExam}
+                      onChange={(e) => handleExamChange(e.target.value)}
+                    >
+                      <option value="" className="text-gray-400">--- CLICK TO SELECT EXAM ---</option>
+                      {exams.map(ex => (
+                        <option key={ex.id} value={ex.id} style={{ color: 'black', background: 'white' }}>
+                          {ex.exam_name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none" size={20} />
+                  </div>
                 </div>
                 
                 {selectedStudent && (
@@ -208,7 +203,7 @@ const UploadResult = () => {
                     <div className="bg-blue-900 text-white p-2 rounded-xl"><UserCircle size={20}/></div>
                     <div>
                       <p className="text-[10px] font-black text-blue-900 uppercase leading-none">{selectedStudent.full_name}</p>
-                      <p className="text-[8px] font-bold text-blue-400 mt-1 uppercase">Ready to upload</p>
+                      <p className="text-[8px] font-bold text-blue-500 mt-1 uppercase">Ready to upload</p>
                     </div>
                   </div>
                 )}
@@ -216,28 +211,28 @@ const UploadResult = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Step 3: Subject Wise Breakdown</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Step 3: Marks Entry</p>
                   <button type="button" onClick={addSubjectField} className="text-blue-900 text-[10px] font-black uppercase flex items-center gap-1 hover:bg-blue-50 px-3 py-1 rounded-lg transition-all"><Plus size={14}/> Add Subject</button>
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-3xl space-y-3">
                   {results.map((res, idx) => (
                     <div key={idx} className="flex gap-3 items-center group animate-in slide-in-from-right-2">
-                      <div className="bg-white p-3 rounded-xl text-gray-400 group-hover:text-blue-900"><BookOpen size={16}/></div>
+                      <div className="bg-white p-3 rounded-xl text-gray-400 group-hover:text-blue-900 shadow-sm"><BookOpen size={16}/></div>
                       
-                      {/* Subject Name Input */}
+                      {/* Subject Name */}
                       <input 
-                        placeholder="Subject Name" 
+                        placeholder="Subject" 
                         value={res.subject}
-                        className="flex-1 bg-white border-none rounded-xl px-4 py-3 text-xs font-bold shadow-sm text-gray-800 placeholder:text-gray-300 focus:ring-2 focus:ring-blue-900"
+                        className="flex-1 bg-white border-none rounded-xl px-4 py-3 text-xs font-bold shadow-sm text-black placeholder:text-gray-300 focus:ring-2 focus:ring-blue-900"
                         onChange={(e) => {
                           const n = [...results]; n[idx].subject = e.target.value; setResults(n);
                         }}
                       />
                       
-                      {/* Marks Input */}
+                      {/* Marks */}
                       <input 
-                        placeholder="Marks" 
+                        placeholder="00" 
                         value={res.marks} 
                         type="number"
                         className="w-20 bg-white border-none rounded-xl px-4 py-3 text-xs font-black text-blue-900 shadow-sm text-center focus:ring-2 focus:ring-blue-900"
@@ -248,7 +243,7 @@ const UploadResult = () => {
                       
                       <span className="text-gray-300 font-bold">/</span>
                       
-                      {/* Max Marks Input */}
+                      {/* Max Marks */}
                       <input 
                         placeholder="100" 
                         value={res.max_marks}
@@ -268,7 +263,7 @@ const UploadResult = () => {
                 type="submit" disabled={loading}
                 className="w-full bg-blue-900 text-white font-black py-5 rounded-3xl mt-8 uppercase tracking-widest shadow-xl shadow-blue-100 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50"
               >
-                {loading ? 'UPLOADING...' : 'PUBLISH RESULT NOW'}
+                {loading ? 'PUBLISHING...' : 'PUBLISH RESULT NOW'}
               </button>
             </form>
           </div>
