@@ -228,4 +228,61 @@ const UploadResult = () => {
                 </div>
 
                 <div className="bg-gray-50/50 p-4 rounded-[2rem] border border-gray-100 space-y-3">
-                  {results.map((
+                  {results.map((res, index) => (
+                    <div key={index} className="flex gap-3 items-center bg-white p-2 rounded-2xl shadow-sm border border-gray-100 group">
+                      <div className="bg-gray-50 p-3 rounded-xl text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all">
+                        <BookOpen size={18} />
+                      </div>
+                      
+                      <div className="flex-1">
+                        <input 
+                          type="text" 
+                          placeholder="Subject"
+                          value={res.subject}
+                          className="w-full bg-transparent border-none px-2 py-2 text-sm font-black text-gray-800 focus:ring-0 uppercase placeholder:text-gray-300"
+                          onChange={(e) => handleSubjectChange(index, 'subject', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-100">
+                        <input 
+                          type="number" 
+                          placeholder="00"
+                          value={res.marks}
+                          className="w-12 bg-transparent border-none text-sm font-black text-center focus:ring-0 text-blue-900 p-0"
+                          onChange={(e) => handleSubjectChange(index, 'marks', e.target.value)}
+                        />
+                        <span className="text-blue-200 font-black">/</span>
+                        <input 
+                          type="number" 
+                          value={res.max_marks}
+                          className="w-10 bg-transparent border-none text-[10px] font-bold text-gray-400 text-center p-0 focus:ring-0"
+                          onChange={(e) => handleSubjectChange(index, 'max_marks', e.target.value)}
+                        />
+                      </div>
+
+                      <button onClick={() => removeSubjectRow(index)} className="p-3 text-gray-300 hover:text-rose-600 transition-colors">
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+             </div>
+
+             <div className="mt-8">
+               <button 
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full bg-blue-900 hover:bg-black text-white py-6 rounded-[2rem] text-sm font-black uppercase tracking-[0.2em] shadow-2xl shadow-blue-100 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-3"
+               >
+                 {loading ? 'SYNCING DATA...' : 'PUBLISH NOW'}
+               </button>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UploadResult;
