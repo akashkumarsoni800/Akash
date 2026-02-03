@@ -3,21 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 
-// GallerySlider को यहाँ से हटा दें क्योंकि आपने इसे App.tsx में डाल दिया है।
-
 const StatCard = ({ icon, title, value, color = 'blue' }) => {
   const colors = {
-    blue: 'bg-blue-50 text-blue-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    green: 'bg-green-50 text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
+    blue: 'bg-blue-50 text-blue-600 border-blue-200',
+    yellow: 'bg-yellow-50 text-yellow-600 border-yellow-200',
+    green: 'bg-green-50 text-green-600 border-green-200',
+    purple: 'bg-purple-50 text-purple-600 border-purple-200',
   };
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 flex items-center space-x-4 border border-gray-100">
-      <div className={`${colors[color]} p-4 rounded-xl text-2xl`}>{icon}</div>
+    <div className={`bg-white rounded-2xl shadow-lg p-6 flex items-center space-x-4 border-2 hover:shadow-xl transition-shadow duration-300 ${colors[color]}`}>
+      <div className={`${colors[color]} p-4 rounded-xl text-3xl border`}>{icon}</div>
       <div>
-        <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">{title}</p>
-        <p className="text-2xl font-black text-gray-800">{value}</p>
+        <p className="text-gray-500 text-xs font-black uppercase tracking-widest">{title}</p>
+        <p className="text-3xl font-black text-gray-800">{value}</p>
       </div>
     </div>
   );
@@ -47,7 +45,6 @@ const AdminDashboard = () => {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      // ✅ Promise.all को सही तरीके से लिखें
       const [stdRes, tchRes, penRes] = await Promise.all([
         supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved'),
         supabase.from('teachers').select('*', { count: 'exact', head: true }),
@@ -84,25 +81,26 @@ const AdminDashboard = () => {
       if (!error) { toast.success("Deleted!"); fetchInitialData(); }
     }
   };
-const handleApprove = async (id: any) => {
-  try {
-    setLoading(true);
-    const { error } = await supabase
-      .from('students')
-      .update({ is_approved: 'approved' })
-      .eq('id', id);
 
-    if (error) throw error;
+  const handleApprove = async (id: any) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('students')
+        .update({ is_approved: 'approved' })
+        .eq('id', id);
 
-    toast.success("Student Approved Successfully!");
-    fetchInitialData(); // डेटा रिफ्रेश करें
-  } catch (error: any) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-  // Student Update Logic
+      if (error) throw error;
+
+      toast.success("Student Approved Successfully!");
+      fetchInitialData();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -119,7 +117,6 @@ const handleApprove = async (id: any) => {
     finally { setLoading(false); }
   };
 
-  // Teacher Update Logic
   const handleTeacherUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -139,65 +136,68 @@ const handleApprove = async (id: any) => {
 
   const filteredStudents = classFilter === 'All' ? allStudents : allStudents.filter(s => s.class_name === classFilter);
 
-  // 🔴 व्हाइट स्क्रीन से बचने के लिए यहाँ लोडिंग चेक है
   if (loading) return (
-    <div className="h-screen flex items-center justify-center font-black text-blue-900 uppercase">
+    <div className="h-screen flex items-center justify-center font-black text-blue-900 uppercase animate-pulse">
+      <div className="text-center">
+        <div className="text-4xl mb-4">🔄</div>
         ASM Loading Dashboard...
+      </div>
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6">
+      <div className="max-w-7xl mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase">Admin Control</h1>
-            <p className="text-sm font-bold text-gray-400">Manage your school efficiently</p>
+            <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase mb-2">Admin Control</h1>
+            <p className="text-lg font-bold text-gray-500">Manage your school efficiently</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button onClick={() => navigate('/admin/create-exam')} className="bg-red-600 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg">📝 CREATE EXAM</button>
-            <button onClick={() => navigate('/admin/add-event')} className="bg-purple-600 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg">📢 ADD EVENT</button>
-            <button onClick={() => navigate('/admin/manage-fees')} className="bg-blue-900 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg">💰 MANAGE FEES</button>
+          <div className="flex flex-wrap gap-3">
+            <button onClick={() => navigate('/admin/create-exam')} className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-2xl text-sm font-black shadow-lg transition duration-200 transform hover:scale-105">📝 CREATE EXAM</button>
+            <button onClick={() => navigate('/admin/add-event')} className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl text-sm font-black shadow-lg transition duration-200 transform hover:scale-105">📢 ADD EVENT</button>
+            <button onClick={() => navigate('/admin/manage-fees')} className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-sm font-black shadow-lg transition duration-200 transform hover:scale-105">💰 MANAGE FEES</button>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <StatCard icon="🎓" title="Approved Students" value={counts.students} color="blue" />
           <StatCard icon="⌛" title="Pending Admissions" value={counts.pending} color="yellow" />
           <StatCard icon="👨‍🏫" title="Total Teachers" value={counts.teachers} color="green" />
         </div>
 
-      {/* Tabs System */}
-        <div className="flex space-x-6 border-b border-gray-200 mb-8">
+        {/* Tabs System */}
+        <div className="flex flex-wrap space-x-8 border-b-2 border-gray-200 mb-10 bg-white rounded-t-3xl p-6 shadow-sm">
           {['overview', 'students', 'teachers'].map(tab => (
             <button 
               key={tab} 
               onClick={() => setActiveTab(tab)} 
-              className={`pb-4 px-2 text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'border-b-4 border-blue-900 text-blue-900' : 'text-gray-400'}`}
+              className={`pb-4 px-4 text-sm font-black uppercase tracking-widest transition-all duration-300 ${activeTab === tab ? 'border-b-4 border-blue-900 text-blue-900 bg-blue-50 rounded-t-lg' : 'text-gray-500 hover:text-gray-700'}`}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        {/* --- Tab Content Logic --- */}
-        <div className="min-h-[400px]">
-          {/* 1. Overview Tab */}
+        {/* Tab Content */}
+        <div className="min-h-[500px] bg-white rounded-b-3xl shadow-lg border border-gray-100 p-8">
+          {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
-              <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Pending Approvals</h2>
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tighter">Pending Approvals</h2>
               {pendingStudents.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <tbody className="divide-y divide-gray-100">
+                  <table className="w-full text-left bg-gray-50 rounded-2xl overflow-hidden">
+                    <tbody className="divide-y divide-gray-200">
                       {pendingStudents.map(s => (
-                        <tr key={s.id}>
-                          <td className="p-4 font-bold text-gray-800">{s.full_name} ({s.class_name})</td>
-                          <td className="p-4 flex gap-2">
-                            <button onClick={() => handleApprove(s.id)} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-green-100">Approve</button>
-                            <button onClick={() => handleRemove('students', s.id)} className="bg-gray-100 text-gray-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Reject</button>
+                        <tr key={s.id} className="hover:bg-gray-100 transition">
+                          <td className="p-6 font-bold text-gray-800 text-lg">{s.full_name} <span className="text-gray-500">({s.class_name})</span></td>
+                          <td className="p-6 flex gap-4">
+                            <button onClick={() => handleApprove(s.id)} className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl text-sm font-black uppercase shadow-lg transition">Approve</button>
+                            <button onClick={() => handleRemove('students', s.id)} className="bg-gray-200 hover:bg-gray-300 text-gray-600 px-6 py-3 rounded-2xl text-sm font-black uppercase transition">Reject</button>
                           </td>
                         </tr>
                       ))}
@@ -205,33 +205,37 @@ const handleApprove = async (id: any) => {
                   </table>
                 </div>
               ) : (
-                <p className="text-gray-400 text-xs font-bold uppercase py-10 text-center">No pending requests</p>
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-4">✅</div>
+                  <p className="text-gray-500 text-lg font-bold uppercase">No pending requests</p>
+                </div>
               )}
             </div>
           )}
 
-          {/* 2. Students Tab */}
+          {/* Students Tab */}
           {activeTab === 'students' && (
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Approved Students</h2>
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Approved Students</h2>
                 <select 
+                  value={classFilter}
                   onChange={(e) => setClassFilter(e.target.value)}
-                  className="bg-gray-50 border-none rounded-xl text-[10px] font-black uppercase"
+                  className="bg-gray-100 border-2 border-gray-300 rounded-2xl px-4 py-2 text-sm font-black uppercase focus:ring-2 focus:ring-blue-500"
                 >
                   {classes.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <tbody className="divide-y divide-gray-100">
+                <table className="w-full text-left bg-gray-50 rounded-2xl overflow-hidden">
+                  <tbody className="divide-y divide-gray-200">
                     {filteredStudents.map(s => (
                       <tr key={s.id} onClick={() => navigate(`/admin/student/${s.id}`)} className="hover:bg-blue-50 transition cursor-pointer">
-                        <td className="p-4 font-bold text-gray-800 underline decoration-blue-200">{s.full_name}</td>
-                        <td className="p-4"><span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black">{s.class_name}</span></td>
-                        <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-                          <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-2 hover:bg-gray-100 rounded-lg transition">📝</button>
-                          <button onClick={() => handleRemove('students', s.id)} className="p-2 hover:bg-gray-100 rounded-lg transition">🗑️</button>
+                        <td className="p-6 font-bold text-gray-800 text-lg underline decoration-blue-300">{s.full_name}</td>
+                        <td className="p-6"><span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-black">{s.class_name}</span></td>
+                        <td className="p-6 flex gap-4" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-xl transition transform hover:scale-110">📝</button>
+                          <button onClick={() => handleRemove('students', s.id)} className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl transition transform hover:scale-110">🗑️</button>
                         </td>
                       </tr>
                     ))}
@@ -241,27 +245,29 @@ const handleApprove = async (id: any) => {
             </div>
           )}
 
-          {/* 3. Teachers Tab */}
+          {/* Teachers Tab */}
           {activeTab === 'teachers' && (
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-in fade-in duration-500">
-              <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Staff Directory</h2>
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tighter">Staff Directory</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full text-left bg-gray-50 rounded-2xl overflow-hidden">
                   <thead>
-                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                      <th className="pb-4 pl-4">Name</th>
-                      <th className="pb-4">Subject</th>
-                      <th className="pb-4">Actions</th>
+                    <tr className="bg-gray-200 text-gray-700">
+                      <th className="p-6 text-left font-black uppercase tracking-widest text-sm">Name</th>
+                      <th className="p-6 text-left font-black uppercase tracking-widest text-sm">Subject</th>
+                      <th className="p-6 text-left font-black uppercase tracking-widest text-sm">Mobile</th>
+                      <th className="p-6 text-left font-black uppercase tracking-widest text-sm">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-200">
                     {allTeachers.map(t => (
-                      <tr key={t.id} onClick={() => navigate(`/admin/teacher/${t.id}`)} className="hover:bg-blue-50 transition cursor-pointer">
-                        <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
-                        <td className="p-4"><span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">{t.subject}</span></td>
-                        <td className="p-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-                          <button onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} className="p-2 hover:bg-gray-100 rounded-lg transition">📝</button>
-                          <button onClick={() => handleRemove('teachers', t.id)} className="p-2 hover:bg-gray-100 rounded-lg transition">🗑️</button>
+                      <tr key={t.id} onClick={() => navigate(`/admin/teacher/${t.id}`)} className="hover:bg-green-50 transition cursor-pointer">
+                        <td className="p-6 font-bold text-gray-800 text-lg">{t.full_name}</td>
+                        <td className="p-6"><span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-black uppercase">{t.subject}</span></td>
+                        <td className="p-6 text-gray-600">{t.phone || 'N/A'}</td>
+                        <td className="p-6 flex gap-4" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-xl transition transform hover:scale-110">📝</button>
+                          <button onClick={() => handleRemove('teachers', t.id)} className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl transition transform hover:scale-110">🗑️</button>
                         </td>
                       </tr>
                     ))}
@@ -272,116 +278,49 @@ const handleApprove = async (id: any) => {
           )}
         </div>
 
-        {/* --- MODALS (Make sure these are inside the main return div) --- */}
-        {/* ... (Your Student & Teacher Edit Modals Code) ... */}
+        {/* Modals */}
+        {isEditModalOpen && editingStudent && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl border border-gray-200">
+              <h2 className="text-3xl font-black text-blue-900 uppercase mb-8 tracking-tighter">Edit Student</h2>
+              <form onSubmit={handleUpdate} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-black text-gray-600 uppercase tracking-widest mb-2">Full Name</label>
+                  <input 
+                    type="text" 
+                    value={editingStudent.full_name}
+                    onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})}
+                    className="w-full bg-gray-50 border-2 border-gray-300 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-black text-gray-600 uppercase tracking-widest mb-2">Class</label>
+                  <select 
+                    value={editingStudent.class_name}
+                    onChange={(e) => setEditingStudent({...editingStudent, class_name: e.target.value})}
+                    className="w-full bg-gray-50 border-2 border-gray-300 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition"
+                  >
+                    {classes.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-6 pt-6">
+                  <button type="submit" className="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-black py-4 rounded-2xl uppercase text-sm shadow-lg transition transform hover:scale-105">Save Changes</button>
+                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-black py-4 rounded-2xl uppercase text-sm transition">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
-        {/* Modals को यहाँ रखें (Student और Teacher वाले) */}
-      {activeTab === 'teachers' && (
-  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-    <table className="w-full text-left">
-      <thead>
-        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">
-          <th className="pb-4">Teacher Name</th>
-          <th className="pb-4">Subject</th>
-          <th className="pb-4">Mobile</th>
-          <th className="pb-4">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-100">
-        {allTeachers.map(t => (
-          <tr key={t.id} className="hover:bg-blue-50 transition cursor-pointer">
-            <td className="p-4 font-bold text-gray-800">{t.full_name}</td>
-            <td className="p-4">
-              <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-[10px] font-black uppercase">
-                {t.subject}
-              </span>
-            </td>
-            <td className="p-4 text-sm text-gray-500">{t.phone || 'N/A'}</td>
-            <td className="p-4 flex gap-2">
-              <button onClick={() => { setEditingTeacher(t); setIsTeacherEditModalOpen(true); }} className="hover:scale-125 transition">📝</button>
-              <button onClick={() => handleRemove('teachers', t.id)} className="hover:scale-125 transition">🗑️</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
-      {isEditModalOpen && editingStudent && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-    <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
-      <h2 className="text-2xl font-black text-blue-900 uppercase mb-6">Edit Student</h2>
-      <form onSubmit={handleUpdate} className="space-y-4">
-        <input 
-          type="text" 
-          placeholder="Full Name"
-          value={editingStudent.full_name}
-          onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})}
-          className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3"
-          required
-        />
-        <select 
-          value={editingStudent.class_name}
-          onChange={(e) => setEditingStudent({...editingStudent, class_name: e.target.value})}
-          className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3"
-        >
-          {classes.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <div className="flex gap-4 pt-4">
-          <button type="submit" className="flex-1 bg-blue-900 text-white font-black py-4 rounded-2xl uppercase text-xs">Save</button>
-          <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-4 rounded-2xl uppercase text-xs">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-      {/* ========================== */}
-{/* 🛠️ TEACHER EDIT MODAL       */}
-{/* ========================== */}
-{isTeacherEditModalOpen && editingTeacher && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-    <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
-      <h2 className="text-2xl font-black text-green-900 uppercase mb-6 tracking-tighter">Edit Teacher</h2>
-      <form onSubmit={handleTeacherUpdate} className="space-y-4">
-        <div>
-          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Full Name</label>
-          <input 
-            type="text" 
-            value={editingTeacher.full_name}
-            onChange={(e) => setEditingTeacher({...editingTeacher, full_name: e.target.value})}
-            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
-            required
-          />
-        </div>
-        <div>
-          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Subject</label>
-          <input 
-            type="text" 
-            value={editingTeacher.subject}
-            onChange={(e) => setEditingTeacher({...editingTeacher, subject: e.target.value})}
-            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
-            required
-          />
-        </div>
-        <div>
-          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Mobile Phone</label>
-          <input 
-            type="text" 
-            value={editingTeacher.phone}
-            onChange={(e) => setEditingTeacher({...editingTeacher, phone: e.target.value})}
-            className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3 focus:ring-2 focus:ring-green-600"
-          />
-        </div>
-        <div className="flex gap-4 pt-4">
-          <button type="submit" className="flex-1 bg-green-700 text-white font-black py-4 rounded-2xl uppercase text-xs shadow-lg">Update Staff</button>
-          <button type="button" onClick={() => setIsTeacherEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-4 rounded-2xl uppercase text-xs">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-    </div>
-  );
-};
-
-export default AdminDashboard;
+        {isTeacherEditModalOpen && editingTeacher && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl border border-gray-200">
+              <h2 className="text-3xl font-black text-green-900 uppercase mb-8 tracking-tighter">Edit Teacher</h2>
+              <form onSubmit={handleTeacherUpdate} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-black text-gray-600 uppercase tracking-widest mb-2">Full Name</label>
+                  <input 
+                    type="text" 
+                    value={editingTeacher.full_name}
+                    onChange={(e) => setEditingTeacher({...editingTeacher, full_name
