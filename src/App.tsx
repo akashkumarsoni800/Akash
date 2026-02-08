@@ -1,11 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
 // --- COMPONENTS ---
 import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
-//import GallerySlider from './components/GallerySlider'; // ✅ Import ensure karein
 
 // --- PUBLIC PAGES ---
 import Home from './pages/Home';
@@ -23,6 +22,7 @@ import StudentResult from './pages/StudentResult';
 import StudentNotices from './pages/StudentNotices';
 import StudentFees from './pages/StudentFees';
 import TeacherAttendance from './pages/TeacherAttendance';
+import TeacherHomework from './pages/TeacherHomework';        // ✅ NEW IMPORT
 import AddStudent from './pages/AddStudent';
 import AddTeacher from './pages/AddTeacher';
 import AddEvent from './pages/AddEvent';
@@ -32,46 +32,37 @@ import UploadResult from './pages/UploadResult';
 import StudentProfile from './pages/StudentProfile';
 import CreateAdmin from './pages/CreateAdmin';
 
-
-
-
 function App() {
   return (
-   <BrowserRouter>
-      {/* 🟢 यह मुख्य कंटेनर है जो पूरी ऐप को कंट्रोल करेगा */}
+    <BrowserRouter>
       <div className="min-h-screen bg-gray-50 notranslate flex flex-col">
-        
-        {/* ग्लोबल नोटिफिकेशन */}
         <Toaster position="top-right" richColors closeButton />
 
         <Routes>
-          {/* ========================== */}
-          {/* 🟢 PUBLIC ROUTES (No Sidebar) */}
-          {/* ========================== */}
+          {/* 🟢 PUBLIC ROUTES */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* ========================== */}
-          {/* 🔵 UNIVERSAL SIDEBAR ROUTES */}
-          {/* ========================== */}
+          {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-                    
             <Route path="/profile-setup" element={<ProfileSetupPage />} />
 
-            {/* Student Section */}
+            {/* 👨‍🏫 TEACHER SECTION */}
+            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+            <Route path="/teacher/homework" element={<TeacherHomework />} />      {/* ✅ NEW */}
+            <Route path="/teacher/homework/:id" element={<TeacherHomework />} />  {/* ✅ DETAIL */}
+            <Route path="/teacher/upload-result" element={<UploadResult />} />
+
+            {/* 👨‍🎓 STUDENT SECTION */}
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/fees" element={<StudentFees />} />
             <Route path="/student/result" element={<StudentResult />} />
             <Route path="/student/notices" element={<StudentNotices />} />
 
-            {/* Teacher Section */}
-            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            <Route path="/teacher/attendance" element={<TeacherAttendance />} />
-            <Route path="/teacher/upload-result" element={<UploadResult />} />
-
-            {/* Admin Section */}
+            {/* 👨‍💼 ADMIN SECTION */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/manage-fees" element={<ManageFees />} />
             <Route path="/admin/create-exam" element={<CreateExam />} />
@@ -82,10 +73,8 @@ function App() {
             <Route path="/admin/student/:id" element={<StudentProfile />} />
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
           </Route>
-         
-          {/* ========================== */}
-          {/* 🔴 404 - PAGE NOT FOUND    */}
-          {/* ========================== */}
+
+          {/* 🔴 404 */}
           <Route path="*" element={
             <div className="flex h-screen flex-col items-center justify-center bg-gray-50 text-center p-6">
               <span className="text-6xl mb-4">🚫</span>
