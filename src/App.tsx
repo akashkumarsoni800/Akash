@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import { motion } from 'framer-motion'; // ✅ Added for 404 animation
 
 // --- COMPONENTS ---
 import Sidebar from './components/Sidebar';
@@ -19,8 +20,8 @@ import StudentDashboard from './pages/StudentDashboard';
 
 // --- TEACHER FEATURES (NEW & EXISTING) ---
 import TeacherAttendance from './pages/TeacherAttendance';
-import TeacherHomework from './pages/TeacherHomework';           // ✅ NEW
-import TeacherStudentList from './pages/TeacherStudentList';    // ✅ NEW
+import TeacherHomework from './pages/TeacherHomework';           // ✅ EXISTING
+import TeacherStudentList from './pages/TeacherStudentList';    // ✅ NEW 
 import TeacherAnalytics from './pages/TeacherAnalytics';        // ✅ NEW
 import UploadResult from './pages/UploadResult';
 
@@ -42,30 +43,27 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 notranslate flex flex-col">
-        {/* Global Notifications */}
         <Toaster position="top-right" richColors closeButton />
 
         <Routes>
-          {/* 🟢 PUBLIC ROUTES (No Auth Required) */}
+          {/* 🟢 PUBLIC ROUTES */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* 🔵 PROTECTED ROUTES (With Sidebar Layout) */}
+          {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-            
-            {/* 👤 Universal Profile */}
             <Route path="/profile-setup" element={<ProfileSetupPage />} />
 
-            {/* 👨‍🏫 TEACHER SECTION - COMPLETE */}
+            {/* 👨‍🏫 TEACHER SECTION - ✅ FULLY UPDATED WITH NEW FEATURES */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
             <Route path="/teacher/attendance" element={<TeacherAttendance />} />
             <Route path="/teacher/homework" element={<TeacherHomework />} />
             <Route path="/teacher/homework/:id" element={<TeacherHomework />} />
-            <Route path="/teacher/students" element={<TeacherStudentList />} />
-            <Route path="/teacher/student/:id" element={<TeacherStudentList />} />
-            <Route path="/teacher/analytics" element={<TeacherAnalytics />} />
+            <Route path="/teacher/students" element={<TeacherStudentList />} />        {/* ✅ NEW */}
+            <Route path="/teacher/student/:id" element={<TeacherStudentList />} />     {/* ✅ NEW */}
+            <Route path="/teacher/analytics" element={<TeacherAnalytics />} />         {/* ✅ NEW */}
             <Route path="/teacher/upload-result" element={<UploadResult />} />
 
             {/* 👨‍🎓 STUDENT SECTION */}
@@ -84,30 +82,30 @@ function App() {
             <Route path="/admin/add-event" element={<AddEvent />} />
             <Route path="/admin/student/:id" element={<StudentProfile />} />
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
-
           </Route>
 
-          {/* 🔴 404 - PAGE NOT FOUND */}
+          {/* 🔴 404 - ENHANCED */}
           <Route path="*" element={
             <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-red-50 to-pink-50 text-center p-6">
               <motion.div 
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-8xl mb-8"
+                initial={{ scale: 0.5, opacity: 0, rotate: -180 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-8xl mb-8 drop-shadow-2xl"
               >
                 🚫
               </motion.div>
-              <h1 className="text-4xl md:text-5xl font-black text-red-600 mb-4 uppercase tracking-widest">
+              <h1 className="text-4xl md:text-5xl font-black text-red-600 mb-4 uppercase tracking-widest animate-pulse">
                 404 - Page Not Found
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-md">
+              <p className="text-xl text-gray-600 mb-8 max-w-md leading-relaxed">
                 The page you're looking for doesn't exist or has been moved.
               </p>
               <a 
                 href="/" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-3xl font-black text-xl uppercase tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-3xl font-black text-xl uppercase tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 border-0"
               >
-                ← Back to Home
+                ← Back to Login
               </a>
             </div>
           } />
