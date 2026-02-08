@@ -3,15 +3,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// --- TypeScript Interfaces ---
 interface Homework {
   id: number;
   title: string;
   subject: string;
   className: string;
+  description?: string;
   dueDate: string;
   status: 'pending' | 'submitted' | 'overdue' | 'graded';
   submissions: number;
   totalStudents: number;
+  fileUrl?: string;
 }
 
 interface HomeworkFormData {
@@ -23,27 +26,50 @@ interface HomeworkFormData {
   className: string;
 }
 
+interface Teacher {
+  id: string;
+  full_name: string;
+  email: string;
+  subject: string;
+}
+
+// --- Homework Modal Component ---
 const HomeworkModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: HomeworkFormData) => void;
+  onSubmit: (data: HomeworkFormData) => Promise<void>;
   subject: string;
   className: string;
 }> = ({ isOpen, onClose, onSubmit, subject, className }) => {
-  // ... same modal code as before (convert state to useState<string | null>)
-  // I'll provide full TS version if needed
-};
+  const [formData, setFormData] = useState<HomeworkFormData>({
+    title: '',
+    description: '',
+    dueDate: '',
+    file: null,
+    subject,
+    className
+  });
+  const [loading, setLoading] = useState(false);
 
-export default function TeacherHomework() {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const [teacher, setTeacher] = useState<any>(null);
-  const [homeworks, setHomeworks] = useState<Homework[]>([]);
-  // ... rest same as JS version
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    await onSubmit(formData);
+    setLoading(false);
+    onClose();
+  };
 
-  // ... component logic same
+  if (!isOpen) return null;
 
   return (
-    // ... same JSX as before
-  );
-}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white/95 backdrop-
