@@ -39,7 +39,7 @@ import ManageFees from './pages/ManageFees';
 import StudentProfile from './pages/StudentProfile';
 import CreateAdmin from './pages/CreateAdmin';
 import TeacherSalary from './pages/TeacherSalary';
-import AccountingDashboard from './pages/AccountingDashboard';
+import ManageSalaries from './pages/ManageSalaries';
 
 
 function App() {
