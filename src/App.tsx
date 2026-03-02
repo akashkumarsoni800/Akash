@@ -38,6 +38,9 @@ import CreateExam from './pages/CreateExam';
 import ManageFees from './pages/ManageFees';
 import StudentProfile from './pages/StudentProfile';
 import CreateAdmin from './pages/CreateAdmin';
+import TeacherSalary from './pages/TeacherSalary';
+import AccountingDashboard from './pages/AccountingDashboard';
+
 
 function App() {
   return (
@@ -82,6 +85,9 @@ function App() {
             <Route path="/admin/add-event" element={<AddEvent />} />
             <Route path="/admin/student/:id" element={<StudentProfile />} />
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
+             <Route path="/admin/teacher-salary" element={<TeacherSalary />} />
+             <Route path="/admin/manage-salaries" element={<ManageSalaries />} />
+             
           </Route>
 
           {/* 🔴 404 - ENHANCED */}
