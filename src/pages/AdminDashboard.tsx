@@ -7,7 +7,7 @@ import {
   Users, GraduationCap, Clock, Plus, Search, 
   FileText, Trash2, Edit2, CheckCircle, CreditCard,
   Wallet, PieChart, Package, ShieldAlert, UserPlus, Settings,
-  Printer, Calendar, LayoutDashboard, Zap, Activity
+  Printer, Calendar, LayoutDashboard, Zap, Activity, FileStack
 } from 'lucide-react';
 
 const containerVar = {
@@ -152,16 +152,18 @@ const AdminDashboard = () => {
             <div className="flex flex-wrap gap-3">
                <motion.button whileHover={{ scale: 1.05 }} onClick={() => navigate('/admin/create-exam')} className="flex items-center gap-2 bg-gray-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black shadow-xl uppercase italic"><Zap size={14}/> Exam</motion.button>
                <motion.button whileHover={{ scale: 1.05 }} onClick={() => navigate('/admin/manage-fees')} className="flex items-center gap-2 bg-rose-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black shadow-xl uppercase italic"><CreditCard size={14}/> Fees</motion.button>
-               <motion.button whileHover={{ scale: 1.05 }} onClick={() => navigate('/admin/documents')} className="flex items-center gap-2 bg-orange-500 text-white px-6 py-4 rounded-2xl text-[10px] font-black shadow-xl uppercase italic"><Printer size={14}/> Documents</motion.button>
+               <motion.button whileHover={{ scale: 1.05 }} onClick={() => navigate('/admin/documents')} className="flex items-center gap-2 bg-orange-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black shadow-xl uppercase italic"><Printer size={14}/> Documents</motion.button>
                <motion.button whileHover={{ scale: 1.05 }} onClick={() => navigate('/admin/upload-result')} className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black shadow-xl uppercase italic"><CheckCircle size={14}/> Results</motion.button>
             </div>
           </div>
 
-          {/* --- NEON ACTION GRID --- */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+          {/* --- NEON ACTION GRID (Fitted with Documents Button) --- */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
              <ActionCard icon={Wallet} label="Accounting" color="blue" onClick={() => navigate('/admin/manage-salaries')} />
+             {/* ✅ Documents Button added here in the Grid */}
+             <ActionCard icon={FileStack} label="Generate Docs" color="orange" onClick={() => navigate('/admin/documents')} />
              <ActionCard icon={PieChart} label="Staff Pay" color="purple" onClick={() => navigate('/admin/teacher-salary')} />
-             <ActionCard icon={Package} label="Inventory" color="orange" onClick={() => navigate('/admin/inventory')} />
+             <ActionCard icon={Package} label="Inventory" color="amber" onClick={() => navigate('/admin/inventory')} />
              <ActionCard icon={ShieldAlert} label="System Access" color="red" onClick={() => navigate('/admin/create-admin')} />
              <ActionCard icon={UserPlus} label="New Student" color="indigo" onClick={() => navigate('/admin/add-student')} />
              <ActionCard icon={Plus} label="New Teacher" color="emerald" onClick={() => navigate('/admin/add-teacher')} />
@@ -349,18 +351,19 @@ const ActionCard = ({ icon: Icon, label, color, onClick }) => {
   const themes = {
     blue: 'hover:bg-blue-600 shadow-blue-100',
     purple: 'hover:bg-purple-600 shadow-purple-100',
-    orange: 'hover:bg-orange-500 shadow-orange-100',
+    orange: 'hover:bg-orange-500 shadow-orange-100', // For Documents
+    amber: 'hover:bg-amber-500 shadow-amber-100',   // For Inventory
     red: 'hover:bg-red-600 shadow-red-100',
     indigo: 'hover:bg-indigo-600 shadow-indigo-100',
     emerald: 'hover:bg-emerald-600 shadow-emerald-100',
   };
 
   return (
-    <button onClick={onClick} className={`flex flex-col items-center gap-4 p-6 bg-white border border-gray-50 rounded-[2.5rem] shadow-xl transition-all duration-500 group ${themes[color] || 'hover:bg-gray-900'}`}>
+    <button onClick={onClick} className={`flex flex-col items-center gap-4 p-5 bg-white border border-gray-50 rounded-[2.2rem] shadow-xl transition-all duration-500 group ${themes[color] || 'hover:bg-gray-900'}`}>
        <div className={`p-4 rounded-2xl bg-gray-50 group-hover:bg-white/20 group-hover:text-white transition-all duration-500`}>
           <Icon size={24} className="group-hover:scale-110 transition-transform" />
        </div>
-       <span className="text-[10px] font-black uppercase italic group-hover:text-white transition-colors tracking-tighter">{label}</span>
+       <span className="text-[9px] font-black uppercase italic group-hover:text-white transition-colors tracking-tighter text-center leading-tight">{label}</span>
     </button>
   );
 };
