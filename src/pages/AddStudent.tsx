@@ -3,12 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import { User, Camera, Upload, ShieldCheck } from "lucide-react";
-import Webcam from "react-webcam";
 import imageCompression from "browser-image-compression";
+
+// react-webcam ko dynamic import karte hain
+let Webcam: any;
+if (typeof window !== "undefined") {
+  Webcam = require("react-webcam").default;
+}
 
 const AddStudent = () => {
   const navigate = useNavigate();
-  const webcamRef = useRef<Webcam>(null);
+  const webcamRef = useRef<any>(null);
 
   const [loading, setLoading] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -63,7 +68,8 @@ const AddStudent = () => {
 
   // ================= CAPTURE FROM WEBCAM =================
   const capturePhoto = async () => {
-    const imageSrc = webcamRef.current?.getScreenshot();
+    if (!webcamRef.current) return;
+    const imageSrc = webcamRef.current.getScreenshot();
     if (!imageSrc) return;
 
     const blob = await fetch(imageSrc).then((res) => res.blob());
@@ -145,14 +151,17 @@ const AddStudent = () => {
           </div>
 
           <div className="flex gap-4 mt-6">
-            <button
-              type="button"
-              onClick={() => setShowWebcam(true)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-xl flex items-center gap-2"
-            >
-              <Camera size={18} />
-              Use Laptop Camera
-            </button>
+            {/* Webcam Button only if browser */}
+            {Webcam && (
+              <button
+                type="button"
+                onClick={() => setShowWebcam(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-xl flex items-center gap-2"
+              >
+                <Camera size={18} />
+                Use Laptop Camera
+              </button>
+            )}
 
             <label className="bg-gray-800 text-white px-4 py-2 rounded-xl cursor-pointer flex items-center gap-2">
               <Upload size={18} />
@@ -168,7 +177,7 @@ const AddStudent = () => {
         </div>
 
         {/* ================= WEBCAM MODAL ================= */}
-        {showWebcam && (
+        {showWebcam && Webcam && (
           <div className="flex flex-col items-center mb-6">
             <Webcam
               ref={webcamRef}
