@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import { User, Camera, Upload, ShieldCheck } from "lucide-react";
-import imageCompression from "browser-image-compression";
 
-// react-webcam ko dynamic import karte hain
+// Browser-only packages dynamic import
 let Webcam: any;
+let imageCompression: any;
+
 if (typeof window !== "undefined") {
   Webcam = require("react-webcam").default;
+  imageCompression = require("browser-image-compression");
 }
 
 const AddStudent = () => {
@@ -39,7 +41,6 @@ const AddStudent = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
-      // 25MB limit
       if (file.size > 25 * 1024 * 1024) {
         toast.error("Photo must be under 25MB");
         return;
@@ -51,13 +52,18 @@ const AddStudent = () => {
 
   // ================= COMPRESS IMAGE =================
   const compressAndSetImage = async (file: File) => {
+    if (!imageCompression) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+      return;
+    }
+
     try {
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1000,
         useWebWorker: true,
       };
-
       const compressedFile = await imageCompression(file, options);
       setPhotoFile(compressedFile);
       setPhotoPreview(URL.createObjectURL(compressedFile));
@@ -151,7 +157,6 @@ const AddStudent = () => {
           </div>
 
           <div className="flex gap-4 mt-6">
-            {/* Webcam Button only if browser */}
             {Webcam && (
               <button
                 type="button"
@@ -203,7 +208,6 @@ const AddStudent = () => {
           </div>
         )}
 
-        {/* ================= BASIC INPUT ================= */}
         <input
           type="text"
           placeholder="Full Name"
