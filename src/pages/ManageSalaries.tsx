@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
-const AccountingDashboard = () => {
+const ManageSalaries= () => {
   const [stats, setStats] = useState({
     totalRevenue: 0,
     totalExpense: 0,
