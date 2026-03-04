@@ -17,14 +17,26 @@ const AddStudent = () => {
     father: '',
     email: '',
     phone: '',
-    dob: '',
-    gender: '',
-    address: '',
+    dob: '', 
+    gender: '', 
+    address: '', 
   });
+
+  // ✅ Helper Function: हर शब्द का पहला अक्षर बड़ा करने के लिए (Auto Capitalize)
+  const toTitleCase = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    // ✅ इन Fields में पहला अक्षर बड़ा रहेगा और बाकी छोटे
+    let finalValue = value;
+    if (['name', 'father', 'class', 'address'].includes(name)) {
+      finalValue = toTitleCase(value);
+    }
+    
+    setFormData({ ...formData, [name]: finalValue });
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +122,7 @@ const AddStudent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 md:p-10">
+    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 md:p-10 font-sans">
       <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl w-full max-w-4xl border border-gray-100">
         
         <div className="text-center mb-10">
@@ -168,6 +180,7 @@ const AddStudent = () => {
                <InputField label="Roll Number *" name="roll" placeholder="E.g. 05" value={formData.roll} onChange={handleChange} required />
             </div>
 
+            {/* ✅ Email and Phone are Optional now */}
             <InputField label="Email (Optional)" name="email" type="email" placeholder="student@example.com" value={formData.email} onChange={handleChange} />
             <InputField label="Phone (Optional)" name="phone" type="tel" placeholder="10-digit mobile" value={formData.phone} onChange={handleChange} />
           </div>
@@ -201,7 +214,7 @@ const AddStudent = () => {
 const InputField = ({ label, ...props }: any) => (
   <div className="space-y-2">
     <label className="block text-[10px] font-black text-gray-400 uppercase ml-2">{label}</label>
-    <input className="w-full p-4 bg-gray-50 border-none rounded-2xl font-bold text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-300" {...props} />
+    <input className="w-full p-4 bg-gray-50 border-none rounded-2xl font-bold text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-300 shadow-sm" {...props} />
   </div>
 );
 
