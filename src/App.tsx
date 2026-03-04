@@ -40,6 +40,7 @@ import StudentProfile from './pages/StudentProfile';
 import CreateAdmin from './pages/CreateAdmin';
 import TeacherSalary from './pages/TeacherSalary';
 import ManageSalaries from './pages/ManageSalaries';
+import ManageInventory from './pages/ManageInventory';
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
              <Route path="/admin/teacher-salary" element={<TeacherSalary />} />
              <Route path="/admin/manage-salaries" element={<ManageSalaries />} />
+            <Route path="/admin/inventory" element={<ManageInventory />} />
              
           </Route>
 
