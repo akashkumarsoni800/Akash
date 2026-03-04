@@ -5,8 +5,9 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, GraduationCap, Clock, Plus, Search, 
-  FileText, Trash2, Edit2, CheckCircle, XCircle, CreditCard,
-  Wallet, PieChart, Package, ShieldAlert, UserPlus, Settings
+  FileText, Trash2, Edit2, CheckCircle, CreditCard,
+  Wallet, PieChart, Package, ShieldAlert, UserPlus, Settings,
+  Printer, FileCheck
 } from 'lucide-react';
 
 const containerVar = {
@@ -133,6 +134,7 @@ const AdminDashboard = () => {
             <div className="flex flex-wrap gap-3">
                <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/admin/create-exam')} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-4 rounded-2xl text-xs font-black shadow-lg italic transition-all"><FileText size={18}/> EXAM</motion.button>
                <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/admin/manage-fees')} className="flex items-center gap-2 bg-rose-500 text-white px-6 py-4 rounded-2xl text-xs font-black shadow-lg italic transition-all"><CreditCard size={18}/> FEES</motion.button>
+               <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/admin/documents')} className="flex items-center gap-2 bg-orange-600 text-white px-6 py-4 rounded-2xl text-xs font-black shadow-lg italic transition-all"><Printer size={18}/> DOCUMENTS</motion.button>
                <motion.button whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/admin/upload-result')} className="flex items-center gap-2 bg-emerald-500 text-white px-6 py-4 rounded-2xl text-xs font-black shadow-lg italic transition-all"><CheckCircle size={18}/> RESULTS</motion.button>
             </div>
           </div>
