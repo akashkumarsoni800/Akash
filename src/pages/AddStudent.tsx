@@ -258,7 +258,7 @@ const AddStudent = () => {
             value={formData.roll}
             onChange={handleChange}
             className="w-full p-3 bg-gray-100 rounded-xl"
-            required
+            
           />
           <input
             type="text"
@@ -276,7 +276,7 @@ const AddStudent = () => {
             value={formData.dob}
             onChange={handleChange}
             className="w-full p-3 bg-gray-100 rounded-xl"
-            required
+            
           />
           <select
             name="gender"
@@ -313,7 +313,7 @@ const AddStudent = () => {
           value={formData.address}
           onChange={handleChange}
           className="w-full p-3 bg-gray-100 rounded-xl mb-6"
-          required
+          
         />
 
         <button
