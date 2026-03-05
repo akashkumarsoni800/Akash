@@ -167,49 +167,51 @@ ${fee.fee_breakdown && Object.entries(fee.fee_breakdown)
               <p className="text-xl text-gray-500">Fees will appear here when assigned by admin</p>
             </div>
           ) : (
-            fees.map((fee: any) => (
-              <div key={fee.id} className="bg-white/90 backdrop-blur-xl rounded-4xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/60 group hover:-translate-y-2">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-8 text-white rounded-t-4xl">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-4xl font-black">{fee.month}</h3>
-                      <p className="text-blue-100 opacity-90">{studentData?.full_name}</p>
-                    </div>
-                    <span className={`px-8 py-4 rounded-3xl text-2xl font-bold shadow-2xl ${
-                      fee.status === 'Paid' 
-                        ? 'bg-green-500/30 border-4 border-green-500/50 backdrop-blur-sm' 
-                        : 'bg-red-500/30 border-4 border-red-500/50 backdrop-blur-sm animate-pulse'
-                    }`}>
-                      {fee.status}
-                    </span>
+            {fees.map((fee: any) => (
+            <div key={fee.id} className="bg-white/90 backdrop-blur-xl rounded-4xl shadow-2xl transition-all duration-500 border border-white/60">
+              {/* Card Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-8 text-white rounded-t-4xl">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-4xl font-black">{fee.month}</h3>
+                    <p className="text-blue-100 opacity-90">{studentData?.full_name || 'Student'}</p>
                   </div>
+                  <span className={`px-8 py-4 rounded-3xl text-2xl font-bold ${
+                    fee.status === 'Paid' ? 'bg-green-500/30' : 'bg-red-500/30 animate-pulse'
+                  }`}>
+                    {fee.status}
+                  </span>
                 </div>
-                
-                {/* Fee Breakdown */}
-                <div className="p-10">
-                  <div className="space-y-6 mb-10">
-                    {fee.fee_breakdown && Object.entries(fee.fee_breakdown).map(([key, value]: any) => (
+              </div>
+
+              {/* Fee Breakdown ✅ Added Safety Check */}
+              <div className="p-10">
+                <div className="space-y-6 mb-10">
+                  {fee.fee_breakdown && typeof fee.fee_breakdown === 'object' ? (
+                    Object.entries(fee.fee_breakdown).map(([key, value]: any) => (
                       Number(value) > 0 && (
-                        <div key={key} className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-3xl group-hover:shadow-lg transition-all">
-                          <span className="text-2xl font-bold text-gray-800 capitalize tracking-wide">
-                            {key.replace(/_/g, ' ')}
+                        <div key={key} className="flex justify-between items-center p-6 bg-gray-50 rounded-3xl">
+                          {/* यहाँ Head Name दिखाने के लिए Logic */}
+                          <span className="text-2xl font-bold text-gray-800 capitalize">
+                            {key.length > 10 ? 'Fee Component' : key} 
                           </span>
-                          <span className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          <span className="text-3xl font-black text-blue-600">
                             ₹{Number(value).toLocaleString()}
                           </span>
                         </div>
                       )
-                    ))}
-                  </div>
-                  
-                  {/* Total & Actions */}
-                  <div className="border-t-4 border-dashed border-blue-200 pt-10">
-                    <div className="flex justify-between items-center mb-10">
-                      <span className="text-3xl font-bold text-gray-600 uppercase tracking-widest">Net Payable</span>
-                      <span className="text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        ₹{Number(fee.total_amount).toLocaleString()}
-                      </span>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 italic">No breakdown details</p>
+                  )}
+                </div>
+
+                <div className="border-t-4 border-dashed border-blue-200 pt-10">
+                  <div className="flex justify-between items-center mb-10">
+                    <span className="text-3xl font-bold text-gray-600 uppercase">Net Payable</span>
+                    <span className="text-5xl font-black text-purple-600">
+                      ₹{Number(fee.total_amount || 0).toLocaleString()}
+                    </span>
                     </div>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
