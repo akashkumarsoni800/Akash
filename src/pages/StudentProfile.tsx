@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const StudentProfile = () => {
-  const { id } = useParams(); // URL se aane wali ID (e.g. 30)
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<any>(null);
@@ -24,10 +24,8 @@ const StudentProfile = () => {
   const fetchStudentData = async () => {
     try {
       setLoading(true);
-      console.log("Searching for ID:", id);
-
-      // 1. Basic Info Fetching - Pehle student dhoondo
-      // Isme hum check kar rahe hain ki URL wali ID, database ki 'id' ya 'roll_no' se match kare
+      
+      // 1. Pehle Student ko dhoondo (ID ya Roll No se)
       const { data: std, error: stdErr } = await supabase
         .from('students')
         .select('*')
@@ -37,38 +35,40 @@ const StudentProfile = () => {
       if (stdErr) throw stdErr;
       
       if (!std) {
-        console.error("Student not found in DB");
         setStudent(null);
         setLoading(false);
         return;
       }
 
       setStudent(std);
-      const dbId = std.id; // Database ki asli internal ID
 
-      // 2. Fees History - Use dbId instead of URL id
+      // ✅ SABSE JARURI FIX: Fees fetch karne ke liye database wali 'std.id' use karo
+      // URL wali 'id' (30) use karne se data nahi mil raha tha
+      const internalId = std.id;
+
+      // 2. Fees History Fetching
       const { data: feeData, error: feeErr } = await supabase
         .from('fees')
         .select('*')
-        .eq('student_id', dbId)
+        .eq('student_id', internalId) // Yahan internalId use ho rahi hai
         .order('created_at', { ascending: false });
       
       if (!feeErr) setFees(feeData || []);
 
-      // 3. Results
+      // 3. Results Fetching
       const { data: resData, error: resErr } = await supabase
         .from('results')
         .select('*, exams(title)')
-        .eq('student_id', dbId)
+        .eq('student_id', internalId)
         .order('uploaded_at', { ascending: false });
       
       if (!resErr) setResults(resData || []);
 
-      // 4. Attendance
+      // 4. Attendance Fetching
       const { data: att } = await supabase
         .from('attendance')
         .select('status')
-        .eq('student_id', dbId);
+        .eq('student_id', internalId);
         
       if (att) {
         setAttendance({
@@ -77,8 +77,8 @@ const StudentProfile = () => {
         });
       }
     } catch (err: any) {
-      console.error("Fetch error details:", err);
-      toast.error("Error fetching data");
+      console.error("Fetch error:", err);
+      toast.error("Error loading student profile");
     } finally {
       setLoading(false);
     }
@@ -91,16 +91,7 @@ const StudentProfile = () => {
     </div>
   );
 
-  if (!student) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] p-10">
-       <div className="bg-white p-12 rounded-[3rem] shadow-2xl text-center border border-red-50">
-          <div className="text-6xl mb-6">🔍</div>
-          <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Student Not Found</h2>
-          <p className="text-gray-400 font-bold mt-2 uppercase text-xs tracking-widest">The ID "{id}" does not exist in records.</p>
-          <button onClick={() => navigate(-1)} className="mt-8 bg-indigo-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg">Go Back</button>
-       </div>
-    </div>
-  );
+  if (!student) return <div className="p-20 text-center font-bold text-red-500">Student Profile Not Found.</div>;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
@@ -112,11 +103,11 @@ const StudentProfile = () => {
             <ChevronLeft size={16}/> Back to Control
           </button>
           <button onClick={() => window.print()} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2">
-            <Printer size={16}/> Download Report
+            <Printer size={16}/> Print Report
           </button>
         </div>
 
-        {/* Profile Header */}
+        {/* Header Card */}
         <div className="bg-indigo-900 rounded-[3.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden mb-10">
           <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
@@ -145,18 +136,20 @@ const StudentProfile = () => {
               </p>
             </div>
           </div>
+          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500 opacity-20 rounded-full blur-[80px]"></div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Info Card */}
           <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50 h-fit">
             <h3 className="font-black uppercase text-[11px] text-gray-400 tracking-widest mb-8 flex items-center gap-2">
-              <FileText size={16} className="text-indigo-600"/> Personal Info
+              <FileText size={16} className="text-indigo-600"/> Personal Dossier
             </h3>
             <div className="space-y-6">
               <InfoRow icon={User} label="Father's Name" value={student.father_name} />
-              <InfoRow icon={Phone} label="Contact Number" value={student.contact_number || 'N/A'} />
+              <InfoRow icon={Phone} label="Contact Support" value={student.contact_number || 'N/A'} />
               <InfoRow icon={Calendar} label="Date of Birth" value={student.date_of_birth || 'N/A'} />
-              <InfoRow icon={MapPin} label="Home Address" value={student.address} />
+              <InfoRow icon={MapPin} label="Address" value={student.address} />
             </div>
           </div>
 
@@ -213,7 +206,7 @@ const StudentProfile = () => {
                        <div key={r.id} className="bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm hover:border-indigo-200 transition-all">
                          <p className="text-[9px] font-black text-gray-400 uppercase mb-1">{r.exams?.title}</p>
                          <p className={`font-black text-lg ${r.status === 'PASS' ? 'text-emerald-600' : 'text-rose-600'}`}>{r.status}</p>
-                         <div className="mt-4 flex justify-between items-center pt-4 border-t border-gray-50">
+                         <div className="mt-4 flex justify-between items-center border-t pt-4 border-white">
                             <span className="text-[10px] font-bold text-gray-400 uppercase">Score: {r.percentage?.toFixed(1)}%</span>
                             <span className="font-black text-indigo-900">₹{r.total_marks} Marks</span>
                          </div>
