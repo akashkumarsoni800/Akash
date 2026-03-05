@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
+import { 
+  User, Phone, MapPin, Calendar, Award, 
+  CreditCard, BookOpen, ChevronLeft, Printer, RefreshCw 
+} from 'lucide-react';
 
 const StudentProfile = () => {
   const { id } = useParams();
@@ -9,7 +13,7 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<any>(null);
   const [fees, setFees] = useState([]);
-  const [marks, setMarks] = useState([]);
+  const [results, setResults] = useState([]); // Corrected from marks
   const [attendance, setAttendance] = useState({ present: 0, total: 0 });
 
   useEffect(() => {
@@ -19,20 +23,24 @@ const StudentProfile = () => {
   const fetchStudentData = async () => {
     try {
       setLoading(true);
-      // 1. Basic Info
+      // 1. Basic Info - Fetching registration_no and photo_url too
       const { data: std, error } = await supabase.from('students').select('*').eq('id', id).single();
       if (error) throw error;
       setStudent(std);
 
-      // 2. Fees
+      // 2. Fees History
       const { data: feeData } = await supabase.from('fees').select('*').eq('student_id', id).order('created_at', { ascending: false });
       setFees(feeData || []);
 
-      // 3. Marks (Assuming 'exams' join)
-      const { data: markData } = await supabase.from('marks').select('*, exams(exam_name)').eq('student_id', id);
-      setMarks(markData || []);
+      // 3. Results (Previously you were calling 'marks' table)
+      const { data: resData } = await supabase
+        .from('results')
+        .select('*, exams(title)')
+        .eq('student_id', id)
+        .order('uploaded_at', { ascending: false });
+      setResults(resData || []);
 
-      // 4. Attendance Summary
+      // 4. Attendance
       const { data: att } = await supabase.from('attendance').select('status').eq('student_id', id);
       if (att) {
         setAttendance({
@@ -48,106 +56,149 @@ const StudentProfile = () => {
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-black uppercase tracking-tighter text-blue-900">ASM Loading Profile...</div>;
+  if (loading) return (
+    <div className="h-screen flex flex-col items-center justify-center bg-white">
+      <RefreshCw className="animate-spin text-indigo-600 mb-4" size={40} />
+      <p className="font-black uppercase tracking-widest text-gray-400">Loading Student File...</p>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12 notranslate">
+    <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
       <div className="max-w-6xl mx-auto px-4 pt-8">
         
-        {/* Navigation & Actions */}
+        {/* Top Navigation */}
         <div className="flex justify-between items-center mb-8">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="bg-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 border border-gray-100 shadow-sm hover:text-blue-900 transition"
-          >
-            ← Back to Control
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-indigo-600 shadow-sm border border-indigo-50">
+            <ChevronLeft size={16}/> Back to Dashboard
           </button>
-          <div className="flex gap-2">
-            <button onClick={() => window.print()} className="bg-blue-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg">🖨️ Print Report</button>
-          </div>
+          <button onClick={() => window.print()} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2">
+            <Printer size={16}/> Print Report
+          </button>
         </div>
 
-        {/* Profile Header Card */}
-        <div className="bg-blue-900 rounded-[40px] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden mb-8">
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-              <span className="bg-blue-500/30 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20">Student Profile</span>
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mt-4 leading-none">
-                {student.full_name}
-              </h1>
-              <p className="text-blue-200 font-bold mt-2 uppercase tracking-widest text-sm">
-                Class: {student.class_name} • Roll No: {student.id.toString().slice(-4)}
-              </p>
+        {/* --- MAIN PROFILE HEADER --- */}
+        <div className="bg-indigo-900 rounded-[3.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden mb-10">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+              {/* Profile Photo */}
+              <div className="w-32 h-32 rounded-[2.5rem] bg-white/10 border-4 border-white/20 overflow-hidden shadow-2xl flex items-center justify-center backdrop-blur-md">
+                 {student.photo_url ? (
+                   <img src={student.photo_url} className="w-full h-full object-cover" alt="Student" />
+                 ) : (
+                   <User size={60} className="text-white/30" />
+                 )}
+              </div>
+              <div>
+                <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">Verified Student</span>
+                <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter mt-3">{student.full_name}</h1>
+                <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                   <div className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-bold border border-white/10 tracking-wider uppercase">Class: {student.class_name}</div>
+                   <div className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-bold border border-white/10 tracking-wider uppercase italic">Roll: {student.roll_no}</div>
+                   <div className="bg-indigo-500/40 px-4 py-1.5 rounded-xl text-[10px] font-bold border border-white/10 tracking-wider uppercase italic">Reg: {student.registration_no || 'N/A'}</div>
+                </div>
+              </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-xl p-6 rounded-[32px] border border-white/20 text-center min-w-[160px]">
-              <p className="text-[10px] font-black uppercase opacity-60 mb-1">Attendance</p>
-              <p className="text-4xl font-black">
+            
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 text-center min-w-[180px] shadow-inner">
+              <p className="text-[10px] font-black uppercase text-indigo-200 mb-2 tracking-widest italic">Attendance Rate</p>
+              <p className="text-5xl font-black tracking-tighter">
                 {attendance.total > 0 ? Math.round((attendance.present / attendance.total) * 100) : 0}%
               </p>
             </div>
           </div>
-          {/* Decorative Circle */}
-          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500 opacity-20 rounded-full blur-[80px]"></div>
         </div>
 
-        {/* Grid Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Left Column: Personal Info & Attendance */}
+          {/* --- LEFT COLUMN: PERSONAL DATA --- */}
           <div className="space-y-8">
-            <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100">
-              <h3 className="font-black uppercase text-[10px] text-gray-400 tracking-widest mb-6">Contact Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-[10px] font-black text-blue-900 uppercase">Guardian Phone</p>
-                  <p className="font-bold text-gray-800">{student.contact_number || 'Not Provided'}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-blue-900 uppercase">Status</p>
-                  <span className="inline-block bg-green-50 text-green-600 px-3 py-1 rounded-lg text-[10px] font-black mt-1">ACTIVE</span>
-                </div>
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200/50 border border-gray-50">
+              <h3 className="font-black uppercase text-[11px] text-gray-400 tracking-widest mb-8 flex items-center gap-2">
+                <FileText size={16} className="text-indigo-600"/> Student Dossier
+              </h3>
+              <div className="space-y-6">
+                <InfoItem icon={User} label="Father's Name" value={student.father_name} />
+                <InfoItem icon={Phone} label="Contact Support" value={student.contact_number || 'N/A'} />
+                <InfoItem icon={Calendar} label="Date of Birth" value={student.date_of_birth || 'N/A'} />
+                <InfoItem icon={MapPin} label="Residential Address" value={student.address} />
               </div>
             </div>
 
-            <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100">
-              <h3 className="font-black uppercase text-[10px] text-gray-400 tracking-widest mb-6">Quick Stats</h3>
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200/50 border border-gray-50">
+              <h3 className="font-black uppercase text-[11px] text-gray-400 tracking-widest mb-6">Engagement Summary</h3>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                  <p className="text-xl font-black text-gray-800">{attendance.present}</p>
-                  <p className="text-[8px] font-black uppercase text-gray-400">Days Present</p>
+                <div className="bg-indigo-50 p-6 rounded-3xl text-center border border-indigo-100">
+                  <p className="text-2xl font-black text-indigo-900">{attendance.present}</p>
+                  <p className="text-[9px] font-black uppercase text-indigo-400 mt-1 italic tracking-tighter">Days In</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                  <p className="text-xl font-black text-gray-800">{fees.length}</p>
-                  <p className="text-[8px] font-black uppercase text-gray-400">Fee Records</p>
+                <div className="bg-rose-50 p-6 rounded-3xl text-center border border-rose-100">
+                  <p className="text-2xl font-black text-rose-600">{attendance.total - attendance.present}</p>
+                  <p className="text-[9px] font-black uppercase text-rose-400 mt-1 italic tracking-tighter">Absents</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Fees & Marks */}
+          {/* --- RIGHT COLUMN: FEES & ACADEMICS --- */}
           <div className="lg:col-span-2 space-y-8">
             
-            {/* Fees Table */}
-            <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="font-black uppercase text-[10px] tracking-widest text-gray-800">Fee Payment History</h3>
+            {/* Academic Results Section */}
+            <div className="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-50 overflow-hidden">
+              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+                <h3 className="font-black uppercase text-[11px] tracking-widest text-gray-800 flex items-center gap-2">
+                   <Award size={18} className="text-indigo-600"/> Academic Performance
+                </h3>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+              <div className="p-8">
+                 {results.length > 0 ? (
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     {results.map((r: any) => (
+                       <div key={r.id} className="bg-[#fcfdfe] border border-gray-100 p-6 rounded-[2rem] hover:border-indigo-200 transition-all group">
+                         <div className="flex justify-between items-start mb-4">
+                           <div>
+                              <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">{r.exams?.title || 'Examination'}</p>
+                              <p className="font-black text-gray-900 text-lg uppercase tracking-tighter">{r.status || 'REPORTED'}</p>
+                           </div>
+                           <div className="bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black shadow-lg shadow-indigo-100">{r.percentage?.toFixed(1)}%</div>
+                         </div>
+                         <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase italic">Grand Total</span>
+                            <span className="font-black text-indigo-900 text-xl">{r.total_marks} Marks</span>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 ) : (
+                   <div className="text-center py-10 opacity-30 italic font-black uppercase tracking-widest">No Exam Records Found</div>
+                 )}
+              </div>
+            </div>
+
+            {/* Fees History Section */}
+            <div className="bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-50 overflow-hidden">
+              <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+                <h3 className="font-black uppercase text-[11px] tracking-widest text-gray-800 flex items-center gap-2">
+                   <CreditCard size={18} className="text-indigo-600"/> Finance Record
+                </h3>
+              </div>
+              <div className="overflow-x-auto p-4">
+                <table className="w-full text-left border-separate border-spacing-y-3">
                   <thead>
-                    <tr className="bg-gray-50/50 text-[10px] font-black text-gray-400 uppercase">
-                      <th className="p-4">Month</th>
-                      <th className="p-4">Amount</th>
-                      <th className="p-4 text-right">Status</th>
+                    <tr className="text-[10px] font-black text-gray-400 uppercase italic">
+                      <th className="px-6 py-2">Billing Month</th>
+                      <th className="px-6 py-2">Amount Paid</th>
+                      <th className="px-6 py-2 text-right">Verification</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody>
                     {fees.map((f: any) => (
-                      <tr key={f.id} className="hover:bg-gray-50/50 transition">
-                        <td className="p-4 font-bold text-gray-800">{f.month}</td>
-                        <td className="p-4 font-black text-blue-900">₹{f.total_amount}</td>
-                        <td className="p-4 text-right">
-                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${f.status === 'Paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                      <tr key={f.id} className="bg-gray-50/50 group hover:bg-indigo-50/30 transition-all rounded-3xl">
+                        <td className="px-6 py-5 rounded-l-[1.5rem] font-black text-gray-900 uppercase text-sm">{f.month}</td>
+                        <td className="px-6 py-5 font-black text-indigo-600">₹{f.total_amount}</td>
+                        <td className="px-6 py-5 rounded-r-[1.5rem] text-right">
+                          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${f.status === 'Paid' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
                             {f.status}
                           </span>
                         </td>
@@ -155,33 +206,7 @@ const StudentProfile = () => {
                     ))}
                   </tbody>
                 </table>
-                {fees.length === 0 && <p className="p-8 text-center text-xs font-bold text-gray-400 italic">No fee history available.</p>}
-              </div>
-            </div>
-
-            {/* Academic Section */}
-            <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="font-black uppercase text-[10px] tracking-widest text-gray-800">Academic Marks</h3>
-              </div>
-              <div className="p-6">
-                 {marks.length > 0 ? (
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     {marks.map((m: any) => (
-                       <div key={m.id} className="border border-gray-100 p-4 rounded-2xl flex justify-between items-center">
-                         <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{m.exams?.exam_name || 'Exam'}</p>
-                            <p className="font-black text-gray-800">{m.marks_obtained} Marks</p>
-                         </div>
-                         <div className="text-right">
-                            <p className="text-xs font-black text-blue-900">{((m.marks_obtained / m.total_marks) * 100).toFixed(0)}%</p>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 ) : (
-                   <p className="text-center text-xs font-bold text-gray-400 italic py-4">No academic data reported yet.</p>
-                 )}
+                {fees.length === 0 && <p className="p-10 text-center text-xs font-black text-gray-300 uppercase italic tracking-[0.2em]">Transaction history empty.</p>}
               </div>
             </div>
 
@@ -191,5 +216,17 @@ const StudentProfile = () => {
     </div>
   );
 };
+
+// --- HELPER COMPONENTS ---
+
+const InfoItem = ({ icon: Icon, label, value }: any) => (
+  <div className="flex items-start gap-4">
+    <div className="bg-gray-50 p-3 rounded-2xl text-indigo-600"><Icon size={18}/></div>
+    <div>
+      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">{label}</p>
+      <p className="font-bold text-gray-900 text-sm">{value || 'N/A'}</p>
+    </div>
+  </div>
+);
 
 export default StudentProfile;
