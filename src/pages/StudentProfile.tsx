@@ -30,7 +30,7 @@ const StudentProfile = () => {
       const { data: std, error: stdErr } = await supabase
         .from('students')
         .select('*')
-        .eq('student_id', id) // आपकी टेबल में अब यही कॉलम नाम है
+        .eq('student_id', Number(id)) // आपकी टेबल में अब यही कॉलम नाम है
         .maybeSingle();
       
       if (stdErr) throw stdErr;
@@ -47,7 +47,8 @@ const StudentProfile = () => {
       const { data: feeData, error: feeErr } = await supabase
         .from('fees')
         .select('*')
-        .eq('student_id', id) 
+        .eq('student_id', std.student_id) 
+// COMMENT: foreign key students.student_id से match होगा
         .order('created_at', { ascending: false });
       
       if (!feeErr) setFees(feeData || []);
