@@ -106,7 +106,7 @@ const ICardTemplate = ({ student }: any) => (
     </div>
     <div className="w-2/3 p-3 relative">
       <h2 className="text-[14px] font-black text-blue-900 uppercase">Adarsh Shishu Mandir</h2>
-      <p className="text-[8px] font-bold text-gray-500 mb-2">Bihar Sharif, Nalanda</p>
+      <p className="text-[8px] font-bold text-gray-500 mb-2">Basantpatti Purnahiya (Sheohar)</p>
       <div className="space-y-1">
         <p className="text-[12px] font-black uppercase text-gray-800">{student.full_name}</p>
         <p className="text-[10px] font-bold text-gray-600 uppercase">Class: {student.class_name}</p>
@@ -125,7 +125,7 @@ const TCTemplate = ({ student }: any) => (
   <div className="w-[8.27in] h-[11.69in] p-12 bg-white border-[12px] border-double border-blue-900 relative text-left">
     <div className="text-center border-b-2 border-blue-900 pb-4 mb-10">
       <h1 className="text-4xl font-black text-blue-900 uppercase">Adarsh Shishu Mandir</h1>
-      <p className="font-bold text-gray-600">Bihar Sharif, Nalanda, Bihar | Code: 850021</p>
+      <p className="font-bold text-gray-600"> Basantpatti, Purnahiya (Sheohar) Bihar | Udise-Code:10032201107 </p>
       <div className="mt-4 inline-block bg-blue-900 text-white px-6 py-1 rounded-full font-bold uppercase tracking-widest text-sm">Transfer Certificate</div>
     </div>
     <div className="space-y-8 text-lg leading-[2] font-serif">
