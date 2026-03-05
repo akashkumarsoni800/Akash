@@ -136,8 +136,11 @@ ${feeHeads.map((head: any) =>
     e.preventDefault();
     if (!selectedStudent && !selectedClass) return toast.error("Select Student/Class & Month");
     
-    const totalAmount = Object.values(feeValues).reduce((sum: number, val: any) => 
+    // ✅ कैलकुलेशन को सबसे ऊपर रखा ताकि एरर न आए
+    const totalAmountValue = Object.values(feeValues).reduce((sum: number, val: any) => 
       sum + Number(val || 0), 0);
+
+    if (totalAmountValue <= 0) return toast.error("Fee amount cannot be zero");
 
     try {
       setLoading(true);
@@ -145,29 +148,35 @@ ${feeHeads.map((head: any) =>
       
       if (bulkMode && selectedClass) {
         const classStudents = students.filter(s => s.class_name === selectedClass);
+        if (classStudents.length === 0) throw new Error("No students found in this class");
+
         const feesToInsert = classStudents.map(student => ({
           student_id: student.id,
           month,
           fee_breakdown: feeValues,
-          total_amount: totalAmount,
+          total_amount: totalAmountValue, // ✅ Fixed variable name
           status: 'Pending'
         }));
-        ({ error } = await supabase.from('fees').insert(feesToInsert));
+        
+        const result = await supabase.from('fees').insert(feesToInsert);
+        error = result.error;
       } else {
-        ({ error } = await supabase.from('fees').insert([{
+        const result = await supabase.from('fees').insert([{
           student_id: selectedStudent,
           month,
           fee_breakdown: feeValues,
-          total_amount,
+          total_amount: totalAmountValue, // ✅ Fixed variable name
           status: 'Pending'
-        }]));
+        }]);
+        error = result.error;
       }
 
       if (error) throw error;
-      toast.success(bulkMode ? `✅ Bulk assigned to ${students.filter(s => s.class_name === selectedClass).length} students!` : "✅ Fee Assigned Successfully!");
+      toast.success(bulkMode ? `✅ Bulk assigned to students!` : "✅ Fee Assigned Successfully!");
       fetchInitialData();
-      if (bulkMode) setSelectedClass('');
-      else setSelectedStudent('');
+      
+      // Form Reset
+      setFeeValues(Object.fromEntries(feeHeads.map(h => [h.id, 0])));
     } catch (error: any) {
       toast.error("Error: " + error.message);
     } finally {
