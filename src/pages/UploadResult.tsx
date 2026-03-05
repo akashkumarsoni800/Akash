@@ -44,7 +44,7 @@ const UploadResult = () => {
 
   // ✅ IMPROVED: Auto-Promotion logic with exact matching
   const getNextClass = (currentClass: string) => {
-    const sequence = ["Nursery", "LKG", "UKG", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "Graduate"];
+    const sequence = ["NUR", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8"];
     
     // सफाई: extra space हटाना
     const cleanCurrent = currentClass.trim();
