@@ -18,55 +18,59 @@ const StudentProfile = () => {
   const [attendance, setAttendance] = useState({ present: 0, total: 0 });
   const [error, setError] = useState<string | null>(null);
 
-  // 🔥 SUPABASE JOIN QUERY - Foreign Key के साथ
   const fetchStudentData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!id || isNaN(Number(id))) {
-        throw new Error("Invalid Student ID format");
+      // ✅ FIX 1: URL ID Check
+      if (!id || id === "undefined" || id === "null") {
+        throw new Error("Student ID missing in URL");
       }
 
       const studentIdNum = Number(id);
-      console.log("🔍 Fetching student with JOIN:", studentIdNum);
+      if (isNaN(studentIdNum)) {
+        throw new Error(`Invalid ID format: "${id}" is not a number`);
+      }
 
-      // ✅ SINGLE JOIN QUERY - सब कुछ एक query में
+      console.log("🔍 Fetching student:", studentIdNum);
+
+      // ✅ FIX 2: SAFE JOIN QUERY (Removed !inner)
+      // !inner हटाने से अगर फीस 0 है तब भी स्टूडेंट दिखेगा
       const { data, error: joinError } = await supabase
         .from("students")
         .select(`
           *,
-          fees!inner(student_id, id, month, total_amount, status, created_at),
-          results!inner(student_id, id, marks_obtained, total_marks, grade),
-          attendance!inner(student_id, status)
+          fees(id, month, total_amount, status, created_at),
+          results(id, marks_obtained, total_marks, grade),
+          attendance(status)
         `)
         .eq("student_id", studentIdNum)
-        .single();
+        .maybeSingle();
 
-      if (joinError) {
-        console.log("JOIN failed, using fallback...");
-        // Fallback - separate queries (100% safe)
-        await fetchSeparate(studentIdNum);
+      if (joinError) throw joinError;
+
+      if (!data) {
+        setStudent(null);
+        setError("Student not found in database.");
         return;
       }
 
-      // ✅ JOIN Success - unpack data
-      if (data) {
-        setStudent(data);
-        setFees(data.fees || []);
-        setResults(data.results || []);
-        
-        const attRecords = data.attendance || [];
-        setAttendance({
-          present: attRecords.filter((a: any) => a.status === "Present").length,
-          total: attRecords.length
-        });
-        
-        toast.success(`✅ Profile loaded: ${data.full_name}`);
-      }
+      // ✅ Success - Populate States
+      setStudent(data);
+      setFees(data.fees || []);
+      setResults(data.results || []);
+      
+      const attRecords = data.attendance || [];
+      setAttendance({
+        present: attRecords.filter((a: any) => a.status === "Present").length,
+        total: attRecords.length
+      });
+      
+      toast.success(`Profile loaded: ${data.full_name}`);
 
     } catch (err: any) {
-      console.error("Error:", err);
+      console.error("Critical Error:", err);
       setError(err.message);
       toast.error(err.message);
     } finally {
@@ -74,36 +78,11 @@ const StudentProfile = () => {
     }
   }, [id]);
 
-  // 🔄 FALLBACK - Separate queries (अगर JOIN fail हो)
-  const fetchSeparate = async (studentIdNum: number) => {
-    const [
-      { data: studentData },
-      { data: feeData },
-      { data: resultData },
-      { data: attData }
-    ] = await Promise.all([
-      supabase.from("students").select("*").eq("student_id", studentIdNum).single(),
-      supabase.from("fees").select("*").eq("student_id", studentIdNum),
-      supabase.from("results").select("*").eq("student_id", studentIdNum),
-      supabase.from("attendance").select("status").eq("student_id", studentIdNum)
-    ]);
-
-    setStudent(studentData || null);
-    setFees(feeData || []);
-    setResults(resultData || []);
-    setAttendance({
-      present: (attData || []).filter((a: any) => a.status === "Present").length,
-      total: attData?.length || 0
-    });
-  };
-
   useEffect(() => {
-    if (id) {
-      fetchStudentData();
-    }
+    if (id) fetchStudentData();
   }, [id, fetchStudentData]);
 
-  // 💰 Calculations
+  // Calculations
   const attendanceRate = attendance.total > 0 
     ? Math.round((attendance.present / attendance.total) * 100) 
     : 0;
@@ -112,195 +91,131 @@ const StudentProfile = () => {
   const paidFees = fees.filter(f => f.status === "Paid").reduce((sum, f) => sum + Number(f.total_amount || 0), 0);
   const dueFees = Math.max(0, totalFees - paidFees);
 
-  const exportCSV = () => {
-    if (!student) return;
-    const csv = [
-      [student.full_name, `ID: ${student.student_id}`],
-      [],
-      ["Total Fees", `₹${totalFees.toLocaleString()}`, "Paid", `₹${paidFees.toLocaleString()}`],
-      ["Due", `₹${dueFees.toLocaleString()}`],
-      [],
-      ["Fee Details"],
-      ["Month", "Amount", "Status"],
-      ...fees.map(f => [f.month || "N/A", Number(f.total_amount || 0).toLocaleString(), f.status || "Pending"])
-    ].map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')).join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `student_${student.student_id}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  // Loading
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="text-center">
-        <RefreshCw className="animate-spin mx-auto mb-6 text-indigo-600" size={56} />
-        <p className="text-2xl font-bold text-gray-700">Loading Student Profile</p>
-        <p className="text-indigo-600 font-mono mt-2">ID: {id}</p>
+        <RefreshCw className="animate-spin mx-auto mb-4 text-indigo-600" size={48} />
+        <p className="font-black uppercase tracking-widest text-gray-400 italic">Syncing ASM Database...</p>
       </div>
     </div>
   );
 
-  // Error
-  if (error) return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-red-50 to-slate-50">
-      <AlertCircle size={80} className="text-red-400 mb-8" />
-      <h1 className="text-4xl font-black text-gray-900 mb-6">Error</h1>
-      <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-2xl">
-        <p className="text-xl text-gray-800 mb-6">{error}</p>
-        <div className="grid grid-cols-2 gap-4 text-sm mb-8">
-          <div><strong>ID:</strong> <code>{id}</code></div>
-          <div><strong>Route:</strong> <code>/students/:id</code></div>
-        </div>
-        <div className="flex gap-4">
-          <button onClick={() => navigate("/students")} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700">
-            Students List
-          </button>
-          <button onClick={fetchStudentData} className="bg-green-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-green-700">
-            Retry
-          </button>
-        </div>
+  if (error || !student) return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-12 text-center bg-[#f8fafc]">
+      <AlertCircle size={80} className="text-rose-500 mb-6 opacity-20" />
+      <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">Profile Error</h1>
+      <p className="text-gray-400 mt-2 font-medium">{error || "Record Not Found"}</p>
+      <div className="flex gap-4 mt-8">
+        <button onClick={() => navigate(-1)} className="bg-gray-200 text-gray-700 px-8 py-3 rounded-2xl font-bold italic">Go Back</button>
+        <button onClick={() => navigate("/admin/dashboard")} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg">Dashboard</button>
       </div>
-    </div>
-  );
-
-  // Not Found
-  if (!student) return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-yellow-50 to-slate-50">
-      <AlertCircle size={80} className="text-yellow-400 mb-8 opacity-60" />
-      <h1 className="text-4xl font-black text-gray-900 mb-6">Student Not Found</h1>
-      <p className="text-2xl text-gray-600 mb-8">
-        ID <code className="bg-gray-200 px-6 py-2 rounded-xl font-mono text-xl">{id}</code>
-      </p>
-      <button onClick={() => navigate("/students")} className="bg-indigo-600 text-white px-16 py-4 rounded-3xl font-black text-lg hover:bg-indigo-700">
-        View All Students
-      </button>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-6 mb-12">
-          <button 
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl font-bold text-indigo-600 shadow-lg hover:shadow-xl transition-all"
-          >
-            <ChevronLeft size={20} /> Back
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 md:p-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Top Header */}
+        <div className="flex justify-between items-center">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase text-indigo-600 shadow-sm border border-indigo-50 hover:shadow-md transition-all tracking-widest">
+            <ChevronLeft size={16} /> Back to Dashboard
           </button>
-          <div className="flex gap-3">
-            <button onClick={exportCSV} className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-green-700">
-              <Download size={18} /> CSV
-            </button>
-            <button onClick={() => window.print()} className="flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-black">
-              <Printer size={18} /> Print
-            </button>
-          </div>
+          <button onClick={() => window.print()} className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase shadow-xl flex items-center gap-2 tracking-widest">
+            <Printer size={16} /> Print Report
+          </button>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 mb-10 overflow-hidden">
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
-            <div className="w-32 h-32 rounded-2xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-              {student.photo_url ? (
-                <img src={student.photo_url} alt={student.full_name} className="w-full h-full object-cover rounded-xl" />
-              ) : (
-                <User size={48} className="text-indigo-600" />
-              )}
-            </div>
-            <div className="flex-1 text-center lg:text-left">
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 mb-4">
-                {student.full_name}
-              </h1>
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <div className="bg-indigo-100 px-6 py-3 rounded-xl font-bold">
-                  Class: {student.class_name || "N/A"}
-                </div>
-                <div className="bg-emerald-100 px-6 py-3 rounded-xl font-bold">
-                  Roll: {student.roll_no || "N/A"}
-                </div>
-                <div className="bg-gray-100 px-6 py-3 rounded-xl font-bold">
-                  ID: {student.student_id}
+        <div className="bg-indigo-900 rounded-[3.5rem] p-10 text-white shadow-2xl relative overflow-hidden border-b-[10px] border-indigo-500/30">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+              <div className="w-32 h-32 rounded-[2.5rem] bg-white/10 border-4 border-white/20 overflow-hidden flex items-center justify-center backdrop-blur-md">
+                {student.photo_url ? (
+                  <img src={student.photo_url} alt={student.full_name} className="w-full h-full object-cover" />
+                ) : (
+                  <User size={60} className="text-white/20" />
+                )}
+              </div>
+              <div>
+                <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">Verified Student</span>
+                <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter mt-3 leading-none">{student.full_name}</h1>
+                <div className="flex gap-4 mt-5">
+                   <div className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-bold border border-white/10 tracking-widest uppercase italic">Class: {student.class_name}</div>
+                   <div className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-bold border border-white/10 tracking-widest uppercase italic">Roll: {student.roll_no}</div>
                 </div>
               </div>
             </div>
-            <div className="bg-indigo-600 text-white p-8 rounded-2xl text-center min-w-[200px]">
-              <p className="text-sm font-bold uppercase tracking-wide mb-4">Attendance</p>
-              <p className={`text-5xl font-black ${attendanceRate >= 75 ? 'text-emerald-300' : 'text-yellow-300'}`}>
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 text-center min-w-[200px] shadow-inner">
+              <p className="text-[10px] font-black uppercase text-indigo-200 mb-2 tracking-widest italic">Attendance</p>
+              <p className={`text-6xl font-black tracking-tighter ${attendanceRate >= 75 ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {attendanceRate}%
               </p>
             </div>
           </div>
+          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Content Section */}
+        <div className="grid lg:grid-cols-3 gap-10">
+          
           {/* Info Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <h3 className="font-black text-xl mb-6 pb-4 border-b">Student Info</h3>
+          <div className="space-y-8">
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50">
+              <h3 className="font-black uppercase text-[11px] text-gray-400 tracking-widest mb-8 flex items-center gap-2 italic">Student Dossier</h3>
               <InfoItem icon={User} label="Student ID" value={student.student_id} />
-              <InfoItem icon={User} label="Father" value={student.father_name} />
-              <InfoItem icon={Phone} label="Phone" value={student.contact_number} />
+              <InfoItem icon={User} label="Father Name" value={student.father_name} />
+              <InfoItem icon={Phone} label="Contact Support" value={student.contact_number} />
               <InfoItem icon={MapPin} label="Address" value={student.address} />
             </div>
           </div>
 
           {/* Fees Main */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <div className="flex items-center gap-4 mb-8">
-                <CreditCard size={32} className="text-indigo-600" />
-                <h3 className="font-black text-2xl">Financial Summary</h3>
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-50 overflow-hidden">
+              <div className="p-8 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                 <div className="flex items-center gap-3">
+                    <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-lg"><CreditCard size={18}/></div>
+                    <h3 className="font-black uppercase text-[11px] tracking-widest text-gray-800 italic">Financial Summary</h3>
+                 </div>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-6 mb-10">
-                <StatCard title="Total" value={`₹${totalFees.toLocaleString()}`} />
-                <StatCard title="Paid" value={`₹${paidFees.toLocaleString()}`} color="text-green-600" />
-                <StatCard title="Due" value={`₹${dueFees.toLocaleString()}`} color={dueFees > 0 ? "text-red-600" : "text-green-600"} />
-              </div>
+              <div className="p-8">
+                <div className="grid grid-cols-3 gap-6 mb-10">
+                  <StatCard title="Total" value={`₹${totalFees.toLocaleString()}`} />
+                  <StatCard title="Paid" value={`₹${paidFees.toLocaleString()}`} color="text-emerald-600" />
+                  <StatCard title="Due" value={`₹${dueFees.toLocaleString()}`} color={dueFees > 0 ? "text-rose-600" : "text-emerald-600"} />
+                </div>
 
-              {fees.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="px-6 py-4 text-left font-bold text-sm uppercase">Month</th>
-                        <th className="px-6 py-4 text-left font-bold text-sm uppercase">Amount</th>
-                        <th className="px-6 py-4 text-right font-bold text-sm uppercase">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {fees.map((fee: any) => (
-                        <tr key={fee.id} className="border-b hover:bg-gray-50">
-                          <td className="px-6 py-4 font-semibold">{fee.month || "N/A"}</td>
-                          <td className="px-6 py-4 font-bold text-indigo-600">
-                            ₹{Number(fee.total_amount).toLocaleString()}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                              fee.status === "Paid" 
-                                ? "bg-green-100 text-green-800" 
-                                : "bg-red-100 text-red-800"
-                            }`}>
-                              {fee.status || "Pending"}
-                            </span>
-                          </td>
+                  {fees.length === 0 ? (
+                    <div className="py-12 text-center opacity-20 italic font-black uppercase text-xs tracking-widest">No matching ledger entries.</div>
+                  ) : (
+                    <table className="w-full text-left border-separate border-spacing-y-3">
+                      <thead>
+                        <tr className="text-[10px] font-black text-gray-400 uppercase italic">
+                          <th className="px-6 py-2">Billing Cycle</th>
+                          <th className="px-6 py-2">Amount Paid</th>
+                          <th className="px-6 py-2 text-right">Verification</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {fees.map((fee: any) => (
+                          <tr key={fee.id} className="bg-gray-50/80 hover:bg-white transition-all rounded-[1.5rem] group border border-transparent hover:border-indigo-100 shadow-sm">
+                            <td className="px-6 py-5 rounded-l-[1.5rem] font-black text-gray-900 uppercase text-xs italic">{fee.month || "Current"}</td>
+                            <td className="px-6 py-5 font-black text-indigo-600 text-lg">₹{Number(fee.total_amount).toLocaleString()}</td>
+                            <td className="px-6 py-5 rounded-r-[1.5rem] text-right">
+                              <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm ${fee.status === "Paid" ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600 animate-pulse"}`}>
+                                {fee.status || "Pending"}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  No fee records found
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -309,23 +224,21 @@ const StudentProfile = () => {
   );
 };
 
-// Helpers
+// Sub-components
 const InfoItem = ({ icon: Icon, label, value }: any) => (
-  <div className="flex items-center gap-4 p-4 hover:bg-indigo-50 rounded-xl transition-colors">
-    <div className="bg-indigo-100 p-3 rounded-xl">
-      <Icon size={20} className="text-indigo-600" />
-    </div>
+  <div className="flex items-start gap-4 mb-6 last:mb-0">
+    <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600 shadow-sm border border-indigo-100"><Icon size={18} /></div>
     <div>
-      <p className="text-sm font-bold text-gray-500 uppercase tracking-wide">{label}</p>
-      <p className="font-semibold text-gray-900 text-lg">{value || "—"}</p>
+      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">{label}</p>
+      <p className="font-bold text-gray-900 text-sm tracking-tight">{value || "Not Provided"}</p>
     </div>
   </div>
 );
 
 const StatCard = ({ title, value, color = "text-indigo-600" }: any) => (
-  <div className="bg-gray-50 p-6 rounded-2xl text-center shadow hover:shadow-lg transition-all">
-    <p className="text-sm font-bold uppercase tracking-wide text-gray-600 mb-3">{title}</p>
-    <p className={`text-3xl font-black ${color}`}>{value}</p>
+  <div className="bg-gray-50/50 p-6 rounded-[2rem] text-center border border-gray-100 shadow-inner">
+    <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 italic">{title}</p>
+    <p className={`text-xl md:text-2xl font-black ${color} tracking-tighter leading-none`}>{value}</p>
   </div>
 );
 
