@@ -159,7 +159,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         {/* 1. HEADER SECTION */}
         <div className="flex justify-between items-center border-b-[1.5px] border-blue-900/20 pb-3 mb-4">
            {/* Left Logo */}
-           <img src="/logo.png" alt="logo" className="w-14 h-14 object-contain" />
+           <img src="/logo.png" alt="logo" className="w-17 h-17 object-contain" />
            
            <div className="text-center flex-1 mx-3">
               <h1 className="text-3xl font-black text-blue-950 uppercase italic tracking-tighter leading-none">Adarsh Shishu Mandir</h1>
@@ -168,7 +168,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
            </div>
 
            {/* Right Logo */}
-           <img src="/logo.png" alt="logo" className="w-14 h-14 object-contain" />
+           
         </div>
 
         {/* 2. STUDENT DETAILS AREA */}
