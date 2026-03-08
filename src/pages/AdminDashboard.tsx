@@ -97,6 +97,11 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [newPhotoFile, setNewPhotoFile] = useState<File | null>(null);
+const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
+const [showWebcam, setShowWebcam] = useState(false);
+const webcamRef = useRef<any>(null);
+
   const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0 });
   const [pendingStudents, setPendingStudents] = useState([]);
   const [allStudents, setAllStudents] = useState([]);
@@ -160,16 +165,42 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
+  const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+   try {
+    let photoUrl = editingStudent.photo_url;
+
+    // ✅ अगर यूजर ने नई फोटो चुनी है, तो उसे Supabase Storage में अपलोड करें
+    if (newPhotoFile) {
+      const fileName = `${Date.now()}_update.jpg`;
+      const { error: uploadError } = await supabase.storage
+        .from("student-photos")
+        .upload(fileName, newPhotoFile);
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from("student-photos").getPublicUrl(fileName);
+      photoUrl = data.publicUrl;
+    }
+
+    // ✅ डेटाबेस अपडेट करें
     await handleAction('update', 'students', editingStudent.student_id, { 
       full_name: editingStudent.full_name, 
       class_name: editingStudent.class_name,
-      roll_no: editingStudent.roll_no,       // ✅ New field added
-      father_name: editingStudent.father_name // ✅ New field added
+      roll_no: editingStudent.roll_no,
+      father_name: editingStudent.father_name,
+      photo_url: photoUrl // फोटो लिंक यहाँ अपडेट होगा
     });
-  };
 
+    setNewPhotoFile(null);
+    setNewPhotoPreview(null);
+    toast.success("Profile Updated!");
+  } catch (err: any) {
+    toast.error(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
   // ✅ Search Fixed: रोल नंबर और नाम दोनों से सर्च करें
   const filteredStudents = allStudents.filter(s => 
     (classFilter === 'All' || s.class_name === classFilter) &&
@@ -312,6 +343,26 @@ const AdminDashboard = () => {
               </h2>
               <form onSubmit={handleUpdate} className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
+                  {/* 📸 PHOTO EDIT BOX */}
+<div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[3rem] border border-gray-100 mb-6">
+  <div className="w-28 h-28 rounded-3xl overflow-hidden border-4 border-white shadow-lg relative group">
+    <img 
+      src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} 
+      className="w-full h-full object-cover" 
+    />
+    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+      <Upload className="text-white" size={20} />
+      <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+        if (e.target.files?.[0]) {
+          setNewPhotoFile(e.target.files[0]);
+          setNewPhotoPreview(URL.createObjectURL(e.target.files[0]));
+        }
+      }} />
+    </label>
+  </div>
+  <button type="button" onClick={() => setShowWebcam(true)} className="text-[10px] font-black uppercase tracking-widest bg-white border px-4 py-2 rounded-xl">Live Camera</button>
+</div>
+                  
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-4">Full Name</label>
                     <input type="text" value={editingStudent.full_name} onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})} className="w-full bg-gray-50 border-none rounded-[2rem] px-8 py-5 font-black text-gray-900 focus:ring-2 focus:ring-indigo-100" />
