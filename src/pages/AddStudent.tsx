@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
-import { User, Camera, Upload, ShieldCheck, RefreshCw } from "lucide-react";
+import { User, Camera, Upload, ShieldCheck, RefreshCw, FlipHorizontal } from "lucide-react";
 
 // SSR-safe dynamic imports
 let imageCompression: any = null;
@@ -21,8 +21,10 @@ const AddStudent = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
+  
+  // ✅ कैमरा स्विच स्टेट ('user' = front, 'environment' = back)
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
-  // Form State - Class और Roll को मैनेज करने के लिए
   const [formData, setFormData] = useState({
     name: "",
     class: "", 
@@ -41,7 +43,6 @@ const AddStudent = () => {
     }
   }, []);
 
-  // ================= 1. AUTO ROLL NUMBER FETCH LOGIC =================
   const fetchNextRoll = async (className: string) => {
     if (!className) return;
     try {
@@ -56,7 +57,6 @@ const AddStudent = () => {
 
       let nextRoll = "1";
       if (data && data.length > 0) {
-        // सबसे बड़े रोल नंबर में 1 जोड़ें
         nextRoll = (parseInt(data[0].roll_no) + 1).toString();
       }
       setFormData(prev => ({ ...prev, roll: nextRoll }));
@@ -66,13 +66,11 @@ const AddStudent = () => {
     }
   };
 
-  // ================= 2. HANDLE CLASS CHANGE =================
   const handleClassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toUpperCase();
     setFormData(prev => ({ ...prev, class: val }));
   };
 
-  // जब क्लास इनपुट से फोकस हटे (Blur), तब ऑटो रोल फेच करें
   const handleClassBlur = () => {
     if (formData.class) fetchNextRoll(formData.class);
   };
@@ -80,9 +78,7 @@ const AddStudent = () => {
   const toTitleCase = (str: string) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase());
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     let value = e.target.value;
     if (["name", "father", "address"].includes(e.target.name)) {
       value = toTitleCase(value);
@@ -122,6 +118,11 @@ const AddStudent = () => {
     setShowWebcam(false);
   };
 
+  // ✅ कैमरा स्विच फंक्शन
+  const toggleCamera = () => {
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.class || !formData.roll) {
@@ -159,24 +160,20 @@ const AddStudent = () => {
       }]);
 
       if (error) throw error;
-
       toast.success(`${formData.name} added successfully!`);
 
-      // ================= 3. RESET BUT KEEP CLASS =================
       setFormData(prev => ({
         ...prev,
         name: "",
-        roll: (parseInt(prev.roll) + 1).toString(), // ऑटो अगला रोल नंबर
+        roll: (parseInt(prev.roll) + 1).toString(),
         father: "",
         email: "",
         phone: "",
         dob: "",
         gender: "",
-        // address: prev.address, // एड्रेस भी चाहे तो बचा सकते हैं
       }));
       setPhotoFile(null);
       setPhotoPreview(null);
-
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -189,85 +186,87 @@ const AddStudent = () => {
       <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl w-full max-w-4xl border border-gray-100">
         
         <div className="flex justify-between items-center mb-8">
-           <h2 className="text-4xl font-black text-gray-900 uppercase italic">Bulk Admission</h2>
-           <div className="bg-indigo-50 px-4 py-2 rounded-2xl text-indigo-600 text-[10px] font-black uppercase">ASM v3.0</div>
+           <h2 className="text-4xl font-black text-gray-900 uppercase italic leading-none">Admission</h2>
+           <div className="bg-indigo-50 px-4 py-2 rounded-2xl text-indigo-600 text-[10px] font-black uppercase tracking-widest">ASM Hub v3.0</div>
         </div>
 
-        {/* PHOTO UPLOAD */}
+        {/* PHOTO UPLOAD SECTION */}
         <div className="flex flex-col items-center mb-10">
-          <div className="w-40 h-40 bg-gray-50 rounded-[3rem] overflow-hidden flex items-center justify-center border-4 border-white shadow-xl relative group border-dashed border-gray-200">
+          <div className="w-40 h-40 bg-gray-50 rounded-[3rem] overflow-hidden flex items-center justify-center border-4 border-white shadow-2xl relative group">
             {photoPreview ? (
               <img src={photoPreview} className="w-full h-full object-cover" />
             ) : (
               <User size={60} className="text-gray-200" />
             )}
+            {/* FILE UPLOAD HIDDEN INPUT */}
             <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-               <Camera className="text-white" size={30} />
+               <Upload className="text-white" size={30} />
                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
             </label>
           </div>
-          <div className="mt-4 flex gap-3">
-             <button type="button" onClick={() => setShowWebcam(true)} className="bg-indigo-600 text-white px-6 py-2 rounded-xl text-xs font-bold shadow-lg">Live Camera</button>
-             {photoPreview && <button type="button" onClick={() => {setPhotoFile(null); setPhotoPreview(null);}} className="bg-red-50 text-red-500 px-6 py-2 rounded-xl text-xs font-bold">Remove</button>}
+          
+          <div className="mt-6 flex gap-3">
+             <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl">
+               <Camera size={16}/> Live Photo
+             </button>
+             <label className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl cursor-pointer">
+               <Upload size={16}/> Browse
+               <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+             </label>
+             {photoPreview && <button type="button" onClick={() => {setPhotoFile(null); setPhotoPreview(null);}} className="bg-rose-50 text-rose-500 px-6 py-3 rounded-2xl text-xs font-bold uppercase">Clear</button>}
           </div>
         </div>
 
+        {/* WEBCAM MODAL */}
         {showWebcam && WebcamComp && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6">
-            <WebcamComp ref={webcamRef} screenshotFormat="image/jpeg" className="rounded-3xl border-4 border-white shadow-2xl max-w-sm w-full" />
-            <div className="flex gap-4 mt-8">
-              <button type="button" onClick={capturePhoto} className="bg-white text-black px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Capture</button>
-              <button type="button" onClick={() => setShowWebcam(false)} className="bg-red-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest">Cancel</button>
+          <div className="fixed inset-0 bg-black/95 z-[100] flex flex-col items-center justify-center p-4">
+            <div className="relative w-full max-w-sm rounded-[3rem] overflow-hidden border-4 border-white shadow-2xl">
+               <WebcamComp 
+                 ref={webcamRef} 
+                 screenshotFormat="image/jpeg" 
+                 videoConstraints={{ facingMode }}
+                 className="w-full h-full object-cover"
+               />
+               {/* SWITCH CAMERA BUTTON */}
+               <button type="button" onClick={toggleCamera} className="absolute top-6 right-6 bg-white/20 backdrop-blur-md p-4 rounded-full text-white border border-white/30 active:scale-90 transition-all">
+                  <FlipHorizontal size={24} />
+               </button>
+            </div>
+            
+            <div className="flex gap-4 mt-10">
+              <button type="button" onClick={capturePhoto} className="bg-emerald-500 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition-all">Capture Photo</button>
+              <button type="button" onClick={() => setShowWebcam(false)} className="bg-white/10 backdrop-blur-lg text-white border border-white/10 px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest active:scale-95 transition-all">Close</button>
             </div>
           </div>
         )}
 
-        {/* FORM GRID */}
+        {/* FORM GRID - STICKY CLASS & ROLL */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          
-          {/* ✅ Sticky Class Name */}
-          <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">
-            <label className="block text-[10px] font-black text-orange-400 uppercase ml-2 mb-1">Target Class *</label>
-            <input 
-              type="text" 
-              name="class" 
-              placeholder="e.g. 10" 
-              value={formData.class} 
-              onChange={handleClassChange} 
-              onBlur={handleClassBlur}
-              className="w-full bg-white p-3 rounded-xl font-black text-orange-900 border-none outline-none focus:ring-2 focus:ring-orange-200" 
-              required 
-            />
+          <div className="bg-indigo-900 p-6 rounded-[2.5rem] border border-indigo-800 shadow-2xl flex flex-col justify-center">
+            <label className="block text-[9px] font-black text-indigo-300 uppercase tracking-[0.2em] mb-2 ml-2">Assigned Class *</label>
+            <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full bg-white/10 border border-white/10 p-4 rounded-2xl font-black text-xl text-white outline-none focus:ring-4 focus:ring-indigo-500/30" required />
           </div>
 
-          {/* ✅ Auto Roll Number */}
-          <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
-            <label className="block text-[10px] font-black text-indigo-400 uppercase ml-2 mb-1">Assigned Roll No *</label>
-            <div className="flex gap-2">
-              <input 
-                type="number" 
-                name="roll" 
-                value={formData.roll} 
-                onChange={handleChange} 
-                className="w-full bg-white p-3 rounded-xl font-black text-indigo-900 border-none outline-none" 
-                required 
-              />
-              <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-3 bg-white rounded-xl text-indigo-600 shadow-sm hover:bg-indigo-600 hover:text-white transition-all">
-                <RefreshCw size={18}/>
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-xl flex flex-col justify-center">
+            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-2">Next Roll No *</label>
+            <div className="flex gap-3">
+              <input type="number" name="roll" value={formData.roll} onChange={handleChange} className="w-full bg-gray-50 p-4 rounded-2xl font-black text-xl text-gray-900 border-none outline-none" required />
+              <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all">
+                <RefreshCw size={22}/>
               </button>
             </div>
           </div>
 
-          <div className="md:col-span-2 border-b border-gray-100 my-2"></div>
+          <div className="md:col-span-2 py-4"><div className="w-full h-px bg-gray-100" /></div>
 
-          <InputField label="Student Name *" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
-          <InputField label="Father's Name *" name="father" placeholder="Father's Name" value={formData.father} onChange={handleChange} required />
+          <InputField label="Student Name *" name="name" placeholder="Akash Kumar" value={formData.name} onChange={handleChange} required />
+          <InputField label="Father's Name *" name="father" placeholder="Father Name" value={formData.father} onChange={handleChange} required />
           
           <div className="grid grid-cols-2 gap-4">
              <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
              <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">Gender *</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-4 bg-gray-50 border-none rounded-2xl font-bold outline-none" required>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-2">Gender *</label>
+                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-4.5 bg-gray-50 border-none rounded-2xl font-black uppercase text-xs outline-none focus:ring-2 focus:ring-indigo-100" required>
                   <option value="">Select</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -275,34 +274,36 @@ const AddStudent = () => {
              </div>
           </div>
 
-          <InputField label="Mobile Number" name="phone" placeholder="10 Digit Number" value={formData.phone} onChange={handleChange} />
+          <InputField label="Contact Mobile" name="phone" placeholder="91XXXXXXXX" value={formData.phone} onChange={handleChange} />
         </div>
 
         <textarea
-          placeholder="Residential Address *"
+          placeholder="Complete Residential Address *"
           name="address"
           value={formData.address}
           onChange={handleChange}
-          className="w-full p-5 bg-gray-50 border-none rounded-[2rem] font-bold outline-none h-28 focus:ring-2 focus:ring-indigo-100 mb-8"
+          className="w-full p-6 bg-gray-50 border-none rounded-[2.5rem] font-bold text-gray-900 outline-none h-32 focus:ring-4 focus:ring-indigo-500/10 mb-10 transition-all"
+          required
         />
 
         <button
           disabled={loading}
-          className="w-full bg-gray-900 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-indigo-600 transition-all flex justify-center items-center gap-4"
+          className="w-full bg-indigo-600 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl shadow-indigo-200 hover:bg-black transition-all flex justify-center items-center gap-4 active:scale-95"
         >
-          {loading ? "Processing..." : <><ShieldCheck size={24} /> Complete & Add Next Student</>}
+          {loading ? "Registering Student..." : <><ShieldCheck size={24} /> Submit & Add Next</>}
         </button>
       </form>
     </div>
   );
 };
 
-// Reusable Input
+// Reusable Input Component
 const InputField = ({ label, ...props }: any) => (
-  <div>
-    <label className="block text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">{label}</label>
-    <input className="w-full p-4 bg-gray-50 border-none rounded-2xl font-bold text-gray-900 outline-none focus:ring-2 focus:ring-indigo-100 transition-all" {...props} />
+  <div className="space-y-2">
+    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">{label}</label>
+    <input className="w-full p-4.5 bg-gray-50 border-none rounded-2xl font-black text-gray-900 outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all" {...props} />
   </div>
 );
 
 export default AddStudent;
+              
