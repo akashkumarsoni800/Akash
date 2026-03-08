@@ -97,7 +97,7 @@ const AdminDashboard = () => {
     let err;
     if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq('id', id));
     if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('id', id));
-    if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq('id', id));
+    if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq('student_id', id));
     
     if (!err) { 
       toast.success("कार्य सफलतापूर्वक संपन्न!"); 
@@ -111,7 +111,7 @@ const AdminDashboard = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await handleAction('update', 'students', editingStudent.id, { 
+    await handleAction('update', 'students', editingStudent.student_id, { 
       full_name: editingStudent.full_name, 
       class_name: editingStudent.class_name 
     });
@@ -207,8 +207,8 @@ const AdminDashboard = () => {
                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 italic">Class: {s.class_name}</p>
                         </div>
                         <div className="flex gap-3">
-                          <button onClick={() => handleAction('approve', 'students', s.id)} className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl text-[10px] font-black tracking-[0.1em] uppercase shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all">Approve</button>
-                          <button onClick={() => handleAction('delete', 'students', s.id)} className="flex-1 bg-gray-50 text-gray-400 py-4 rounded-2xl text-[10px] font-black tracking-[0.1em] uppercase hover:bg-red-50 hover:text-red-500 transition-all">Reject</button>
+                          <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl text-[10px] font-black tracking-[0.1em] uppercase shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all">Approve</button>
+                          <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-gray-50 text-gray-400 py-4 rounded-2xl text-[10px] font-black tracking-[0.1em] uppercase hover:bg-red-50 hover:text-red-500 transition-all">Reject</button>
                         </div>
                       </motion.div>
                     )) : (
@@ -244,7 +244,7 @@ const AdminDashboard = () => {
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {filteredStudents.map(s => (
-                          <tr key={s.id} className="hover:bg-indigo-50/30 transition-all group">
+                          <tr key={s.student_id} className="hover:bg-indigo-50/30 transition-all group">
                             <td className="p-8 font-black text-gray-800 uppercase text-sm">
                                <div className="flex items-center gap-4">
                                   <div className="w-10 h-10 bg-white rounded-xl shadow-sm border flex items-center justify-center text-indigo-600 font-black">{s.full_name[0]}</div>
@@ -258,8 +258,8 @@ const AdminDashboard = () => {
                             </td>
                             <td className="p-8 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                               <ActionIconButton icon={Edit2} color="indigo" onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} />
-                              <ActionIconButton icon={Users} color="blue" onClick={() => navigate(`/admin/student/${s.id}`)} />
-                              <ActionIconButton icon={Trash2} color="red" onClick={() => handleAction('delete', 'students', s.id)} />
+                              <ActionIconButton icon={Users} color="blue" onClick={() => navigate(`/admin/student/${s.student_id}`)} />
+                              <ActionIconButton icon={Trash2} color="red" onClick={() => handleAction('delete', 'students', s.student_id)} />
                             </td>
                           </tr>
                         ))}
