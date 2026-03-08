@@ -10,24 +10,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const DocumentHub = () => {
   const [studentId, setStudentId] = useState('');
-  const [student, setStudent] = useState<any>(null); // Single student info
-  const [studentsList, setStudentsList] = useState<any[]>([]); // Bulk students for admit cards
+  const [student, setStudent] = useState<any>(null);
+  const [studentsList, setStudentsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeDoc, setActiveDoc] = useState<'ICARD' | 'TC' | 'DOB' | 'GATE' | 'ADMIT' | null>(null);
   const componentRef = useRef<any>();
 
-  // 🔥 ADVANCED SEARCH & BULK LOGIC
   const fetchStudent = async () => {
     if (!studentId.trim()) return toast.error("कृपया Name, Roll No या Class डालें!");
-    
     setLoading(true);
-    setStudentsList([]); // Reset previous list
+    setStudentsList([]);
     const cleanSearch = studentId.trim();
     const isNumber = !isNaN(Number(cleanSearch));
 
     try {
-      // 1. सबसे पहले चेक करें कि क्या यह पूरी क्लास के लिए सर्च है?
-      const { data: bulkData, error: bulkError } = await supabase
+      const { data: bulkData } = await supabase
         .from('students')
         .select('*')
         .eq('class_name', cleanSearch)
@@ -35,13 +32,12 @@ const DocumentHub = () => {
 
       if (bulkData && bulkData.length > 0) {
         setStudentsList(bulkData);
-        setStudent(bulkData[0]); // Preview के लिए पहला स्टूडेंट सेट करें
+        setStudent(bulkData[0]);
         toast.success(`${bulkData.length} छात्रों की क्लास लोड हो गई! 🚀`);
         setLoading(false);
         return;
       }
 
-      // 2. अगर क्लास नहीं है, तो सिंगल स्टूडेंट सर्च करें
       const { data, error } = await supabase
         .from('students')
         .select('*')
@@ -49,13 +45,12 @@ const DocumentHub = () => {
         .maybeSingle();
 
       if (error) throw error;
-
       if (!data) {
         toast.error("कोई डेटा नहीं मिला!");
         setStudent(null);
       } else {
         setStudent(data);
-        setStudentsList([data]); // सिंगल के लिए लिस्ट में सिर्फ एक
+        setStudentsList([data]);
         toast.success(`${data.full_name} लोड हो गया! ✅`);
       }
     } catch (err: any) {
@@ -72,19 +67,17 @@ const DocumentHub = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
-        
         <header className="text-center">
            <h1 className="text-5xl font-black text-blue-900 uppercase italic tracking-tighter">Document Hub</h1>
            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">ASM Institutional Printing Engine</p>
         </header>
 
-        {/* Search Bar */}
         <div className="bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-50 flex flex-col md:flex-row gap-4 items-center">
           <div className="relative flex-1 w-full">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-blue-400" />
             <input 
               type="text" 
-              placeholder="नाम, रोल नंबर या क्लास (जैसे '10A') डालें..." 
+              placeholder="नाम, रोल नंबर या क्लास डालें..." 
               className="w-full pl-14 pr-6 py-5 bg-blue-50/50 rounded-2xl font-bold text-lg outline-none focus:ring-4 focus:ring-blue-100 transition-all"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
@@ -97,7 +90,6 @@ const DocumentHub = () => {
           </button>
         </div>
 
-        {/* Document Tabs */}
         {student && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <DocBtn icon={CreditCard} label="Identity Card" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} />
@@ -108,7 +100,6 @@ const DocumentHub = () => {
           </div>
         )}
 
-        {/* Printing Area */}
         <div className="bg-white p-6 md:p-12 rounded-[4rem] shadow-2xl border border-gray-50 flex flex-col items-center">
           {student && activeDoc ? (
             <div className="w-full flex flex-col items-center space-y-8">
@@ -117,10 +108,7 @@ const DocumentHub = () => {
                   {activeDoc === 'ICARD' && <ICardTemplate student={student} />}
                   {activeDoc === 'TC' && <TCTemplate student={student} />}
                   {activeDoc === 'DOB' && <DOBTemplate student={student} />}
-                  
-                  {/* ✅ BULK ADMIT CARDS RENDERING (6 per page) */}
                   {activeDoc === 'ADMIT' && <AdmitGrid students={studentsList} />}
-                  
                   {activeDoc === 'GATE' && <GatePassTemplate student={student} />}
                 </div>
               </div>
@@ -143,7 +131,8 @@ const DocBtn = ({ icon: Icon, label, active, onClick }: any) => (
     <span className="text-[9px] font-black uppercase tracking-widest text-center">{label}</span>
   </button>
 );
-/* --- 📄 2-CARDS PER PAGE ADMIT GRID (COMPACT VERSION) --- */
+
+/* --- 📄 2-CARDS PER PAGE ADMIT GRID (LOGO & SIZE FIXED) --- */
 const AdmitGrid = ({ students }: { students: any[] }) => (
   <div className="flex flex-col gap-[8mm] bg-white w-[210mm] mx-auto p-[8mm] custom-print-style">
     {students.map((std, idx) => (
@@ -152,28 +141,23 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         className="relative border-[2.5px] border-black p-6 h-[125mm] w-full flex flex-col justify-between overflow-hidden bg-white shadow-lg"
         style={{ pageBreakInside: 'avoid' }}
       >
-        
-        {/* Top Accent Line */}
         <div className="absolute top-0 left-0 w-full h-1 bg-blue-900"></div>
 
-        {/* 1. HEADER SECTION */}
         <div className="flex justify-between items-center border-b-[1.5px] border-blue-900/20 pb-3 mb-4">
-           {/* Left Logo */}
+           {/* ✅ Logo Fixed: Height/Width 17 (68px approx) with contain */}
            <img src="/logo.png" alt="logo" className="w-17 h-17 object-contain" />
            
            <div className="text-center flex-1 mx-3">
               <h1 className="text-3xl font-black text-blue-950 uppercase italic tracking-tighter leading-none">Adarsh Shishu Mandir</h1>
               <p className="text-[8px] font-bold text-gray-500 mt-0.5 uppercase tracking-widest leading-none">Basantpatti, Purnahiya (Sheohar) Bihar | Udise: 10032201107</p>
-              <div className="inline-block bg-blue-950 text-white px-6 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mt-2">Annual Exam Admit Card 2026</div>
+              <div className="inline-block bg-blue-950 text-white px-6 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mt-2 shadow-lg">Annual Exam Admit Card 2026</div>
            </div>
 
-           {/* Right Logo */}
-           
+           {/* Space for balance (since one logo is removed) */}
+           <div className="w-17 h-17"></div>
         </div>
 
-        {/* 2. STUDENT DETAILS AREA */}
         <div className="flex gap-8 items-start flex-1 mb-3">
-          {/* Photo Frame */}
           <div className="w-32 h-36 border-[2px] border-black bg-gray-50 flex flex-col items-center justify-center relative flex-shrink-0">
              <p className="text-[9px] font-black text-gray-300 uppercase italic">Paste Photo</p>
              <div className="absolute bottom-1.5 w-full text-center border-t border-gray-200 pt-1">
@@ -181,7 +165,6 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
              </div>
           </div>
 
-          {/* Details Table */}
           <div className="flex-1 space-y-3">
              <AdmitDetailRow label="CANDIDATE NAME" value={std.full_name} isLarge />
              <div className="grid grid-cols-2 gap-4">
@@ -196,14 +179,12 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
           </div>
         </div>
 
-        {/* 3. INSTRUCTIONS & ALERT (Compact) */}
         <div className="space-y-2">
            <div className="bg-rose-50 border border-dashed border-rose-200 p-2 rounded-lg">
               <p className="text-[8px] font-black text-rose-700 uppercase text-center leading-tight tracking-wide">
                 ❗ चेतावनी: मोबाइल या कोई भी इलेक्ट्रॉनिक सामान लाना सख्त मना है।
               </p>
            </div>
-           
            <div className="px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg">
               <p className="text-[8px] font-bold leading-tight text-gray-500 italic">
                 * कक्ष में 30 मिनट पूर्व पहुँचना अनिवार्य है। <br/>
@@ -212,7 +193,6 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
            </div>
         </div>
 
-        {/* 4. FOOTER SECTION */}
         <div className="mt-4 flex justify-between items-end border-t border-gray-100 pt-4">
            <div className="text-center">
               <p className="text-[7px] font-black uppercase text-gray-300 tracking-widest leading-none mb-1">School Seal</p>
@@ -220,7 +200,6 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
                  <img src="/logo.png" alt="" className="w-5 h-5 grayscale" />
               </div>
            </div>
-           
            <div className="text-center pb-1">
               <div className="w-36 border-b border-blue-950 mx-auto"></div>
               <p className="text-[9px] font-black uppercase text-blue-950 tracking-widest mt-1.5 italic">Principal Signature</p>
@@ -231,7 +210,6 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
   </div>
 );
 
-// Detail Row Helper (Smaller Fonts)
 const AdmitDetailRow = ({ label, value, isLarge = false }: any) => (
   <div className="border-b border-gray-100 pb-0.5">
     <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">{label}</p>
@@ -241,16 +219,12 @@ const AdmitDetailRow = ({ label, value, isLarge = false }: any) => (
   </div>
 );
 
-
-
-
 /* --- PREVIOUS TEMPLATES (RETAINED) --- */
-
 const ICardTemplate = ({ student }: any) => (
   <div className="w-[3.5in] h-[2.2in] flex bg-white border-[3px] border-blue-900 rounded-2xl overflow-hidden font-sans m-2 shadow-lg">
     <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3">
       <div className="w-20 h-20 rounded-2xl border-2 border-white overflow-hidden mb-2 bg-white/20">
-        <img src={student.photo_url || "https://via.placeholder.com/150"} className="w-full h-full object-cover" alt="" />
+        <img src={student.photo_url || "https://via.placeholder.com/150"} className="w-full h-full object-cover" />
       </div>
       <p className="text-[10px] font-black italic">Roll: {student.roll_no}</p>
     </div>
