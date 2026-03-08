@@ -3,16 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import Webcam from "react-webcam"; // ✅ इसे जरूर जोड़ें (Webcam के लिए)
+import Webcam from "react-webcam"; // ✅ कैमरा के लिए इसे जोड़ें
 import { 
   Users, GraduationCap, Clock, Plus, Search, 
   Trash2, Edit2, CheckCircle, CreditCard,
   Wallet, PieChart, Package, ShieldAlert, UserPlus,
   Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
-  Upload, Camera // ✅ इन दोनों को जोड़ें
+  Upload, Camera // ✅ आइकन यहाँ जोड़ें
 } from 'lucide-react';
 
-// --- ANIMATION VARIANTS ---
+// --- ANIMATION VARIANTS (Original) ---
 const containerVar = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -23,7 +23,7 @@ const itemVar = {
   visible: { y: 0, opacity: 1 }
 };
 
-// --- HELPER COMPONENTS ---
+// --- HELPER COMPONENTS (Original) ---
 const ActionCard = ({ icon: Icon, label, color, onClick }) => {
   const themes = {
     blue: 'hover:bg-blue-600 shadow-blue-100',
@@ -100,7 +100,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // ✅ Camera & Photo States
+  // ✅ 1. Photo & Camera States (Added)
   const [newPhotoFile, setNewPhotoFile] = useState<File | null>(null);
   const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
     if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq(pkColumn, idValue));
     
     if (!err) { 
-      toast.success("Done!"); 
+      toast.success("Success!"); 
       fetchInitialData(); 
       setIsEditModalOpen(false); 
     } else { 
@@ -161,12 +161,14 @@ const AdminDashboard = () => {
     }
   };
 
-  // ✅ Fixed handleUpdate with Photo Upload
+  // ✅ 2. Fixed handleUpdate with Photo Upload (Added Logic)
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       let photoUrl = editingStudent.photo_url;
+
+      // अगर नई फोटो सिलेक्ट की गई है, तो उसे अपलोड करें
       if (newPhotoFile) {
         const fileName = `${Date.now()}_update.jpg`;
         const { error: uploadError } = await supabase.storage.from("student-photos").upload(fileName, newPhotoFile);
@@ -180,8 +182,9 @@ const AdminDashboard = () => {
         class_name: editingStudent.class_name,
         roll_no: editingStudent.roll_no,
         father_name: editingStudent.father_name,
-        photo_url: photoUrl
+        photo_url: photoUrl // फोटो लिंक यहाँ अपडेट होगा
       });
+      // क्लीनअप
       setNewPhotoFile(null);
       setNewPhotoPreview(null);
     } catch (err: any) {
@@ -191,7 +194,7 @@ const AdminDashboard = () => {
     }
   };
 
-  // ✅ Photo Handlers
+  // ✅ 3. Camera Capture Handler (Added)
   const capturePhoto = async () => {
     if (!webcamRef.current) return;
     const imageSrc = webcamRef.current.getScreenshot();
@@ -213,7 +216,7 @@ const AdminDashboard = () => {
     <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#fcfdfe] p-4 md:p-8 pb-32">
       <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* --- HEADER --- */}
+        {/* --- HEADER (Original) --- */}
         <motion.div variants={itemVar} className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-2xl flex flex-col gap-10">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
             <div className="space-y-2">
@@ -237,14 +240,14 @@ const AdminDashboard = () => {
           </div>
         </motion.div>
 
-        {/* --- KPI STATS --- */}
+        {/* --- KPI STATS (Original) --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StatCard icon={GraduationCap} title="Enrolled Students" value={counts.students} color="blue" />
           <StatCard icon={Clock} title="Awaiting Approval" value={counts.pending} color="amber" />
           <StatCard icon={Users} title="Academic Staff" value={counts.teachers} color="emerald" />
         </div>
 
-        {/* --- TABS & TABLE --- */}
+        {/* --- TABLES (Original) --- */}
         <motion.div variants={itemVar} className="bg-white rounded-[4rem] shadow-2xl border border-gray-100 overflow-hidden min-h-[600px]">
           <div className="flex border-b p-6 gap-6 bg-gray-50/30">
             {['overview', 'students'].map(tab => (
@@ -279,15 +282,16 @@ const AdminDashboard = () => {
         </motion.div>
       </div>
 
-      {/* --- EDIT MODAL --- */}
+      {/* --- EDIT MODAL (Design Unchanged, Logic Added) --- */}
       <AnimatePresence>
         {isEditModalOpen && editingStudent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[3.5rem] p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[3.5rem] p-12 shadow-2xl overflow-y-auto max-h-[90vh]">
               <h2 className="text-3xl font-black uppercase italic mb-8 flex items-center gap-3"><Edit2 className="text-indigo-600" /> Edit Profile</h2>
               
               <form onSubmit={handleUpdate} className="space-y-6">
-                {/* 📸 PHOTO SECTION */}
+                
+                {/* ✅ 4. PHOTO SECTION (Added within Original Form) */}
                 <div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[2.5rem] border">
                   <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg relative group">
                     <img src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} className="w-full h-full object-cover" />
@@ -304,6 +308,7 @@ const AdminDashboard = () => {
                   <button type="button" onClick={() => setShowWebcam(true)} className="text-[10px] font-black uppercase tracking-widest bg-white border px-4 py-2 rounded-xl flex items-center gap-2"><Camera size={14}/> Live Camera</button>
                 </div>
 
+                {/* --- Input Fields (Original Design) --- */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Full Name</label>
@@ -325,7 +330,7 @@ const AdminDashboard = () => {
         )}
       </AnimatePresence>
 
-      {/* 📸 WEBCAM POPUP */}
+      {/* ✅ 5. WEBCAM POPUP (Added Logic) */}
       <AnimatePresence>
         {showWebcam && (
           <div className="fixed inset-0 bg-black/95 z-[200] flex flex-col items-center justify-center p-6">
@@ -342,4 +347,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-                                                                                             
+          
