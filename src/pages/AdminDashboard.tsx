@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // useRef यहाँ जोड़ें
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import Webcam from "react-webcam"; // ✅ इसे जरूर जोड़ें (Webcam के लिए)
 import { 
   Users, GraduationCap, Clock, Plus, Search, 
   Trash2, Edit2, CheckCircle, CreditCard,
   Wallet, PieChart, Package, ShieldAlert, UserPlus,
-  Printer, LayoutDashboard, Zap, Activity, FileStack, Settings
+  Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
+  Upload, Camera // ✅ इन दोनों को जोड़ें
 } from 'lucide-react';
 
 // --- ANIMATION VARIANTS ---
@@ -21,7 +23,7 @@ const itemVar = {
   visible: { y: 0, opacity: 1 }
 };
 
-// --- HELPER COMPONENTS (Moved up to prevent Reference Errors) ---
+// --- HELPER COMPONENTS ---
 const ActionCard = ({ icon: Icon, label, color, onClick }) => {
   const themes = {
     blue: 'hover:bg-blue-600 shadow-blue-100',
@@ -97,10 +99,12 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // ✅ Camera & Photo States
   const [newPhotoFile, setNewPhotoFile] = useState<File | null>(null);
-const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
-const [showWebcam, setShowWebcam] = useState(false);
-const webcamRef = useRef<any>(null);
+  const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
+  const [showWebcam, setShowWebcam] = useState(false);
+  const webcamRef = useRef<any>(null);
 
   const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0 });
   const [pendingStudents, setPendingStudents] = useState([]);
@@ -128,14 +132,7 @@ const webcamRef = useRef<any>(null);
       ]);
       setCounts({ students: stdRes.count || 0, teachers: tchRes.count || 0, pending: penRes.count || 0 });
       const { data: pending } = await supabase.from('students').select('*').eq('is_approved', 'pending');
-      
-      // ✅ Sorting Fixed: छात्रों को Roll No के हिसाब से सॉर्ट किया
-      const { data: students } = await supabase
-        .from('students')
-        .select('*')
-        .eq('is_approved', 'approved')
-        .order('roll_no', { ascending: true });
-
+      const { data: students } = await supabase.from('students').select('*').eq('is_approved', 'approved').order('roll_no', { ascending: true });
       const { data: teachers } = await supabase.from('teachers').select('*').order('full_name');
       setPendingStudents(pending || []);
       setAllStudents(students || []);
@@ -150,13 +147,12 @@ const webcamRef = useRef<any>(null);
     setLoading(true);
     let err;
     const pkColumn = table === 'students' ? 'student_id' : 'id';
-
     if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq(pkColumn, idValue));
     if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('student_id', idValue));
     if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq(pkColumn, idValue));
     
     if (!err) { 
-      toast.success("Success!"); 
+      toast.success("Done!"); 
       fetchInitialData(); 
       setIsEditModalOpen(false); 
     } else { 
@@ -165,55 +161,53 @@ const webcamRef = useRef<any>(null);
     }
   };
 
+  // ✅ Fixed handleUpdate with Photo Upload
   const handleUpdate = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-   try {
-    let photoUrl = editingStudent.photo_url;
+    e.preventDefault();
+    setLoading(true);
+    try {
+      let photoUrl = editingStudent.photo_url;
+      if (newPhotoFile) {
+        const fileName = `${Date.now()}_update.jpg`;
+        const { error: uploadError } = await supabase.storage.from("student-photos").upload(fileName, newPhotoFile);
+        if (uploadError) throw uploadError;
+        const { data } = supabase.storage.from("student-photos").getPublicUrl(fileName);
+        photoUrl = data.publicUrl;
+      }
 
-    // ✅ अगर यूजर ने नई फोटो चुनी है, तो उसे Supabase Storage में अपलोड करें
-    if (newPhotoFile) {
-      const fileName = `${Date.now()}_update.jpg`;
-      const { error: uploadError } = await supabase.storage
-        .from("student-photos")
-        .upload(fileName, newPhotoFile);
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from("student-photos").getPublicUrl(fileName);
-      photoUrl = data.publicUrl;
+      await handleAction('update', 'students', editingStudent.student_id, { 
+        full_name: editingStudent.full_name, 
+        class_name: editingStudent.class_name,
+        roll_no: editingStudent.roll_no,
+        father_name: editingStudent.father_name,
+        photo_url: photoUrl
+      });
+      setNewPhotoFile(null);
+      setNewPhotoPreview(null);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // ✅ डेटाबेस अपडेट करें
-    await handleAction('update', 'students', editingStudent.student_id, { 
-      full_name: editingStudent.full_name, 
-      class_name: editingStudent.class_name,
-      roll_no: editingStudent.roll_no,
-      father_name: editingStudent.father_name,
-      photo_url: photoUrl // फोटो लिंक यहाँ अपडेट होगा
-    });
+  // ✅ Photo Handlers
+  const capturePhoto = async () => {
+    if (!webcamRef.current) return;
+    const imageSrc = webcamRef.current.getScreenshot();
+    const blob = await fetch(imageSrc).then((res) => res.blob());
+    const file = new File([blob], "edit-photo.jpg", { type: "image/jpeg" });
+    setNewPhotoFile(file);
+    setNewPhotoPreview(imageSrc);
+    setShowWebcam(false);
+  };
 
-    setNewPhotoFile(null);
-    setNewPhotoPreview(null);
-    toast.success("Profile Updated!");
-  } catch (err: any) {
-    toast.error(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-  // ✅ Search Fixed: रोल नंबर और नाम दोनों से सर्च करें
   const filteredStudents = allStudents.filter(s => 
     (classFilter === 'All' || s.class_name === classFilter) &&
     (s.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_no?.toString().includes(searchTerm))
   );
-  const filteredTeachers = allTeachers.filter(t => t.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  if (loading && !counts.students) return (
-    <div className="h-screen flex flex-col items-center justify-center bg-white">
-      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-16 h-16 border-b-4 border-indigo-600 rounded-full mb-6" />
-      <p className="text-gray-900 font-black uppercase tracking-[0.3em]">Initializing ASM Dashboard...</p>
-    </div>
-  );
+  if (loading && !counts.students) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#fcfdfe] p-4 md:p-8 pb-32">
@@ -221,31 +215,23 @@ const webcamRef = useRef<any>(null);
         
         {/* --- HEADER --- */}
         <motion.div variants={itemVar} className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-2xl flex flex-col gap-10">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
             <div className="space-y-2">
                <div className="flex items-center gap-3">
                   <div className="bg-indigo-600 p-2 rounded-xl text-white"><LayoutDashboard size={20}/></div>
-                  <h1 className="text-5xl font-black text-gray-900 uppercase italic tracking-tighter leading-none">Admin Portal</h1>
+                  <h1 className="text-4xl font-black text-gray-900 uppercase italic tracking-tighter leading-none">Admin Portal</h1>
                </div>
                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">
                   ASM Institutional Hub | {currentTime.toLocaleTimeString()}
                </p>
             </div>
-
             <div className="flex flex-wrap gap-3">
-               <NavBtn label="Exam" icon={Zap} color="bg-gray-900" onClick={() => navigate('/admin/create-exam')} />
                <NavBtn label="Fees" icon={CreditCard} color="bg-rose-600" onClick={() => navigate('/admin/manage-fees')} />
                <NavBtn label="Docs" icon={Printer} color="bg-orange-600" onClick={() => navigate('/admin/documents')} />
-               <NavBtn label="Results" icon={CheckCircle} color="bg-emerald-600" onClick={() => navigate('/admin/upload-result')} />
             </div>
           </div>
-
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
              <ActionCard icon={Wallet} label="Accounting" color="blue" onClick={() => navigate('/admin/manage-salaries')} />
-             <ActionCard icon={FileStack} label="Docs Hub" color="orange" onClick={() => navigate('/admin/documents')} />
-             <ActionCard icon={PieChart} label="Staff Pay" color="purple" onClick={() => navigate('/admin/teacher-salary')} />
-             <ActionCard icon={Package} label="Inventory" color="amber" onClick={() => navigate('/admin/inventory')} />
-             <ActionCard icon={ShieldAlert} label="Security" color="red" onClick={() => navigate('/admin/create-admin')} />
              <ActionCard icon={UserPlus} label="+ Student" color="indigo" onClick={() => navigate('/admin/add-student')} />
              <ActionCard icon={Plus} label="+ Teacher" color="emerald" onClick={() => navigate('/admin/add-teacher')} />
           </div>
@@ -253,82 +239,42 @@ const webcamRef = useRef<any>(null);
 
         {/* --- KPI STATS --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <StatCard icon={GraduationCap} title="Enrolled Students" value={counts.students} color="blue" subText="Live admission data" />
-          <StatCard icon={Clock} title="Awaiting Approval" value={counts.pending} color="amber" subText="Action required" />
-          <StatCard icon={Users} title="Academic Staff" value={counts.teachers} color="emerald" subText="Faculty management" />
+          <StatCard icon={GraduationCap} title="Enrolled Students" value={counts.students} color="blue" />
+          <StatCard icon={Clock} title="Awaiting Approval" value={counts.pending} color="amber" />
+          <StatCard icon={Users} title="Academic Staff" value={counts.teachers} color="emerald" />
         </div>
 
-        {/* --- TABLES --- */}
+        {/* --- TABS & TABLE --- */}
         <motion.div variants={itemVar} className="bg-white rounded-[4rem] shadow-2xl border border-gray-100 overflow-hidden min-h-[600px]">
-          <div className="flex border-b border-gray-50 p-6 gap-6 bg-gray-50/30">
-            {['overview', 'students', 'teachers'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-10 py-5 text-[11px] font-black uppercase tracking-[0.2em] rounded-[2rem] transition-all relative ${activeTab === tab ? 'bg-white text-indigo-600 shadow-lg' : 'text-gray-400 hover:text-gray-600'}`}>
+          <div className="flex border-b p-6 gap-6 bg-gray-50/30">
+            {['overview', 'students'].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-10 py-4 text-[11px] font-black uppercase tracking-widest rounded-full transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow-lg' : 'text-gray-400'}`}>
                 {tab}
               </button>
             ))}
           </div>
 
-          <div className="p-10">
-            <AnimatePresence mode="wait">
-              {activeTab === 'overview' && (
-                <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pendingStudents.map(s => (
-                      <div key={s.student_id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl space-y-6">
-                        <div>
-                           <h3 className="font-black text-gray-900 uppercase text-lg leading-tight">{s.full_name}</h3>
-                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 italic">Class: {s.class_name}</p>
-                        </div>
-                        <div className="flex gap-3">
-                          <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl text-[10px] font-black uppercase">Approve</button>
-                          <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-gray-50 text-gray-400 py-4 rounded-2xl text-[10px] font-black uppercase">Reject</button>
-                        </div>
-                      </div>
-                    ))}
-                    {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black uppercase italic">No Pending tasks</div>}
-                </motion.div>
-              )}
-
-              {activeTab === 'students' && (
-                <motion.div key="st" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="relative flex-1 group">
-                      <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-indigo-500" size={20} />
-                      <input onChange={(e) => setSearchTerm(e.target.value)} type="text" placeholder="Search by name or roll number..." className="w-full pl-16 pr-8 py-5 bg-gray-50 border-none rounded-[2rem] font-bold text-gray-900 focus:ring-4 focus:ring-indigo-100" />
-                    </div>
-                    <select onChange={(e) => setClassFilter(e.target.value)} className="py-5 px-10 bg-gray-50 border-none rounded-[2rem] font-black text-[11px] uppercase tracking-widest cursor-pointer">
-                      {classes.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  </div>
-
-                  <div className="overflow-hidden rounded-[3rem] border border-gray-50">
-                    <table className="w-full text-left">
-                      <thead className="bg-gray-50/50">
-                        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                          <th className="p-8">Roll No</th>
-                          <th className="p-8">Candidate Name</th>
-                          <th className="p-8 text-center">Class</th>
-                          <th className="p-8 text-right">Actions</th>
+          <div className="p-8">
+            {activeTab === 'students' && (
+              <div className="space-y-6">
+                <input onChange={(e) => setSearchTerm(e.target.value)} type="text" placeholder="Search..." className="w-full p-4 bg-gray-50 rounded-2xl font-bold border-none" />
+                <div className="overflow-x-auto rounded-[2.5rem] border shadow-inner">
+                  <table className="w-full text-left">
+                    <tbody className="divide-y divide-gray-50">
+                      {filteredStudents.map(s => (
+                        <tr key={s.student_id} className="hover:bg-indigo-50/20 group transition-all">
+                          <td className="p-6 font-black text-gray-800 uppercase text-xs">{s.full_name}</td>
+                          <td className="p-6 flex justify-end gap-2">
+                            <ActionIconButton icon={Edit2} color="indigo" onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} />
+                            <ActionIconButton icon={Trash2} color="red" onClick={() => handleAction('delete', 'students', s.student_id)} />
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {filteredStudents.map(s => (
-                          <tr key={s.student_id} className="hover:bg-indigo-50/30 transition-all group">
-                            <td className="p-8 font-black text-indigo-600 italic">#{s.roll_no}</td>
-                            <td className="p-8 font-black text-gray-800 uppercase text-sm">{s.full_name}</td>
-                            <td className="p-8 text-center"><span className="bg-white border px-6 py-2 rounded-full text-[10px] font-black">{s.class_name}</span></td>
-                            <td className="p-8 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                              <ActionIconButton icon={Edit2} color="indigo" onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} />
-                              <ActionIconButton icon={Users} color="blue" onClick={() => navigate(`/admin/student/${s.student_id}`)} />
-                              <ActionIconButton icon={Trash2} color="red" onClick={() => handleAction('delete', 'students', s.student_id)} />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
@@ -336,57 +282,42 @@ const webcamRef = useRef<any>(null);
       {/* --- EDIT MODAL --- */}
       <AnimatePresence>
         {isEditModalOpen && editingStudent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-gray-900/60 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[4rem] p-12 shadow-2xl">
-              <h2 className="text-4xl font-black text-gray-900 uppercase italic mb-10 flex items-center gap-4 tracking-tighter">
-                <Edit2 className="text-indigo-600" /> Edit Profile
-              </h2>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[3.5rem] p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
+              <h2 className="text-3xl font-black uppercase italic mb-8 flex items-center gap-3"><Edit2 className="text-indigo-600" /> Edit Profile</h2>
+              
               <form onSubmit={handleUpdate} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* 📸 PHOTO EDIT BOX */}
-<div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[3rem] border border-gray-100 mb-6">
-  <div className="w-28 h-28 rounded-3xl overflow-hidden border-4 border-white shadow-lg relative group">
-    <img 
-      src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} 
-      className="w-full h-full object-cover" 
-    />
-    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
-      <Upload className="text-white" size={20} />
-      <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-        if (e.target.files?.[0]) {
-          setNewPhotoFile(e.target.files[0]);
-          setNewPhotoPreview(URL.createObjectURL(e.target.files[0]));
-        }
-      }} />
-    </label>
-  </div>
-  <button type="button" onClick={() => setShowWebcam(true)} className="text-[10px] font-black uppercase tracking-widest bg-white border px-4 py-2 rounded-xl">Live Camera</button>
-</div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-4">Full Name</label>
-                    <input type="text" value={editingStudent.full_name} onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})} className="w-full bg-gray-50 border-none rounded-[2rem] px-8 py-5 font-black text-gray-900 focus:ring-2 focus:ring-indigo-100" />
+                {/* 📸 PHOTO SECTION */}
+                <div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[2.5rem] border">
+                  <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg relative group">
+                    <img src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} className="w-full h-full object-cover" />
+                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">
+                      <Upload className="text-white" size={20} />
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          setNewPhotoFile(e.target.files[0]);
+                          setNewPhotoPreview(URL.createObjectURL(e.target.files[0]));
+                        }
+                      }} />
+                    </label>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-4">Father's Name</label>
-                    <input type="text" value={editingStudent.father_name} onChange={(e) => setEditingStudent({...editingStudent, father_name: e.target.value})} className="w-full bg-gray-50 border-none rounded-[2rem] px-8 py-5 font-black text-gray-900 focus:ring-2 focus:ring-indigo-100" />
+                  <button type="button" onClick={() => setShowWebcam(true)} className="text-[10px] font-black uppercase tracking-widest bg-white border px-4 py-2 rounded-xl flex items-center gap-2"><Camera size={14}/> Live Camera</button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Full Name</label>
+                    <input type="text" value={editingStudent.full_name} onChange={(e) => setEditingStudent({...editingStudent, full_name: e.target.value})} className="w-full bg-gray-50 rounded-2xl px-6 py-4 font-black outline-none focus:ring-2 focus:ring-indigo-100" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Father Name</label>
+                    <input type="text" value={editingStudent.father_name} onChange={(e) => setEditingStudent({...editingStudent, father_name: e.target.value})} className="w-full bg-gray-50 rounded-2xl px-6 py-4 font-black outline-none focus:ring-2 focus:ring-indigo-100" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-4">Roll Number</label>
-                    <input type="number" value={editingStudent.roll_no} onChange={(e) => setEditingStudent({...editingStudent, roll_no: e.target.value})} className="w-full bg-gray-50 border-none rounded-[2rem] px-8 py-5 font-black text-gray-900 focus:ring-2 focus:ring-indigo-100" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-4">Class Grade</label>
-                    <select value={editingStudent.class_name} onChange={(e) => setEditingStudent({...editingStudent, class_name: e.target.value})} className="w-full bg-gray-50 border-none rounded-[2rem] px-8 py-5 font-black text-gray-900 uppercase cursor-pointer outline-none">
-                      {classes.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex gap-4 pt-6">
-                  <button type="submit" className="flex-2 bg-indigo-600 text-white font-black py-5 px-10 rounded-[2rem] shadow-xl hover:bg-black transition-all uppercase tracking-widest text-[11px]">Save Updates</button>
-                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-gray-100 text-gray-500 font-black py-5 rounded-[2rem] hover:bg-gray-200 transition-all uppercase tracking-widest text-[11px]">Cancel</button>
+
+                <div className="flex gap-4 pt-4">
+                  <button type="submit" className="flex-1 bg-indigo-600 text-white font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest shadow-xl">Save updates</button>
+                  <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-8 bg-gray-100 text-gray-400 font-black py-4 rounded-2xl uppercase text-[10px]">Close</button>
                 </div>
               </form>
             </motion.div>
@@ -394,8 +325,21 @@ const webcamRef = useRef<any>(null);
         )}
       </AnimatePresence>
 
+      {/* 📸 WEBCAM POPUP */}
+      <AnimatePresence>
+        {showWebcam && (
+          <div className="fixed inset-0 bg-black/95 z-[200] flex flex-col items-center justify-center p-6">
+            <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="rounded-[3rem] border-4 border-white shadow-2xl max-w-sm w-full" />
+            <div className="flex gap-4 mt-8">
+              <button onClick={capturePhoto} className="bg-emerald-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl">Capture</button>
+              <button onClick={() => setShowWebcam(false)} className="bg-red-500 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest">Close</button>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
 
 export default AdminDashboard;
+                                                                                             
