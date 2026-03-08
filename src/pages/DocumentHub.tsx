@@ -143,69 +143,87 @@ const DocBtn = ({ icon: Icon, label, active, onClick }: any) => (
     <span className="text-[9px] font-black uppercase tracking-widest text-center">{label}</span>
   </button>
 );
-
-/* --- 📄 2-CARDS PER PAGE ADMIT GRID (PERFECT SIZE) --- */
+/* --- 📄 2-CARDS PER PAGE ADMIT GRID (ALERT AT BOTTOM) --- */
 const AdmitGrid = ({ students }: { students: any[] }) => (
-  <div className="flex flex-col gap-[10mm] bg-white w-[210mm] mx-auto p-[10mm]">
+  <div className="flex flex-col gap-[10mm] bg-white w-[210mm] mx-auto p-[10mm] custom-print-style">
     {students.map((std, idx) => (
       <div 
         key={idx} 
-        className="border-[4px] border-black p-8 h-[130mm] w-full flex flex-col justify-between relative overflow-hidden bg-white shadow-sm"
+        className="relative border-[3px] border-black p-8 h-[130mm] w-full flex flex-col justify-between overflow-hidden bg-white shadow-xl"
         style={{ pageBreakInside: 'avoid' }}
       >
-        {/* Decorative Header Background */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-black"></div>
+        
+        {/* Decorative top line */}
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-blue-900"></div>
 
-        {/* School Header */}
-        <div className="text-center border-b-4 border-black pb-4 mb-6">
-          <h2 className="text-4xl font-black uppercase italic tracking-tighter">Adarsh Shishu Mandir</h2>
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500 mt-1">
-            Basantpatti, Purnahiya (Sheohar) Bihar | Udise: 10032201107
-          </p>
-          <div className="mt-4 inline-block bg-black text-white px-8 py-1 rounded-full font-black uppercase text-xs tracking-widest">
-            Annual Examination Admit Card - 2026
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="flex gap-10 items-start flex-1">
-          {/* Photo Box */}
-          <div className="w-40 h-44 border-4 border-black bg-gray-50 flex flex-col items-center justify-center relative">
-             <span className="text-[10px] font-black text-gray-300 uppercase">Paste Photo</span>
-             <div className="absolute bottom-2 w-full text-center border-t border-gray-200 pt-1">
-                <p className="text-[8px] font-bold text-gray-400 uppercase">Self Attested</p>
-             </div>
-          </div>
-
-          {/* Details Table Style */}
-          <div className="flex-1 space-y-4">
-             <DetailRow label="Candidate Name" value={std.full_name} bold />
-             <div className="grid grid-cols-2 gap-4">
-                <DetailRow label="Roll Number" value={std.roll_no} />
-                <DetailRow label="Class Grade" value={std.class_name} />
-             </div>
-             <DetailRow label="Guardian Name" value={std.father_name} />
-             <DetailRow label="Registration ID" value={std.student_id} isMono />
-          </div>
-        </div>
-
-        {/* Subjects / Instructions */}
-        <div className="mt-6 p-4 bg-gray-50 border-2 border-black rounded-2xl">
-           <p className="text-[10px] font-bold leading-relaxed italic text-gray-700">
-             * परीक्षार्थी को परीक्षा कक्ष में आधा घंटा पूर्व पहुँचना अनिवार्य है। <br/>
-             * बिना इस प्रवेश पत्र के परीक्षा में बैठने की अनुमति नहीं दी जाएगी।
-           </p>
-        </div>
-
-        {/* Footer Signatures */}
-        <div className="mt-8 flex justify-between items-end border-t-2 border-black pt-4">
-           <div className="text-center">
-              <p className="text-[9px] font-black uppercase opacity-40 mb-1">Office Seal</p>
-              <div className="w-20 h-10 border border-dashed border-gray-200 rounded-lg"></div>
+        {/* 1. SCHOOL HEADER WITH DUAL LOGO */}
+        <div className="flex justify-between items-center border-b-2 border-blue-900/20 pb-4 mb-6">
+           {/* Left Logo */}
+           <img src="/logo.png" alt="logo" className="w-16 h-16 object-contain" />
+           
+           <div className="text-center flex-1 mx-4">
+              <h1 className="text-4xl font-black text-blue-950 uppercase italic tracking-tighter leading-none">Adarsh Shishu Mandir</h1>
+              <p className="text-[9px] font-bold text-gray-500 mt-1 uppercase tracking-widest">Basantpatti, Purnahiya (Sheohar) Bihar | Udise: 10032201107</p>
+              <div className="inline-block bg-blue-950 text-white px-8 py-1 rounded-full text-[11px] font-black uppercase tracking-[0.2em] mt-3 shadow-lg">Annual Examination Admit Card 2026</div>
            </div>
-           <div className="text-center space-y-1">
-              <div className="w-32 border-b-2 border-black mx-auto"></div>
-              <p className="text-[10px] font-black uppercase tracking-widest">Principal Signature</p>
+
+           {/* Right Logo */}
+           <img src="/logo.png" alt="logo" className="w-16 h-16 object-contain" />
+        </div>
+
+        {/* 2. CANDIDATE DETAILS AREA */}
+        <div className="flex gap-10 items-start flex-1 mb-4">
+          {/* Photo Frame */}
+          <div className="w-36 h-44 border-[3px] border-black bg-gray-50 flex flex-col items-center justify-center relative flex-shrink-0 shadow-inner">
+             <p className="text-[10px] font-black text-gray-300 uppercase italic">Paste Photo</p>
+             <div className="absolute bottom-2 w-full text-center border-t border-gray-200 pt-1">
+                <p className="text-[7px] font-bold text-gray-400 uppercase">Self Attested</p>
+             </div>
+          </div>
+
+          {/* Details Table */}
+          <div className="flex-1 space-y-4">
+             <AdmitDetailRow label="CANDIDATE NAME" value={std.full_name} isLarge />
+             <div className="grid grid-cols-2 gap-6">
+                <AdmitDetailRow label="ROLL NUMBER" value={std.roll_no} />
+                <AdmitDetailRow label="CLASS GRADE" value={std.class_name} />
+             </div>
+             <AdmitDetailRow label="GUARDIAN NAME" value={std.father_name} />
+             <div className="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+                <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic">REGISTRATION ID:</p>
+                <p className="text-sm font-mono font-black text-blue-900">{std.student_id}</p>
+             </div>
+          </div>
+        </div>
+
+        {/* 3. ALERT MESSAGE & INSTRUCTIONS (Now at Bottom) */}
+        <div className="space-y-3">
+           <div className="bg-rose-50 border-2 border-dashed border-rose-200 p-3 rounded-xl">
+              <p className="text-[9px] font-black text-rose-700 uppercase text-center leading-tight tracking-wider">
+                ❗ चेतावनी: प्रवेश पत्र परीक्षा हॉल में प्रतिदिन लाना अनिवार्य है। मोबाइल, कैलकुलेटर या कोई भी इलेक्ट्रॉनिक सामान लाना सख्त मना है।
+              </p>
+           </div>
+           
+           <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl">
+              <p className="text-[9px] font-bold leading-relaxed text-gray-600 italic">
+                * परीक्षार्थी को परीक्षा कक्ष में 30 मिनट पूर्व पहुँचना अनिवार्य है। <br/>
+                * परीक्षा शुरू होने के 1 घंटे बाद तक किसी भी परीक्षार्थी को कक्ष छोड़ने की अनुमति नहीं दी जाएगी।
+              </p>
+           </div>
+        </div>
+
+        {/* 4. FOOTER: OFFICE SEAL & PRINCIPAL SIGNATURE */}
+        <div className="mt-6 flex justify-between items-end border-t-2 border-gray-100 pt-5">
+           <div className="text-center">
+              <p className="text-[8px] font-black uppercase text-gray-400 tracking-widest mb-1 italic">School Seal</p>
+              <div className="w-24 h-12 border-2 border-dashed border-gray-100 rounded-2xl flex items-center justify-center opacity-30">
+                 <img src="/logo.png" alt="" className="w-6 h-6 grayscale" />
+              </div>
+           </div>
+           
+           <div className="text-center relative pb-2">
+              <div className="w-44 border-b-2 border-blue-950 mx-auto"></div>
+              <p className="text-[11px] font-black uppercase text-blue-950 tracking-[0.2em] mt-2 italic">Principal Signature</p>
            </div>
         </div>
       </div>
@@ -213,15 +231,16 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
   </div>
 );
 
-// Detail Row Helper Component
-const DetailRow = ({ label, value, bold = false, isMono = false }: any) => (
-  <div className="border-b-2 border-gray-100 pb-2">
-    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">{label}</p>
-    <p className={`${bold ? 'text-2xl' : 'text-lg'} ${isMono ? 'font-mono' : ''} font-black text-gray-900 uppercase`}>
+// Helper for Detail Rows
+const AdmitDetailRow = ({ label, value, isLarge = false }: any) => (
+  <div className="border-b-2 border-gray-100 pb-1">
+    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic leading-none mb-1">{label}</p>
+    <p className={`${isLarge ? 'text-2xl' : 'text-xl'} font-black text-blue-950 uppercase leading-none tracking-tighter`}>
       {value || '----------'}
     </p>
   </div>
 );
+
 
 
 /* --- PREVIOUS TEMPLATES (RETAINED) --- */
