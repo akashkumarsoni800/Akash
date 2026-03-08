@@ -79,6 +79,7 @@ const AdminDashboard = () => {
   const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
   const webcamRef = useRef<any>(null);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user"); 
 
   const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0 });
   const [pendingStudents, setPendingStudents] = useState([]);
@@ -152,14 +153,19 @@ const AdminDashboard = () => {
     } catch (err: any) { toast.error(err.message); } 
     finally { setLoading(false); }
   };
-
+const toggleCamera = () => {
+  setFacingMode(prev => prev === "user" ? "environment" : "user");
+};
   const capturePhoto = async () => {
     if (!webcamRef.current) return;
     const imageSrc = webcamRef.current.getScreenshot();
+    if (!imageSrc) return;
     const blob = await fetch(imageSrc).then((res) => res.blob());
     const file = new File([blob], "edit.jpg", { type: "image/jpeg" });
     setNewPhotoFile(file); setNewPhotoPreview(imageSrc); setShowWebcam(false);
   };
+  
+  
 
   const filteredStudents = allStudents.filter(s => 
     (classFilter === 'All' || s.class_name === classFilter) &&
@@ -319,6 +325,12 @@ const AdminDashboard = () => {
         <div className="fixed inset-0 bg-black/95 z-[200] flex flex-col items-center justify-center p-6">
           <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="rounded-[3rem] border-4 border-white shadow-2xl max-w-sm w-full" />
           <div className="flex gap-4 mt-8"><button onClick={capturePhoto} className="bg-emerald-500 text-white px-12 py-5 rounded-2xl font-black uppercase shadow-xl">Capture</button><button onClick={() => setShowWebcam(false)} className="bg-red-500 text-white px-12 py-5 rounded-2xl font-black uppercase">Close</button></div>
+       
+
+{/* कैमरा स्विच करने वाला बटन */}
+<button type="button" onClick={toggleCamera} className="...">
+  <FlipHorizontal size={24} />
+</button>
         </div>
       )}
     </motion.div>
