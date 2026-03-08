@@ -131,8 +131,7 @@ const DocBtn = ({ icon: Icon, label, active, onClick }: any) => (
     <span className="text-[9px] font-black uppercase tracking-widest text-center">{label}</span>
   </button>
 );
-
-/* --- 📄 2-CARDS PER PAGE ADMIT GRID (LOGO & SIZE FIXED) --- */
+/* --- 📄 2-CARDS PER PAGE ADMIT GRID (FINAL LOGO FIX) --- */
 const AdmitGrid = ({ students }: { students: any[] }) => (
   <div className="flex flex-col gap-[8mm] bg-white w-[210mm] mx-auto p-[8mm] custom-print-style">
     {students.map((std, idx) => (
@@ -144,8 +143,15 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         <div className="absolute top-0 left-0 w-full h-1 bg-blue-900"></div>
 
         <div className="flex justify-between items-center border-b-[1.5px] border-blue-900/20 pb-3 mb-4">
-           {/* ✅ Logo Fixed: Height/Width 17 (68px approx) with contain */}
-           <img src="/logo.png" alt="logo" className="w-17 h-17 object-contain" />
+           
+           {/* ✅ Logo Fixed: Using Arbitrary values for 68px (17 * 4) */}
+           <div className="w-[68px] h-[68px] flex items-center justify-center">
+              <img 
+                src="/logo.png" 
+                alt="logo" 
+                className="w-full h-full object-contain" 
+              />
+           </div>
            
            <div className="text-center flex-1 mx-3">
               <h1 className="text-3xl font-black text-blue-950 uppercase italic tracking-tighter leading-none">Adarsh Shishu Mandir</h1>
@@ -153,10 +159,11 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
               <div className="inline-block bg-blue-950 text-white px-6 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mt-2 shadow-lg">Annual Exam Admit Card 2026</div>
            </div>
 
-           {/* Space for balance (since one logo is removed) */}
-           <div className="w-17 h-17"></div>
+           {/* बैलेंस के लिए खाली जगह */}
+           <div className="w-[68px] h-[68px]"></div>
         </div>
 
+        {/* --- बाकी का कोड (Details, Alert, Footer) वैसा ही रहेगा --- */}
         <div className="flex gap-8 items-start flex-1 mb-3">
           <div className="w-32 h-36 border-[2px] border-black bg-gray-50 flex flex-col items-center justify-center relative flex-shrink-0">
              <p className="text-[9px] font-black text-gray-300 uppercase italic">Paste Photo</p>
@@ -209,6 +216,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
     ))}
   </div>
 );
+
 
 const AdmitDetailRow = ({ label, value, isLarge = false }: any) => (
   <div className="border-b border-gray-100 pb-0.5">
