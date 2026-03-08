@@ -95,8 +95,8 @@ const AdminDashboard = () => {
     if (action === 'delete' && !window.confirm("क्या आप वाकई इसे हमेशा के लिए डिलीट करना चाहते हैं?")) return;
     setLoading(true);
     let err;
-    if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq('id', id));
-    if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('id', id));
+    if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq('student_id', id));
+    if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('student_id', id));
     if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq('student_id', id));
     
     if (!err) { 
