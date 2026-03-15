@@ -327,10 +327,15 @@ const toggleCamera = () => {
           <div className="flex gap-4 mt-8"><button onClick={capturePhoto} className="bg-emerald-500 text-white px-12 py-5 rounded-2xl font-black uppercase shadow-xl">Capture</button><button onClick={() => setShowWebcam(false)} className="bg-red-500 text-white px-12 py-5 rounded-2xl font-black uppercase">Close</button></div>
        
 
-{/* कैमरा स्विच करने वाला बटन */}
-<button type="button" onClick={toggleCamera} className="...">
-  <FlipHorizontal size={24} />
-</button>
+ {/* ✅ FIXED CAMERA FLIP BUTTON */}
+    <button 
+      type="button" 
+      onClick={toggleCamera}
+      className="mt-6 p-3 bg-white/20 hover:bg-white/40 text-white rounded-2xl backdrop-blur-sm flex items-center gap-2 font-bold uppercase text-sm"
+    >
+      <Flip size={20} />
+      Flip Camera
+    </button>
         </div>
       )}
     </motion.div>
