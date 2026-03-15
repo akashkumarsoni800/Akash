@@ -9,7 +9,7 @@ import {
   Trash2, Edit2, CheckCircle, CreditCard,
   Wallet, PieChart, Package, ShieldAlert, UserPlus,
   Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
-  Upload, Camera,**Flip**
+  Upload, Camera,Flip
 } from 'lucide-react';
 
 // --- ANIMATION VARIANTS ---
