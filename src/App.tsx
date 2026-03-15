@@ -62,7 +62,7 @@ function App() {
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-            <Route path="/profile-setup" element={<ProfileSetupPage />} />
+            {  //<Route path="/profile-setup" element={<ProfileSetupPage />} />//}
 
             {/* 👨‍🏫 TEACHER SECTION - ✅ FULLY UPDATED WITH NEW FEATURES */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
