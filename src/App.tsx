@@ -56,6 +56,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+           <Route path="/profile-setup" element={<ProfileSetupPage />} />
+           <Route path="/profile-setup" element={<ProfileSetupPage />} />
+
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
