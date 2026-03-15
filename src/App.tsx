@@ -62,7 +62,7 @@ function App() {
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-            <Route path="/profile-setup" element={<ProfileSetupPage />} />
+            {/* <Route path="/profile-setup" element={<ProfileSetupPage />} /> */}
 
             {/* 👨‍🏫 TEACHER SECTION - ✅ FULLY UPDATED WITH NEW FEATURES */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
@@ -106,7 +106,7 @@ function App() {
                 transition={{ duration: 0.6 }}
                 className="text-8xl mb-8 drop-shadow-2xl"
               >
-                🚫
+                 🚫 404
               </motion.div>
               <h1 className="text-4xl md:text-5xl font-black text-red-600 mb-4 uppercase tracking-widest animate-pulse">
                 404 - Page Not Found
