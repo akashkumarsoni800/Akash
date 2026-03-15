@@ -57,12 +57,12 @@ function App() {
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
            <Route path="/profile-setup" element={<ProfileSetupPage />} />
-           <Route path="/profile-setup" element={<ProfileSetupPage />} />
+           
 
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-            {  //<Route path="/profile-setup" element={<ProfileSetupPage />} />//}
+            <Route path="/profile-setup" element={<ProfileSetupPage />} />
 
             {/* 👨‍🏫 TEACHER SECTION - ✅ FULLY UPDATED WITH NEW FEATURES */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
