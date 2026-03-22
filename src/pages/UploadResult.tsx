@@ -77,7 +77,7 @@ const UploadResult = () => {
 
       // 1. रिज़ल्ट टेबल में डेटा डालें
       const { error: resErr } = await supabase.from('results').insert({
-        student_id: selectedStudent.id,
+        student_id: selectedStudent.student_id,
         exam_id: selectedExamId,
         marks_data: results,
         total_marks: totalObtained,
@@ -95,7 +95,7 @@ const UploadResult = () => {
           const { error: promoErr } = await supabase
             .from('students')
             .update({ class_name: nextClass })
-            .eq('id', selectedStudent.id);
+            .eq('student_id', selectedStudent.student_id);
 
           if (promoErr) throw promoErr;
           toast.success(`SUCCESS: Student moved to ${nextClass} 🚀`, { duration: 5000 });
@@ -144,12 +144,12 @@ const UploadResult = () => {
             </div>
             <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
               {filteredStudents.map((s:any) => (
-                <div key={s.id} onClick={() => setSelectedStudent(s)} className={`p-4 rounded-2xl cursor-pointer transition-all border ${selectedStudent?.id === s.id ? 'bg-indigo-900 text-white shadow-lg scale-[1.02]' : 'bg-gray-50 hover:bg-white hover:border-indigo-100'}`}>
+                <div key={s.student_id} onClick={() => setSelectedStudent(s)} className={`p-4 rounded-2xl cursor-pointer transition-all border ${selectedStudent?.student_id === s.student_id ? 'bg-indigo-900 text-white shadow-lg scale-[1.02]' : 'bg-gray-50 hover:bg-white hover:border-indigo-100'}`}>
                   <div className="flex items-center gap-3">
-                    <div className={`h-8 w-8 rounded-lg ${selectedStudent?.id === s.id ? 'bg-white/20' : 'bg-white text-indigo-900 shadow-sm'} flex items-center justify-center font-black text-xs`}>{s.full_name[0]}</div>
+                    <div className={`h-8 w-8 rounded-lg ${selectedStudent?.student_id === s.student_id ? 'bg-white/20' : 'bg-white text-indigo-900 shadow-sm'} flex items-center justify-center font-black text-xs`}>{s.full_name[0]}</div>
                     <div>
                       <h4 className="font-bold text-sm">{s.full_name}</h4>
-                      <p className={`text-[10px] uppercase font-black ${selectedStudent?.id === s.id ? 'text-indigo-200' : 'text-gray-400'}`}>Current: {s.class_name}</p>
+                      <p className={`text-[10px] uppercase font-black ${selectedStudent?.student_id === s.student_id ? 'text-indigo-200' : 'text-gray-400'}`}>Current: {s.class_name}</p>
                     </div>
                   </div>
                 </div>

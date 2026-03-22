@@ -68,9 +68,14 @@ const ProfileSetupPage = () => {
 
         // 3. Fetch Data
         if (tableToFetch && idToFetch) {
-          const { data: profile } = await supabase.from(tableToFetch).select('*').eq('id', idToFetch).maybeSingle();
+          let idCol = 'id';
+          if (tableToFetch === 'students') {
+            idCol = id ? 'student_id' : 'auth_id';
+          }
+          
+          const { data: profile } = await supabase.from(tableToFetch).select('*').eq(idCol, idToFetch).maybeSingle();
           if (profile) {
-            setProfileId(profile.id);
+            setProfileId(tableToFetch === 'students' ? profile.student_id : profile.id);
             setFormData({
               full_name: profile.full_name || '',
               email: profile.email || '',
