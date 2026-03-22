@@ -123,10 +123,10 @@ const AdminDashboard = () => {
     if (action === 'delete' && !window.confirm("Confirm deletion?")) return;
     setLoading(true);
     let err;
-    const pkColumn = 'id';
+    const pkColumn = table === 'students' ? 'student_id' : 'id';
     
     if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq(pkColumn, idValue));
-    if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('id', idValue));
+    if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('student_id', idValue));
     if (action === 'update') ({ error: err } = await supabase.from(table).update(payload).eq(pkColumn, idValue));
     
     if (!err) { toast.success("Done!"); fetchInitialData(); setIsEditModalOpen(false); } 
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
         const { data } = supabase.storage.from("student-photos").getPublicUrl(fileName);
         photoUrl = data.publicUrl;
       }
-      await handleAction('update', 'students', editingStudent.id, { 
+      await handleAction('update', 'students', editingStudent.student_id, { 
         full_name: editingStudent.full_name, class_name: editingStudent.class_name,
         roll_no: editingStudent.roll_no, father_name: editingStudent.father_name, photo_url: photoUrl
       });
@@ -227,11 +227,11 @@ const toggleCamera = () => {
               {activeTab === 'overview' && (
                 <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {pendingStudents.map(s => (
-                      <div key={s.id} className="bg-white p-8 rounded-[2.5rem] border shadow-xl flex flex-col justify-between h-48">
+                      <div key={s.student_id} className="bg-white p-8 rounded-[2.5rem] border shadow-xl flex flex-col justify-between h-48">
                         <div><h4 className="font-black text-gray-900 uppercase">{s.full_name}</h4><p className="text-[10px] font-bold text-gray-400 italic">Class: {s.class_name}</p></div>
                         <div className="flex gap-2">
-                           <button onClick={() => handleAction('approve', 'students', s.id)} className="flex-1 bg-emerald-500 text-white py-3 rounded-xl text-[10px] font-black uppercase">Approve</button>
-                           <button onClick={() => handleAction('delete', 'students', s.id)} className="flex-1 bg-gray-50 text-gray-400 py-3 rounded-xl text-[10px] font-black uppercase">Reject</button>
+                           <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-emerald-500 text-white py-3 rounded-xl text-[10px] font-black uppercase">Approve</button>
+                           <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-gray-50 text-gray-400 py-3 rounded-xl text-[10px] font-black uppercase">Reject</button>
                         </div>
                       </div>
                     ))}
@@ -253,14 +253,14 @@ const toggleCamera = () => {
                       <thead className="bg-gray-50/50"><tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest"><th className="p-6">Roll</th><th className="p-6">Name</th><th className="p-6 text-center">Class</th><th className="p-6 text-right">Action</th></tr></thead>
                       <tbody className="divide-y divide-gray-50">
                         {filteredStudents.map(s => (
-                          <tr key={s.id} className="hover:bg-indigo-50/20 group transition-all">
+                          <tr key={s.student_id} className="hover:bg-indigo-50/20 group transition-all">
                             <td className="p-6 font-black text-indigo-600 italic">#{s.roll_no}</td>
                             <td className="p-6 font-black text-gray-800 uppercase text-xs">{s.full_name}</td>
                             <td className="p-6 text-center"><span className="bg-white border px-4 py-1 rounded-full text-[9px] font-black">{s.class_name}</span></td>
                             <td className="p-6 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                                <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Edit2 size={16}/></button>
-                               <button onClick={() => navigate(`/admin/student/${s.id}`)} className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={16}/></button>
-                               <button onClick={() => handleAction('delete', 'students', s.id)} className="p-3 bg-red-50 text-red-600 rounded-xl"><Trash2 size={16}/></button>
+                               <button onClick={() => navigate(`/admin/student/${s.student_id}`)} className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={16}/></button>
+                               <button onClick={() => handleAction('delete', 'students', s.student_id)} className="p-3 bg-red-50 text-red-600 rounded-xl"><Trash2 size={16}/></button>
                             </td>
                           </tr>
                         ))}

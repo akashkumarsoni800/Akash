@@ -102,7 +102,7 @@ export const useApproveStudent = () => {
       const { error } = await supabase
         .from('students')
         .update({ approval_status: 'approved' })
-        .eq('id', id);
+        .eq('student_id', id);
       if (error) throw error;
     },
     onSuccess: () => {

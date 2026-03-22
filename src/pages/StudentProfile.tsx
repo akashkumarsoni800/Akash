@@ -43,7 +43,7 @@ const StudentProfile = () => {
         { data: resultsData },
         { data: attendanceData }
       ] = await Promise.all([
-        supabase.from("students").select("*").eq("id", studentIdNum).maybeSingle(),
+        supabase.from("students").select("*").eq("student_id", studentIdNum).maybeSingle(),
         supabase.from("fees").select("id, month, total_amount, status, created_at").eq("student_id", studentIdNum),
         supabase.from("results").select("id, marks_obtained, total_marks, grade").eq("student_id", studentIdNum),
         supabase.from("attendance").select("status").eq("student_id", studentIdNum)
@@ -68,7 +68,7 @@ const StudentProfile = () => {
         total: attRecords.length
       });
       
-      toast.success(`Profile loaded: ${data.full_name}`);
+      toast.success(`Profile loaded: ${studentData.full_name}`);
 
     } catch (err: any) {
       console.error("Critical Error:", err);
