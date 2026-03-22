@@ -37,10 +37,11 @@ export default function StudentRegistrationForm() {
         .from('students')
         .insert([{
           full_name: formData.fullName,
-          parent_name: formData.guardianName,
+          father_name: formData.guardianName,
           contact_number: formData.contactNumber,
           class_name: formData.classAssignment,
           email: formData.email,
+          password: formData.password,
           is_approved: 'pending' // ✅ अब ये टेक्स्ट फॉर्मेट में जाएगा
         }]);
 

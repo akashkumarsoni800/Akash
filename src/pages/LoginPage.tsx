@@ -11,7 +11,6 @@ const LoginPage = () => {
   const [studentData, setStudentData] = useState({
     full_name: '',
     father_name: '',
-    roll_no: '',
     password: '',
     email: ''
   });
@@ -24,15 +23,15 @@ const LoginPage = () => {
       if (role === 'student') {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
-          .select('full_name, father_name, roll_no, password, is_approved')
+          .select('full_name, father_name, password, is_approved')
           .eq('full_name', studentData.full_name.trim())
           .eq('father_name', studentData.father_name.trim())
-          .eq('roll_no', studentData.roll_no.trim())
+          .limit(1)
           .maybeSingle();
 
         if (dbError) throw dbError;
         if (!studentRecord) {
-          toast.error("Student record not found! Check name, father's name & roll no.");
+          toast.error("Student record not found! Check name & father's name.");
           setLoading(false);
           return;
         }
@@ -115,7 +114,7 @@ const LoginPage = () => {
               type="button"
               onClick={() => {
                 setRole(r);
-                setStudentData({ full_name: '', father_name: '', roll_no: '', password: '', email: '' });
+                setStudentData({ full_name: '', father_name: '', password: '', email: '' });
               }}
               className={`group relative py-4 px-3 rounded-xl font-semibold text-sm capitalize transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg border-2 ${
                 role === r
@@ -158,18 +157,6 @@ const LoginPage = () => {
                     placeholder="Enter father's name"
                     value={studentData.father_name}
                     onChange={(e) => setStudentData({ ...studentData, father_name: e.target.value })}
-                  />
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Roll Number</label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
-                    placeholder="Enter roll number"
-                    value={studentData.roll_no}
-                    onChange={(e) => setStudentData({ ...studentData, roll_no: e.target.value })}
                   />
                 </div>
               </div>

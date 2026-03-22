@@ -156,11 +156,12 @@ const AddStudent = () => {
         contact_number: formData.phone || null,
         email: formData.email || null,
         photo_url: photoUrl,
+        password: "asm123",
         is_approved: "approved",
       }]);
 
       if (error) throw error;
-      toast.success(`${formData.name} added successfully!`);
+      toast.success(`${formData.name} added successfully! Default Password: asm123`);
 
       setFormData(prev => ({
         ...prev,
