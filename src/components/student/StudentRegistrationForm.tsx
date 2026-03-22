@@ -24,10 +24,23 @@ export default function StudentRegistrationForm() {
     setLoading(true);
 
     try {
-      // 1. Supabase Auth में यूजर रजिस्टर करें
+      // Helper for formatting
+      const toTitleCase = (str: string) => str.replace(/\b\w/g, (char) => char.toUpperCase());
+      const formattedName = toTitleCase(formData.fullName.trim());
+      const formattedFather = toTitleCase(formData.guardianName.trim());
+      const formattedClass = formData.classAssignment.trim().toUpperCase();
+
+      // 1. Supabase Auth में यूजर रजिस्टर करें (with metadata)
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
+        options: {
+          data: {
+            full_name: formattedName,
+            father_name: formattedFather,
+            class_name: formattedClass
+          }
+        }
       });
 
       if (authError) throw authError;
@@ -36,12 +49,14 @@ export default function StudentRegistrationForm() {
       const { error: dbError } = await supabase
         .from('students')
         .insert([{
-          full_name: formData.fullName,
-          father_name: formData.guardianName,
+          full_name: formattedName,
+          father_name: formattedFather,
           contact_number: formData.contactNumber,
-          class_name: formData.classAssignment,
+          class_name: formattedClass,
           email: formData.email,
-          is_approved: 'pending' // ✅ अब ये टेक्स्ट फॉर्मेट में जाएगा
+          is_approved: 'pending',
+          roll_no: '0', 
+          registration_no: `TEMP-${Date.now()}`
         }]);
 
       if (dbError) throw dbError;
@@ -69,27 +84,27 @@ export default function StudentRegistrationForm() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Full Name *</Label>
-                <Input placeholder="Student Name" onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required />
+                <Input placeholder="Student Name" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, fullName: e.target.value })} required />
               </div>
               <div className="space-y-2">
                 <Label>Guardian Name *</Label>
-                <Input placeholder="Father/Mother Name" onChange={(e) => setFormData({ ...formData, guardianName: e.target.value })} required />
+                <Input placeholder="Father/Mother Name" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, guardianName: e.target.value })} required />
               </div>
               <div className="space-y-2">
                 <Label>Email Address *</Label>
-                <Input type="email" placeholder="email@example.com" onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+                <Input type="email" placeholder="email@example.com" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })} required />
               </div>
               <div className="space-y-2">
                 <Label>Create Password *</Label>
-                <Input type="password" placeholder="Min. 6 chars" onChange={(e) => setFormData({ ...formData, password: e.target.value })} required />
+                <Input type="password" placeholder="Min. 6 chars" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })} required />
               </div>
               <div className="space-y-2">
                 <Label>Contact Number *</Label>
-                <Input placeholder="10 digit number" onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })} required />
+                <Input placeholder="10 digit number" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, contactNumber: e.target.value })} required />
               </div>
               <div className="space-y-2">
                 <Label>Class *</Label>
-                <Input placeholder="e.g., 10th A" onChange={(e) => setFormData({ ...formData, classAssignment: e.target.value })} required />
+                <Input placeholder="e.g., 10th A" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, classAssignment: e.target.value })} required />
               </div>
             </div>
 

@@ -29,7 +29,7 @@ const TeacherAttendance = () => {
       const fetchClassStudents = async () => {
         setLoading(true);
         const { data } = await supabase.from('students')
-          .select('id, full_name')
+          .select('id:student_id, full_name')
           .eq('class_name', selectedClass)
           .eq('is_approved', 'approved')
           .order('full_name');

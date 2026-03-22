@@ -27,7 +27,7 @@ const TeacherSalary = () => {
     try {
       const [{ data: salaryData }, { data: teacherData }] = await Promise.all([
         supabase.from('teacher_salaries').select('*').order('month', { ascending: false }),
-        supabase.from('students').select('id, full_name, class_name').order('full_name') // Using students as teachers for demo
+        supabase.from('students').select('id:student_id, full_name, class_name').order('full_name') // Using students as teachers for demo
       ]);
       
       setSalaries(salaryData || []);

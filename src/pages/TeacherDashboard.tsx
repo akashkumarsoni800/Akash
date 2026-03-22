@@ -104,7 +104,7 @@ export default function TeacherDashboard() {
         classesRes
       ] = await Promise.all([
         // Total students for this teacher
-        supabase.from('students').select('id', { count: 'exact', head: true }),
+        supabase.from('students').select('student_id', { count: 'exact', head: true }),
         
         // Today's attendance
         supabase

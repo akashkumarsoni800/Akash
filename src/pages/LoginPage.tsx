@@ -25,9 +25,9 @@ const LoginPage = () => {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
           .select('student_id, full_name, father_name, class_name, email, is_approved')
-          .ilike('full_name', studentData.full_name.trim())
-          .ilike('father_name', studentData.father_name.trim())
-          .ilike('class_name', studentData.class_name.trim())
+          .ilike('full_name', `%${studentData.full_name.trim()}%`)
+          .ilike('father_name', `%${studentData.father_name.trim()}%`)
+          .ilike('class_name', `%${studentData.class_name.trim()}%`)
           .limit(1)
           .maybeSingle();
 
@@ -170,17 +170,14 @@ const LoginPage = () => {
                 </div>
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Class</label>
-                  <select 
+                  <input 
+                    type="text" 
                     required 
-                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg text-gray-700"
+                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                    placeholder="Enter Class (e.g., 10A, LKG)"
                     value={studentData.class_name}
-                    onChange={(e) => setStudentData({ ...studentData, class_name: e.target.value })}
-                  >
-                    <option value="" disabled>Select Class</option>
-                    {["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(cls => (
-                       <option key={cls} value={cls}>{cls}</option>
-                    ))}
-                  </select>
+                    onChange={(e) => setStudentData({ ...studentData, class_name: e.target.value.toUpperCase() })}
+                  />
                 </div>
               </div>
             </>
