@@ -257,7 +257,7 @@ const toggleCamera = () => {
                             <td className="p-6 font-black text-indigo-600 italic">#{s.roll_no}</td>
                             <td className="p-6 font-black text-gray-800 uppercase text-xs">{s.full_name}</td>
                             <td className="p-6 text-center"><span className="bg-white border px-4 py-1 rounded-full text-[9px] font-black">{s.class_name}</span></td>
-                            <td className="p-6 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                            <td className="p-6 flex justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
                                <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Edit2 size={16}/></button>
                                <button onClick={() => navigate(`/admin/student/${s.student_id}`)} className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={16}/></button>
                                <button onClick={() => handleAction('delete', 'students', s.student_id)} className="p-3 bg-red-50 text-red-600 rounded-xl"><Trash2 size={16}/></button>
@@ -299,7 +299,7 @@ const toggleCamera = () => {
                 <div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[2.5rem] border">
                   <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg relative group">
                     <img src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} className="w-full h-full object-cover" />
-                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer">
+                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 cursor-pointer">
                       <Upload className="text-white" size={20} /><input type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) { setNewPhotoFile(e.target.files[0]); setNewPhotoPreview(URL.createObjectURL(e.target.files[0])); } }} />
                     </label>
                   </div>

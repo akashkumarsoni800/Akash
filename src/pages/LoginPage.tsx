@@ -24,7 +24,7 @@ const LoginPage = () => {
       if (role === 'student') {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
-          .select('id, full_name, father_name, class_name, email, is_approved')
+          .select('student_id, full_name, father_name, class_name, email, is_approved')
           .eq('full_name', studentData.full_name.trim())
           .eq('father_name', studentData.father_name.trim())
           .eq('class_name', studentData.class_name.trim())
