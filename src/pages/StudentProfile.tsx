@@ -102,7 +102,7 @@ const StudentProfile = () => {
       const { error: updateError } = await supabase
         .from("students")
         .update({ photo_url: newPhotoUrl })
-        .eq("id", Number(id));
+        .eq("student_id", Number(id));
         
       if (updateError) throw updateError;
       

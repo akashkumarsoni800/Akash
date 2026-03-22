@@ -24,7 +24,7 @@ const LoginPage = () => {
       if (role === 'student') {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
-          .select('id, full_name, father_name, class_name, is_approved')
+          .select('id, full_name, father_name, class_name, email, is_approved')
           .eq('full_name', studentData.full_name.trim())
           .eq('father_name', studentData.father_name.trim())
           .eq('class_name', studentData.class_name.trim())
@@ -42,6 +42,19 @@ const LoginPage = () => {
           toast.error("⏳ Account Approval Pending!");
           setLoading(false);
           return;
+        }
+        
+        // Internal Auth link for Dashboard validation
+        const { error: authError } = await supabase.auth.signInWithPassword({
+            email: studentRecord.email,
+            password: 'Student123'
+        });
+        
+        if (authError) {
+            console.error(authError);
+            toast.error("Internal Auth Error linking session. Ensure admin migration completed.");
+            setLoading(false);
+            return;
         }
 
         toast.success(`Welcome, ${studentRecord.full_name}!`);
