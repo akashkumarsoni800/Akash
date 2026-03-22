@@ -12,6 +12,7 @@ const StudentProfile = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [student, setStudent] = useState<any>(null);
   const [fees, setFees] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
@@ -45,7 +46,7 @@ const StudentProfile = () => {
           results(id, marks_obtained, total_marks, grade),
           attendance(status)
         `)
-        .eq("student_id", studentIdNum)
+        .eq("id", studentIdNum)
         .maybeSingle();
 
       if (joinError) throw joinError;
@@ -81,6 +82,38 @@ const StudentProfile = () => {
   useEffect(() => {
     if (id) fetchStudentData();
   }, [id, fetchStudentData]);
+
+  // Photo Upload Handler
+  const uploadPhoto = async (event: any) => {
+    try {
+      setUploading(true);
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+      const filePath = `${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage.from("student-photos").upload(filePath, file);
+      if (uploadError) throw uploadError;
+      
+      const { data } = supabase.storage.from("student-photos").getPublicUrl(filePath);
+      const newPhotoUrl = data.publicUrl;
+
+      const { error: updateError } = await supabase
+        .from("students")
+        .update({ photo_url: newPhotoUrl })
+        .eq("id", Number(id));
+        
+      if (updateError) throw updateError;
+      
+      setStudent((prev: any) => ({ ...prev, photo_url: newPhotoUrl }));
+      toast.success("Photo updated successfully!");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to upload photo");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Calculations
   const attendanceRate = attendance.total > 0 
@@ -130,13 +163,19 @@ const StudentProfile = () => {
         <div className="bg-indigo-900 rounded-[3.5rem] p-10 text-white shadow-2xl relative overflow-hidden border-b-[10px] border-indigo-500/30">
           <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
             <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-              <div className="w-32 h-32 rounded-[2.5rem] bg-white/10 border-4 border-white/20 overflow-hidden flex items-center justify-center backdrop-blur-md">
-                {student.photo_url ? (
+              <label className="relative group w-32 h-32 rounded-[2.5rem] bg-white/10 border-4 border-white/20 overflow-hidden flex items-center justify-center backdrop-blur-md cursor-pointer hover:border-white/50 transition-all">
+                {uploading ? (
+                  <RefreshCw className="animate-spin text-white" size={30} />
+                ) : student.photo_url ? (
                   <img src={student.photo_url} alt={student.full_name} className="w-full h-full object-cover" />
                 ) : (
                   <User size={60} className="text-white/20" />
                 )}
-              </div>
+                <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-xs font-bold uppercase tracking-widest mt-1">Upload</span>
+                </div>
+                <input type="file" className="hidden" accept="image/*" onChange={uploadPhoto} disabled={uploading} />
+              </label>
               <div>
                 <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">Verified Student</span>
                 <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter mt-3 leading-none">{student.full_name}</h1>
