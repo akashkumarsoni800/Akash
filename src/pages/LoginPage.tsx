@@ -25,9 +25,9 @@ const LoginPage = () => {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
           .select('student_id, full_name, father_name, class_name, email, is_approved')
-          .eq('full_name', studentData.full_name.trim())
-          .eq('father_name', studentData.father_name.trim())
-          .eq('class_name', studentData.class_name.trim())
+          .ilike('full_name', studentData.full_name.trim())
+          .ilike('father_name', studentData.father_name.trim())
+          .ilike('class_name', studentData.class_name.trim())
           .limit(1)
           .maybeSingle();
 
