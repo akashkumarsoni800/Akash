@@ -36,33 +36,33 @@ const StudentProfile = () => {
 
       console.log("🔍 Fetching student:", studentIdNum);
 
-      // ✅ FIX 2: SAFE JOIN QUERY (Removed !inner)
-      // !inner हटाने से अगर फीस 0 है तब भी स्टूडेंट दिखेगा
-      const { data, error: joinError } = await supabase
-        .from("students")
-        .select(`
-          *,
-          fees(id, month, total_amount, status, created_at),
-          results(id, marks_obtained, total_marks, grade),
-          attendance(status)
-        `)
-        .eq("id", studentIdNum)
-        .maybeSingle();
+      // ✅ FIX 2: SAFE PARALLEL FETCHING (Avoids ambiguous join relationships)
+      const [
+        { data: studentData, error: studentError },
+        { data: feesData },
+        { data: resultsData },
+        { data: attendanceData }
+      ] = await Promise.all([
+        supabase.from("students").select("*").eq("id", studentIdNum).maybeSingle(),
+        supabase.from("fees").select("id, month, total_amount, status, created_at").eq("student_id", studentIdNum),
+        supabase.from("results").select("id, marks_obtained, total_marks, grade").eq("student_id", studentIdNum),
+        supabase.from("attendance").select("status").eq("student_id", studentIdNum)
+      ]);
 
-      if (joinError) throw joinError;
+      if (studentError) throw studentError;
 
-      if (!data) {
+      if (!studentData) {
         setStudent(null);
         setError("Student not found in database.");
         return;
       }
 
       // ✅ Success - Populate States
-      setStudent(data);
-      setFees(data.fees || []);
-      setResults(data.results || []);
+      setStudent(studentData);
+      setFees(feesData || []);
+      setResults(resultsData || []);
       
-      const attRecords = data.attendance || [];
+      const attRecords = attendanceData || [];
       setAttendance({
         present: attRecords.filter((a: any) => a.status === "Present").length,
         total: attRecords.length
