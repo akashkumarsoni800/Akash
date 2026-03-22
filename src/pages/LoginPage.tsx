@@ -11,6 +11,7 @@ const LoginPage = () => {
   const [studentData, setStudentData] = useState({
     full_name: '',
     father_name: '',
+    class_name: '',
     password: '',
     email: ''
   });
@@ -23,21 +24,16 @@ const LoginPage = () => {
       if (role === 'student') {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
-          .select('full_name, father_name, password, is_approved')
+          .select('id, full_name, father_name, class_name, is_approved')
           .eq('full_name', studentData.full_name.trim())
           .eq('father_name', studentData.father_name.trim())
+          .eq('class_name', studentData.class_name.trim())
           .limit(1)
           .maybeSingle();
 
         if (dbError) throw dbError;
         if (!studentRecord) {
-          toast.error("Student record not found! Check name & father's name.");
-          setLoading(false);
-          return;
-        }
-
-        if (studentRecord.password !== studentData.password) {
-          toast.error("Wrong password!");
+          toast.error("Record not found! Check Name, Father's Name and Class.");
           setLoading(false);
           return;
         }
@@ -114,7 +110,7 @@ const LoginPage = () => {
               type="button"
               onClick={() => {
                 setRole(r);
-                setStudentData({ full_name: '', father_name: '', password: '', email: '' });
+                setStudentData({ full_name: '', father_name: '', class_name: '', password: '', email: '' });
               }}
               className={`group relative py-4 px-3 rounded-xl font-semibold text-sm capitalize transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg border-2 ${
                 role === r
@@ -159,6 +155,20 @@ const LoginPage = () => {
                     onChange={(e) => setStudentData({ ...studentData, father_name: e.target.value })}
                   />
                 </div>
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Class</label>
+                  <select 
+                    required 
+                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg text-gray-700"
+                    value={studentData.class_name}
+                    onChange={(e) => setStudentData({ ...studentData, class_name: e.target.value })}
+                  >
+                    <option value="" disabled>Select Class</option>
+                    {["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(cls => (
+                       <option key={cls} value={cls}>{cls}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </>
           )}
@@ -177,35 +187,37 @@ const LoginPage = () => {
             </div>
           )}
 
-          {/* Password Field */}
-          <div className="group">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-            <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
-                required 
-                className="w-full pl-4 pr-12 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
-                value={studentData.password}
-                onChange={(e) => setStudentData({ ...studentData, password: e.target.value })}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-4 flex items-center transition-all duration-300 hover:scale-110 group-hover:text-blue-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                ) : (
-                  <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                  </svg>
-                )}
-              </button>
+          {/* Password Field (Only for Staff) */}
+          {role !== 'student' && (
+            <div className="group">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  required 
+                  className="w-full pl-4 pr-12 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                  value={studentData.password}
+                  onChange={(e) => setStudentData({ ...studentData, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center transition-all duration-300 hover:scale-110 group-hover:text-blue-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  ) : (
+                    <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Login Button */}
           <button 

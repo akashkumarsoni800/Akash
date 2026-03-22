@@ -156,7 +156,6 @@ const AddStudent = () => {
         contact_number: formData.phone || null,
         email: formData.email || null,
         photo_url: photoUrl,
-        password: "asm123",
         is_approved: "approved",
       }]);
 
