@@ -29,6 +29,9 @@ import UploadResult from './pages/UploadResult';
 import StudentResult from './pages/StudentResult';
 import StudentNotices from './pages/StudentNotices';
 import StudentFees from './pages/StudentFees';
+import StudentAttendance from './pages/StudentAttendance';
+import StudentHomework from './pages/StudentHomework';
+import StudentICardPage from './pages/StudentICardPage';
 
 // --- ADMIN FEATURES ---
 import AddStudent from './pages/AddStudent';
@@ -78,6 +81,9 @@ function App() {
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/fees" element={<StudentFees />} />
             <Route path="/student/result" element={<StudentResult />} />
+            <Route path="/student/homework" element={<StudentHomework />} />
+            <Route path="/student/attendance" element={<StudentAttendance />} />
+            <Route path="/student/id-card" element={<StudentICardPage />} />
             <Route path="/student/notices" element={<StudentNotices />} />
 
             {/* 👨‍💼 ADMIN SECTION */}

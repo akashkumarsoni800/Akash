@@ -5,7 +5,8 @@ import DashboardHeader from './DashboardHeader';
 import GallerySlider from './GallerySlider'; // ✅ 1. GallerySlider इम्पोर्ट किया गया
 import { 
   X, LayoutDashboard, CreditCard, UserPlus, Users, 
-  ShieldCheck, ClipboardList, Calendar, FileText 
+  ShieldCheck, ClipboardList, Calendar, FileText,
+  BookOpen
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -122,8 +123,12 @@ const Sidebar = () => {
           {profile.role === 'student' && (
             <>
               <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> My Dashboard </Link>
+              <Link to="/student/homework" className={navLinkClass("/student/homework")} onClick={() => setIsMobileOpen(false)}> <BookOpen size={18}/> Homework </Link>
+              <Link to="/student/attendance" className={navLinkClass("/student/attendance")} onClick={() => setIsMobileOpen(false)}> <Calendar size={18}/> Attendance </Link>
               <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsMobileOpen(false)}> <CreditCard size={18}/> Fee Records </Link>
               <Link to="/student/result" className={navLinkClass("/student/result")} onClick={() => setIsMobileOpen(false)}> <ClipboardList size={18}/> Examination </Link>
+              <Link to="/student/id-card" className={navLinkClass("/student/id-card")} onClick={() => setIsMobileOpen(false)}> <ShieldCheck size={18}/> My ID Card </Link>
+              <Link to="/student/notices" className={navLinkClass("/student/notices")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Notice Board </Link>
             </>
           )}
         </nav>
