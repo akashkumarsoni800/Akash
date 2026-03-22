@@ -9,7 +9,7 @@ import {
   Trash2, Edit2, CheckCircle, CreditCard,
   Wallet, PieChart, Package, ShieldAlert, UserPlus,
   Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
-  Upload, Camera,Flip
+  Upload, Camera, FlipHorizontal
 } from 'lucide-react';
 
 // --- ANIMATION VARIANTS ---
@@ -333,7 +333,7 @@ const toggleCamera = () => {
       onClick={toggleCamera}
       className="mt-6 p-3 bg-white/20 hover:bg-white/40 text-white rounded-2xl backdrop-blur-sm flex items-center gap-2 font-bold uppercase text-sm"
     >
-      <Flip size={20} />
+      <FlipHorizontal size={20} />
       Flip Camera
     </button>
         </div>
