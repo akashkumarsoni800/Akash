@@ -38,10 +38,10 @@ const Sidebar = () => {
           });
           setLoading(false);
         }
-        return; // छात्र मिल गया तो यहीं रुक जाएं
+        return;
       }
 
-      // ✅ अगर छात्र नहीं है या अप्रूव नहीं है, तब Teachers टेबल चेक करें
+      // 2. Try Teacher/Admin
       const { data: staffData } = await supabase
         .from('teachers')
         .select('full_name, avatar_url, role')
@@ -54,6 +54,9 @@ const Sidebar = () => {
           avatar: staffData.avatar_url, 
           role: staffData.role 
         });
+      } else if (isMounted) {
+        // Fallback or Logout if no profile found
+        // await supabase.auth.signOut();
       }
     } catch (err) {
       console.error("Profile fetch error:", err);

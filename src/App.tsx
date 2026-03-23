@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'; // ✅ Added for 404 animation
 // --- COMPONENTS ---
 import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // --- PUBLIC PAGES ---
 import Home from './pages/Home';
@@ -65,42 +66,39 @@ function App() {
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
-            {/* <Route path="/profile-setup" element={<ProfileSetupPage />} /> */}
-
-            {/* 👨‍🏫 TEACHER SECTION - ✅ FULLY UPDATED WITH NEW FEATURES */}
-            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            <Route path="/teacher/attendance" element={<TeacherAttendance />} />
-            <Route path="/teacher/homework" element={<TeacherHomework />} />
-            <Route path="/teacher/homework/:id" element={<TeacherHomework />} />
-            <Route path="/teacher/students" element={<TeacherStudentList />} />        {/* ✅ NEW */}
-            <Route path="/teacher/student/:id" element={<TeacherStudentList />} />     {/* ✅ NEW */}
-            <Route path="/teacher/analytics" element={<TeacherAnalytics />} />         {/* ✅ NEW */}
-            <Route path="/teacher/upload-result" element={<UploadResult />} />
+            {/* 👨‍🏫 TEACHER SECTION */}
+            <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRole="teacher"><TeacherDashboard /></ProtectedRoute>} />
+            <Route path="/teacher/attendance" element={<ProtectedRoute allowedRole="teacher"><TeacherAttendance /></ProtectedRoute>} />
+            <Route path="/teacher/homework" element={<ProtectedRoute allowedRole="teacher"><TeacherHomework /></ProtectedRoute>} />
+            <Route path="/teacher/homework/:id" element={<ProtectedRoute allowedRole="teacher"><TeacherHomework /></ProtectedRoute>} />
+            <Route path="/teacher/students" element={<ProtectedRoute allowedRole="teacher"><TeacherStudentList /></ProtectedRoute>} />
+            <Route path="/teacher/student/:id" element={<ProtectedRoute allowedRole="teacher"><TeacherStudentList /></ProtectedRoute>} />
+            <Route path="/teacher/analytics" element={<ProtectedRoute allowedRole="teacher"><TeacherAnalytics /></ProtectedRoute>} />
+            <Route path="/teacher/upload-result" element={<ProtectedRoute allowedRole="teacher"><UploadResult /></ProtectedRoute>} />
 
             {/* 👨‍🎓 STUDENT SECTION */}
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/fees" element={<StudentFees />} />
-            <Route path="/student/result" element={<StudentResult />} />
-            <Route path="/student/homework" element={<StudentHomework />} />
-            <Route path="/student/attendance" element={<StudentAttendance />} />
-            <Route path="/student/id-card" element={<StudentICardPage />} />
-            <Route path="/student/notices" element={<StudentNotices />} />
+            <Route path="/student/dashboard" element={<ProtectedRoute allowedRole="student"><StudentDashboard /></ProtectedRoute>} />
+            <Route path="/student/fees" element={<ProtectedRoute allowedRole="student"><StudentFees /></ProtectedRoute>} />
+            <Route path="/student/result" element={<ProtectedRoute allowedRole="student"><StudentResult /></ProtectedRoute>} />
+            <Route path="/student/homework" element={<ProtectedRoute allowedRole="student"><StudentHomework /></ProtectedRoute>} />
+            <Route path="/student/attendance" element={<ProtectedRoute allowedRole="student"><StudentAttendance /></ProtectedRoute>} />
+            <Route path="/student/id-card" element={<ProtectedRoute allowedRole="student"><StudentICardPage /></ProtectedRoute>} />
+            <Route path="/student/notices" element={<ProtectedRoute allowedRole="student"><StudentNotices /></ProtectedRoute>} />
 
             {/* 👨‍💼 ADMIN SECTION */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/manage-fees" element={<ManageFees />} />
-            <Route path="/admin/create-exam" element={<CreateExam />} />
-            <Route path="/admin/upload-result" element={<UploadResult />} />
-            <Route path="/admin/add-student" element={<AddStudent />} />
-            <Route path="/admin/add-teacher" element={<AddTeacher />} />
-            <Route path="/admin/add-event" element={<AddEvent />} />
-            <Route path="/admin/student/:id" element={<StudentProfile />} />
-            <Route path="/admin/create-admin" element={<CreateAdmin />} />
-             <Route path="/admin/teacher-salary" element={<TeacherSalary />} />
-             <Route path="/admin/manage-salaries" element={<ManageSalaries />} />
-            <Route path="/admin/inventory" element={<ManageInventory />} />
-            <Route path="/admin/documents" element={<DocumentHub />} />
-             
+            <Route path="/admin/dashboard" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/manage-fees" element={<ProtectedRoute allowedRole="admin"><ManageFees /></ProtectedRoute>} />
+            <Route path="/admin/create-exam" element={<ProtectedRoute allowedRole="admin"><CreateExam /></ProtectedRoute>} />
+            <Route path="/admin/upload-result" element={<ProtectedRoute allowedRole="admin"><UploadResult /></ProtectedRoute>} />
+            <Route path="/admin/add-student" element={<ProtectedRoute allowedRole="admin"><AddStudent /></ProtectedRoute>} />
+            <Route path="/admin/add-teacher" element={<ProtectedRoute allowedRole="admin"><AddTeacher /></ProtectedRoute>} />
+            <Route path="/admin/add-event" element={<ProtectedRoute allowedRole="admin"><AddEvent /></ProtectedRoute>} />
+            <Route path="/admin/student/:id" element={<ProtectedRoute allowedRole="admin"><StudentProfile /></ProtectedRoute>} />
+            <Route path="/admin/create-admin" element={<ProtectedRoute allowedRole="admin"><CreateAdmin /></ProtectedRoute>} />
+            <Route path="/admin/teacher-salary" element={<ProtectedRoute allowedRole="admin"><TeacherSalary /></ProtectedRoute>} />
+            <Route path="/admin/manage-salaries" element={<ProtectedRoute allowedRole="admin"><ManageSalaries /></ProtectedRoute>} />
+            <Route path="/admin/inventory" element={<ProtectedRoute allowedRole="admin"><ManageInventory /></ProtectedRoute>} />
+            <Route path="/admin/documents" element={<ProtectedRoute allowedRole="admin"><DocumentHub /></ProtectedRoute>} />
           </Route>
 
           {/* 🔴 404 - ENHANCED */}

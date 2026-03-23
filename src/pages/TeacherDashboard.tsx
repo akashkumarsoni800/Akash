@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 // --- Enhanced Action Card ---
-const ActionCard = ({ icon, title, desc, onClick, color = 'blue', badgeCount = 0, stats }) => {
-  const colors = {
+const ActionCard = ({ icon, title, desc, onClick, color = 'blue', badgeCount = 0, stats }: any) => {
+  const colors: { [key: string]: string } = {
     blue: 'bg-blue-50 text-blue-600 hover:border-blue-500 ring-blue-200',
     green: 'bg-green-50 text-green-600 hover:border-green-500 ring-green-200',
     purple: 'bg-purple-50 text-purple-600 hover:border-purple-500 ring-purple-200',
@@ -88,7 +88,7 @@ export default function TeacherDashboard() {
         .from('teachers')
         .select('*')
         .eq('email', user.email)
-        .single();
+        .maybeSingle();
       
       setTeacher(teacherData);
 
@@ -367,13 +367,13 @@ export default function TeacherDashboard() {
         </motion.div>
       </div>
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-20px); }
         }
         .animate-float { animation: float 6s ease-in-out infinite; }
-      `}</style>
+      `}} />
     </div>
   );
 }
