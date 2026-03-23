@@ -18,6 +18,17 @@ const AddTeacher = () => {
     setIsPending(true);
 
     try {
+      // 0. Check if email already exists in Students table
+      const { data: existingStudent } = await supabase
+        .from('students')
+        .select('full_name')
+        .eq('email', formData.email)
+        .maybeSingle();
+
+      if (existingStudent) {
+        throw new Error(`This email is already registered as a student (${existingStudent.full_name}).`);
+      }
+
       // 1. Create Auth User
       const { data, error: authError } = await supabase.auth.signUp({
         email: formData.email,
@@ -39,7 +50,8 @@ const AddTeacher = () => {
           subject: formData.subject,
           email: formData.email,
           phone: formData.phone,
-          auth_id: data.user.id 
+          auth_id: data.user.id,
+          role: 'teacher' // 👈 Explicitly set role
         }]);
         
         if (dbError) throw dbError;

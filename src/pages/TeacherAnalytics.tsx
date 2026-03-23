@@ -81,8 +81,40 @@ const TeacherAnalytics: React.FC = () => {
       const passCount = resultsData?.filter((r: any) => (r.marks || 0) >= 40)?.length || 0;
       const topPerformers = resultsData?.filter((r: any) => (r.marks || 0) >= 90)?.length || 0;
 
-      // Low attendance students (mock calculation)
-      const lowAttendance = Math.round((totalStudents * 0.07)); // 7% approx
+      // Low attendance students (attendance < 75%)
+      const { data: attendanceData } = await supabase
+        .from('attendance')
+        .select('student_id, status')
+        .gte('date', last30Days.slice(0, 10));
+
+      const studentAttendanceMap: {[key: string]: {present: number, total: number}} = {};
+      attendanceData?.forEach((record: any) => {
+        if (!studentAttendanceMap[record.student_id]) {
+          studentAttendanceMap[record.student_id] = { present: 0, total: 0 };
+        }
+        studentAttendanceMap[record.student_id].total++;
+        if (record.status === 'present' || record.status === 'P') {
+          studentAttendanceMap[record.student_id].present++;
+        }
+      });
+
+      const lowAttendanceCount = Object.values(studentAttendanceMap).filter(
+        stats => (stats.present / stats.total) < 0.75
+      ).length;
+
+      // Recent Results
+      const { data: recentResultsRaw } = await supabase
+        .from('student_results')
+        .select('*, students(full_name)')
+        .order('date', { ascending: false })
+        .limit(5);
+
+      const recentResults = (recentResultsRaw || []).map((r: any) => ({
+        student_name: r.students?.full_name || 'Student',
+        marks: r.marks_obtained || r.marks || 0,
+        subject: r.subject_name || r.subject || 'Subject',
+        date: r.date || r.created_at
+      }));
 
       setAnalytics({
         totalStudents: totalStudents || 0,
@@ -90,8 +122,8 @@ const TeacherAnalytics: React.FC = () => {
         avgMarks,
         passPercentage: resultsData?.length ? Math.round((passCount / resultsData.length) * 100) : 0,
         topPerformers,
-        lowAttendance,
-        recentResults: [] // Add real data later
+        lowAttendance: lowAttendanceCount,
+        recentResults
       });
     } catch (error) {
       console.error('Analytics fetch error:', error);

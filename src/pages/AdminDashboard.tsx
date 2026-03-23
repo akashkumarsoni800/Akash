@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,7 +70,11 @@ const StatCard = ({ icon: Icon, title, value, color, subText }) => {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialTab = queryParams.get('tab') || 'overview';
+
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -96,6 +100,11 @@ const AdminDashboard = () => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const tab = new URLSearchParams(location.search).get('tab');
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   const fetchInitialData = async () => {
     try {
@@ -300,8 +309,18 @@ const toggleCamera = () => {
                           <div className="w-14 h-14 md:w-16 md:h-16 bg-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white text-xl md:text-2xl font-black">{t.full_name?.[0]}</div>
                           <button onClick={() => handleAction('delete', 'teachers', t.id)} className="text-gray-300 hover:text-rose-500 transition-colors p-2 bg-gray-50 rounded-xl"><Trash2 size={16}/></button>
                        </div>
-                       <h3 className="font-black uppercase text-gray-900 leading-tight md:text-lg">{t.full_name}</h3>
-                       <p className="text-[9px] md:text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1 md:mt-2 italic">{t.subject || 'Staff Member'}</p>
+                        <div className="flex flex-col flex-1 pl-4 md:pl-6 overflow-hidden">
+                           <h3 className="font-black uppercase text-gray-900 leading-tight md:text-lg truncate">{t.full_name}</h3>
+                           <div className="flex items-center gap-2 mt-1">
+                              <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tighter ${
+                                t.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700'
+                              }`}>
+                                {t.role || 'teacher'}
+                              </span>
+                              <p className="text-[9px] md:text-[10px] font-bold text-gray-400 truncate tracking-tight">{t.email}</p>
+                           </div>
+                           <p className="text-[9px] md:text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-2 md:mt-3 italic">{t.subject || 'Staff Member'}</p>
+                        </div>
                     </div>
                   ))}
                 </motion.div>

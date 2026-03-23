@@ -132,6 +132,19 @@ const AddStudent = () => {
     setLoading(true);
 
     try {
+      // 0. Check if email exists in Teachers table
+      if (formData.email) {
+        const { data: existingTeacher } = await supabase
+          .from('teachers')
+          .select('full_name')
+          .eq('email', formData.email)
+          .maybeSingle();
+
+        if (existingTeacher) {
+          throw new Error(`This email is already registered as a staff member (${existingTeacher.full_name}).`);
+        }
+      }
+
       let photoUrl = "";
       if (photoFile) {
         const fileName = `${Date.now()}.jpg`;

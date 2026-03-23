@@ -23,7 +23,7 @@ const StudentFees = () => {
       if (!student) return toast.error("Profile not found");
       setStudentData(student);
 
-      const { data: feeData } = await supabase.from('fees').select('*, fee_receipts(*)').eq('student_id', student.id).order('created_at', { ascending: false });
+      const { data: feeData } = await supabase.from('fees').select('*, fee_receipts(*)').eq('student_id', student.student_id || student.id).order('created_at', { ascending: false });
       setFees(feeData || []);
       
       const pending = (feeData || []).filter(f => f.status === 'Pending').reduce((sum, f) => sum + Number(f.total_amount), 0);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Student {
@@ -31,15 +32,37 @@ const StudentList: React.FC = () => {
   }, []);
 
   const fetchStudents = async () => {
-    setLoading(true);
-    // Mock data - replace with Supabase query
-    const mockStudents: Student[] = [
-      { id: '1', full_name: 'Rahul Sharma', email: 'rahul@school.com', roll_number: '10A-001', class_name: '10A', father_name: 'Mr. Raj Sharma', phone: '9876543210', address: 'Patna', attendance_rate: 95, avg_marks: 88, status: 'active' },
-      { id: '2', full_name: 'Priya Kumari', email: 'priya@school.com', roll_number: '10A-002', class_name: '10A', father_name: 'Mr. Sunil Kumar', phone: '9876543211', address: 'Patna', attendance_rate: 92, avg_marks: 76, status: 'active' },
-      // Add more students...
-    ];
-    setStudents(mockStudents);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('is_approved', 'approved')
+        .order('full_name');
+
+      if (error) throw error;
+      
+      const formattedStudents: Student[] = (data || []).map(s => ({
+        id: s.student_id || s.id,
+        full_name: s.full_name,
+        email: s.email,
+        roll_number: s.roll_no,
+        class_name: s.class_name,
+        father_name: s.father_name,
+        phone: s.contact_number,
+        address: s.address,
+        attendance_rate: 0, // In a full app, we'd join with attendance
+        avg_marks: 0,       // In a full app, we'd join with results
+        status: 'active',
+        photo_url: s.photo_url
+      }));
+
+      setStudents(formattedStudents);
+    } catch (error: any) {
+      toast.error("Failed to load students: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredStudents = students.filter(student => 

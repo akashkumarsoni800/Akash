@@ -29,7 +29,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
         // 1. Check Student Table (Approved students only)
         const { data: student } = await supabase
           .from('students')
-          .select('id, is_approved')
+          .select('is_approved')
           .eq('email', userEmail)
           .maybeSingle();
 
@@ -47,7 +47,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
           .maybeSingle();
 
         if (staff) {
-          setUserRole(staff.role); // 'teacher' or 'admin'
+          setUserRole(staff.role || 'teacher'); // 'teacher' or 'admin' (fallback to teacher)
         }
       } catch (error) {
         console.error('Auth check error:', error);

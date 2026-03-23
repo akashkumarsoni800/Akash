@@ -27,7 +27,7 @@ const TeacherSalary = () => {
     try {
       const [{ data: salaryData }, { data: teacherData }] = await Promise.all([
         supabase.from('teacher_salaries').select('*').order('month', { ascending: false }),
-        supabase.from('students').select('id:student_id, full_name, class_name').order('full_name') // Using students as teachers for demo
+        supabase.from('teachers').select('id, full_name, role').order('full_name')
       ]);
       
       setSalaries(salaryData || []);
@@ -155,7 +155,7 @@ const TeacherSalary = () => {
                       ...newSalary,
                       teacher_id: e.target.value,
                       teacher_name: teacher?.full_name || '',
-                      designation: teacher?.class_name || ''
+                      designation: teacher?.role || ''
                     });
                   }}
                   className="w-full p-8 border-2 border-gray-200 rounded-4xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 text-2xl font-bold transition-all h-24"
@@ -164,7 +164,7 @@ const TeacherSalary = () => {
                   <option value="">Select Teacher</option>
                   {teachers.map(t => (
                     <option key={t.id} value={t.id}>
-                      {t.full_name} ({t.class_name})
+                      {t.full_name} ({t.role})
                     </option>
                   ))}
                 </select>

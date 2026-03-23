@@ -41,7 +41,7 @@ const ProfileSetupPage = () => {
         const { data: teacherData } = await supabase
           .from('teachers')
           .select('*')
-          .eq('id', user.id)
+          .eq('auth_id', user.id) // 👈 Changed from 'id' to 'auth_id'
           .maybeSingle();
 
         if (teacherData) {

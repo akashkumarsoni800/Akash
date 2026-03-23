@@ -40,7 +40,7 @@ const StudentResult = () => {
       // 2. Get Results
       const { data: resData } = await supabase.from('results')
         .select('*, exams(title)')
-        .eq('student_id', student.id)
+        .eq('student_id', student.student_id || student.id)
         .order('uploaded_at', { ascending: false });
 
       setResults(resData || []);

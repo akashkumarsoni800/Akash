@@ -33,15 +33,15 @@ export default function StudentDashboard() {
         if (studentData) {
           setStudent(studentData);
 
-          // 2. Fetch Stats in Parallel
+          const studentId = studentData.student_id || studentData.id;
           const [
             { data: attendanceData },
             { data: feeData },
             { data: homeworkData },
             { data: noticeData }
           ] = await Promise.all([
-            supabase.from('attendance').select('status').eq('student_id', studentData.id),
-            supabase.from('fees').select('total_amount').eq('student_id', studentData.id).eq('status', 'Pending'),
+            supabase.from('attendance').select('status').eq('student_id', studentId),
+            supabase.from('fees').select('total_amount').eq('student_id', studentId).eq('status', 'Pending'),
             supabase.from('homework').select('id').eq('class_name', studentData.class_name),
             supabase.from('events').select('*').order('created_at', { ascending: false }).limit(3)
           ]);

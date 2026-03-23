@@ -6,7 +6,7 @@ import GallerySlider from './GallerySlider'; // ✅ 1. GallerySlider इम्�
 import { 
   X, LayoutDashboard, CreditCard, UserPlus, Users, 
   ShieldCheck, ClipboardList, Calendar, FileText,
-  BookOpen
+  BookOpen, Package, Wallet, PieChart, Users2, Bell
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -22,26 +22,7 @@ const Sidebar = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !isMounted) return;
 
-      // ✅ पहले Students टेबल चेक करें (क्योंकि नए रजिस्ट्रेशन छात्र के ही हैं)
-      const { data: studentData } = await supabase
-        .from('students')
-        .select('full_name, avatar_url, is_approved')
-        .eq('email', user.email)
-        .maybeSingle();
-
-      if (studentData && studentData.is_approved === 'approved') {
-        if (isMounted) {
-          setProfile({ 
-            name: studentData.full_name, 
-            avatar: studentData.avatar_url, 
-            role: 'student' 
-          });
-          setLoading(false);
-        }
-        return;
-      }
-
-      // 2. Try Teacher/Admin
+      // 1. Try Staff table first (Teacher/Admin)
       const { data: staffData } = await supabase
         .from('teachers')
         .select('full_name, avatar_url, role')
@@ -54,9 +35,23 @@ const Sidebar = () => {
           avatar: staffData.avatar_url, 
           role: staffData.role 
         });
-      } else if (isMounted) {
-        // Fallback or Logout if no profile found
-        // await supabase.auth.signOut();
+        setLoading(false);
+        return;
+      }
+
+      // 2. Fallback to Students table
+      const { data: studentData } = await supabase
+        .from('students')
+        .select('full_name, avatar_url, is_approved')
+        .eq('email', user.email)
+        .maybeSingle();
+
+      if (studentData && studentData.is_approved === 'approved' && isMounted) {
+        setProfile({ 
+          name: studentData.full_name, 
+          avatar: studentData.avatar_url, 
+          role: 'student' 
+        });
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
@@ -109,17 +104,24 @@ const Sidebar = () => {
               <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Overview </Link>
               <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")} onClick={() => setIsMobileOpen(false)}> <CreditCard size={18}/> Fees Management </Link>
               <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={() => setIsMobileOpen(false)}> <UserPlus size={18}/> New Student </Link>
-              <Link to="/admin/add-teacher" className={navLinkClass("/admin/add-teacher")} onClick={() => setIsMobileOpen(false)}> <Users size={18}/> Staff Directory </Link>
+              <Link to="/admin/dashboard?tab=teachers" className={navLinkClass("/admin/dashboard")} onClick={() => setIsMobileOpen(false)}> <Users size={18}/> Staff Directory </Link>
+              <Link to="/admin/teacher-salary" className={navLinkClass("/admin/teacher-salary")} onClick={() => setIsMobileOpen(false)}> <Wallet size={18}/> Teacher Salaries </Link>
+              <Link to="/admin/manage-salaries" className={navLinkClass("/admin/manage-salaries")} onClick={() => setIsMobileOpen(false)}> <PieChart size={18}/> Accounting </Link>
+              <Link to="/admin/inventory" className={navLinkClass("/admin/inventory")} onClick={() => setIsMobileOpen(false)}> <Package size={18}/> Inventory Mgmt </Link>
               <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")} onClick={() => setIsMobileOpen(false)}> <ClipboardList size={18}/> Results </Link>
-              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsMobileOpen(false)}> <ShieldCheck size={18}/> New Admin Account </Link>
+              <Link to="/admin/documents" className={navLinkClass("/admin/documents")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Document Hub </Link>
+              <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")} onClick={() => setIsMobileOpen(false)}> <Bell size={18}/> Notice Board </Link>
+              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsMobileOpen(false)}> <ShieldCheck size={18}/> System Admins </Link>
             </>
           )}
 
           {profile.role === 'teacher' && (
             <>
               <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
+              <Link to="/teacher/students" className={navLinkClass("/teacher/students")} onClick={() => setIsMobileOpen(false)}> <Users2 size={18}/> My Students </Link>
               <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")} onClick={() => setIsMobileOpen(false)}> <Calendar size={18}/> Attendance </Link>
               <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Mark Entry </Link>
+              <Link to="/teacher/analytics" className={navLinkClass("/teacher/analytics")} onClick={() => setIsMobileOpen(false)}> <PieChart size={18}/> Class Analytics </Link>
             </>
           )}
 
