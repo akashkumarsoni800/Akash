@@ -61,12 +61,12 @@ const StudentFees = () => {
         <div className="bg-indigo-900 rounded-[3.5rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden">
            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
               <div className="text-center md:text-left">
-                 <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none">Financial<br/>Portfolio</h1>
-                 <p className="text-indigo-300 font-bold uppercase text-[10px] tracking-[0.3em] mt-6">Candidate: {studentData.full_name}</p>
+                 <h1 className="text-2xl md:text-6xl font-black uppercase italic tracking-tighter leading-none">Financial<br className="hidden md:block"/>Portfolio</h1>
+                 <p className="text-indigo-300 font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.3em] mt-4 md:mt-6">Candidate: {studentData.full_name}</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 text-center min-w-[240px] shadow-inner">
-                 <p className="text-[10px] font-black uppercase text-indigo-200 mb-2 tracking-widest italic">Total Pending</p>
-                 <p className={`text-6xl font-black tracking-tighter ${totalPending > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>₹{totalPending.toLocaleString()}</p>
+              <div className="bg-white/10 backdrop-blur-xl p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-white/10 text-center min-w-[200px] md:w-auto shadow-inner">
+                 <p className="text-[9px] md:text-[10px] font-black uppercase text-indigo-200 mb-1 md:mb-2 tracking-widest italic">Total Pending</p>
+                 <p className={`text-4xl md:text-6xl font-black tracking-tighter ${totalPending > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>₹{totalPending.toLocaleString()}</p>
               </div>
            </div>
            <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"></div>

@@ -182,12 +182,12 @@ const AddStudent = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4 md:p-10 font-sans">
-      <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl w-full max-w-4xl border border-gray-100">
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4 md:p-10 font-sans pb-24">
+      <form onSubmit={handleSubmit} className="bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl w-full max-w-4xl border border-gray-100">
         
-        <div className="flex justify-between items-center mb-8">
-           <h2 className="text-4xl font-black text-gray-900 uppercase italic leading-none">Admission</h2>
-           <div className="bg-indigo-50 px-4 py-2 rounded-2xl text-indigo-600 text-[10px] font-black uppercase tracking-widest">ASM Hub v3.0</div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+           <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase italic leading-none">Admission</h2>
+           <div className="bg-indigo-50 px-4 py-2 rounded-2xl text-indigo-600 text-[9px] md:text-[10px] font-black uppercase tracking-widest">ASM Hub v3.0</div>
         </div>
 
         {/* PHOTO UPLOAD SECTION */}
@@ -205,15 +205,15 @@ const AddStudent = () => {
             </label>
           </div>
           
-          <div className="mt-6 flex gap-3">
-             <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl">
-               <Camera size={16}/> Live Photo
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+             <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-2 bg-indigo-600 text-white px-5 md:px-6 py-3 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl">
+               <Camera size={14}/> Live Photo
              </button>
-             <label className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl cursor-pointer">
-               <Upload size={16}/> Browse
+             <label className="flex items-center gap-2 bg-emerald-600 text-white px-5 md:px-6 py-3 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl cursor-pointer">
+               <Upload size={14}/> Browse
                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
              </label>
-             {photoPreview && <button type="button" onClick={() => {setPhotoFile(null); setPhotoPreview(null);}} className="bg-rose-50 text-rose-500 px-6 py-3 rounded-2xl text-xs font-bold uppercase">Clear</button>}
+             {photoPreview && <button type="button" onClick={() => {setPhotoFile(null); setPhotoPreview(null);}} className="bg-rose-50 text-rose-500 px-4 md:px-6 py-3 rounded-2xl text-[10px] md:text-xs font-bold uppercase">Clear</button>}
           </div>
         </div>
 
@@ -262,11 +262,11 @@ const AddStudent = () => {
           <InputField label="Student Name *" name="name" placeholder="Akash Kumar" value={formData.name} onChange={handleChange} required />
           <InputField label="Father's Name *" name="father" placeholder="Father Name" value={formData.father} onChange={handleChange} required />
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
              <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
              <div>
                 <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-2">Gender *</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-4.5 bg-gray-50 border-none rounded-2xl font-black uppercase text-xs outline-none focus:ring-2 focus:ring-indigo-100" required>
+                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-4 bg-gray-50 border-none rounded-2xl font-black uppercase text-xs outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all" required>
                   <option value="">Select</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -288,9 +288,9 @@ const AddStudent = () => {
 
         <button
           disabled={loading}
-          className="w-full bg-indigo-600 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl shadow-indigo-200 hover:bg-black transition-all flex justify-center items-center gap-4 active:scale-95"
+          className="w-full bg-indigo-600 text-white py-5 md:py-6 rounded-[2rem] md:rounded-[2.5rem] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs shadow-2xl shadow-indigo-200 hover:bg-black transition-all flex justify-center items-center gap-3 md:gap-4 active:scale-95"
         >
-          {loading ? "Registering Student..." : <><ShieldCheck size={24} /> Submit & Add Next</>}
+          {loading ? "Registering Student..." : <><ShieldCheck size={20} /> Submit & Add Next</>}
         </button>
       </form>
     </div>

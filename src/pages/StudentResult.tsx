@@ -75,21 +75,21 @@ const StudentResult = () => {
         {studentData && results.length > 0 ? (
           <div className="space-y-8">
              {/* 🟢 TOP SUMMARY CARD */}
-             <div className="bg-indigo-900 rounded-[3.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-10 border-b-[10px] border-indigo-500/30">
+             <div className="bg-indigo-900 rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-8 md:gap-10 border-b-[8px] md:border-b-[10px] border-indigo-500/30">
                 <div className="absolute -bottom-10 -left-10 opacity-10 pointer-events-none self-center"><GraduationCap size={240}/></div>
                 
-                <div className="relative flex items-center gap-8 text-center md:text-left">
-                   <div className="w-24 h-24 md:w-32 md:h-32 bg-white/10 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center text-4xl font-black border border-white/20 shadow-inner">
+                <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-8 text-center md:text-left">
+                   <div className="w-20 h-20 md:w-32 md:h-32 bg-white/10 backdrop-blur-3xl rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center text-3xl md:text-4xl font-black border border-white/20 shadow-inner">
                       {studentData.photo_url ? (
-                        <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[2.5rem]" alt="Profile" />
+                        <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[1.5rem] md:rounded-[2.5rem]" alt="Profile" />
                       ) : studentData.full_name[0]}
                    </div>
                    <div>
                       <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
                          <ShieldCheck className="text-emerald-400" size={16}/>
-                         <span className="text-[10px] font-black uppercase tracking-widest text-indigo-300">Official Report</span>
+                         <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-indigo-300">Official Report</span>
                       </div>
-                      <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight">{studentData.full_name}</h2>
+                      <h2 className="text-2xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight">{studentData.full_name}</h2>
                       <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
                          <span className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest">Class {studentData.class_name}</span>
                          <span className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest">Roll: {studentData.roll_no}</span>
@@ -163,12 +163,12 @@ const StudentResult = () => {
 };
 
 const QuickStat = ({ label, value, isPass }: any) => (
-  <div className={`p-6 rounded-[2.5rem] border-2 text-center min-w-[140px] shadow-lg backdrop-blur-md overflow-hidden relative ${isPass ? 'bg-white/10 border-white/20' : 'bg-rose-500/20 border-rose-500/30'}`}>
+  <div className={`p-4 md:p-6 rounded-[1.5rem] md:rounded-[2.5rem] border-2 text-center min-w-[120px] md:min-w-[140px] shadow-lg backdrop-blur-md overflow-hidden relative ${isPass ? 'bg-white/10 border-white/20' : 'bg-rose-500/20 border-rose-500/30'}`}>
      <div className="relative z-10">
-        <p className="text-[9px] font-black uppercase text-indigo-300 tracking-widest mb-1 italic opacity-60">{label}</p>
-        <p className="text-2xl font-black uppercase italic tracking-tight">{value}</p>
+        <p className="text-[8px] md:text-[9px] font-black uppercase text-indigo-300 tracking-widest mb-1 italic opacity-60">{label}</p>
+        <p className="text-xl md:text-2xl font-black uppercase italic tracking-tight">{value}</p>
      </div>
-     <div className={`absolute bottom-0 inset-x-0 h-1.5 ${isPass ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
+     <div className={`absolute bottom-0 inset-x-0 h-1 md:h-1.5 ${isPass ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
   </div>
 );
 

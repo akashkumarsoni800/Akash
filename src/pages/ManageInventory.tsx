@@ -99,42 +99,76 @@ const ManageInventory = () => {
 
         {/* Inventory Table */}
         
-        <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50">
-              <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                <th className="p-6">Item Name</th>
-                <th className="p-6">Category</th>
-                <th className="p-6 text-center">In Stock</th>
-                <th className="p-6">Selling Price</th>
-                <th className="p-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {items.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-all group">
-                  <td className="p-6 font-black text-gray-800 uppercase">{item.item_name}</td>
-                  <td className="p-6">
-                    <span className="bg-gray-100 px-3 py-1 rounded-lg text-[10px] font-black uppercase text-gray-500">
+        <div className="bg-transparent md:bg-white md:rounded-[2.5rem] md:shadow-xl md:border md:border-gray-100 overflow-hidden">
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50">
+                <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  <th className="p-6">Item Name</th>
+                  <th className="p-6">Category</th>
+                  <th className="p-6 text-center">In Stock</th>
+                  <th className="p-6">Selling Price</th>
+                  <th className="p-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {items.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50 transition-all group">
+                    <td className="p-6 font-black text-gray-800 uppercase">{item.item_name}</td>
+                    <td className="p-6">
+                      <span className="bg-gray-100 px-3 py-1 rounded-lg text-[10px] font-black uppercase text-gray-500">
+                        {item.category}
+                      </span>
+                    </td>
+                    <td className="p-6 text-center">
+                      <span className={`font-black text-lg ${item.quantity < 5 ? 'text-red-500 animate-pulse' : 'text-gray-800'}`}>
+                        {item.quantity}
+                      </span>
+                    </td>
+                    <td className="p-6 font-bold text-indigo-600">₹{item.selling_price}</td>
+                    <td className="p-6 text-right">
+                      <button onClick={() => deleteItem(item.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                        <Trash2 size={20} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {items.map((item) => (
+              <div key={item.id} className="bg-white p-6 rounded-[2rem] shadow-xl border border-gray-100 relative group">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="pr-8">
+                    <h3 className="font-black text-gray-800 uppercase text-lg leading-tight">{item.item_name}</h3>
+                    <span className="bg-gray-100 px-3 py-1 rounded-lg text-[9px] font-black uppercase text-gray-500 mt-2 inline-block">
                       {item.category}
                     </span>
-                  </td>
-                  <td className="p-6 text-center">
-                    <span className={`font-black text-lg ${item.quantity < 5 ? 'text-red-500 animate-pulse' : 'text-gray-800'}`}>
-                      {item.quantity}
-                    </span>
-                  </td>
-                  <td className="p-6 font-bold text-indigo-600">₹{item.selling_price}</td>
-                  <td className="p-6 text-right">
-                    <button onClick={() => deleteItem(item.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                      <Trash2 size={20} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {items.length === 0 && <p className="p-20 text-center text-gray-400 font-bold italic">No items in inventory.</p>}
+                  </div>
+                  <button onClick={() => deleteItem(item.id)} className="absolute top-6 right-6 text-gray-300 hover:text-red-500 transition-colors bg-gray-50 p-2 rounded-xl">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 border-t border-gray-50 pt-4">
+                  <div>
+                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">In Stock</span>
+                    <span className={`font-black text-2xl ${item.quantity < 5 ? 'text-red-500 animate-pulse' : 'text-gray-900'}`}>{item.quantity}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Selling Price</span>
+                    <span className="font-black text-2xl text-emerald-600">₹{item.selling_price}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {items.length === 0 && <p className="p-10 md:p-20 text-center text-gray-400 font-bold italic bg-white rounded-[2rem]">No items in inventory.</p>}
         </div>
       </div>
 

@@ -80,14 +80,14 @@ export default function StudentDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans space-y-10 pb-24">
+    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans space-y-8 md:space-y-10 pb-24">
       {/* 🟢 TOP HEADER - HERO SECTION */}
-      <div className="bg-indigo-900 rounded-[3.5rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-10">
+      <div className="bg-indigo-900 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-10">
         <div className="relative z-10 text-center md:text-left">
-          <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 mb-6">
+          <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-white/10 mb-6">
             ✨ Academic Session 2024-25
           </div>
-          <h1 className="text-4xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4">
+          <h1 className="text-3xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4">
             Welcome Back,<br/>{student?.full_name?.split(' ')[0] || 'Scholar'}!
           </h1>
           <p className="text-indigo-200 font-bold uppercase text-xs tracking-[0.2em] flex items-center justify-center md:justify-start gap-3">
@@ -144,7 +144,7 @@ export default function StudentDashboard() {
            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-3 italic">
              <Layout size={16}/> Essential Systems
            </h3>
-           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               <ActionCard icon="💸" label="Fees" path="/student/fees" color="emerald" navigate={navigate}/>
               <ActionCard icon="📊" label="Results" path="/student/result" color="indigo" navigate={navigate}/>
               <ActionCard icon="📑" label="Homework" path="/student/homework" color="amber" navigate={navigate}/>
@@ -185,14 +185,14 @@ export default function StudentDashboard() {
 
 // Sub-components for cleaner structure
 const StatSummaryCard = ({ icon: Icon, label, value, sub, color }: any) => (
-  <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100 hover:border-indigo-100 transition-all flex items-center gap-6 group">
-    <div className={`bg-${color}-50 p-6 rounded-[2.5rem] text-${color}-600 group-hover:scale-110 transition-transform`}>
-      <Icon size={32} />
+  <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-100 hover:border-indigo-100 transition-all flex items-center gap-4 md:gap-6 group">
+    <div className={`bg-${color}-50 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2.5rem] text-${color}-600 group-hover:scale-110 transition-transform flex-shrink-0`}>
+      <Icon size={28} className="md:w-8 md:h-8" />
     </div>
     <div>
-      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 italic">{label}</p>
-      <h3 className="text-4xl font-black text-gray-900 tracking-tighter italic">{value}</h3>
-      <p className="text-[9px] font-bold text-gray-400 uppercase mt-1">{sub}</p>
+      <p className="text-[9px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 italic">{label}</p>
+      <h3 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter italic">{value}</h3>
+      <p className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase mt-1">{sub}</p>
     </div>
   </div>
 );
@@ -200,11 +200,11 @@ const StatSummaryCard = ({ icon: Icon, label, value, sub, color }: any) => (
 const ActionCard = ({ icon, label, path, color, navigate }: any) => (
   <div 
     onClick={() => navigate(path)}
-    className="bg-white p-8 rounded-[2.8rem] shadow-sm border border-gray-50 hover:shadow-2xl hover:border-indigo-100 cursor-pointer transition-all flex flex-col items-center justify-center text-center group active:scale-95"
+    className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.8rem] shadow-sm border border-gray-50 hover:shadow-2xl hover:border-indigo-100 cursor-pointer transition-all flex flex-col items-center justify-center text-center group active:scale-95"
   >
-     <div className="text-5xl mb-4 group-hover:rotate-12 transition-transform">{icon}</div>
-     <h4 className="font-black text-gray-800 uppercase tracking-tighter italic text-lg">{label}</h4>
-     <div className={`w-8 h-1 bg-${color}-500 rounded-full mt-3 opacity-0 group-hover:opacity-100 transition-opacity`}></div>
+     <div className="text-3xl md:text-5xl mb-3 md:mb-4 group-hover:rotate-12 transition-transform">{icon}</div>
+     <h4 className="font-black text-gray-800 uppercase tracking-tighter italic text-sm md:text-lg">{label}</h4>
+     <div className={`w-6 md:w-8 h-1 bg-${color}-500 rounded-full mt-2 md:mt-3 opacity-0 group-hover:opacity-100 transition-opacity`}></div>
   </div>
 );
 

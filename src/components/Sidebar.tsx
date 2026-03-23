@@ -89,16 +89,16 @@ const Sidebar = () => {
       )}
 
       {/* SIDEBAR DRAWER */}
-      <aside className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out 
+      <aside className={`fixed top-0 left-0 h-full w-64 md:w-72 bg-white shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out 
         lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
-        <div className="h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-6 rounded-br-[3rem]">
-          <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-blue-900 font-black text-2xl mb-2 shadow-xl">ASM</div>
-          <h2 className="font-black text-[10px] tracking-widest uppercase opacity-80">Adarsh Shishu Mandir</h2>
-          <button onClick={() => setIsMobileOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white lg:hidden"><X size={24}/></button>
+        <div className="h-32 md:h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-4 md:p-6 rounded-br-[2rem] md:rounded-br-[3rem]">
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-blue-900 font-black text-xl md:text-2xl mb-1 md:mb-2 shadow-xl">ASM</div>
+          <h2 className="font-black text-[9px] md:text-[10px] tracking-widest uppercase opacity-80 text-center px-2">Adarsh Shishu Mandir</h2>
+          <button onClick={() => setIsMobileOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white lg:hidden"><X size={20}/></button>
         </div>
 
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-160px)] scrollbar-hide">
+        <nav className="p-3 md:p-4 space-y-1 overflow-y-auto h-[calc(100vh-128px)] md:h-[calc(100vh-160px)] asm-hide-scrollbar">
           <p className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Navigation</p>
           
           {profile.role === 'admin' && (

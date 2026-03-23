@@ -75,12 +75,12 @@ const StudentAttendance = () => {
 
       <div className="max-w-5xl mx-auto space-y-10">
         <div className="text-center space-y-3">
-          <h1 className="text-4xl md:text-6xl font-black text-gray-900 italic uppercase tracking-tighter leading-none">Attendance Log</h1>
-          <p className="text-gray-400 font-bold text-[10px] uppercase tracking-[0.4em]">Official presence records</p>
+          <h1 className="text-3xl md:text-6xl font-black text-gray-900 italic uppercase tracking-tighter leading-none">Attendance Log</h1>
+          <p className="text-gray-400 font-bold text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em]">Official presence records</p>
         </div>
 
         {/* 🟢 SUMMARY CARDS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
            <StatBox label="Presence" value={`${stats.percentage}%`} icon={TrendingUp} color="indigo" />
            <StatBox label="Total Days" value={stats.total} icon={BarChart3} color="blue" />
            <StatBox label="Present" value={stats.present} icon={CheckCircle2} color="emerald" />
@@ -132,12 +132,12 @@ const StudentAttendance = () => {
 };
 
 const StatBox = ({ label, value, icon: Icon, color }: any) => (
-  <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-transparent hover:border-indigo-100 transition-all text-center group">
-     <div className={`bg-${color}-50 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 text-${color}-600 group-hover:scale-110 transition-transform`}>
-        <Icon size={24}/>
+  <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl border border-transparent hover:border-indigo-100 transition-all text-center group">
+     <div className={`bg-${color}-50 w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4 text-${color}-600 group-hover:scale-110 transition-transform`}>
+        <Icon size={20} className="md:w-6 md:h-6"/>
      </div>
-     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 italic opacity-60">{label}</p>
-     <p className="text-3xl font-black text-gray-900 italic tracking-tighter">{value}</p>
+     <p className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 italic opacity-60">{label}</p>
+     <p className="text-2xl md:text-3xl font-black text-gray-900 italic tracking-tighter">{value}</p>
   </div>
 );
 

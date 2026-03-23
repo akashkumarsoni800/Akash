@@ -230,28 +230,34 @@ const StudentProfile = () => {
                   {fees.length === 0 ? (
                     <div className="py-12 text-center opacity-20 italic font-black uppercase text-xs tracking-widest">No matching ledger entries.</div>
                   ) : (
-                    <table className="w-full text-left border-separate border-spacing-y-3">
-                      <thead>
-                        <tr className="text-[10px] font-black text-gray-400 uppercase italic">
-                          <th className="px-6 py-2">Billing Cycle</th>
-                          <th className="px-6 py-2">Amount Paid</th>
-                          <th className="px-6 py-2 text-right">Verification</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {fees.map((fee: any) => (
-                          <tr key={fee.id} className="bg-gray-50/80 hover:bg-white transition-all rounded-[1.5rem] group border border-transparent hover:border-indigo-100 shadow-sm">
-                            <td className="px-6 py-5 rounded-l-[1.5rem] font-black text-gray-900 uppercase text-xs italic">{fee.month || "Current"}</td>
-                            <td className="px-6 py-5 font-black text-indigo-600 text-lg">₹{Number(fee.total_amount).toLocaleString()}</td>
-                            <td className="px-6 py-5 rounded-r-[1.5rem] text-right">
-                              <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm ${fee.status === "Paid" ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600 animate-pulse"}`}>
+                    <div className="flex flex-col gap-3">
+                      {/* Table Header (Desktop only) */}
+                      <div className="hidden md:flex justify-between px-6 py-2 text-[10px] font-black text-gray-400 uppercase italic">
+                        <div className="w-1/3">Billing Cycle</div>
+                        <div className="w-1/3 text-center">Amount Paid</div>
+                        <div className="w-1/3 text-right">Verification</div>
+                      </div>
+                      
+                      {/* Table Rows (Cards on mobile) */}
+                      {fees.map((fee: any) => (
+                        <div key={fee.id} className="bg-gray-50/80 hover:bg-white transition-all rounded-[1.5rem] p-5 md:px-6 md:py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 border border-transparent hover:border-indigo-100 shadow-sm">
+                          <div className="md:w-1/3 flex flex-col md:block">
+                            <span className="md:hidden text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Billing Cycle</span>
+                            <span className="font-black text-gray-900 uppercase text-xs italic">{fee.month || "Current"}</span>
+                          </div>
+                          <div className="md:w-1/3 md:text-center flex flex-col md:block">
+                            <span className="md:hidden text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Amount</span>
+                            <span className="font-black text-indigo-600 text-lg">₹{Number(fee.total_amount).toLocaleString()}</span>
+                          </div>
+                          <div className="md:w-1/3 md:text-right flex items-center md:items-end justify-between md:justify-end gap-2">
+                             <span className="md:hidden text-[9px] font-black text-gray-400 uppercase tracking-widest">Status</span>
+                             <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm ${fee.status === "Paid" ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600 animate-pulse"}`}>
                                 {fee.status || "Pending"}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                             </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>

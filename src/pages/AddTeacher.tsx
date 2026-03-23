@@ -56,12 +56,12 @@ const AddTeacher = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 notranslate">
-      <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 w-full max-w-md">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 notranslate pb-24">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[32px] shadow-sm border border-gray-100 w-full max-w-md">
         
         {/* Header Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+          <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
             Add Teacher
           </h2>
           <p className="text-sm font-bold text-gray-400 mt-1">Register new staff member</p>
@@ -117,7 +117,7 @@ const AddTeacher = () => {
             <button 
               type="submit"
               disabled={isPending} 
-              className="w-full bg-blue-900 hover:bg-black text-white p-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg transition transform active:scale-95 disabled:opacity-50"
+              className="w-full bg-blue-900 hover:bg-black text-white p-4 md:p-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg transition transform active:scale-95 disabled:opacity-50"
             >
               {isPending ? "🚀 Processing..." : "💾 Create Teacher Account"}
             </button>

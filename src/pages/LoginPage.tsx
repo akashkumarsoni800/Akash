@@ -99,14 +99,14 @@ const LoginPage = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-100/20 to-pink-100/20 rounded-full blur-3xl animate-float"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-2xl bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl border border-white/50 p-10 max-h-[90vh] overflow-y-auto">
+      <div className="relative z-10 w-full max-w-2xl bg-white/80 backdrop-blur-xl shadow-2xl rounded-[2rem] md:rounded-3xl border border-white/50 p-6 md:p-10 max-h-[90vh] overflow-y-auto">
         {/* Header Section */}
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto mb-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-100 flex items-center justify-center transform hover:scale-105 transition-transform duration-300 group">
+        <div className="text-center mb-8 md:mb-10">
+          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-white shadow-lg rounded-2xl p-3 md:p-4 border border-gray-100 flex items-center justify-center transform hover:scale-105 transition-transform duration-300 group">
             <img 
               src="/logo.png" 
               alt="Adarsh Shishu Mandir" 
-              className="w-16 h-16 object-contain"
+              className="w-12 h-12 md:w-16 md:h-16 object-contain"
             />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
@@ -115,8 +115,8 @@ const LoginPage = () => {
           <p className="text-gray-600 font-medium text-lg">Adarsh Shishu Mandir</p>
         </div>
 
-        {/* Role Selection - Equal Width */}
-        <div className="grid grid-cols-3 gap-2 mb-10 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 shadow-inner">
+        {/* Role Selection - Horizontal on all screens to save space */}
+        <div className="grid grid-cols-3 gap-1 md:gap-2 mb-6 md:mb-10 p-1.5 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 shadow-inner">
           {['student', 'teacher', 'admin'].map((r) => (
             <button
               key={r}
@@ -125,7 +125,7 @@ const LoginPage = () => {
                 setRole(r);
                 setStudentData({ full_name: '', father_name: '', class_name: '', password: '', email: '' });
               }}
-              className={`group relative py-4 px-3 rounded-xl font-semibold text-sm capitalize transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg border-2 ${
+              className={`group relative py-3 md:py-4 px-1 md:px-3 rounded-xl font-semibold text-[10px] md:text-sm capitalize transition-all duration-300 transform hover:scale-[1.02] border-2 flex items-center justify-center ${
                 role === r
                   ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-500/25 border-blue-500 shadow-lg scale-[1.02]'
                   : 'bg-white/70 border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 shadow-md'
@@ -144,37 +144,36 @@ const LoginPage = () => {
           {/* Student Fields */}
           {role === 'student' && (
             <>
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Student Name</label>
+                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Student Name</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
                     placeholder="Enter full name"
                     value={studentData.full_name}
                     onChange={(e) => setStudentData({ ...studentData, full_name: e.target.value })}
                   />
                 </div>
-
                 <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Father's Name</label>
+                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Father's Name</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
                     placeholder="Enter father's name"
                     value={studentData.father_name}
                     onChange={(e) => setStudentData({ ...studentData, father_name: e.target.value })}
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Class</label>
+                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Class</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
-                    placeholder="Enter Class (e.g., 10A, LKG)"
+                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
+                    placeholder="Ex: 10A, LKG"
                     value={studentData.class_name}
                     onChange={(e) => setStudentData({ ...studentData, class_name: e.target.value.toUpperCase() })}
                   />
@@ -186,11 +185,12 @@ const LoginPage = () => {
           {/* Staff Email Field */}
           {role !== 'student' && (
             <div className="group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+              <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Email Address</label>
               <input 
                 type="email" 
                 required 
-                className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
+                placeholder="teacher@example.com"
                 value={studentData.email}
                 onChange={(e) => setStudentData({ ...studentData, email: e.target.value })}
               />
@@ -200,12 +200,13 @@ const LoginPage = () => {
           {/* Password Field (Only for Staff) */}
           {role !== 'student' && (
             <div className="group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Password</label>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
                   required 
-                  className="w-full pl-4 pr-12 py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm hover:shadow-md text-lg placeholder-gray-400"
+                  className="w-full pl-4 pr-12 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
+                  placeholder="Enter your password"
                   value={studentData.password}
                   onChange={(e) => setStudentData({ ...studentData, password: e.target.value })}
                 />

@@ -17,7 +17,7 @@ const ActionCard = ({ icon, title, desc, onClick, color = 'blue', badgeCount = 0
   return (
     <div 
       onClick={onClick}
-      className={`group relative bg-white p-8 rounded-[2rem] shadow-lg border-2 border-transparent cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:border-opacity-100 overflow-hidden ${colors[color]} ring-1 ring-transparent hover:ring-opacity-50`}
+      className={`group relative bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-2 border-transparent cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:border-opacity-100 overflow-hidden ${colors[color]} ring-1 ring-transparent hover:ring-opacity-50`}
     >
       {badgeCount > 0 && (
         <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-8 h-8 flex items-center justify-center font-bold animate-pulse shadow-lg">
@@ -27,11 +27,11 @@ const ActionCard = ({ icon, title, desc, onClick, color = 'blue', badgeCount = 0
       
       <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-[2rem]"></div>
       
-      <div className={`relative z-10 ${colors[color].split(' ')[0]} w-20 h-20 rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 mx-auto`}>
+      <div className={`relative z-10 ${colors[color].split(' ')[0]} w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center text-3xl md:text-4xl mb-4 md:mb-6 shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 mx-auto`}>
         <span className="group-hover:animate-bounce">{icon}</span>
       </div>
       
-      <h3 className="font-black text-2xl text-gray-800 uppercase tracking-tight text-center mb-3 group-hover:text-gray-900 transition-colors">
+      <h3 className="font-black text-xl md:text-2xl text-gray-800 uppercase tracking-tight text-center mb-2 md:mb-3 group-hover:text-gray-900 transition-colors">
         {title}
       </h3>
       <p className="text-sm text-gray-500 mt-2 font-semibold text-center leading-relaxed">
@@ -192,17 +192,17 @@ export default function TeacherDashboard() {
         <motion.div 
           initial={{ opacity: 0, y: -50 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="group bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 rounded-[3rem] p-10 md:p-16 text-white mb-12 shadow-2xl relative overflow-hidden hover:scale-[1.02] transition-all duration-1000"
+          className="group bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-16 text-white mb-8 md:mb-12 shadow-2xl relative overflow-hidden hover:scale-[1.02] transition-all duration-1000"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-transparent to-purple-500/20 animate-pulse"></div>
           <div className="relative z-10">
             <span className="bg-white/20 backdrop-blur-sm text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest border border-white/30">
               Teacher Control Panel • Live Data
             </span>
-            <h1 className="text-5xl md:text-7xl font-black mt-6 tracking-[-0.05em] uppercase bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-3xl md:text-7xl font-black mt-6 tracking-[-0.05em] uppercase bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent leading-tight">
               Welcome Back,
               <br />
-              <span className="text-6xl md:text-8xl bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text">
+              <span className="text-4xl md:text-8xl bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text">
                 {teacher?.full_name?.split(' ')[0] || 'Teacher'}!
               </span>
             </h1>
@@ -228,36 +228,36 @@ export default function TeacherDashboard() {
         </motion.div>
 
         {/* ✅ DYNAMIC QUICK STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-4xl mb-4">👥</div>
-              <div className="text-4xl font-black mb-2">{stats.totalStudents}</div>
-              <div className="text-blue-100 uppercase tracking-wider font-bold text-sm">Total Students</div>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
+              <div className="text-3xl md:text-4xl mb-3 md:mb-4">👥</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.totalStudents}</div>
+              <div className="text-blue-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Total Students</div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-4xl mb-4">📊</div>
-              <div className="text-4xl font-black mb-2">{stats.attendancePercentage}%</div>
-              <div className="text-green-100 uppercase tracking-wider font-bold text-sm">Today Attendance</div>
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
+              <div className="text-3xl md:text-4xl mb-3 md:mb-4">📊</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.attendancePercentage}%</div>
+              <div className="text-green-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Today Attendance</div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-            <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-4xl mb-4">✏️</div>
-              <div className="text-4xl font-black mb-2">{stats.pendingHomework}</div>
-              <div className="text-orange-100 uppercase tracking-wider font-bold text-sm">Pending Homework</div>
+            <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
+              <div className="text-3xl md:text-4xl mb-3 md:mb-4">✏️</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.pendingHomework}</div>
+              <div className="text-orange-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Pending Homework</div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-            <div className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-4xl mb-4">⭐</div>
-              <div className="text-4xl font-black mb-2">{stats.avgPerformance}%</div>
-              <div className="text-purple-100 uppercase tracking-wider font-bold text-sm">Avg Performance</div>
+            <div className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
+              <div className="text-3xl md:text-4xl mb-3 md:mb-4">⭐</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.avgPerformance}%</div>
+              <div className="text-purple-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Avg Performance</div>
             </div>
           </motion.div>
         </div>

@@ -187,38 +187,65 @@ const TeacherHomework: React.FC = () => {
               </button>
             </div>
 
-            {/* Submission Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <th className="p-4 text-left font-black uppercase tracking-wider text-sm text-gray-700">Student</th>
-                    <th className="p-4 text-left font-black uppercase tracking-wider text-sm text-gray-700">Submitted</th>
-                    <th className="p-4 text-left font-black uppercase tracking-wider text-sm text-gray-700">Status</th>
-                    <th className="p-4 text-left font-black uppercase tracking-wider text-sm text-gray-700">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {submissions.slice(0, 10).map((submission) => (
-                    <tr key={submission.id} className="border-b hover:bg-gray-50">
-                      <td className="p-4 font-semibold">{submission.student_name}</td>
-                      <td className="p-4">{new Date(submission.submitted_at).toLocaleString()}</td>
-                      <td>
-                        <span className={`px-3 py-1 rounded-full text-xs font-black ${
-                          submission.status === 'submitted' ? 'bg-green-100 text-green-800' :
-                          submission.status === 'graded' ? 'bg-purple-100 text-purple-800' : 
-                          'bg-orange-100 text-orange-800'
-                        }`}>
-                          {submission.status}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <button className="text-blue-600 hover:text-blue-800 font-bold text-sm">Grade →</button>
-                      </td>
+            {/* Submission Table (Desktop) / Cards (Mobile) */}
+            <div className="asm-table-container custom-scrollbar md:border md:bg-white md:shadow-inner md:rounded-[2.5rem]">
+              <div className="hidden md:block">
+                <table className="w-full text-left min-w-[600px]">
+                  <thead className="bg-gray-50/50">
+                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <th className="p-6 text-left">Student</th>
+                      <th className="p-6 text-left">Submitted</th>
+                      <th className="p-6 text-left">Status</th>
+                      <th className="p-6 text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {submissions.slice(0, 10).map((submission) => (
+                      <tr key={submission.id} className="hover:bg-indigo-50/20 group transition-all">
+                        <td className="p-6 font-black text-gray-800 uppercase text-xs">{submission.student_name}</td>
+                        <td className="p-6 font-bold text-gray-400 text-[10px] uppercase tracking-wider">{new Date(submission.submitted_at).toLocaleString()}</td>
+                        <td className="p-6">
+                          <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                            submission.status === 'submitted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                            submission.status === 'graded' ? 'bg-purple-50 text-purple-600 border-purple-100' : 
+                            'bg-amber-50 text-amber-600 border-amber-100'
+                          }`}>
+                            {submission.status}
+                          </span>
+                        </td>
+                        <td className="p-6 text-right">
+                          <button className="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-xl transition-colors border border-indigo-100">Grade →</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                 {submissions.slice(0, 10).map((submission) => (
+                    <div key={submission.id} className="bg-white p-6 rounded-[2rem] shadow-xl border border-gray-100 flex flex-col gap-4">
+                       <div className="flex justify-between items-start">
+                          <h3 className="font-black text-gray-800 uppercase text-sm leading-tight">{submission.student_name}</h3>
+                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                            submission.status === 'submitted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                            submission.status === 'graded' ? 'bg-purple-50 text-purple-600 border-purple-100' : 
+                            'bg-amber-50 text-amber-600 border-amber-100'
+                          }`}>
+                            {submission.status}
+                          </span>
+                       </div>
+                       <p className="font-bold text-gray-400 text-[10px] uppercase tracking-wider italic">
+                          <span className="opacity-60">Submitted:</span> {new Date(submission.submitted_at).toLocaleString()}
+                       </p>
+                       <div className="border-t border-gray-50 pt-4 mt-2">
+                          <button className="w-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white py-3 rounded-xl transition-colors border border-indigo-100">
+                             Grade Submission →
+                          </button>
+                       </div>
+                    </div>
+                 ))}
+              </div>
             </div>
           </motion.div>
         )}

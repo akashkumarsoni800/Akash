@@ -70,7 +70,7 @@ const TeacherAttendance = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto pt-6 px-4">
+    <div className="max-w-2xl mx-auto p-4 md:p-8 md:pt-12 pb-24">
       {/* Class Selector Dropdown */}
       <div className="bg-white p-6 rounded-3xl shadow-md mb-6 border border-blue-50">
         <label className="block text-xs font-black text-blue-900 uppercase mb-2 tracking-widest">Select Class to Mark Attendance</label>
@@ -102,7 +102,7 @@ const TeacherAttendance = () => {
                 <span className="font-bold text-gray-700">{s.full_name}</span>
                 <button 
                   onClick={() => toggleStatus(s.id)}
-                  className={`w-14 h-14 rounded-2xl font-black text-xl transition-all shadow-md ${
+                  className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl font-black text-lg md:text-xl transition-all shadow-md active:scale-90 ${
                     attendance[s.id] === 'P' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
                   }`}
                 >

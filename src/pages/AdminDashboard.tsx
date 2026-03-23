@@ -179,24 +179,24 @@ const toggleCamera = () => {
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* --- HEADER & TOP ACTIONS --- */}
-        <motion.div variants={itemVar} className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-2xl flex flex-col gap-10">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-            <div className="space-y-2">
-               <div className="flex items-center gap-3">
+        <motion.div variants={itemVar} className="bg-white p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-gray-100 shadow-2xl flex flex-col gap-8 md:gap-10">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-6 md:gap-8">
+            <div className="space-y-2 text-center lg:text-left">
+               <div className="flex items-center justify-center lg:justify-start gap-3">
                   <div className="bg-indigo-600 p-2 rounded-xl text-white"><LayoutDashboard size={20}/></div>
-                  <h1 className="text-4xl font-black text-gray-900 uppercase italic tracking-tighter leading-none">Admin Portal</h1>
+                  <h1 className="text-3xl md:text-4xl font-black text-gray-900 uppercase italic tracking-tighter leading-none">Admin Portal</h1>
                </div>
-               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">{currentTime.toLocaleTimeString()}</p>
+               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest md:pl-1">{currentTime.toLocaleTimeString()}</p>
             </div>
-            <div className="flex flex-wrap gap-3">
-               <button onClick={() => navigate('/admin/create-exam')} className="bg-gray-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase flex items-center gap-2 italic"><Zap size={14}/> Exam</button>
-               <button onClick={() => navigate('/admin/manage-fees')} className="bg-rose-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase flex items-center gap-2 italic"><CreditCard size={14}/> Fees</button>
-               <button onClick={() => navigate('/admin/documents')} className="bg-orange-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase flex items-center gap-2 italic"><Printer size={14}/> Documents</button>
-               <button onClick={() => navigate('/admin/upload-result')} className="bg-emerald-600 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase flex items-center gap-2 italic"><CheckCircle size={14}/> Results</button>
+            <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+               <button onClick={() => navigate('/admin/create-exam')} className="bg-gray-900 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl text-[9px] md:text-[10px] font-black uppercase flex items-center gap-2 italic"><Zap size={14}/> Exam</button>
+               <button onClick={() => navigate('/admin/manage-fees')} className="bg-rose-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl text-[9px] md:text-[10px] font-black uppercase flex items-center gap-2 italic"><CreditCard size={14}/> Fees</button>
+               <button onClick={() => navigate('/admin/documents')} className="bg-orange-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl text-[9px] md:text-[10px] font-black uppercase flex items-center gap-2 italic"><Printer size={14}/> Docs</button>
+               <button onClick={() => navigate('/admin/upload-result')} className="bg-emerald-600 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl text-[9px] md:text-[10px] font-black uppercase flex items-center gap-2 italic"><CheckCircle size={14}/> Results</button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
              <ActionCard icon={Wallet} label="Accounting" color="blue" onClick={() => navigate('/admin/manage-salaries')} />
              <ActionCard icon={FileStack} label="Docs Hub" color="orange" onClick={() => navigate('/admin/documents')} />
              <ActionCard icon={PieChart} label="Staff Pay" color="purple" onClick={() => navigate('/admin/teacher-salary')} />
@@ -215,27 +215,28 @@ const toggleCamera = () => {
         </div>
 
         {/* --- TABLES SECTION --- */}
-        <motion.div variants={itemVar} className="bg-white rounded-[4rem] shadow-2xl border border-gray-100 overflow-hidden">
-          <div className="flex border-b p-6 gap-6 bg-gray-50/30">
+        <motion.div variants={itemVar} className="bg-transparent md:bg-white rounded-none md:rounded-[4rem] shadow-none md:shadow-2xl border-0 md:border md:border-gray-100 overflow-hidden">
+          <div className="flex flex-wrap border-b-0 md:border-b p-2 md:p-6 gap-2 md:gap-6 bg-transparent md:bg-gray-50/30">
             {['overview', 'students', 'teachers'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-10 py-5 text-[11px] font-black uppercase tracking-[0.2em] rounded-[2rem] transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow-lg' : 'text-gray-400'}`}>{tab}</button>
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 md:flex-none px-4 md:px-10 py-3 md:py-5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl md:rounded-[2rem] transition-all whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white md:bg-transparent text-gray-500 shadow-sm md:shadow-none'}`}>{tab}</button>
             ))}
           </div>
 
-          <div className="p-10">
+          <div className="p-2 pt-6 md:p-10">
             <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
-                <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <motion.div key="ov" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     {pendingStudents.map(s => (
-                      <div key={s.student_id} className="bg-white p-8 rounded-[2.5rem] border shadow-xl flex flex-col justify-between h-48">
-                        <div><h4 className="font-black text-gray-900 uppercase">{s.full_name}</h4><p className="text-[10px] font-bold text-gray-400 italic">Class: {s.class_name}</p></div>
-                        <div className="flex gap-2">
-                           <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-emerald-500 text-white py-3 rounded-xl text-[10px] font-black uppercase">Approve</button>
-                           <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-gray-50 text-gray-400 py-3 rounded-xl text-[10px] font-black uppercase">Reject</button>
+                      <div key={s.student_id} className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-gray-100 shadow-xl flex flex-col justify-between h-44 md:h-48 relative overflow-hidden transition-all hover:scale-[1.02]">
+                        <div className="absolute top-0 right-0 p-4 opacity-5"><UserPlus size={64}/></div>
+                        <div className="relative z-10"><h4 className="font-black text-gray-900 uppercase text-lg md:text-xl leading-tight">{s.full_name}</h4><p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Class: {s.class_name}</p></div>
+                        <div className="flex gap-2 relative z-10 relative z-10 mt-4">
+                           <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-md">Approve</button>
+                           <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-rose-50 hover:bg-rose-100 transition-colors text-rose-500 py-3 rounded-xl text-[10px] font-black uppercase">Reject</button>
                         </div>
                       </div>
                     ))}
-                    {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black uppercase italic">No Pending tasks</div>}
+                    {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black uppercase italic text-sm tracking-widest">No Pending Approvals</div>}
                 </motion.div>
               )}
 
@@ -244,28 +245,49 @@ const toggleCamera = () => {
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="relative flex-1">
                       <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                      <input onChange={(e) => setSearchTerm(e.target.value)} type="text" placeholder="Roll No या नाम से खोजें..." className="w-full pl-16 pr-8 py-5 bg-gray-50 border-none rounded-[2rem] font-bold" />
+                      <input onChange={(e) => setSearchTerm(e.target.value)} type="text" placeholder="Roll No या नाम से खोजें..." className="w-full pl-16 pr-6 py-4 md:py-5 bg-gray-50 border-none rounded-[1.5rem] md:rounded-[2rem] font-bold text-sm md:text-base" />
                     </div>
-                    <select onChange={(e) => setClassFilter(e.target.value)} className="py-5 px-10 bg-gray-50 border-none rounded-[2rem] font-black text-[11px] uppercase outline-none">{classes.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                    <select onChange={(e) => setClassFilter(e.target.value)} className="py-4 md:py-5 px-6 md:px-10 bg-gray-50 border-none rounded-[1.5rem] md:rounded-[2rem] font-black text-[10px] md:text-[11px] uppercase outline-none w-full md:w-auto">{classes.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-                  <div className="overflow-x-auto rounded-[2.5rem] border shadow-inner">
-                    <table className="w-full text-left">
-                      <thead className="bg-gray-50/50"><tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest"><th className="p-6">Roll</th><th className="p-6">Name</th><th className="p-6 text-center">Class</th><th className="p-6 text-right">Action</th></tr></thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {filteredStudents.map(s => (
-                          <tr key={s.student_id} className="hover:bg-indigo-50/20 group transition-all">
-                            <td className="p-6 font-black text-indigo-600 italic">#{s.roll_no}</td>
-                            <td className="p-6 font-black text-gray-800 uppercase text-xs">{s.full_name}</td>
-                            <td className="p-6 text-center"><span className="bg-white border px-4 py-1 rounded-full text-[9px] font-black">{s.class_name}</span></td>
-                            <td className="p-6 flex justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
-                               <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Edit2 size={16}/></button>
-                               <button onClick={() => navigate(`/admin/student/${s.student_id}`)} className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={16}/></button>
-                               <button onClick={() => handleAction('delete', 'students', s.student_id)} className="p-3 bg-red-50 text-red-600 rounded-xl"><Trash2 size={16}/></button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="asm-table-container custom-scrollbar border-0 md:border md:bg-white md:shadow-inner md:rounded-[2.5rem]">
+                    <div className="hidden md:block">
+                      <table className="w-full text-left min-w-[600px]">
+                        <thead className="bg-gray-50/50"><tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest"><th className="p-6">Roll</th><th className="p-6">Name</th><th className="p-6 text-center">Class</th><th className="p-6 text-right">Action</th></tr></thead>
+                        <tbody className="divide-y divide-gray-50">
+                          {filteredStudents.map(s => (
+                            <tr key={s.student_id} className="hover:bg-indigo-50/20 group transition-all">
+                              <td className="p-6 font-black text-indigo-600 italic">#{s.roll_no}</td>
+                              <td className="p-6 font-black text-gray-800 uppercase text-xs">{s.full_name}</td>
+                              <td className="p-6 text-center"><span className="bg-white border px-4 py-1 rounded-full text-[9px] font-black">{s.class_name}</span></td>
+                              <td className="p-6 flex justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
+                                 <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Edit2 size={16}/></button>
+                                 <button onClick={() => navigate(`/admin/student/${s.student_id}`)} className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={16}/></button>
+                                 <button onClick={() => handleAction('delete', 'students', s.student_id)} className="p-3 bg-red-50 text-red-600 rounded-xl"><Trash2 size={16}/></button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {/* Mobile Card View for Students */}
+                    <div className="md:hidden space-y-4 pt-2">
+                      {filteredStudents.map(s => (
+                        <div key={s.student_id} className="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 flex flex-col gap-3 relative overflow-hidden">
+                           <div className="flex justify-between items-start">
+                             <div>
+                               <p className="font-black text-indigo-600 italic mb-1 text-xs">#{s.roll_no}</p>
+                               <h3 className="font-black text-gray-800 uppercase text-base leading-tight pr-2">{s.full_name}</h3>
+                             </div>
+                             <span className="bg-gray-50 border border-gray-100 px-3 py-1 rounded-full text-[9px] font-black tracking-widest text-gray-500 whitespace-nowrap">{s.class_name}</span>
+                           </div>
+                           <div className="flex flex-wrap gap-2 justify-end mt-2 pt-3 border-t border-gray-50">
+                             <button onClick={() => { setEditingStudent(s); setIsEditModalOpen(true); }} className="flex-1 flex justify-center items-center py-2.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest"><Edit2 size={12} className="mr-1"/> Edit</button>
+                             <button onClick={() => navigate(`/admin/student/${s.student_id}`)} className="flex-1 flex justify-center items-center py-2.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl text-[9px] font-black uppercase tracking-widest"><Users size={12} className="mr-1"/> View</button>
+                             <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 flex justify-center items-center py-2.5 px-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-[9px] font-black uppercase tracking-widest"><Trash2 size={12} className="mr-1"/> Delete</button>
+                           </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -273,13 +295,13 @@ const toggleCamera = () => {
               {activeTab === 'teachers' && (
                 <motion.div key="tch" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {allTeachers.map(t => (
-                    <div key={t.id} className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-xl relative group">
-                       <div className="flex justify-between items-start mb-6">
-                          <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black">{t.full_name?.[0]}</div>
-                          <button onClick={() => handleAction('delete', 'teachers', t.id)} className="text-gray-300 hover:text-rose-500 transition-colors"><Trash2 size={18}/></button>
+                    <div key={t.id} className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-gray-100 shadow-xl relative group">
+                       <div className="flex justify-between items-start mb-4 md:mb-6">
+                          <div className="w-14 h-14 md:w-16 md:h-16 bg-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white text-xl md:text-2xl font-black">{t.full_name?.[0]}</div>
+                          <button onClick={() => handleAction('delete', 'teachers', t.id)} className="text-gray-300 hover:text-rose-500 transition-colors p-2 bg-gray-50 rounded-xl"><Trash2 size={16}/></button>
                        </div>
-                       <h3 className="font-black uppercase text-gray-900 leading-tight">{t.full_name}</h3>
-                       <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1 italic">{t.subject || 'Staff Member'}</p>
+                       <h3 className="font-black uppercase text-gray-900 leading-tight md:text-lg">{t.full_name}</h3>
+                       <p className="text-[9px] md:text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1 md:mt-2 italic">{t.subject || 'Staff Member'}</p>
                     </div>
                   ))}
                 </motion.div>
@@ -293,9 +315,12 @@ const toggleCamera = () => {
       <AnimatePresence>
         {isEditModalOpen && editingStudent && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[3.5rem] p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
-              <h2 className="text-3xl font-black uppercase italic mb-8 flex items-center gap-3"><Edit2 className="text-indigo-600" /> Edit Profile</h2>
-              <form onSubmit={handleUpdate} className="space-y-6">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white w-full max-w-lg rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h2 className="text-2xl md:text-3xl font-black uppercase italic flex items-center gap-2 md:gap-3"><Edit2 className="text-indigo-600 h-6 w-6 md:h-8 md:w-8" /> Edit Profile</h2>
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="bg-gray-100 p-2 md:p-3 rounded-xl text-gray-500 hover:bg-gray-200"><Trash2 size={16} className="hidden" /> {/* Using Trash2 space for generic cross layout or similar if needed. Real close button can be an X if imported, otherwise using text */} <span className="font-black text-[10px] uppercase">Close</span></button>
+              </div>
+              <form onSubmit={handleUpdate} className="space-y-4 md:space-y-6">
                 <div className="flex flex-col items-center gap-4 bg-gray-50 p-6 rounded-[2.5rem] border">
                   <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg relative group">
                     <img src={newPhotoPreview || editingStudent.photo_url || "/default-avatar.png"} className="w-full h-full object-cover" />

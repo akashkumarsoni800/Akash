@@ -141,19 +141,19 @@ const ManageFees = () => {
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Header Section */}
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 text-center md:text-left">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl font-black text-gray-900 tracking-tighter uppercase italic">Fee Management</h1>
-              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2 italic">Institutional Billing ASM v3.0</p>
+              <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase italic">Fee Management</h1>
+              <p className="text-gray-400 font-bold uppercase text-[9px] md:text-[10px] tracking-widest mt-2 italic">Institutional Billing ASM v3.0</p>
            </motion.div>
-           <button onClick={() => setBulkMode(!bulkMode)} className={`px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${bulkMode ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'bg-white text-gray-400 border border-gray-100'}`}>
+           <button onClick={() => setBulkMode(!bulkMode)} className={`px-6 md:px-8 py-3 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all ${bulkMode ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'bg-white text-gray-400 border border-gray-100'}`}>
               {bulkMode ? '🚀 Bulk Mode: ON' : 'Single Entry'}
            </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
           {/* Assignment Form */}
-          <div className="lg:col-span-2 bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-gray-200/50 border border-gray-50">
+          <div className="lg:col-span-2 bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl shadow-gray-200/50 border border-gray-50">
              <form onSubmit={handleAssignFee} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
