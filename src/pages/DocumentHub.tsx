@@ -208,25 +208,48 @@ const DocumentHub = () => {
 
 
         <div className="bg-white p-6 md:p-12 rounded-[4rem] shadow-2xl border border-gray-50 flex flex-col items-center">
-          {student && activeDoc ? (
+          {(student || (studentsList.length > 0 && activeDoc)) ? (
             <div className="w-full flex flex-col items-center space-y-8">
               <div className="overflow-auto w-full bg-slate-200 p-4 md:p-10 rounded-3xl shadow-inner flex justify-center">
-                <div ref={componentRef} className="bg-white shadow-2xl">
-                  {activeDoc === 'ICARD' && <StudentICard student={student} />}
-                  {activeDoc === 'TC' && <TCTemplate student={student} />}
-                  {activeDoc === 'DOB' && <DOBTemplate student={student} />}
-                  {activeDoc === 'ADMIT' && <AdmitGrid students={studentsList} />}
-                  {activeDoc === 'GATE' && <GatePassTemplate student={student} />}
+                <div ref={componentRef} className="bg-white shadow-2xl p-4">
+                  {student ? (
+                    // 👤 INDIVIDUAL PREVIEW
+                    <>
+                      {activeDoc === 'ICARD' && <StudentICard student={student} />}
+                      {activeDoc === 'TC' && <TCTemplate student={student} />}
+                      {activeDoc === 'DOB' && <DOBTemplate student={student} />}
+                      {activeDoc === 'ADMIT' && <AdmitGrid students={[student]} />}
+                      {activeDoc === 'GATE' && <GatePassTemplate student={student} />}
+                    </>
+                  ) : (
+                    // 📚 BULK CLASS PREVIEW
+                    <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
+                      {activeDoc === 'ADMIT' ? (
+                        <AdmitGrid students={studentsList} />
+                      ) : (
+                        studentsList.map((std) => (
+                          <div key={std.id} className="break-inside-avoid shadow-lg mb-4">
+                            {activeDoc === 'ICARD' && <StudentICard student={std} />}
+                            {activeDoc === 'GATE' && <GatePassTemplate student={std} />}
+                            {activeDoc === 'TC' && <TCTemplate student={std} />}
+                            {activeDoc === 'DOB' && <DOBTemplate student={std} />}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              {activeDoc !== 'ICARD' && (
-                <button onClick={handlePrint} className="bg-emerald-600 text-white px-16 py-5 rounded-full font-black uppercase tracking-widest flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
-                  <Printer size={24} /> Print {studentsList.length > 1 ? `Full Class (${studentsList.length})` : 'Document'}
-                </button>
-              )}
+              <button 
+                onClick={handlePrint} 
+                className="bg-blue-950 text-white px-16 py-6 rounded-full font-black uppercase tracking-widest flex items-center gap-4 shadow-2xl hover:bg-black hover:scale-105 transition-all text-sm group"
+              >
+                <Printer size={28} className="group-hover:rotate-12 transition-transform" /> 
+                Print {student ? "Individual" : `Full Class (${studentsList.length})`} {activeDoc} Cards
+              </button>
             </div>
           ) : (
-            <p className="py-20 text-gray-300 font-black uppercase tracking-[0.3em] italic">Select Document Type</p>
+            <p className="py-20 text-gray-300 font-black uppercase tracking-[0.3em] italic">Select Document Type to Preview</p>
           )}
         </div>
       </div>
