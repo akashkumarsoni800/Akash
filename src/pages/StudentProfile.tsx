@@ -3,9 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import {
-  User, Phone, MapPin, CreditCard, ChevronLeft, 
-  Printer, RefreshCw, AlertCircle, Download
+  User, Phone, MapPin, ChevronLeft, 
+  Printer, RefreshCw, AlertCircle, Download, CreditCard
 } from "lucide-react";
+import StudentICard from "./StudentICard";
 
 const StudentProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -109,7 +110,13 @@ const StudentProfile = () => {
       setStudent((prev: any) => ({ ...prev, photo_url: newPhotoUrl }));
       toast.success("Photo updated successfully!");
     } catch (e: any) {
-      toast.error(e.message || "Failed to upload photo");
+      console.error("Upload Error Details:", e);
+      const msg = e.message || "Unknown error";
+      if (msg.includes("bucket")) {
+        toast.error("Storage Bucket Error: Please ensure 'student-photos' bucket is public and has proper RLS policies.");
+      } else {
+        toast.error(`Upload Failed: ${msg}`);
+      }
     } finally {
       setUploading(false);
     }
@@ -150,13 +157,15 @@ const StudentProfile = () => {
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Top Header */}
-        <div className="flex justify-between items-center">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase text-indigo-600 shadow-sm border border-indigo-50 hover:shadow-md transition-all tracking-widest">
-            <ChevronLeft size={16} /> Back to Dashboard
-          </button>
-          <button onClick={() => window.print()} className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase shadow-xl flex items-center gap-2 tracking-widest">
-            <Printer size={16} /> Print Report
-          </button>
+        <div className="flex justify-between items-center no-print">
+          <div className="flex gap-3">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase text-indigo-600 shadow-sm border border-indigo-50 hover:shadow-md transition-all tracking-widest">
+              <ChevronLeft size={16} /> Back
+            </button>
+            <button onClick={() => window.print()} className="bg-white text-gray-900 border border-gray-100 px-6 py-3 rounded-2xl font-black text-[10px] uppercase shadow-sm flex items-center gap-2 tracking-widest hover:bg-gray-50">
+              <Printer size={16} /> Print Report
+            </button>
+          </div>
         </div>
 
         {/* Profile Card */}
@@ -211,6 +220,19 @@ const StudentProfile = () => {
 
           {/* Fees Main */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Identity Card Section */}
+            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-50 overflow-hidden">
+               <div className="p-8 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                     <div className="bg-blue-900 p-2 rounded-xl text-white shadow-lg"><CreditCard size={18}/></div>
+                     <h3 className="font-black uppercase text-[11px] tracking-widest text-gray-800 italic">Identity Card</h3>
+                  </div>
+               </div>
+               <div className="p-10 flex justify-center bg-slate-100/50">
+                  <StudentICard student={student} />
+               </div>
+            </div>
+
             <div className="bg-white rounded-[3rem] shadow-xl border border-gray-50 overflow-hidden">
               <div className="p-8 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
                  <div className="flex items-center gap-3">

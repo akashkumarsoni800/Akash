@@ -188,7 +188,13 @@ const AddStudent = () => {
       setPhotoFile(null);
       setPhotoPreview(null);
     } catch (err: any) {
-      toast.error(err.message);
+      console.error("Registration Error Details:", err);
+      const msg = err.message || "Unknown error";
+      if (msg.includes("bucket")) {
+        toast.error("Storage Bucket Error: Please ensure 'student-photos' bucket is public and has proper RLS policies.");
+      } else {
+        toast.error(`Registration Failed: ${msg}`);
+      }
     } finally {
       setLoading(false);
     }

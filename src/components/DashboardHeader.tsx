@@ -16,7 +16,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   const roleLabel = userRole === 'admin' ? 'Administrator' : userRole === 'teacher' ? 'Teacher' : 'Student';
 
   return (
-    <div className="fixed top-0 w-full bg-white shadow-sm z-40 px-4 py-3 flex justify-between items-center h-16 border-b border-gray-100">
+    <div className="fixed top-0 w-full bg-white shadow-sm z-40 px-4 py-3 flex justify-between items-center h-16 border-b border-gray-100 no-print">
       
       <div className="flex items-center gap-2 md:gap-3">
         {/* 📱 Mobile Hamburger - Hidden on Desktop (lg:hidden) */}

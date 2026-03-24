@@ -7,6 +7,7 @@ import {
   Award, DoorOpen, GraduationCap, RefreshCw, UserCheck, Users 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import StudentICard from './StudentICard';
 
 const DocumentHub = () => {
   const [studentId, setStudentId] = useState('');
@@ -67,12 +68,12 @@ const DocumentHub = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
-        <header className="text-center">
+        <header className="text-center no-print">
            <h1 className="text-5xl font-black text-blue-900 uppercase italic tracking-tighter">Document Hub</h1>
            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">ASM Institutional Printing Engine</p>
         </header>
 
-        <div className="bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-50 flex flex-col md:flex-row gap-4 items-center">
+        <div className="bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-50 flex flex-col md:flex-row gap-4 items-center no-print">
           <div className="relative flex-1 w-full">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-blue-400" />
             <input 
@@ -91,7 +92,7 @@ const DocumentHub = () => {
         </div>
 
         {student && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print">
             <DocBtn icon={CreditCard} label="Identity Card" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} />
             <DocBtn icon={FileText} label="Transfer (TC)" active={activeDoc === 'TC'} onClick={() => setActiveDoc('TC')} />
             <DocBtn icon={Award} label="Birth Cert" active={activeDoc === 'DOB'} onClick={() => setActiveDoc('DOB')} />
@@ -105,16 +106,18 @@ const DocumentHub = () => {
             <div className="w-full flex flex-col items-center space-y-8">
               <div className="overflow-auto w-full bg-slate-200 p-4 md:p-10 rounded-3xl shadow-inner flex justify-center">
                 <div ref={componentRef} className="bg-white shadow-2xl">
-                  {activeDoc === 'ICARD' && <ICardTemplate student={student} />}
+                  {activeDoc === 'ICARD' && <StudentICard student={student} />}
                   {activeDoc === 'TC' && <TCTemplate student={student} />}
                   {activeDoc === 'DOB' && <DOBTemplate student={student} />}
                   {activeDoc === 'ADMIT' && <AdmitGrid students={studentsList} />}
                   {activeDoc === 'GATE' && <GatePassTemplate student={student} />}
                 </div>
               </div>
-              <button onClick={handlePrint} className="bg-emerald-600 text-white px-16 py-5 rounded-full font-black uppercase tracking-widest flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
-                <Printer size={24} /> Print {studentsList.length > 1 ? `Full Class (${studentsList.length})` : 'Document'}
-              </button>
+              {activeDoc !== 'ICARD' && (
+                <button onClick={handlePrint} className="bg-emerald-600 text-white px-16 py-5 rounded-full font-black uppercase tracking-widest flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
+                  <Printer size={24} /> Print {studentsList.length > 1 ? `Full Class (${studentsList.length})` : 'Document'}
+                </button>
+              )}
             </div>
           ) : (
             <p className="py-20 text-gray-300 font-black uppercase tracking-[0.3em] italic">Select Document Type</p>
@@ -228,25 +231,7 @@ const AdmitDetailRow = ({ label, value, isLarge = false }: any) => (
 );
 
 /* --- PREVIOUS TEMPLATES (RETAINED) --- */
-const ICardTemplate = ({ student }: any) => (
-  <div className="w-[3.5in] h-[2.2in] flex bg-white border-[3px] border-blue-900 rounded-2xl overflow-hidden font-sans m-2 shadow-lg">
-    <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3">
-      <div className="w-20 h-20 rounded-2xl border-2 border-white overflow-hidden mb-2 bg-white/20">
-        <img src={student.photo_url || "https://via.placeholder.com/150"} className="w-full h-full object-cover" />
-      </div>
-      <p className="text-[10px] font-black italic">Roll: {student.roll_no}</p>
-    </div>
-    <div className="flex-1 p-4 flex flex-col justify-between">
-      <h2 className="text-[16px] font-black text-blue-900 uppercase leading-none">Adarsh Shishu Mandir</h2>
-      <div className="mt-2 space-y-1">
-         <p className="text-[12px] font-black uppercase italic">{student.full_name}</p>
-         <p className="text-[9px] font-bold text-gray-500 uppercase">Class: {student.class_name}</p>
-         <p className="text-[9px] font-bold text-gray-500 uppercase">Guardian: {student.father_name}</p>
-      </div>
-      <div className="flex justify-end"><div className="text-center w-12 border-t border-black mt-4"><p className="text-[6px] font-black">Principal</p></div></div>
-    </div>
-  </div>
-);
+
 
 const TCTemplate = ({ student }: any) => (
   <div className="w-[8.27in] h-[11.69in] p-16 bg-white border-[12px] border-double border-blue-900 text-left relative">

@@ -88,7 +88,7 @@ const Sidebar = () => {
 
       {/* SIDEBAR DRAWER */}
       <aside className={`fixed top-0 left-0 h-full w-64 md:w-72 bg-white shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out 
-        lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} no-print`}>
         
         <div className="h-32 md:h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-4 md:p-6 rounded-br-[2rem] md:rounded-br-[3rem]">
           <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-blue-900 font-black text-xl md:text-2xl mb-1 md:mb-2 shadow-xl">ASM</div>
@@ -148,7 +148,7 @@ const Sidebar = () => {
           <Outlet />
         </div>
         {/* 🖼️ स्लाइडर अब कंटेंट के नीचे "बीच" में दिखेगा */}
-    <div className="mt-10">
+    <div className="mt-10 no-print">
       <GallerySlider />
     </div>
       </main>

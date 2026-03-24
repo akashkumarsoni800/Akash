@@ -31,51 +31,67 @@ const ManageFees = () => {
     sum + Number(val || 0), 0);
 
   const fetchInitialData = async () => {
+    setLoading(true);
     try {
-      const [{ data: stdData }, { data: headData }, { data: statsData }, { data: paymentsData }, { data: autoData }] = 
-        await Promise.all([
-          supabase.from('students').select('*').order('full_name'),
-          supabase.from('fee_heads').select('*').order('id'),
-          supabase.from('fees').select('status, total_amount'),
-          supabase.from('fees')
-            .select(`*, students(full_name, class_name, contact_number)`)
-            .order('created_at', { ascending: false })
-            .limit(5),
-          supabase.from('auto_fee_settings').select('*').eq('id', 'default').maybeSingle()
-        ]);
+      // Fetch each independently to prevent one table error from breaking others
+      const fetchStudents = supabase.from('students').select('*').order('full_name');
+      const fetchHeads = supabase.from('fee_heads').select('*').order('id');
+      const fetchStats = supabase.from('fees').select('status, total_amount');
+      const fetchPayments = supabase.from('fees')
+        .select(`*, students(full_name, class_name, contact_number)`)
+        .order('updated_at', { ascending: false })
+        .limit(5);
+      const fetchAuto = supabase.from('auto_fee_settings').select('*').eq('id', 'default').maybeSingle();
 
-      setStudents(stdData || []);
-      setFeeHeads(headData || []);
-      setAutoFeeSettings(autoData);
-      
-      if (headData) {
+      const [stdRes, headRes, statsRes, paymentsRes, autoRes] = await Promise.allSettled([
+        fetchStudents, fetchHeads, fetchStats, fetchPayments, fetchAuto
+      ]);
+
+      if (stdRes.status === 'fulfilled') setStudents(stdRes.value.data || []);
+      if (headRes.status === 'fulfilled') {
+        const heads = headRes.value.data || [];
+        setFeeHeads(heads);
         const initialValues: any = {};
-        headData.forEach((h: any) => initialValues[h.id] = 0);
+        heads.forEach((h: any) => initialValues[h.id] = 0);
         setFeeValues(initialValues);
       }
-
-      if (autoData?.enabled) {
-        const nextDate = new Date();
-        nextDate.setDate(autoData.send_day || 1);
-        if (nextDate < new Date()) nextDate.setMonth(nextDate.getMonth() + 1);
-        setNextAutoSend(nextDate.toLocaleDateString('en-IN'));
+      if (autoRes.status === 'fulfilled') {
+        const autoData = autoRes.value.data;
+        setAutoFeeSettings(autoData);
+        if (autoData?.enabled) {
+          const nextDate = new Date();
+          nextDate.setDate(autoData.send_day || 1);
+          if (nextDate < new Date()) nextDate.setMonth(nextDate.getMonth() + 1);
+          setNextAutoSend(nextDate.toLocaleDateString('en-IN'));
+        }
       }
 
-      const feeArray = statsData || [];
-      const pendingCount = feeArray.filter((f: any) => f.status === 'Pending').length;
-      const collectedAmount = feeArray.reduce((sum: number, f: any) => 
-        f.status === 'Paid' ? sum + (Number(f.total_amount) || 0) : sum, 0);
-      
-      setFeeStats({
-        totalPending: pendingCount,
-        totalCollected: collectedAmount,
-        overdue: feeArray.filter((f: any) => f.status === 'Overdue').length,
-        collectionRate: feeArray.length ? Math.round((collectedAmount / feeArray.reduce((sum: number, f: any) => sum + (Number(f.total_amount) || 0), 0)) * 100) : 0
-      });
-      
-      setRecentPayments(paymentsData || []);
+      if (statsRes.status === 'fulfilled') {
+        const feeArray = statsRes.value.data || [];
+        const pendingCount = feeArray.filter((f: any) => f.status === 'Pending').length;
+        const collectedAmount = feeArray.reduce((sum: number, f: any) => 
+          f.status === 'Paid' ? sum + (Number(f.total_amount) || 0) : sum, 0);
+        
+        setFeeStats({
+          totalPending: pendingCount,
+          totalCollected: collectedAmount,
+          overdue: feeArray.filter((f: any) => f.status === 'Overdue').length,
+          collectionRate: feeArray.length ? Math.round((collectedAmount / feeArray.reduce((sum: number, f: any) => sum + (Number(f.total_amount) || 0), 0)) * 100) : 0
+        });
+      }
+
+      if (paymentsRes.status === 'fulfilled') setRecentPayments(paymentsRes.value.data || []);
+
+      // Individual error reporting for debugging
+      if (statsRes.status === 'rejected' || paymentsRes.status === 'rejected') {
+        console.error("Fee table Error:", (statsRes as any).reason || (paymentsRes as any).reason);
+        toast.error("Accounting data partially unavailable");
+      }
+
     } catch (error: any) {
-      toast.error("Error loading initial data");
+      toast.error("Critical System Error");
+    } finally {
+      setLoading(false);
     }
   };
 

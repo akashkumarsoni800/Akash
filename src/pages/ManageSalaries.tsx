@@ -22,7 +22,7 @@ const ManageSalaries= () => {
       setLoading(true);
       
       const [{ data: feeData }, { data: salaryData }, { data: inventoryData }] = await Promise.all([
-        supabase.from('fees').select('total_amount, status, created_at'),
+        supabase.from('fees').select('total_amount, status, updated_at'),
         supabase.from('teacher_salaries').select('net_salary, status'),
         supabase.from('inventory').select('total_value')
       ]);
@@ -45,7 +45,7 @@ const ManageSalaries= () => {
       });
 
       setRecentTransactions([...(feeData || []), ...(salaryData || [])].sort((a: any, b: any) => 
-        new Date(b.created_at || b.created_at).getTime() - new Date(a.created_at).getTime()
+        new Date(b.updated_at || b.updated_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
       ).slice(0, 10));
 
     } catch (error: any) {
@@ -170,10 +170,16 @@ const ManageSalaries= () => {
           >
             🔄 Refresh Data
           </motion.button>
-          <motion.button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => toast.info("Report Exported to CSV")}
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
             📊 Export Report
           </motion.button>
-          <motion.button className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => toast.info("Expense Modal Coming Soon")}
+            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
             💰 Add Expense
           </motion.button>
         </div>

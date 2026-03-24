@@ -159,7 +159,15 @@ const AdminDashboard = () => {
         roll_no: editingStudent.roll_no, father_name: editingStudent.father_name, photo_url: photoUrl
       });
       setNewPhotoFile(null); setNewPhotoPreview(null);
-    } catch (err: any) { toast.error(err.message); } 
+    } catch (err: any) {
+      console.error("Photo Update Error Details:", err);
+      const msg = err.message || "Unknown error";
+      if (msg.includes("bucket")) {
+        toast.error("Storage Bucket Error: Please ensure 'student-photos' bucket is public and has proper RLS policies.");
+      } else {
+        toast.error(`Update Failed: ${msg}`);
+      }
+    } 
     finally { setLoading(false); }
   };
 const toggleCamera = () => {

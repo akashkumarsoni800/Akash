@@ -98,3 +98,30 @@
     @apply text-2xl !important;
   }
 }
+
+/* 🖨️ PRINT UTILITIES */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body, html {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Force exact sizing for ID Cards */
+  .custom-print-style {
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 10mm !important;
+    margin: 0 auto !important;
+  }
+
+  .print-card-content {
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

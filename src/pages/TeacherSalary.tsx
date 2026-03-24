@@ -15,7 +15,6 @@ const TeacherSalary = () => {
     month: '',
     basic_salary: 0,
     hra: 0,
-    allowances: 0,
     deductions: 0
   });
 
@@ -41,8 +40,7 @@ const TeacherSalary = () => {
   };
 
   const calculateNetSalary = () => {
-    return Number(newSalary.basic_salary) + Number(newSalary.hra) + 
-           Number(newSalary.allowances) - Number(newSalary.deductions);
+    return Number(newSalary.basic_salary) + Number(newSalary.hra) - Number(newSalary.deductions);
   };
 
   const handleSalarySubmit = async (e: React.FormEvent) => {
@@ -55,9 +53,14 @@ const TeacherSalary = () => {
       
       const { error } = await supabase.from('teacher_salaries').insert([{
         teacher_name: teacher?.full_name || newSalary.teacher_name,
-        designation: teacher?.class_name || newSalary.designation,
-        ...newSalary,
-        net_salary: netSalary
+        designation: teacher?.role || newSalary.designation,
+        teacher_id: newSalary.teacher_id,
+        month: newSalary.month,
+        basic_salary: newSalary.basic_salary,
+        hra: newSalary.hra,
+        deductions: newSalary.deductions,
+        net_salary: netSalary,
+        status: 'Pending'
       }]);
       
       if (error) throw error;
@@ -70,7 +73,6 @@ const TeacherSalary = () => {
         month: '',
         basic_salary: 0,
         hra: 0,
-        allowances: 0,
         deductions: 0
       });
       fetchData();
@@ -187,19 +189,25 @@ const TeacherSalary = () => {
                   <input 
                     type="number" 
                     value={newSalary.basic_salary}
-                    onChange={(e) => setNewSalary({...newSalary, basic_salary: Number(e.target.value)})}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setNewSalary({
+                        ...newSalary, 
+                        basic_salary: val,
+                        hra: Math.round(val * 0.24) // 24% HRA
+                      });
+                    }}
                     className="w-full p-8 border-2 border-gray-200 rounded-4xl focus:border-green-500 focus:ring-4 focus:ring-green-200 text-3xl font-black text-right transition-all h-24"
                     placeholder="₹25,000"
                   />
                 </div>
                 <div>
-                  <label className="block text-xl font-bold text-gray-700 mb-4 uppercase tracking-wide">HRA (24%)</label>
+                  <label className="block text-xl font-bold text-gray-700 mb-4 uppercase tracking-wide">HRA (24% Auto)</label>
                   <input 
                     type="number" 
                     value={newSalary.hra}
-                    onChange={(e) => setNewSalary({...newSalary, hra: Number(e.target.value)})}
-                    className="w-full p-8 border-2 border-gray-200 rounded-4xl focus:border-green-500 focus:ring-4 focus:ring-green-200 text-3xl font-black text-right transition-all h-24"
-                    placeholder="₹6,000"
+                    readOnly
+                    className="w-full p-8 border-2 border-gray-100 bg-gray-50 rounded-4xl text-3xl font-black text-right transition-all h-24 text-gray-400"
                   />
                 </div>
               </div>

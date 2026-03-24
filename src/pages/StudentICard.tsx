@@ -1,43 +1,83 @@
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { motion } from 'framer-motion';
 
 const StudentICard = ({ student }: { student: any }) => {
   const componentRef = useRef<any>();
 
-  // प्रिंट फंक्शन
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
+  if (!student) return null;
+
   return (
-    <div className="p-6">
-      {/* प्रिंट होने वाला एरिया */}
-      <div ref={componentRef} className="print:m-0">
-        <div className="w-[3.5in] h-[2.2in] bg-white border-2 border-indigo-900 rounded-xl overflow-hidden shadow-2xl relative flex font-sans">
-          {/* Left Bar */}
-          <div className="w-1/3 bg-indigo-900 flex flex-col items-center justify-center p-2 text-white">
-            <div className="w-20 h-20 rounded-full border-2 border-white overflow-hidden bg-gray-200 mb-2">
-               {/* छात्र की फोटो */}
-               <img src={student.photo_url || "/user-avatar.png"} className="w-full h-full object-cover" />
-            </div>
-            <p className="text-[10px] font-bold uppercase">Roll No: {student.roll_no}</p>
+    <div className="flex flex-col items-center gap-6">
+      {/* Printable Area */}
+      <div ref={componentRef} className="print:m-0 print:shadow-none bg-white p-2 sm:p-4 rounded-xl">
+        <div className="w-[3.5in] h-[2.2in] flex bg-white border-[3px] border-blue-900 rounded-2xl overflow-hidden font-sans shadow-lg relative">
+          
+          {/* Left Security Bar */}
+          <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3 relative overflow-hidden">
+             {/* Subtle pattern background for security */}
+             <div className="absolute inset-0 opacity-10 pointer-events-none text-[5rem] rotate-12 flex items-center justify-center font-black select-none">ASM</div>
+             
+             <div className="relative z-10 w-20 h-20 rounded-2xl border-2 border-white/50 overflow-hidden mb-2 bg-white/10 shadow-inner">
+                <img 
+                  src={student.photo_url || "/default-avatar.png"} 
+                  className="w-full h-full object-cover" 
+                  alt={student.full_name}
+                  onError={(e: any) => e.target.src = "/default-avatar.png"}
+                />
+             </div>
+             <div className="relative z-10 text-center">
+                <p className="text-[10px] font-black italic tracking-wider leading-none">ROLL NO</p>
+                <p className="text-sm font-black italic mt-0.5 tracking-tighter">#{student.roll_no}</p>
+             </div>
           </div>
 
-          {/* Right Content */}
-          <div className="w-2/3 p-3">
-            <h2 className="text-indigo-900 font-black text-sm uppercase leading-tight">Adarsh Shishu Mandir</h2>
-            <p className="text-[8px] text-gray-500 font-bold mb-3 italic">Bihar Sharif, Nalanda</p>
-            
-            <div className="space-y-1">
-              <h3 className="text-md font-black text-gray-800 uppercase">{student.full_name}</h3>
-              <p className="text-[10px] text-gray-600 font-bold uppercase">Class: <span className="text-indigo-600">{student.class_name}</span></p>
-              <p className="text-[10px] text-gray-600 font-bold uppercase">Father: {student.father_name}</p>
-              <p className="text-[10px] text-gray-600 font-bold uppercase">Mob: {student.contact_number}</p>
+          {/* Right Data Section */}
+          <div className="flex-1 p-4 flex flex-col justify-between relative">
+            <div className="space-y-0.5">
+               <h2 className="text-[16px] font-black text-blue-950 uppercase leading-none tracking-tighter italic">Adarsh Shishu Mandir</h2>
+               <p className="text-[6px] font-bold text-gray-400 uppercase tracking-[0.2em] leading-none mb-3">Institutional Identity Module</p>
             </div>
 
-            <div className="absolute bottom-2 right-2">
-              <p className="text-[8px] font-black text-indigo-900 uppercase">Principal Sign</p>
+            <div className="mt-1 space-y-1.5 flex-1 pt-1 border-t border-gray-100">
+               <div>
+                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Student Name</p>
+                  <p className="text-[11px] font-black text-blue-900 uppercase italic leading-none">{student.full_name}</p>
+               </div>
+               
+               <div className="flex justify-between items-end">
+                  <div className="space-y-1.5 flex-1">
+                     <div>
+                        <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Class / Grade</p>
+                        <p className="text-[9px] font-bold text-gray-700 uppercase leading-none">{student.class_name}</p>
+                     </div>
+                     <div>
+                        <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Parent/Guardian</p>
+                        <p className="text-[9px] font-bold text-gray-700 uppercase leading-none">{student.father_name}</p>
+                     </div>
+                  </div>
+                  
+                  {/* Security Watermark in background */}
+                  <div className="opacity-5 absolute right-4 bottom-12 rotate-[-45deg] select-none pointer-events-none">
+                     <p className="text-4xl font-black">ASM</p>
+                  </div>
+
+                  <div className="text-center w-16 mb-1">
+                     <div className="h-8 flex flex-col justify-end items-center opacity-30 select-none grayscale">
+                        <img src="/logo.png" alt="" className="w-5 h-5 mb-1" />
+                     </div>
+                     <div className="border-t border-blue-900 pt-1">
+                        <p className="text-[5px] font-black text-blue-900 uppercase tracking-widest leading-none">Principal Sign</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+            <div className="absolute top-4 right-4 opacity-10">
+               <div className="w-8 h-8 rounded-full border-2 border-dashed border-blue-900"></div>
             </div>
           </div>
         </div>
@@ -45,9 +85,9 @@ const StudentICard = ({ student }: { student: any }) => {
 
       <button 
         onClick={handlePrint}
-        className="mt-6 bg-indigo-600 text-white px-10 py-3 rounded-2xl font-bold uppercase tracking-widest shadow-lg"
+        className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl transition-all active:scale-95"
       >
-        🖨️ Print I-Card
+        🖨️ Print Digital Card
       </button>
     </div>
   );
