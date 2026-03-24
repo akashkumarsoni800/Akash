@@ -18,8 +18,6 @@ const StudentICard = ({ student }: { student: any }) => {
           
           {/* Left Security Bar */}
           <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3 relative overflow-hidden">
-             {/* Subtle pattern background for security */}
-             <div className="absolute inset-0 opacity-10 pointer-events-none text-[5rem] rotate-12 flex items-center justify-center font-black select-none">ASM</div>
              
              <div className="relative z-10 w-20 h-20 rounded-2xl border-2 border-white/50 overflow-hidden mb-2 bg-white/10 shadow-inner">
                 <img 
@@ -60,11 +58,6 @@ const StudentICard = ({ student }: { student: any }) => {
                      </div>
                   </div>
                   
-                  {/* Security Watermark in background */}
-                  <div className="opacity-5 absolute right-4 bottom-12 rotate-[-45deg] select-none pointer-events-none">
-                     <p className="text-4xl font-black">ASM</p>
-                  </div>
-
                   <div className="text-center w-16 mb-1">
                      <div className="h-8 flex flex-col justify-end items-center opacity-30 select-none grayscale">
                         <img src="/logo.png" alt="" className="w-5 h-5 mb-1" />

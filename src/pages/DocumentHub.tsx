@@ -73,22 +73,45 @@ const DocumentHub = () => {
            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">ASM Institutional Printing Engine</p>
         </header>
 
-        <div className="bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-50 flex flex-col md:flex-row gap-4 items-center no-print">
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-blue-400" />
-            <input 
-              type="text" 
-              placeholder="नाम, रोल नंबर या क्लास डालें..." 
-              className="w-full pl-14 pr-6 py-5 bg-blue-50/50 rounded-2xl font-bold text-lg outline-none focus:ring-4 focus:ring-blue-100 transition-all"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && fetchStudent()}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 no-print">
+          <div className="md:col-span-2 bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-50 flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-blue-400" />
+              <input 
+                type="text" 
+                placeholder="नाम या रोल नंबर डालें..." 
+                className="w-full pl-14 pr-6 py-5 bg-blue-50/50 rounded-2xl font-bold text-lg outline-none focus:ring-4 focus:ring-blue-100 transition-all"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && fetchStudent()}
+              />
+            </div>
+            <button onClick={fetchStudent} disabled={loading} className="w-full md:w-auto bg-blue-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-3">
+              {loading ? <RefreshCw className="animate-spin" /> : <Users size={20}/>}
+              {loading ? 'Search' : 'Find Student'}
+            </button>
           </div>
-          <button onClick={fetchStudent} disabled={loading} className="w-full md:w-auto bg-blue-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-3">
-            {loading ? <RefreshCw className="animate-spin" /> : <Users size={20}/>}
-            {loading ? 'Searching...' : 'Find Student/Class'}
-          </button>
+
+          <div className="bg-blue-900 p-6 md:p-8 rounded-[3rem] shadow-2xl border border-blue-800 flex flex-col justify-center">
+            <label className="text-[9px] font-black text-blue-300 uppercase tracking-widest mb-2 ml-2">Quick Class Load</label>
+            <select 
+              className="w-full bg-white/10 border border-white/10 p-4 rounded-2xl font-black text-white outline-none focus:ring-4 focus:ring-blue-500/30"
+              onChange={(e) => {
+                setStudentId(e.target.value);
+                // Trigger fetch immediately
+                setTimeout(() => {
+                  const btn = document.getElementById('class-fetch-btn');
+                  if (btn) btn.click();
+                }, 10);
+              }}
+            >
+              <option value="" className="text-gray-900">Select Class</option>
+              {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(cls => (
+                <option key={cls} value={cls} className="text-gray-900">Class {cls}</option>
+              ))}
+            </select>
+            <button id="class-fetch-btn" onClick={fetchStudent} className="hidden"></button>
+          </div>
         </div>
 
         {student && (
@@ -168,11 +191,17 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
 
         {/* --- बाकी का कोड (Details, Alert, Footer) वैसा ही रहेगा --- */}
         <div className="flex gap-8 items-start flex-1 mb-3">
-          <div className="w-32 h-36 border-[2px] border-black bg-gray-50 flex flex-col items-center justify-center relative flex-shrink-0">
-             <p className="text-[9px] font-black text-gray-300 uppercase italic">Paste Photo</p>
-             <div className="absolute bottom-1.5 w-full text-center border-t border-gray-200 pt-1">
-                <p className="text-[6px] font-bold text-gray-400 uppercase">Self Attested</p>
-             </div>
+          <div className="w-32 h-36 border-[2px] border-black bg-gray-50 flex flex-col items-center justify-center relative flex-shrink-0 overflow-hidden shadow-inner">
+             {std.photo_url ? (
+               <img src={std.photo_url} className="w-full h-full object-cover" alt="Student" />
+             ) : (
+               <>
+                 <p className="text-[9px] font-black text-gray-300 uppercase italic">Paste Photo</p>
+                 <div className="absolute bottom-1.5 w-full text-center border-t border-gray-200 pt-1">
+                    <p className="text-[6px] font-bold text-gray-400 uppercase">Self Attested</p>
+                 </div>
+               </>
+             )}
           </div>
 
           <div className="flex-1 space-y-3">
@@ -204,12 +233,12 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         </div>
 
         <div className="mt-4 flex justify-between items-end border-t border-gray-100 pt-4">
-           <div className="text-center">
+            <div className="text-center">
               <p className="text-[7px] font-black uppercase text-gray-300 tracking-widest leading-none mb-1">School Seal</p>
-              <div className="w-20 h-10 border border-dashed border-gray-100 rounded-xl flex items-center justify-center opacity-20">
-                 <img src="/logo.png" alt="" className="w-5 h-5 grayscale" />
+              <div className="w-20 h-10 border border-dashed border-gray-100 rounded-xl flex items-center justify-center">
+                 <img src="/logo.png" alt="" className="w-7 h-7" />
               </div>
-           </div>
+            </div>
            <div className="text-center pb-1">
               <div className="w-36 border-b border-blue-950 mx-auto"></div>
               <p className="text-[9px] font-black uppercase text-blue-950 tracking-widest mt-1.5 italic">Principal Signature</p>
