@@ -154,10 +154,6 @@ const DocumentHub = () => {
                 <h3 className="font-black text-blue-900 uppercase tracking-widest flex items-center gap-3">
                    <Users className="text-blue-500" /> {student ? "Full Class List" : `Multiple Records Found (${studentsList.length})`}
                 </h3>
-                <button onClick={() => window.print()} className="bg-blue-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 no-print shadow-xl hover:shadow-blue-200 group">
-                  <Printer size={18} className="group-hover:rotate-12 transition-transform" /> 
-                  Print ALL {studentsList.length} {activeDoc ? activeDoc : 'Cards'} at Once
-                </button>
              </div>
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 no-print">
                {studentsList.map((std) => (
