@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
-const StudentICard = ({ student }: { student: any }) => {
+const StudentICard = ({ student, hidePrintButton = false }: { student: any, hidePrintButton?: boolean }) => {
   const componentRef = useRef<any>();
 
   const handlePrint = useReactToPrint({
@@ -76,12 +76,14 @@ const StudentICard = ({ student }: { student: any }) => {
         </div>
       </div>
 
-      <button 
-        onClick={handlePrint}
-        className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl transition-all active:scale-95"
-      >
-        🖨️ Print Digital Card
-      </button>
+      {!hidePrintButton && (
+        <button 
+          onClick={handlePrint}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
+        >
+          🖨️ Print Digital Card
+        </button>
+      )}
     </div>
   );
 };

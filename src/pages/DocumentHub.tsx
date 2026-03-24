@@ -211,7 +211,7 @@ const DocumentHub = () => {
                   {student ? (
                     // 👤 INDIVIDUAL PREVIEW
                     <>
-                      {activeDoc === 'ICARD' && <StudentICard student={student} />}
+                      {activeDoc === 'ICARD' && <StudentICard student={student} hidePrintButton={true} />}
                       {activeDoc === 'TC' && <TCTemplate student={student} />}
                       {activeDoc === 'DOB' && <DOBTemplate student={student} />}
                       {activeDoc === 'ADMIT' && <AdmitGrid students={[student]} />}
@@ -225,7 +225,7 @@ const DocumentHub = () => {
                       ) : (
                         studentsList.map((std) => (
                           <div key={std.id} className="break-inside-avoid shadow-lg mb-4">
-                            {activeDoc === 'ICARD' && <StudentICard student={std} />}
+                            {activeDoc === 'ICARD' && <StudentICard student={std} hidePrintButton={true} />}
                             {activeDoc === 'GATE' && <GatePassTemplate student={std} />}
                             {activeDoc === 'TC' && <TCTemplate student={std} />}
                             {activeDoc === 'DOB' && <DOBTemplate student={std} />}
