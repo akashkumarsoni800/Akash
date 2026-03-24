@@ -219,18 +219,21 @@ const DocumentHub = () => {
                     </>
                   ) : (
                     // 📚 BULK CLASS PREVIEW
-                    <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
+                    <div className="bg-white">
                       {activeDoc === 'ADMIT' ? (
                         <AdmitGrid students={studentsList} />
+                      ) : activeDoc === 'ICARD' ? (
+                        <ICardGrid students={studentsList} />
                       ) : (
-                        studentsList.map((std) => (
-                          <div key={std.id} className="break-inside-avoid shadow-lg mb-4">
-                            {activeDoc === 'ICARD' && <StudentICard student={std} hidePrintButton={true} />}
-                            {activeDoc === 'GATE' && <GatePassTemplate student={std} />}
-                            {activeDoc === 'TC' && <TCTemplate student={std} />}
-                            {activeDoc === 'DOB' && <DOBTemplate student={std} />}
-                          </div>
-                        ))
+                        <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
+                          {studentsList.map((std) => (
+                            <div key={std.id} className="break-inside-avoid shadow-lg mb-4">
+                              {activeDoc === 'GATE' && <GatePassTemplate student={std} />}
+                              {activeDoc === 'TC' && <TCTemplate student={std} />}
+                              {activeDoc === 'DOB' && <DOBTemplate student={std} />}
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   )}
@@ -259,6 +262,16 @@ const DocBtn = ({ icon: Icon, label, active, onClick }: any) => (
     <span className="text-[9px] font-black uppercase tracking-widest text-center">{label}</span>
   </button>
 );
+const ICardGrid = ({ students }: { students: any[] }) => (
+  <div className="grid grid-cols-2 gap-[10mm] p-[10mm] bg-white w-[210mm] mx-auto print:p-0">
+    {students.map((std, idx) => (
+      <div key={idx} className="break-inside-avoid flex justify-center py-[5mm]">
+        <StudentICard student={std} hidePrintButton={true} />
+      </div>
+    ))}
+  </div>
+);
+
 /* --- 📄 2-CARDS PER PAGE ADMIT GRID (FINAL LOGO FIX) --- */
 const AdmitGrid = ({ students }: { students: any[] }) => (
   <div className="flex flex-col gap-[8mm] bg-white w-[210mm] mx-auto p-[8mm] custom-print-style">
