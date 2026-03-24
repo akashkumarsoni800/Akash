@@ -27,6 +27,7 @@ const StudentHomework = () => {
       const { data: student } = await supabase.from('students')
         .select('*')
         .eq('email', user.email)
+        .limit(1)
         .maybeSingle();
 
       if (!student) {

@@ -42,17 +42,24 @@ const DocumentHub = () => {
       const { data, error } = await supabase
         .from('students')
         .select('*')
-        .or(`student_id.eq.${isNumber ? cleanSearch : 0},roll_no.eq.${cleanSearch},full_name.ilike.%${cleanSearch}%`)
-        .maybeSingle();
+        .or(`student_id.eq.${isNumber ? cleanSearch : 0},roll_no.eq.${cleanSearch},full_name.ilike.%${cleanSearch}%`);
 
       if (error) throw error;
-      if (!data) {
+      
+      if (!data || data.length === 0) {
         toast.error("कोई डेटा नहीं मिला!");
         setStudent(null);
+        setStudentsList([]);
       } else {
-        setStudent(data);
-        setStudentsList([data]);
-        toast.success(`${data.full_name} लोड हो गया! ✅`);
+        if (data.length === 1) {
+          setStudent(data[0]);
+          setStudentsList([data[0]]);
+          toast.success(`${data[0].full_name} लोड हो गया! ✅`);
+        } else {
+          setStudent(null);
+          setStudentsList(data);
+          toast.success(`${data.length} छात्र मिले! कृपया चुनें। 🚀`);
+        }
       }
     } catch (err: any) {
       toast.error("Error: " + err.message);

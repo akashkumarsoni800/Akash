@@ -31,6 +31,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
           .from('students')
           .select('is_approved')
           .eq('email', userEmail)
+          .limit(1)
           .maybeSingle();
 
         if (student && student.is_approved === 'approved') {
@@ -44,6 +45,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
           .from('teachers')
           .select('role')
           .eq('email', userEmail)
+          .limit(1)
           .maybeSingle();
 
         if (staff) {

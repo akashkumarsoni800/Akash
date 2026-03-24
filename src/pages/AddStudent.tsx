@@ -138,6 +138,7 @@ const AddStudent = () => {
           .from('teachers')
           .select('full_name')
           .eq('email', formData.email)
+          .limit(1)
           .maybeSingle();
 
         if (existingTeacher) {

@@ -72,6 +72,7 @@ const LoginPage = () => {
           .from('teachers')
           .select('role, full_name')
           .eq('email', studentData.email.trim())
+          .limit(1)
           .maybeSingle();
 
         if (!staffRecord || staffRecord.role !== role) {

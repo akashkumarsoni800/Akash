@@ -42,6 +42,7 @@ const ProfileSetupPage = () => {
           .from('teachers')
           .select('*')
           .eq('auth_id', user.id) // 👈 Changed from 'id' to 'auth_id'
+          .limit(1)
           .maybeSingle();
 
         if (teacherData) {
@@ -73,7 +74,7 @@ const ProfileSetupPage = () => {
             idCol = id ? 'student_id' : 'auth_id';
           }
           
-          const { data: profile } = await supabase.from(tableToFetch).select('*').eq(idCol, idToFetch).maybeSingle();
+          const { data: profile } = await supabase.from(tableToFetch).select('*').eq(idCol, idToFetch).limit(1).maybeSingle();
           if (profile) {
             setProfileId(tableToFetch === 'students' ? profile.student_id : profile.id);
             setFormData({

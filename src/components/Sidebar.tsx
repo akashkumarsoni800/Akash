@@ -27,6 +27,7 @@ const Sidebar = () => {
         .from('teachers')
         .select('full_name, avatar_url, role')
         .eq('email', user.email)
+        .limit(1)
         .maybeSingle();
 
       if (staffData && isMounted) {
@@ -44,6 +45,7 @@ const Sidebar = () => {
         .from('students')
         .select('full_name, avatar_url, is_approved')
         .eq('email', user.email)
+        .limit(1)
         .maybeSingle();
 
       if (studentData && studentData.is_approved === 'approved' && isMounted) {

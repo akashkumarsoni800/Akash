@@ -19,7 +19,7 @@ const StudentFees = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: student } = await supabase.from('students').select('*').eq('email', user.email).maybeSingle();
+      const { data: student } = await supabase.from('students').select('*').eq('email', user.email).limit(1).maybeSingle();
       if (!student) return toast.error("Profile not found");
       setStudentData(student);
 

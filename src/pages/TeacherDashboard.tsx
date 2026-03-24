@@ -88,6 +88,7 @@ export default function TeacherDashboard() {
         .from('teachers')
         .select('*')
         .eq('email', user.email)
+        .limit(1)
         .maybeSingle();
       
       setTeacher(teacherData);
