@@ -138,7 +138,7 @@ const DocumentHub = () => {
 
         {/* 📑 DOCUMENT TYPE SELECTION (Always visible if students loaded) */}
         {studentsList.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print animate-in fade-in zoom-in-95 duration-500">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print duration-500">
              <DocBtn icon={CreditCard} label="Identity Card" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} />
              <DocBtn icon={FileText} label="Transfer (TC)" active={activeDoc === 'TC'} onClick={() => setActiveDoc('TC')} />
              <DocBtn icon={Award} label="Birth Cert" active={activeDoc === 'DOB'} onClick={() => setActiveDoc('DOB')} />
@@ -149,7 +149,7 @@ const DocumentHub = () => {
 
         {/* 📚 MULTIPLE RECORDS SELECTION & BULK PRINT */}
         {studentsList.length > 1 && (
-          <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-blue-50 animate-in fade-in slide-in-from-bottom-5">
+          <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-blue-50">
              <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-blue-900 uppercase tracking-widest flex items-center gap-3">
                    <Users className="text-blue-500" /> {student ? "Full Class List" : `Multiple Records Found (${studentsList.length})`}

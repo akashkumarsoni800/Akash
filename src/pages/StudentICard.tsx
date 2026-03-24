@@ -19,18 +19,19 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
           {/* Left Security Bar */}
           <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3 relative overflow-hidden">
              
-             <div className="relative z-10 w-20 h-20 rounded-2xl border-2 border-white/50 overflow-hidden mb-2 bg-white/10 shadow-inner">
+             <div className="relative z-10 w-20 h-20 rounded-2xl border-2 border-white/50 overflow-hidden mb-2 bg-blue-900/10">
                 <img 
                   src={student.photo_url || "/default-avatar.png"} 
-                  className="w-full h-full object-cover" 
-                  alt={student.full_name}
+                  className="w-full h-full object-cover select-none" 
+                  alt=""
+                  loading="eager"
                   onError={(e: any) => e.target.src = "/default-avatar.png"}
                 />
              </div>
-             <div className="relative z-10 text-center">
-                <p className="text-[10px] font-black italic tracking-wider leading-none">ROLL NO</p>
-                <p className="text-sm font-black italic mt-0.5 tracking-tighter">#{student.roll_no}</p>
-             </div>
+              <div className="relative z-10 text-center">
+                 <p className="text-[10px] font-black italic tracking-wider leading-none opacity-60">ROLL NO</p>
+                 <p className="text-lg font-black italic mt-1 tracking-tighter shadow-sm">{student.roll_no}</p>
+              </div>
           </div>
 
           {/* Right Data Section */}
