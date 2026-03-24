@@ -25,40 +25,55 @@ const DocumentHub = () => {
     const isNumber = !isNaN(Number(cleanSearch));
 
     try {
-      const { data: bulkData } = await supabase
+      // 1. Try exact Class Match (Fast bulk load)
+      const { data: classData } = await supabase
         .from('students')
         .select('*')
         .eq('class_name', cleanSearch)
         .order('roll_no', { ascending: true });
 
-      if (bulkData && bulkData.length > 0) {
-        setStudentsList(bulkData);
-        setStudent(bulkData[0]);
-        toast.success(`${bulkData.length} छात्रों की क्लास लोड हो गई! 🚀`);
+      if (classData && classData.length > 0) {
+        setStudentsList(classData);
+        setStudent(classData[0]);
+        toast.success(`${classData.length} Students in Class ${cleanSearch} loaded! 🚀`);
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase
-        .from('students')
-        .select('*')
-        .or(`student_id.eq.${isNumber ? cleanSearch : 0},roll_no.eq.${cleanSearch},full_name.ilike.%${cleanSearch}%`);
+      // 2. Advanced Search (Class + Name or name-only)
+      let query = supabase.from('students').select('*');
+      
+      const parts = cleanSearch.split(/\s+/);
+      if (parts.length > 1) {
+        // Try to identify which part is the class (usually a number or short string)
+        const classIndex = parts.findIndex(p => !isNaN(Number(p)) || ['Nursery', 'LKG', 'UKG'].includes(p.toUpperCase()));
+        if (classIndex !== -1) {
+          const cls = parts[classIndex];
+          const namePart = parts.filter((_, i) => i !== classIndex).join(' ');
+          query = query.eq('class_name', cls).ilike('full_name', `%${namePart}%`);
+        } else {
+          query = query.or(`full_name.ilike.%${cleanSearch}%,student_id.eq.${isNumber ? cleanSearch : 0},roll_no.eq.${cleanSearch}`);
+        }
+      } else {
+        query = query.or(`student_id.eq.${isNumber ? cleanSearch : 0},roll_no.eq.${cleanSearch},full_name.ilike.%${cleanSearch}%`);
+      }
 
+      const { data, error } = await query;
       if (error) throw error;
       
       if (!data || data.length === 0) {
-        toast.error("कोई डेटा नहीं मिला!");
+        toast.error("Record not found!");
         setStudent(null);
         setStudentsList([]);
       } else {
         if (data.length === 1) {
           setStudent(data[0]);
           setStudentsList([data[0]]);
-          toast.success(`${data[0].full_name} लोड हो गया! ✅`);
+          toast.success(`${data[0].full_name} loaded! ✅`);
         } else {
           setStudent(null);
           setStudentsList(data);
-          toast.success(`${data.length} छात्र मिले! कृपया चुनें। 🚀`);
+          toast.success(`${data.length} matches found! Please select. 🚀`);
         }
       }
     } catch (err: any) {
@@ -120,6 +135,59 @@ const DocumentHub = () => {
             <button id="class-fetch-btn" onClick={fetchStudent} className="hidden"></button>
           </div>
         </div>
+
+        {studentsList.length > 1 && !student && (
+          <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-blue-50 animate-in fade-in slide-in-from-bottom-5">
+             <div className="flex justify-between items-center mb-6">
+                <h3 className="font-black text-blue-900 uppercase tracking-widest flex items-center gap-3">
+                   <Users className="text-blue-500" /> Multiple Records Found ({studentsList.length})
+                </h3>
+                {studentsList.length > 1 && (
+                  <button onClick={() => window.print()} className="bg-blue-900 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 no-print">
+                    <Printer size={14} /> Print All {studentsList.length} Cards
+                  </button>
+                )}
+             </div>
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 no-print">
+               {studentsList.map((std) => (
+                 <button 
+                   key={std.id}
+                   onClick={() => setStudent(std)}
+                   className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/50 hover:bg-blue-600 group transition-all text-left border border-blue-100 hover:border-blue-600 hover:shadow-lg"
+                 >
+                   <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center font-black text-blue-600 group-hover:text-blue-600 border border-blue-100 shadow-sm overflow-hidden flex-shrink-0">
+                      {std.photo_url ? (
+                        <img src={std.photo_url} className="w-full h-full object-cover" alt="" />
+                      ) : (
+                        std.full_name.charAt(0)
+                      )}
+                   </div>
+                   <div className="min-w-0">
+                     <p className="font-black text-xs text-blue-950 group-hover:text-white uppercase truncate">{std.full_name}</p>
+                     <p className="text-[10px] font-bold text-blue-500 group-hover:text-blue-200 uppercase mt-0.5">
+                       Class {std.class_name} • Roll #{std.roll_no}
+                     </p>
+                     <p className="text-[9px] font-bold text-gray-400 group-hover:text-blue-100 uppercase truncate mt-0.5">
+                       F: {std.father_name}
+                     </p>
+                   </div>
+                   <UserCheck className="ml-auto text-blue-200 group-hover:text-white" size={18} />
+                 </button>
+               ))}
+             </div>
+             
+             {/* Printable view for all matching students if printing the whole list */}
+             <div className="hidden print:block mt-10">
+                <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
+                  {studentsList.map((std) => (
+                    <div key={std.id} className="break-inside-avoid">
+                      <StudentICard student={std} />
+                    </div>
+                  ))}
+                </div>
+             </div>
+          </div>
+        )}
 
         {student && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print">
