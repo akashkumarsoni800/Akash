@@ -136,15 +136,27 @@ const DocumentHub = () => {
           </div>
         </div>
 
+        {/* 📑 DOCUMENT TYPE SELECTION (Always visible if students loaded) */}
+        {studentsList.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print animate-in fade-in zoom-in-95 duration-500">
+             <DocBtn icon={CreditCard} label="Identity Card" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} />
+             <DocBtn icon={FileText} label="Transfer (TC)" active={activeDoc === 'TC'} onClick={() => setActiveDoc('TC')} />
+             <DocBtn icon={Award} label="Birth Cert" active={activeDoc === 'DOB'} onClick={() => setActiveDoc('DOB')} />
+             <DocBtn icon={GraduationCap} label="Admit Cards (Bulk)" active={activeDoc === 'ADMIT'} onClick={() => setActiveDoc('ADMIT')} />
+             <DocBtn icon={DoorOpen} label="Gate Pass" active={activeDoc === 'GATE'} onClick={() => setActiveDoc('GATE')} />
+          </div>
+        )}
+
         {/* 📚 MULTIPLE RECORDS SELECTION & BULK PRINT */}
         {studentsList.length > 1 && (
           <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-blue-50 animate-in fade-in slide-in-from-bottom-5">
              <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-blue-900 uppercase tracking-widest flex items-center gap-3">
-                   <Users className="text-blue-500" /> {student ? "All Students in Class" : `Multiple Records Found (${studentsList.length})`}
+                   <Users className="text-blue-500" /> {student ? "Full Class List" : `Multiple Records Found (${studentsList.length})`}
                 </h3>
-                <button onClick={() => window.print()} className="bg-blue-900 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 no-print shadow-lg hover:shadow-blue-200">
-                  <Printer size={14} /> Print All {studentsList.length} {activeDoc === 'ADMIT' ? 'Admit Cards' : 'ID Cards'}
+                <button onClick={() => window.print()} className="bg-blue-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 no-print shadow-xl hover:shadow-blue-200 group">
+                  <Printer size={18} className="group-hover:rotate-12 transition-transform" /> 
+                  Print ALL {studentsList.length} {activeDoc ? activeDoc : 'Cards'} at Once
                 </button>
              </div>
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 no-print">
@@ -177,54 +189,23 @@ const DocumentHub = () => {
              
              {/* 🖨️ PRINTABLE AREA FOR BULK OPERATION */}
              <div className="hidden print:block mt-10">
-                <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
-                  {studentsList.map((std) => (
-                    <div key={std.id} className="break-inside-avoid py-[5mm]">
-                      {(!activeDoc || activeDoc === 'ICARD') && <StudentICard student={std} />}
-                      {activeDoc === 'ADMIT' && (
-                        <div className="w-[100mm] border-2 border-dashed border-gray-300 p-6 rounded-3xl bg-white relative">
-                            {/* Simple Admit Card Bulk Template */}
-                            <div className="text-center mb-4 border-b pb-2">
-                                <h2 className="text-xl font-black uppercase text-blue-900 leading-tight">Adarsh Shishu Mandir</h2>
-                                <p className="text-[10px] font-bold text-gray-500 italic">Examination Admit Card - 2024</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="w-20 h-20 bg-gray-100 rounded-xl overflow-hidden border">
-                                    {std.photo_url ? <img src={std.photo_url} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">Photo</div>}
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                    <p className="text-[10px]"><span className="font-bold uppercase text-gray-400">Name:</span> <span className="font-black uppercase text-blue-900">{std.full_name}</span></p>
-                                    <p className="text-[10px]"><span className="font-bold uppercase text-gray-400">Class:</span> <span className="font-black text-blue-900">{std.class_name}</span></p>
-                                    <p className="text-[10px]"><span className="font-bold uppercase text-gray-400">Roll:</span> <span className="font-black text-blue-900">#{std.roll_no}</span></p>
-                                    <p className="text-[10px]"><span className="font-bold uppercase text-gray-400">Father:</span> <span className="font-black text-blue-900 uppercase">{std.father_name}</span></p>
-                                </div>
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-dashed flex justify-between items-end">
-                                <div className="text-[8px] text-gray-400 font-bold uppercase italic">ASM Digital Seal</div>
-                                <div className="text-right">
-                                    <p className="text-[8px] font-black uppercase text-gray-400">Principal Signature</p>
-                                    <div className="h-6"></div>
-                                </div>
-                            </div>
-                        </div>
-                      )}
-                      {/* Add more bulk templates here if needed */}
-                    </div>
-                  ))}
-                </div>
+                {activeDoc === 'ADMIT' ? (
+                  <AdmitGrid students={studentsList} />
+                ) : (
+                  <div className="flex flex-wrap gap-[5mm] justify-center bg-white p-[5mm]">
+                    {studentsList.map((std) => (
+                      <div key={std.id} className="break-inside-avoid py-[5mm]">
+                        {(!activeDoc || activeDoc === 'ICARD') && <StudentICard student={std} />}
+                        {activeDoc === 'GATE' && <GatePassTemplate student={std} />}
+                        {/* More individual bulk templates can be added here */}
+                      </div>
+                    ))}
+                  </div>
+                )}
              </div>
           </div>
         )}
 
-        {student && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 no-print">
-            <DocBtn icon={CreditCard} label="Identity Card" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} />
-            <DocBtn icon={FileText} label="Transfer (TC)" active={activeDoc === 'TC'} onClick={() => setActiveDoc('TC')} />
-            <DocBtn icon={Award} label="Birth Cert" active={activeDoc === 'DOB'} onClick={() => setActiveDoc('DOB')} />
-            <DocBtn icon={GraduationCap} label="Admit Cards (Bulk)" active={activeDoc === 'ADMIT'} onClick={() => setActiveDoc('ADMIT')} />
-            <DocBtn icon={DoorOpen} label="Gate Pass" active={activeDoc === 'GATE'} onClick={() => setActiveDoc('GATE')} />
-          </div>
-        )}
 
         <div className="bg-white p-6 md:p-12 rounded-[4rem] shadow-2xl border border-gray-50 flex flex-col items-center">
           {student && activeDoc ? (
