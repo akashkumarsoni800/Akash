@@ -205,289 +205,99 @@ const AddStudent = () => {
   }
  };
 
- return (
-  <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-4xl mx-auto space-y-12">
-    
-    {/* --- HEADER --- */}
-    <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-       <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-        Add<br/>
-        <span className="text-[var(--accent-admin)]">Student</span>
-       </h1>
-       <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
-        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Student Details v4.2
-       </p>
-      </motion.div>
+  return (
+   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
+    <div className="max-w-4xl mx-auto space-y-12">
+     
+     {/* --- HEADER --- */}
+     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
+       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
+         Add Student
+        </h1>
+        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
+         <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Student Details v4.8 Stable
+        </p>
+       </motion.div>
+     </div>
 
-      <div className="bg-white border border-slate-100 rounded-3xl p-4 pr-8 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
-       <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-100 group-hover:rotate-12 transition-transform">
-        <Fingerprint size={24} />
-       </div>
-       <div>
-        <p className="text-[9px] font-black text-slate-400  mb-0.5 leading-none">Biometric Status</p>
-        <p className="text-xs font-black text-slate-900 "> Link Active</p>
-       </div>
-      </div>
-    </div>
-
-    {/* --- STEP PROGRESSION --- */}
-    <div className="bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-between px-10 relative">
-      <StepIndicator step={1} current={step} label="Identity" />
-      <div className="flex-1 h-px bg-slate-100 mx-4" />
-      <StepIndicator step={2} current={step} label="" />
-      <div className="flex-1 h-px bg-slate-100 mx-4" />
-      <StepIndicator step={3} current={step} label="Verification" />
-    </div>
-
-    <form onSubmit={handleSubmit} className="relative">
-     <AnimatePresence mode="wait">
-      {step === 1 && (
-       <motion.div 
-        key="step1"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
+     <form onSubmit={handleSubmit} className="space-y-12">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         className="premium-card p-10 md:p-16 space-y-12"
-       >
+      >
         <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
            <User size={24} />
           </div>
           <div>
-           <h2 className="text-3xl font-black text-slate-900  uppercase">Primary Identity</h2>
-           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">Legal Candidate Details</p>
+           <h2 className="text-3xl font-black text-slate-900  uppercase">Student Details</h2>
+           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">REGISTRATION FORM</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-         <InputField label="Candidate Full Name *" name="name" placeholder="Akash Kumar" value={formData.name} onChange={handleChange} required icon={User} />
-         <InputField label="Paid Guardian *" name="father" placeholder="Father's Legal Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+         <InputField label="Student Name *" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required icon={User} />
+         <InputField label="Father's Name *" name="father" placeholder="Father's Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
          
          <div className="grid grid-cols-2 gap-6">
           <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
           <div className="space-y-1 group">
-           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Gender Selection</label>
+           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">GenderSelection</label>
            <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" required>
-            <option value="">Select Identity</option>
+            <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
            </select>
           </div>
          </div>
 
-         <InputField label="Contact Uplink" name="phone" placeholder="+91 XXXX-XXXXXX" value={formData.phone} onChange={handleChange} icon={Zap} />
-        </div>
+         <InputField label="Phone Number" name="phone" placeholder="Mobile Number" value={formData.phone} onChange={handleChange} icon={Fingerprint} />
 
-        <div className="space-y-1 group">
-         <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Residential Coordinates</label>
-         <textarea
-          placeholder="Complete House Address & Zip Code..."
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
-          required
-         />
-        </div>
-
-        <div className="pt-8 flex justify-end">
-          <button 
-           type="button" 
-           onClick={() => setStep(2)} 
-           className="premium-button-admin px-12"
-          >
-           Initialize <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-       </motion.div>
-      )}
-
-      {step === 2 && (
-       <motion.div 
-        key="step2"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        className="premium-card p-10 md:p-16 space-y-12"
-       >
-        <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
-           <Layout size={24} />
-          </div>
-          <div>
-           <h2 className="text-3xl font-black text-slate-900  uppercase">Fleet Assignment</h2>
-           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">Academic Node Allocation</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-         <div className="bg-slate-900 p-8 rounded-[3rem] border border-slate-800 shadow-2xl flex flex-col justify-center relative group">
-          <div className="absolute top-4 right-4 text-white/5 group-hover:scale-110 transition-transform"><Star size={60} /></div>
-          <label className="block text-[10px] font-black text-blue-300  mb-3 ml-2 leading-none">Assigned Class *</label>
-          <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full bg-white/10 border border-white/10 p-5 rounded-2xl font-black text-2xl text-white outline-none focus:ring-4 focus:ring-blue-500/30 " required />
-         </div>
-
-         <div className="bg-blue-50 p-8 rounded-[3rem] border border-blue-100 shadow-sm flex flex-col justify-center group/roll">
-          <label className="block text-[10px] font-black text-blue-400  mb-3 ml-2 leading-none">Sequential Roll Identifier *</label>
+         <div className="space-y-1 group">
+          <label className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
           <div className="flex gap-4">
-           <input type="number" name="roll" value={formData.roll} onChange={handleChange} className="w-full bg-white p-5 rounded-2xl font-black text-2xl text-slate-900 border-none outline-none shadow-inner" required />
-           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-5 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
-            <RefreshCw size={24}/>
+           <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full premium-input pl-8 uppercase" required />
+           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
+            <RefreshCw size={20}/>
            </button>
           </div>
          </div>
-        </div>
 
-        <InputField label="School Email Node" name="email" type="email" placeholder="student@asm-portal.com" value={formData.email} onChange={handleChange} icon={Mail} />
+         <InputField label="Roll Number *" name="roll" value={formData.roll} onChange={handleChange} required icon={Award} />
 
-        <div className="pt-8 flex justify-between">
-          <button 
-           type="button" 
-           onClick={() => setStep(1)} 
-           className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black  text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3"
-          >
-           <ChevronLeft size={18} /> Modify Identity
-          </button>
-          <button 
-           type="button" 
-           onClick={() => setStep(3)} 
-           className="premium-button-admin px-12"
-          >
-           Bio-metric Synthesis <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-       </motion.div>
-      )}
-
-      {step === 3 && (
-       <motion.div 
-        key="step3"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        className="premium-card p-10 md:p-16 space-y-12"
-       >
-        <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
-           <Camera size={24} />
-          </div>
-          <div>
-           <h2 className="text-3xl font-black text-slate-900  uppercase">Visual </h2>
-           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">Biometric Capture </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center">
-         <div className="w-56 h-56 bg-slate-50 rounded-[4rem] overflow-hidden flex items-center justify-center border-8 border-white shadow-2xl relative group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/10 to-transparent pointer-events-none" />
-          {photoPreview ? (
-           <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
-          ) : (
-           <div className="text-center space-y-4">
-             <User size={80} className="text-slate-200 mx-auto" />
-             <p className="text-[8px] font-black text-slate-300 tracking-widest leading-none">Awaiting Capture</p>
-           </div>
-          )}
-          <label className="absolute inset-0 bg-blue-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[2px]">
-            <Upload className="text-white" size={40} />
-            <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-          </label>
+         <div className="md:col-span-2">
+           <InputField label="Email (Login ID) *" name="email" type="email" placeholder="student@school.com" value={formData.email} onChange={handleChange} required icon={Mail} />
          </div>
-         
-         <div className="mt-12 flex flex-wrap justify-center gap-4">
-           <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl text-[10px] font-black  shadow-xl shadow-blue-100 active:scale-95 transition-all group">
-            <Camera size={18} className="group-hover:scale-110 transition-transform"/> Start Live Feed
-           </button>
-           <label className="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black  shadow-xl cursor-pointer active:scale-95 transition-all hover:bg-blue-600">
-            <Upload size={18}/> Manual Upload
-            <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-           </label>
+
+         <div className="md:col-span-2 space-y-1 group">
+          <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Address</label>
+          <textarea
+           placeholder="Home Address..."
+           name="address"
+           value={formData.address}
+           onChange={handleChange}
+           className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
+           required
+          />
          </div>
         </div>
 
-        <div className="pt-8 flex justify-between">
-          <button 
-           type="button" 
-           onClick={() => setStep(2)} 
-           className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black  text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3"
-          >
-           <ChevronLeft size={18} /> Modify 
-          </button>
-          <button
-           type="submit"
-           disabled={loading}
-           className="premium-button-admin px-16"
-          >
-           {loading ? (
-            <RefreshCw className="animate-spin" size={20} />
-           ) : (
-            <><ShieldCheck size={24} className="group-hover:rotate-12 transition-transform" /> Authorize Induction</>
-           )}
-          </button>
-        </div>
-       </motion.div>
-      )}
-     </AnimatePresence>
-    </form>
-
-    {/* WEBCAM MODAL */}
-    <AnimatePresence>
-     {showWebcam && WebcamComp && (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-slate-950/95 z-[100] flex flex-col items-center justify-center p-6 backdrop-blur-xl"
-      >
-       <div className="relative w-full max-w-sm aspect-square bg-slate-900 rounded-[5rem] overflow-hidden shadow-2xl group border-4 border-white/10">
-         <div className="absolute inset-0 border-8 border-blue-500/20 z-10 pointer-events-none rounded-[5rem]" />
-         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-blue-500/30 blur-[1px] z-10 pointer-events-none animate-pulse" />
-         
-         <WebcamComp 
-          ref={webcamRef} 
-          screenshotFormat="image/jpeg" 
-          videoConstraints={{ facingMode }}
-          className="w-full h-full object-cover"
-         />
-         
-         <button type="button" onClick={toggleCamera} className="absolute top-8 right-8 bg-black/40 backdrop-blur-xl p-5 rounded-full text-white border border-white/10 active:scale-90 transition-all hover:bg-blue-600 z-20">
-          <FlipHorizontal size={24} />
-         </button>
-
-         <div className="absolute bottom-8 left-0 w-full px-8 z-20">
-          <div className="bg-black/60 backdrop-blur-md p-4 rounded-3xl border border-white/10 text-center">
-            <p className="text-[10px] font-black text-blue-400 tracking-widest">Optical Alignment Sensor Active</p>
-          </div>
-         </div>
-       </div>
-       
-       <div className="flex gap-6 mt-12">
-        <button type="button" onClick={capturePhoto} className="bg-blue-600 text-white px-12 py-6 rounded-3xl font-black  shadow-2xl shadow-blue-500/20 active:scale-95 transition-all text-[10px]">Register Biometric</button>
-        <button type="button" onClick={() => setShowWebcam(false)} className="bg-white/5 text-white border border-white/10 px-10 py-6 rounded-3xl font-black  active:scale-95 transition-all text-[10px] hover:bg-white/10 group">
-          <ChevronLeft size={16} className="inline mr-2 group-hover:-translate-x-1 transition-transform" /> Abort Capture
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="premium-button w-full bg-slate-900 text-white hover:bg-blue-600 p-8 text-lg"
+        >
+          {loading ? <RefreshCw className="animate-spin" size={24} /> : <ShieldCheck size={24} />}
+          {loading ? 'Adding...' : 'Save Student Details'}
         </button>
-       </div>
       </motion.div>
-     )}
-    </AnimatePresence>
+     </form>
+    </div>
    </div>
-  </div>
- );
+  );
 };
-
-const StepIndicator = ({ step, current, label }: { step: number; current: number; label: string }) => (
- <div className={`flex items-center gap-4 transition-all duration-700 ${current >= step ? 'opacity-100' : 'opacity-30'}`}>
-   <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-[12px] transition-all ${
-    current === step ? 'bg-blue-600 text-white shadow-lg' : current > step ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
-   }`}>
-    {current > step ? <CheckCircle2 size={18} /> : step}
-   </div>
-   <span className={`text-[10px] font-black tracking-widest hidden md:block ${current === step ? 'text-slate-900' : 'text-slate-300'}`}>{label}</span>
- </div>
-);
-
 const InputField = ({ label, icon: Icon, ...props }: any) => (
  <div className="space-y-1 group">
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
