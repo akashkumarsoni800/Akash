@@ -67,7 +67,7 @@ const ManageSalaries = () => {
             <RefreshCw size={60} className="animate-spin text-indigo-600/20"/>
             <Database size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600" />
          </div>
-         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Institutional Ledger...</p>
+         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing School Ledger...</p>
       </div>
     );
   }
@@ -84,7 +84,7 @@ const ManageSalaries = () => {
                 <span className="text-indigo-600">Vault</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-indigo-500" /> Authorized Institutional Economic Oversight v4.2
+                <ShieldCheck size={12} className="text-indigo-500" /> Paid School Economic Oversight v4.2
               </p>
            </motion.div>
            
@@ -163,9 +163,9 @@ const ManageSalaries = () => {
                 <table className="w-full text-left">
                   <thead>
                     <tr className="text-[10px] font-black text-slate-300   bg-slate-50/30">
-                      <th className="px-12 py-8">Entity Identity</th>
+                      <th className="px-12 py-8">Record Identity</th>
                       <th className="px-12 py-8">Timeline</th>
-                      <th className="px-12 py-8 text-center">Payload</th>
+                      <th className="px-12 py-8 text-center">Total</th>
                       <th className="px-12 py-8 text-right">Classification</th>
                     </tr>
                   </thead>
@@ -192,7 +192,7 @@ const ManageSalaries = () => {
                            <span className={`px-5 py-2 rounded-xl text-[9px] font-black  tracking-widest border  ${
                              tx.teacher_name ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
                            }`}>
-                             {tx.teacher_name ? 'Disbursement' : 'Inward Fund'}
+                             {tx.teacher_name ? 'Payment' : 'Inward Fund'}
                            </span>
                         </td>
                       </tr>

@@ -39,7 +39,7 @@ const CreateAdmin = () => {
         throw new Error(data.error);
       }
 
-      toast.success(`New Admin Authorized: ${formData.full_name}`);
+      toast.success(`New Admin Paid: ${formData.full_name}`);
       toast.info("Access permissions propagated across institutional nodes.");
       
       setFormData({ full_name: '', email: '', password: '' });
@@ -61,10 +61,10 @@ const CreateAdmin = () => {
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Master<br/>
-                <span className="text-blue-600">Registry</span>
+                <span className="text-blue-600">Records</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Authorized Institutional Node Architect v4.2
+                <ShieldCheck size={12} className="text-blue-500" /> Paid School Node Architect v4.2
               </p>
            </motion.div>
  
@@ -183,7 +183,7 @@ const CreateAdmin = () => {
 
                  <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
                     <p className="text-[9px] font-black text-white/30   leading-relaxed">
-                       Notice: Registry induction logs are recorded in the institutional audit vault for perpetual monitoring. Sequential authorization required.
+                       Notice: Records induction logs are recorded in the institutional audit vault for perpetual monitoring. Sequential authorization required.
                     </p>
                  </div>
               </motion.div>
@@ -223,7 +223,7 @@ const CreateAdmin = () => {
         <div className="pt-12 text-center">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50 transition-opacity hover:opacity-100 group cursor-default">
               <Zap size={14} className="text-blue-500" />
-              <p className="text-[9px] font-black text-slate-400  tracking-widest transition-colors group-hover:text-blue-600">Institutional Standard ASM v4.2 Powered by Supabase Edge</p>
+              <p className="text-[9px] font-black text-slate-400  tracking-widest transition-colors group-hover:text-blue-600">School Standard ASM v4.2 Powered by Supabase Edge</p>
            </div>
         </div>
 

@@ -47,7 +47,7 @@ export default function ApprovalsManagement() {
 
       if (error) throw error;
       
-      toast.success(action === 'approved' ? "Identity Authorized ✅" : "Identity Purged ❌");
+      toast.success(action === 'approved' ? "Identity Paid ✅" : "Identity Purged ❌");
       fetchApprovals();
     } catch (err: any) {
       toast.error(err.message);
@@ -121,7 +121,7 @@ export default function ApprovalsManagement() {
                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200 shadow-inner">
                   <ShieldCheck size={48} />
                </div>
-               <h4 className="text-[10px] font-black text-slate-400   mb-2">Registry Compliant</h4>
+               <h4 className="text-[10px] font-black text-slate-400   mb-2">Records Compliant</h4>
                <p className="text-[9px] font-black text-slate-300  tracking-widest leading-relaxed">No pending identity verification requests found.</p>
             </div>
          )}

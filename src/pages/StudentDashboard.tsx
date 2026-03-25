@@ -112,7 +112,7 @@ export default function StudentDashboard() {
                    <p className="text-lg font-black text-slate-800 ">Class {student?.class_name}</p>
                 </div>
                 <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
-                   <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Registry No</p>
+                   <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Records No</p>
                    <p className="text-lg font-black text-slate-800 ">#{student?.roll_no}</p>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function StudentDashboard() {
              </div>
              
              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <ActionCard icon="💸" label="Fees Registry" path="/student/fees" color="emerald" navigate={navigate}/>
+                <ActionCard icon="💸" label="Fees Records" path="/student/fees" color="emerald" navigate={navigate}/>
                 <ActionCard icon="📊" label="Academic Data" path="/student/result" color="purple" navigate={navigate}/>
                 <ActionCard icon="📑" label="Homework Hub" path="/student/homework" color="amber" navigate={navigate}/>
                 <ActionCard icon="📅" label="Presence Log" path="/student/attendance" color="blue" navigate={navigate}/>
@@ -260,7 +260,7 @@ const ActionCard = ({ icon, label, path, color, navigate }: any) => {
        <div className="text-4xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">{icon}</div>
        <h4 className="font-black   text-lg leading-tight">{label}</h4>
        <div className="mt-4 flex items-center gap-2 text-[8px] font-black  tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-          Open Registry <ArrowRight size={10} />
+          Open Records <ArrowRight size={10} />
        </div>
     </button>
   );

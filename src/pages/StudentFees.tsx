@@ -92,7 +92,7 @@ const StudentFees = () => {
                        <User size={20} />
                     </div>
                     <div>
-                       <p className="text-[8px] font-black text-white/30  tracking-widest">Authorized Candidate</p>
+                       <p className="text-[8px] font-black text-white/30  tracking-widest">Paid Candidate</p>
                        <p className="text-sm font-black text-white   tracking-tight">{studentData?.full_name}</p>
                     </div>
                  </div>
@@ -185,7 +185,7 @@ const StudentFees = () => {
                       <Wallet size={40} className="text-slate-200"/>
                    </div>
                    <div className="space-y-2">
-                      <p className="text-slate-900 font-black   text-2xl ">Manifest Clean</p>
+                      <p className="text-slate-900 font-black   text-2xl ">List Clean</p>
                       <p className="text-[10px] font-black text-slate-300   ">No institutional billing nodes detected in current cycle.</p>
                    </div>
                 </div>
@@ -197,7 +197,7 @@ const StudentFees = () => {
         <div className="pt-12 text-center">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50">
               <ShieldCheck size={14} className="text-blue-500" />
-              <p className="text-[9px] font-black text-slate-400  tracking-widest">Institutional Standard ASM v3.0 Authorized</p>
+              <p className="text-[9px] font-black text-slate-400  tracking-widest">School Standard ASM v3.0 Paid</p>
            </div>
         </div>
 

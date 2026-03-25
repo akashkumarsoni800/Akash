@@ -178,7 +178,7 @@ const ProfileSetupPage = () => {
                 <span className="text-blue-600">Initialization</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Authorized Identity Calibration Flow
+                <ShieldCheck size={12} className="text-blue-500" /> Paid Identity Calibration Flow
               </p>
            </motion.div>
            
@@ -231,7 +231,7 @@ const ProfileSetupPage = () => {
 
                  <div className="grid gap-10">
                     <InputField 
-                      label="Institutional Nomenclature" 
+                      label="School Nomenclature" 
                       value={formData.full_name} 
                       onChange={(e: any) => setFormData({...formData, full_name: e.target.value})} 
                       icon={User}

@@ -68,7 +68,7 @@ const StudentAttendance = () => {
           <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
           <Activity size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
        </div>
-       <p className="font-black   text-slate-400 text-[10px] mt-8">Syncing Presence Manifest...</p>
+       <p className="font-black   text-slate-400 text-[10px] mt-8">Syncing Presence List...</p>
     </div>
   );
 
@@ -100,7 +100,7 @@ const StudentAttendance = () => {
                 <span className="text-blue-600">Analytics</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Institutional Presence & Activity Audit
+                <ShieldCheck size={12} className="text-blue-500" /> School Presence & Activity Audit
               </p>
            </motion.div>
            
@@ -136,7 +136,7 @@ const StudentAttendance = () => {
                  <div className="relative group/filter">
                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/filter:text-blue-500 transition-colors" size={14}/>
                     <select className="bg-white border border-slate-100 rounded-xl pl-10 pr-6 py-2 text-[9px] font-black  tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
-                       <option>Full Manifest</option>
+                       <option>Full List</option>
                        <option>Last 30 Cycles</option>
                        <option>Flagged Only</option>
                     </select>
@@ -189,7 +189,7 @@ const StudentAttendance = () => {
                 <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200 opacity-30 group">
                    <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
                    <div className="space-y-2">
-                      <h4 className="text-xl font-black text-slate-900   ">Registry Nullified</h4>
+                      <h4 className="text-xl font-black text-slate-900   ">Records Nullified</h4>
                       <p className="text-[9px] font-black text-slate-400  ">No presence records found in the current session cycle.</p>
                    </div>
                 </div>

@@ -74,7 +74,7 @@ const AddEvent = () => {
                 <span className="text-blue-600">Hub</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Authorize & Distribute Institutional Notices
+                <ShieldCheck size={12} className="text-blue-500" /> Authorize & Distribute School Notices
               </p>
            </motion.div>
            
@@ -111,7 +111,7 @@ const AddEvent = () => {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Institutional Maintenance Protocol"
+                        placeholder="e.g. School Maintenance Protocol"
                         className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-lg font-black text-slate-900 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner "
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -187,7 +187,7 @@ const AddEvent = () => {
                    </div>
                    
                    <div className="space-y-2">
-                      <p className="text-slate-500 font-black text-[9px]  tracking-widest">Content Payload</p>
+                      <p className="text-slate-500 font-black text-[9px]  tracking-widest">Content Total</p>
                       <p className="text-slate-400 text-sm leading-relaxed min-h-[8rem]">
                         {formData.description || "Synthesize content to generate preview payload..."}
                       </p>
@@ -210,7 +210,7 @@ const AddEvent = () => {
                    <Clock size={20} />
                 </div>
                 <p className="text-slate-600 font-black text-[10px]  tracking-widest leading-relaxed">
-                  Notices are instantly distributed to all active <span className="text-blue-600">Scholar Terminals</span>.
+                  Notices are instantly distributed to all active <span className="text-blue-600">Scholar Systems</span>.
                 </p>
              </div>
           </div>

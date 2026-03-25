@@ -217,7 +217,7 @@ const AddStudent = () => {
                 <span className="text-[var(--accent-admin)]">Onboarding</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Induction Protocol v4.2
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid School Induction Protocol v4.2
               </p>
            </motion.div>
 
@@ -227,7 +227,7 @@ const AddStudent = () => {
              </div>
              <div>
                <p className="text-[9px] font-black text-slate-400   mb-0.5 leading-none">Biometric Status</p>
-               <p className="text-xs font-black text-slate-900 ">Registry Link Active</p>
+               <p className="text-xs font-black text-slate-900 ">Records Link Active</p>
              </div>
            </div>
         </div>
@@ -236,7 +236,7 @@ const AddStudent = () => {
         <div className="bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-between px-10 relative">
            <StepIndicator step={1} current={step} label="Identity" />
            <div className="flex-1 h-px bg-slate-100 mx-4" />
-           <StepIndicator step={2} current={step} label="Registry" />
+           <StepIndicator step={2} current={step} label="Records" />
            <div className="flex-1 h-px bg-slate-100 mx-4" />
            <StepIndicator step={3} current={step} label="Verification" />
         </div>
@@ -263,7 +263,7 @@ const AddStudent = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <InputField label="Candidate Full Name *" name="name" placeholder="Akash Kumar" value={formData.name} onChange={handleChange} required icon={User} />
-                  <InputField label="Authorized Guardian *" name="father" placeholder="Father's Legal Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
+                  <InputField label="Paid Guardian *" name="father" placeholder="Father's Legal Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
                   
                   <div className="grid grid-cols-2 gap-6">
                     <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
@@ -298,7 +298,7 @@ const AddStudent = () => {
                      onClick={() => setStep(2)} 
                      className="premium-button-admin px-12"
                    >
-                     Initialize Registry <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                     Initialize Records <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                    </button>
                 </div>
               </motion.div>
@@ -340,7 +340,7 @@ const AddStudent = () => {
                   </div>
                 </div>
 
-                <InputField label="Institutional Email Node" name="email" type="email" placeholder="student@asm-portal.com" value={formData.email} onChange={handleChange} icon={Mail} />
+                <InputField label="School Email Node" name="email" type="email" placeholder="student@asm-portal.com" value={formData.email} onChange={handleChange} icon={Mail} />
 
                 <div className="pt-8 flex justify-between">
                    <button 
@@ -374,8 +374,8 @@ const AddStudent = () => {
                       <Camera size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-black text-slate-900   uppercase">Visual Registry</h2>
-                      <p className="text-[10px] font-black text-slate-300  tracking-widest leading-none">Biometric Capture Terminal</p>
+                      <h2 className="text-3xl font-black text-slate-900   uppercase">Visual Records</h2>
+                      <p className="text-[10px] font-black text-slate-300  tracking-widest leading-none">Biometric Capture System</p>
                    </div>
                 </div>
 
@@ -413,7 +413,7 @@ const AddStudent = () => {
                      onClick={() => setStep(2)} 
                      className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black   text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3"
                    >
-                     <ChevronLeft size={18} /> Modify Registry
+                     <ChevronLeft size={18} /> Modify Records
                    </button>
                    <button
                      type="submit"

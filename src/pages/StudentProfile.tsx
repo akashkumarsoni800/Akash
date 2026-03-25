@@ -69,7 +69,7 @@ const StudentProfile = () => {
         total: attRecords.length
       });
       
-      toast.success(`Profile Authorized: ${studentData.full_name}`);
+      toast.success(`Profile Paid: ${studentData.full_name}`);
 
     } catch (err: any) {
       console.error("Critical Error:", err);
@@ -130,7 +130,7 @@ const StudentProfile = () => {
            <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
            <Fingerprint size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
         </div>
-        <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Individual Registry...</p>
+        <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Individual Records...</p>
      </div>
   );
 
@@ -139,7 +139,7 @@ const StudentProfile = () => {
       <div className="w-32 h-32 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 mb-10 shadow-inner">
          <AlertCircle size={60} />
       </div>
-      <h1 className="text-5xl font-black text-slate-900    uppercase">Registry Error</h1>
+      <h1 className="text-5xl font-black text-slate-900    uppercase">Records Error</h1>
       <p className="text-slate-400 mt-4 font-black  tracking-widest text-xs">{error || "Reference node not found"}</p>
       <div className="flex gap-6 mt-12">
         <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[2rem] font-black  text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
@@ -164,7 +164,7 @@ const StudentProfile = () => {
           </div>
           <div className="bg-white px-6 py-3 rounded-full border border-slate-100 shadow-sm flex items-center gap-3">
              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-             <p className="text-[10px] font-black text-slate-400  tracking-widest ">Registry Live</p>
+             <p className="text-[10px] font-black text-slate-400  tracking-widest ">Records Live</p>
           </div>
         </div>
 
@@ -240,7 +240,7 @@ const StudentProfile = () => {
               </div>
               
               <div className="space-y-10 relative z-10">
-                <DossierItem icon={User} label="Institutional ID" value={student.student_id} />
+                <DossierItem icon={User} label="School ID" value={student.student_id} />
                 <DossierItem icon={User} label="Paternal Authority" value={student.father_name} />
                 <DossierItem icon={Phone} label="Emergency Node" value={student.contact_number} />
                 <DossierItem icon={MapPin} label="Geospatial Hub" value={student.address} />
@@ -248,7 +248,7 @@ const StudentProfile = () => {
 
               <div className="pt-8 border-t border-slate-50 opacity-30 flex items-center justify-center gap-3">
                  <ShieldCheck size={14} />
-                 <p className="text-[8px] font-black   ">End-to-End Encrypted Registry</p>
+                 <p className="text-[8px] font-black   ">End-to-End Encrypted Records</p>
               </div>
             </motion.div>
 
@@ -303,7 +303,7 @@ const StudentProfile = () => {
               
               <div className="p-12 space-y-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <MiniStatCard label="Institutional Cost" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
+                  <MiniStatCard label="School Cost" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
                   <MiniStatCard label="Released Fund" value={`₹${paidFees.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
                   <MiniStatCard label="Outstanding" value={`₹${dueFees.toLocaleString()}`} icon={ArrowDownRight} color={dueFees > 0 ? "rose" : "emerald"} />
                 </div>

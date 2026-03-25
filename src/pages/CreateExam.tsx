@@ -73,10 +73,10 @@ const CreateExam = () => {
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Exam<br/>
-                <span className="text-purple-600">Terminal</span>
+                <span className="text-purple-600">System</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-purple-500" /> Authorized Scholastic Assessment Architect
+                <ShieldCheck size={12} className="text-purple-500" /> Paid Scholastic Assessment Architect
               </p>
            </motion.div>
 
@@ -106,7 +106,7 @@ const CreateExam = () => {
                    <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
                       <Layout size={20} />
                    </div>
-                   <h2 className="text-2xl font-black text-slate-900    uppercase">Manifest Parameters</h2>
+                   <h2 className="text-2xl font-black text-slate-900    uppercase">List Parameters</h2>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8">
@@ -217,8 +217,8 @@ const CreateExam = () => {
               <div className="bg-slate-900 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 blur-3xl group-hover:bg-purple-500/40 transition-all duration-1000" />
                  <div className="relative z-10 space-y-2">
-                    <p className="text-[10px] font-black text-purple-400   ">Institutional Insight</p>
-                    <h3 className="text-4xl font-black   leading-none  uppercase">Assessment<br/>Matrix</h3>
+                    <p className="text-[10px] font-black text-purple-400   ">School Insight</p>
+                    <h3 className="text-4xl font-black   leading-none  uppercase">Assessment<br/>Table</h3>
                  </div>
 
                  <div className="space-y-6 relative z-10">
@@ -231,7 +231,7 @@ const CreateExam = () => {
                        <p className="text-xl font-black   text-blue-400 ">{examDate ? 'Scheduled' : 'Pending'}</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-6">
-                       <p className="text-[10px] font-black text-slate-400  tracking-widest">Authorized Level</p>
+                       <p className="text-[10px] font-black text-slate-400  tracking-widest">Paid Level</p>
                        <p className="text-xl font-black   text-purple-400 ">Lvl 07 Admin</p>
                     </div>
                  </div>

@@ -98,13 +98,13 @@ const DocumentHub = () => {
                 <span className="text-purple-600">Archive</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-purple-500" /> Authorized Institutional Document Generation & Registry Hub v4.2
+                <ShieldCheck size={12} className="text-purple-500" /> Paid School Document Generation & Records Hub v4.2
               </p>
            </motion.div>
  
            <div className="hidden lg:flex items-center gap-4 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
               <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-              <span className="text-[10px] font-black  tracking-widest text-slate-400">Secure Registry Link Active</span>
+              <span className="text-[10px] font-black  tracking-widest text-slate-400">Secure Records Link Active</span>
            </div>
         </div>
 
@@ -128,7 +128,7 @@ const DocumentHub = () => {
               className="premium-button-admin w-full md:w-auto bg-slate-900 text-white hover:bg-purple-600 border-none shadow-xl"
             >
               {loading ? <RefreshCw className="animate-spin" size={20}/> : <Users size={20}/>}
-              <span>{loading ? 'Analyzing...' : 'Access Registry'}</span>
+              <span>{loading ? 'Analyzing...' : 'Access Records'}</span>
             </button>
           </div>
 
@@ -149,7 +149,7 @@ const DocumentHub = () => {
             >
               <option value="" className="text-slate-900">Select Cohort</option>
               {['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(cls => (
-                <option key={cls} value={cls} className="text-slate-900">Class {cls} Registry</option>
+                <option key={cls} value={cls} className="text-slate-900">Class {cls} Records</option>
               ))}
             </select>
             <button id="class-fetch-btn" onClick={fetchStudent} className="hidden"></button>
@@ -164,10 +164,10 @@ const DocumentHub = () => {
               animate={{ opacity: 1, y: 0 }}
               className="no-print grid grid-cols-2 md:grid-cols-5 gap-6"
             >
-               <PremiumDocBtn icon={CreditCard} label="Identity Manifest" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} accent="purple" />
+               <PremiumDocBtn icon={CreditCard} label="Identity List" active={activeDoc === 'ICARD'} onClick={() => setActiveDoc('ICARD')} accent="purple" />
                <PremiumDocBtn icon={FileText} label="Transfer Certificate" active={activeDoc === 'TC'} onClick={() => setActiveDoc('TC')} accent="slate" />
                <PremiumDocBtn icon={Award} label="Birth Authorization" active={activeDoc === 'DOB'} onClick={() => setActiveDoc('DOB')} accent="indigo" />
-               <PremiumDocBtn icon={Layout} label="Admit Terminal (Bulk)" active={activeDoc === 'ADMIT'} onClick={() => setActiveDoc('ADMIT')} accent="purple" />
+               <PremiumDocBtn icon={Layout} label="Admit System (Bulk)" active={activeDoc === 'ADMIT'} onClick={() => setActiveDoc('ADMIT')} accent="purple" />
                <PremiumDocBtn icon={DoorOpen} label="Operational Gate Pass" active={activeDoc === 'GATE'} onClick={() => setActiveDoc('GATE')} accent="rose" />
             </motion.div>
           )}
@@ -183,7 +183,7 @@ const DocumentHub = () => {
             >
                <div className="flex justify-between items-center border-b border-slate-50 pb-8">
                   <h3 className="font-black text-slate-900  tracking-widest flex items-center gap-4 uppercase">
-                     <Users className="text-purple-600" /> {student ? "Manifest Target Selected" : `Extracted Records (${studentsList.length})`}
+                     <Users className="text-purple-600" /> {student ? "List Target Selected" : `Extracted Records (${studentsList.length})`}
                   </h3>
                   <div className="flex items-center gap-3 bg-purple-50 px-4 py-2 rounded-xl">
                      <Zap size={14} className="text-purple-600" />
@@ -360,7 +360,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
            <div className="text-center flex-1 mx-4">
               <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Adarsh Shishu Mandir</h2>
               <p className="text-[8px] font-black text-slate-400 mt-1   leading-none">Basantpatti, Purnahiya (Sheohar) Bihar</p>
-              <div className="inline-block bg-slate-900 text-white px-8 py-1.5 rounded-full text-[10px] font-black   mt-3">Annual Examination Admit Terminal 2026</div>
+              <div className="inline-block bg-slate-900 text-white px-8 py-1.5 rounded-full text-[10px] font-black   mt-3">Annual Examination Admit System 2026</div>
            </div>
 
            <div className="w-[80px] h-[80px] flex flex-col items-center justify-center border border-slate-100 rounded-2xl bg-slate-50/50">
@@ -380,7 +380,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
                </div>
              )}
              <div className="absolute bottom-0 w-full bg-slate-900/90 py-1 text-center">
-                <p className="text-[7px] font-black text-white  tracking-widest">Authorized</p>
+                <p className="text-[7px] font-black text-white  tracking-widest">Paid</p>
              </div>
           </div>
 
@@ -388,13 +388,13 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
              <AdmitDetailRow label="Candidate Identity" value={std.full_name} isLarge />
              <div className="grid grid-cols-2 gap-8">
                 <AdmitDetailRow label="Enrollment Node" value={std.roll_no} />
-                <AdmitDetailRow label="Registry Cohort" value={std.class_name} />
+                <AdmitDetailRow label="Records Cohort" value={std.class_name} />
              </div>
-             <AdmitDetailRow label="Authorized Guardian" value={std.father_name} />
+             <AdmitDetailRow label="Paid Guardian" value={std.father_name} />
              <div className="flex justify-between items-center bg-slate-50 px-5 py-2.5 rounded-2xl border border-slate-100">
                 <div className="flex items-center gap-3">
                    <Zap size={10} className="text-purple-600" />
-                   <p className="text-[8px] font-black text-slate-400  tracking-widest">Institutional UUID:</p>
+                   <p className="text-[8px] font-black text-slate-400  tracking-widest">School UUID:</p>
                 </div>
                 <p className="text-sm font-mono font-black text-slate-900">{std.student_id}</p>
              </div>
@@ -404,7 +404,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         <div className="space-y-3">
            <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800 shadow-xl">
               <p className="text-[9px] font-black text-white  text-center leading-tight  ">
-                ❗ Institutional Security Protocol: Electronic devices prohibited in terminal zones.
+                ❗ School Security Protocol: Electronic devices prohibited in terminal zones.
               </p>
            </div>
            <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl flex justify-between items-center">
@@ -421,7 +421,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
 
         <div className="mt-6 flex justify-between items-end border-t-2 border-slate-100 pt-6">
             <div className="text-center space-y-2">
-              <p className="text-[8px] font-black  text-slate-300 tracking-widest leading-none">Seal Registry</p>
+              <p className="text-[8px] font-black  text-slate-300 tracking-widest leading-none">Seal Records</p>
               <div className="w-24 h-12 border-2 border-dashed border-slate-100 rounded-[1.5rem] flex items-center justify-center bg-slate-50/30">
                  <img src="/logo.png" alt="" className="w-8 h-8 opacity-20 grayscale" />
               </div>
@@ -460,7 +460,7 @@ const TCTemplate = ({ student }: any) => (
     <div>
       <div className="text-center border-b-4 border-slate-900 pb-8 mb-16 space-y-3">
         <h1 className="text-6xl font-black   text-slate-900 leading-none  uppercase">Adarsh Shishu Mandir</h1>
-        <p className="text-xs font-black   text-slate-400">Institutional Transfer Protocol • UDise: 10032201107</p>
+        <p className="text-xs font-black   text-slate-400">School Transfer Protocol • UDise: 10032201107</p>
       </div>
       
       <div className="space-y-12 py-10">
@@ -480,7 +480,7 @@ const TCTemplate = ({ student }: any) => (
     <div className="flex justify-between items-end pb-12 font-black  text-xs   px-10">
        <div className="text-center space-y-4">
           <div className="w-56 h-[1.5px] bg-slate-200" />
-          <p className="text-slate-300">Authorized Faculty</p>
+          <p className="text-slate-300">Paid Faculty</p>
        </div>
        <div className="text-center space-y-4">
           <div className="w-56 h-[1.5px] bg-slate-900" />
@@ -551,7 +551,7 @@ const GatePassTemplate = ({ student }: any) => (
     
     <div className="flex justify-between items-center border-b-2 border-rose-100 pb-3 mb-4">
        <h2 className="text-2xl font-black  text-rose-600  leading-none  uppercase">Gate Pass</h2>
-       <div className="bg-rose-600 text-white px-4 py-1 rounded-full text-[9px] font-black  tracking-widest ">Authorized</div>
+       <div className="bg-rose-600 text-white px-4 py-1 rounded-full text-[9px] font-black  tracking-widest ">Paid</div>
     </div>
     
     <div className="space-y-3">

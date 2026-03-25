@@ -168,7 +168,7 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-20 text-center opacity-40">
-              <p className="text-[10px] font-black text-slate-400  ">Authorized Access Protocol v4.0</p>
+              <p className="text-[10px] font-black text-slate-400  ">Paid Access Protocol v4.0</p>
             </div>
           </motion.div>
         ) : (

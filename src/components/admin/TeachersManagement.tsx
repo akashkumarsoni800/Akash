@@ -105,7 +105,7 @@ export default function TeachersManagement() {
       {/* --- TOP BAR --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div className="space-y-1">
-            <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Faculty Registry</h3>
+            <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Faculty Records</h3>
             <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Academic Personnel Management v4.2</p>
          </div>
          <button 
@@ -150,7 +150,7 @@ export default function TeachersManagement() {
                         </div>
                         <div className="flex items-center gap-3 text-slate-400">
                            <Phone size={14} className="text-slate-200" />
-                           <p className="text-[10px] font-black tracking-tight">{t.phone || 'No Registry Contact'}</p>
+                           <p className="text-[10px] font-black tracking-tight">{t.phone || 'No Records Contact'}</p>
                         </div>
                      </div>
                   </div>

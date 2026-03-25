@@ -109,7 +109,7 @@ const TeacherHomework: React.FC = () => {
           <RefreshCw size={60} className="animate-spin text-emerald-600/20"/>
           <Layout size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-emerald-600" />
        </div>
-       <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Distribution Manifest...</p>
+       <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Distribution List...</p>
     </div>
   );
 
@@ -125,7 +125,7 @@ const TeacherHomework: React.FC = () => {
                 <span className="text-emerald-600">Distribution</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-emerald-500" /> Authorized Scholastic Task Emission & Oversight Terminal
+                <ShieldCheck size={12} className="text-emerald-500" /> Paid Scholastic Task Emission & Oversight System
               </p>
            </motion.div>
 
@@ -234,7 +234,7 @@ const TeacherHomework: React.FC = () => {
                  <div className="space-y-4">
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900   leading-none  uppercase">
                        Submission<br/>
-                       <span className="text-emerald-600">Terminal</span>
+                       <span className="text-emerald-600">System</span>
                     </h2>
                     <div className="flex items-center gap-4">
                        <span className="bg-slate-900 text-white px-5 py-1.5 rounded-full text-[9px] font-black  tracking-widest ">{selectedHW.title}</span>

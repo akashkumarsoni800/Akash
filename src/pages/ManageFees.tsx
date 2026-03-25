@@ -154,7 +154,7 @@ const ManageFees = () => {
             <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
             <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
          </div>
-         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Fiscal Manifest...</p>
+         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Fiscal List...</p>
       </div>
     );
   }
@@ -171,7 +171,7 @@ const ManageFees = () => {
                 <span className="text-[var(--accent-admin)]">Oversight</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Billing Suite v4.2
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid School Billing Suite v4.2
               </p>
            </motion.div>
 
@@ -179,7 +179,7 @@ const ManageFees = () => {
              <button 
                onClick={() => setBulkMode(false)} 
                className={`px-10 py-4 rounded-2xl font-black text-[10px]  tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
-               Single Registry
+               Single Records
              </button>
              <button 
                onClick={() => setBulkMode(true)} 
@@ -207,10 +207,10 @@ const ManageFees = () => {
                           Fiscal<br/>
                           <span className="text-[var(--accent-admin)]">Assignment</span>
                         </h2>
-                        <p className="text-[10px] font-black text-slate-400  tracking-widest leading-none mt-1">Manual Account Distribution Terminal</p>
+                        <p className="text-[10px] font-black text-slate-400  tracking-widest leading-none mt-1">Manual Account Distribution System</p>
                       </div>
                       <div className="px-6 py-2.5 bg-blue-50 rounded-2xl text-[10px] font-black text-blue-600  tracking-widest border border-blue-100 shadow-sm">
-                        Registry Active
+                        Records Active
                       </div>
                    </div>
 

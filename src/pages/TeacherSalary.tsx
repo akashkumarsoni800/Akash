@@ -84,7 +84,7 @@ const TeacherSalary = () => {
       const teacher = teachers.find(t => t.id === newSalary.teacher_id);
       const netSalary = calculateNetSalary();
       
-      const rawPayload: any = {
+      const rawTotal: any = {
         teacher_name: teacher?.full_name || newSalary.teacher_name,
         designation: teacher?.role || newSalary.designation,
         teacher_id: newSalary.teacher_id,
@@ -97,20 +97,20 @@ const TeacherSalary = () => {
         deductions: newSalary.deductions
       };
 
-      const finalPayload: any = {};
+      const finalTotal: any = {};
       if (dbColumns.length > 0) {
         dbColumns.forEach(col => {
-          if (rawPayload[col] !== undefined) finalPayload[col] = rawPayload[col];
+          if (rawTotal[col] !== undefined) finalTotal[col] = rawTotal[col];
         });
       } else {
-        finalPayload.teacher_name = rawPayload.teacher_name;
-        finalPayload.teacher_id = rawPayload.teacher_id;
-        finalPayload.month = rawPayload.month;
-        finalPayload.net_salary = rawPayload.net_salary;
-        finalPayload.status = rawPayload.status;
+        finalTotal.teacher_name = rawTotal.teacher_name;
+        finalTotal.teacher_id = rawTotal.teacher_id;
+        finalTotal.month = rawTotal.month;
+        finalTotal.net_salary = rawTotal.net_salary;
+        finalTotal.status = rawTotal.status;
       }
 
-      const { error } = await supabase.from('teacher_salaries').insert([finalPayload]);
+      const { error } = await supabase.from('teacher_salaries').insert([finalTotal]);
       if (error) throw error;
       
       toast.success('✅ Salary record authorized!');
@@ -141,7 +141,7 @@ const TeacherSalary = () => {
         .eq('id', salaryId);
       
       if (error) throw error;
-      toast.success('✅ Disbursement Released!');
+      toast.success('✅ Payment Released!');
       fetchData();
     } catch (error: any) {
       toast.error('Failed to update status');
@@ -159,7 +159,7 @@ const TeacherSalary = () => {
              <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
              <CreditCard size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
           </div>
-          <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Payroll Terminal...</p>
+          <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Payroll System...</p>
        </div>
     );
   }
@@ -172,18 +172,18 @@ const TeacherSalary = () => {
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
-                Payroll<br/>
-                <span className="text-[var(--accent-admin)]">Operations</span>
+                Teacher<br/>
+                <span className="text-[var(--accent-admin)]">Salaries</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Compensation Terminal v4.2
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid School Salary System v4.2
               </p>
            </motion.div>
            
            <div className="bg-white border border-slate-100 rounded-[3rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
              <div>
-                <p className="text-[10px] font-black text-slate-400   mb-2 leading-none">Cumulative Payload</p>
+                <p className="text-[10px] font-black text-slate-400   mb-2 leading-none">Total Amount</p>
                 <p className="text-4xl font-black text-slate-900   leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
              </div>
            </div>
@@ -203,13 +203,13 @@ const TeacherSalary = () => {
                <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
                   <Receipt size={30} />
                </div>
-               <h2 className="text-4xl font-black text-slate-900   leading-none uppercase">Disbursement<br/><span className="text-[var(--accent-admin)] uppercase">Entry</span></h2>
+               <h2 className="text-4xl font-black text-slate-900   leading-none uppercase">Add<br/><span className="text-[var(--accent-admin)] uppercase">Salary</span></h2>
             </div>
             
             <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                  <div className="space-y-3 group">
-                    <label className="text-[10px] font-black text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Faculty Identity</label>
+                    <label className="text-[10px] font-black text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Select Teacher</label>
                     <div className="relative">
                        <UserCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
                        <select 
@@ -259,7 +259,7 @@ const TeacherSalary = () => {
                   {(!dbColumns.includes('basic_salary') && dbColumns.length > 0) ? (
                     <div className="relative z-10">
                       <InputField 
-                        label="Total Disbursement Amount" 
+                        label="Total Payment Amount" 
                         type="number" 
                         value={newSalary.basic_salary || ''}
                         prefix="INR"
@@ -271,7 +271,7 @@ const TeacherSalary = () => {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                       <InputField 
-                        label="Base Compensation" 
+                        label="Base Salary" 
                         type="number" 
                         value={newSalary.basic_salary || ''}
                         prefix="INR"
@@ -331,7 +331,7 @@ const TeacherSalary = () => {
                  <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                     <div className="text-center md:text-left">
-                       <p className="text-[10px] font-black  text-blue-400  mb-2 leading-none">Net Institutional Payload</p>
+                       <p className="text-[10px] font-black  text-blue-400  mb-2 leading-none">Net School Total</p>
                        <h2 className="text-5xl md:text-6xl font-black  leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
                     </div>
                     <button 
@@ -340,7 +340,7 @@ const TeacherSalary = () => {
                       className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl"
                     >
                       {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
-                      {loading ? 'Authenticating...' : 'Authorize Disbursement'}
+                      {loading ? 'Authenticating...' : 'Authorize Payment'}
                     </button>
                  </div>
               </div>
@@ -355,8 +355,8 @@ const TeacherSalary = () => {
           >
             <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
                <div className="space-y-3">
-                  <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Archive<br/><span className="text-[var(--accent-admin)] uppercase">Manifest</span></h2>
-                  <p className="text-[9px] font-black text-slate-400   leading-none">Historical Disbursement Registry</p>
+                   <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Salary<br/><span className="text-[var(--accent-admin)] uppercase">History</span></h2>
+                  <p className="text-[9px] font-black text-slate-400   leading-none">Historical Payment Records</p>
                </div>
                <div className="flex flex-col items-end gap-2">
                   <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-2xl text-[10px] font-black border border-blue-100 shadow-sm">
@@ -373,7 +373,7 @@ const TeacherSalary = () => {
               {salaries.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-48">
                   <Wallet size={100} className="mb-10 text-slate-200" />
-                  <p className="text-[12px] font-black   text-slate-400">Manifest Clean</p>
+                  <p className="text-[12px] font-black   text-slate-400">List Clean</p>
                 </div>
               ) : (
                 salaries.map((salary: any, idx: number) => (

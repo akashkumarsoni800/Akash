@@ -61,11 +61,11 @@ const StudentNotices = () => {
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
-                Institutional<br/>
+                School<br/>
                 <span className="text-blue-600">Bulletin</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Official Communications & Registry Updates
+                <ShieldCheck size={12} className="text-blue-500" /> Official Communications & Records Updates
               </p>
            </motion.div>
            
@@ -102,7 +102,7 @@ const StudentNotices = () => {
                           <div className="space-y-1">
                              <h3 className="text-2xl md:text-4xl font-black text-slate-900    leading-none uppercase">{notice.title}</h3>
                              <p className="text-[10px] font-black text-slate-400  tracking-widest flex items-center gap-2">
-                                <Zap size={10} className="text-blue-500" /> Authorized Publication
+                                <Zap size={10} className="text-blue-500" /> Paid Publication
                              </p>
                           </div>
                        </div>
@@ -139,7 +139,7 @@ const StudentNotices = () => {
             >
                <div className="w-32 h-32 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📭</div>
                <div className="space-y-4">
-                  <h3 className="text-3xl font-black text-slate-900    uppercase">Manifest Locked</h3>
+                  <h3 className="text-3xl font-black text-slate-900    uppercase">List Locked</h3>
                   <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]   leading-relaxed px-10">
                     The priority broadcast channel is currently silent. Please maintain operational focus until further updates are authorized.
                   </p>

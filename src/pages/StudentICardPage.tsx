@@ -50,7 +50,7 @@ const StudentICardPage = () => {
         <div className="text-center space-y-3">
           <div className="inline-block bg-indigo-50 px-4 py-1.5 rounded-full text-[9px] font-black text-indigo-600   mb-2">Electronic Credentials</div>
           <h1 className="text-4xl md:text-6xl font-black text-gray-900   leading-none uppercase">Student ID Card</h1>
-          <p className="text-gray-400 font-black text-[10px]  ">Official Institutional Identity</p>
+          <p className="text-gray-400 font-black text-[10px]  ">Official School Identity</p>
         </div>
 
         <div className="flex flex-col items-center bg-white rounded-[4rem] p-10 md:p-20 shadow-2xl border border-gray-100 relative overflow-hidden">

@@ -55,7 +55,7 @@ export default function StudentsManagement() {
       {/* --- TOP BAR & FILTERS --- */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
          <div className="space-y-1 text-left">
-            <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Personnel Registry</h3>
+            <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Personnel Records</h3>
             <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
          </div>
  
@@ -89,7 +89,7 @@ export default function StudentsManagement() {
             <table className="w-full text-left min-w-[800px]">
                <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black text-slate-400  ">
-                     <th className="px-10 py-6">Registry Position</th>
+                     <th className="px-10 py-6">Records Position</th>
                      <th className="px-10 py-6">Scholar Identity</th>
                      <th className="px-10 py-6 text-center">Batch Logic</th>
                      <th className="px-10 py-6">Parent Identity</th>

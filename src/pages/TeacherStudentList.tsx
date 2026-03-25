@@ -108,7 +108,7 @@ const StudentList: React.FC = () => {
                 <span className="text-emerald-600">Liaison</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-emerald-500" /> Authorized Scholar Directory & Performance Hub v4.2
+                <ShieldCheck size={12} className="text-emerald-500" /> Paid Scholar Directory & Performance Hub v4.2
               </p>
            </motion.div>
            

@@ -129,10 +129,10 @@ const UploadResult = () => {
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Academic<br/>
-                <span className="text-emerald-600">Registry</span>
+                <span className="text-emerald-600">Records</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <Target size={12} className="text-emerald-500" /> Scholastic Performance Ledger & Registry v4.2
+                <Target size={12} className="text-emerald-500" /> Scholastic Performance Ledger & Records v4.2
               </p>
            </motion.div>
            
@@ -172,7 +172,7 @@ const UploadResult = () => {
                   className="premium-input w-full appearance-none  !text-[10px]"
                   onChange={(e) => setClassFilter(e.target.value)}
                 >
-                  {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'Manifest: All Classes' : `Manifest: ${c}`}</option>)}
+                  {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'List: All Classes' : `List: ${c}`}</option>)}
                 </select>
               </div>
             </div>
@@ -217,7 +217,7 @@ const UploadResult = () => {
                   </div>
                   <div className="flex items-center gap-3 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100">
                      <Award size={20} />
-                     <span className="text-xs font-black  tracking-widest">Merit Authorized</span>
+                     <span className="text-xs font-black  tracking-widest">Merit Paid</span>
                   </div>
                 </div>
 
@@ -231,7 +231,7 @@ const UploadResult = () => {
                          onChange={(e) => handleExamSelect(e.target.value)}
                          value={selectedExamId}
                        >
-                         <option value="">Choose Exam Manifest</option>
+                         <option value="">Choose Exam List</option>
                          {exams.map((e:any) => <option key={e.id} value={e.id}>{e.exam_name || e.title} ({e.session_year || 'Current'})</option>)}
                        </select>
                     </div>
@@ -319,7 +319,7 @@ const UploadResult = () => {
                       className="premium-button-admin flex-1 bg-emerald-600 hover:bg-emerald-700 border-none shadow-xl shadow-emerald-100"
                     >
                       {loading ? <CheckCircle className="animate-spin" size={18}/> : <FileUp size={18}/>}
-                      {loading ? 'Authenticating Registry...' : 'Authorize Result Entry'}
+                      {loading ? 'Authenticating Records...' : 'Authorize Result Entry'}
                     </button>
                     <button 
                       type="button" 
@@ -336,7 +336,7 @@ const UploadResult = () => {
                 <div className="w-32 h-32 bg-slate-100 rounded-[3rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <User size={60} className="text-slate-400" />
                 </div>
-                <h3 className="text-3xl font-black text-slate-900   mb-4 uppercase">Manifest Locked</h3>
+                <h3 className="text-3xl font-black text-slate-900   mb-4 uppercase">List Locked</h3>
                 <p className="max-w-xs text-[10px] font-black text-slate-400   leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
               </div>
             )}

@@ -349,11 +349,11 @@ export default function TeacherDashboard() {
 
           <ActionCard 
             icon={BarChart3} 
-            title="Result Registry" 
+            title="Result Records" 
             desc="Academic KPI Management"
             onClick={() => navigate('/teacher/upload-result')}
             color="amber"
-            status="Live Registry Ready"
+            status="Live Records Ready"
           />
 
           <ActionCard 
@@ -410,7 +410,7 @@ export default function TeacherDashboard() {
               onClick={() => navigate('/profile-setup')}
               className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[10px]   shadow-xl transition-all active:scale-95"
             >
-              Manage Profile Registry
+              Manage Profile Records
             </button>
           </motion.div>
         </div>
@@ -425,7 +425,7 @@ export default function TeacherDashboard() {
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-emerald-600 mb-8 shadow-inner relative z-10">
             <RefreshCw size={32} className="animate-spin-slow" />
           </div>
-          <h4 className="text-2xl font-black text-slate-900   mb-2 relative z-10">Command Sync Terminal</h4>
+          <h4 className="text-2xl font-black text-slate-900   mb-2 relative z-10">Command Sync System</h4>
           <p className="text-[10px] font-black text-slate-400  tracking-widest mb-10 relative z-10">
             Last Integrity Check: {new Date().toLocaleTimeString()} • REAL-TIME ACTIVE
           </p>

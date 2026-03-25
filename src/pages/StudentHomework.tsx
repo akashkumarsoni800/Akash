@@ -68,7 +68,7 @@ const StudentHomework = () => {
           <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
           <BookOpen size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
        </div>
-       <p className="font-black   text-slate-400 text-[10px] mt-8 text-center">Syncing Assignment Manifest...</p>
+       <p className="font-black   text-slate-400 text-[10px] mt-8 text-center">Syncing Assignment List...</p>
     </div>
   );
 
@@ -100,7 +100,7 @@ const StudentHomework = () => {
                 <span className="text-purple-600">Assets</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-purple-500" /> Authorized Scholastic Tasks & Resource Manifest
+                <ShieldCheck size={12} className="text-purple-500" /> Paid Scholastic Tasks & Resource List
               </p>
            </motion.div>
            
@@ -159,7 +159,7 @@ const StudentHomework = () => {
                           </div>
 
                           <p className="text-slate-600 font-black text-lg leading-relaxed max-w-2xl border-l-[6px] border-slate-50 pl-8 py-2 group-hover:border-purple-100 transition-colors">
-                            {hw.description || 'Institutional instructions for this task manifest have not been detailed. Please consult individual faculty nodes.'}
+                            {hw.description || 'School instructions for this task manifest have not been detailed. Please consult individual faculty nodes.'}
                           </p>
                        </div>
 

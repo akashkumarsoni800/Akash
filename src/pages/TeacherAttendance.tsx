@@ -73,7 +73,7 @@ const TeacherAttendance = () => {
 
       const { error } = await supabase.from('attendance').upsert(records, { onConflict: 'student_id, date' });
       if (error) throw error;
-      toast.success(`Registry updated: Class ${selectedClass} presence secured.`);
+      toast.success(`Records updated: Class ${selectedClass} presence secured.`);
     } catch (e: any) {
       toast.error(e.message);
     } finally {
@@ -97,10 +97,10 @@ const TeacherAttendance = () => {
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
               <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Presence<br/>
-                <span className="text-blue-600">Registry</span>
+                <span className="text-blue-600">Records</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
-                <ShieldCheck size={12} className="text-blue-500" /> Faculty Log & Registry Protocol
+                <ShieldCheck size={12} className="text-blue-500" /> Faculty Log & Records Protocol
               </p>
            </motion.div>
            
@@ -118,7 +118,7 @@ const TeacherAttendance = () => {
           <div className="md:col-span-3">
              <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-xl transition-all duration-500">
                 <div className="w-full md:w-1/3 space-y-3">
-                  <label className="text-[9px] font-black text-slate-400  tracking-widest ml-2">Select Target Manifest</label>
+                  <label className="text-[9px] font-black text-slate-400  tracking-widest ml-2">Select Target List</label>
                   <div className="relative group/sel">
                     <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/sel:text-blue-500 transition-colors" size={18} />
                     <select 
@@ -126,7 +126,7 @@ const TeacherAttendance = () => {
                       value={selectedClass}
                       onChange={(e) => setSelectedClass(e.target.value)}
                     >
-                      <option value="">Choose Class Manifest</option>
+                      <option value="">Choose Class List</option>
                       {classList.map(c => <option key={c} value={c}>Class Protocol: {c}</option>)}
                     </select>
                     <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within/sel:rotate-90 transition-transform" size={14} />
@@ -153,7 +153,7 @@ const TeacherAttendance = () => {
                     className="w-full md:w-auto px-10 py-6 bg-slate-900 text-white rounded-[2rem] font-black  tracking-widest text-[11px] shadow-2xl shadow-slate-200 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 "
                   >
                     {loading ? <CheckCircle2 className="animate-spin" size={18}/> : <CheckSquare size={18}/>}
-                    Secure Registry
+                    Secure Records
                   </button>
                 )}
              </div>
@@ -181,7 +181,7 @@ const TeacherAttendance = () => {
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <h2 className="text-2xl font-black text-slate-800  tracking-tight flex items-center gap-3  uppercase">
                   <span className="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-xs">01</span>
-                  Presence Manifest <span className="text-slate-300 ml-2">Class {selectedClass}</span>
+                  Presence List <span className="text-slate-300 ml-2">Class {selectedClass}</span>
                 </h2>
                 
                 <div className="relative group/search w-full md:w-80">

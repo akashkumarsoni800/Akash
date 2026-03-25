@@ -68,7 +68,7 @@ const ManageInventory = () => {
             <RefreshCw size={60} className="animate-spin text-amber-600/20"/>
             <Box size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-amber-600" />
          </div>
-         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Logistics Manifest...</p>
+         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Logistics List...</p>
       </div>
     );
   }
@@ -85,7 +85,7 @@ const ManageInventory = () => {
                 <span className="text-amber-500">Command</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
-                <ShieldCheck size={12} className="text-amber-500" /> Authorized Institutional Asset Tracking Suite v4.2
+                <ShieldCheck size={12} className="text-amber-500" /> Paid School Asset Tracking Suite v4.2
               </p>
            </motion.div>
            
@@ -112,7 +112,7 @@ const ManageInventory = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card p-10 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 opacity-20 rounded-full -mr-20 -mt-20 transition-transform group-hover:scale-110"></div>
-              <p className="text-[9px] font-black text-slate-300   mb-10">Institutional Valuation</p>
+              <p className="text-[9px] font-black text-slate-300   mb-10">School Valuation</p>
               <div className="space-y-2">
                  <p className="text-5xl font-black text-slate-900  leading-none">₹ {items.reduce((sum, item) => sum + Number(item.total_value), 0).toLocaleString()}</p>
                  <div className="flex items-center gap-2">
@@ -166,8 +166,8 @@ const ManageInventory = () => {
            
            <div className="p-10 md:p-14 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8 bg-slate-50/20">
               <div className="space-y-3 text-center md:text-left">
-                 <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Asset<br/><span className="text-amber-600 uppercase">Manifest</span></h2>
-                 <p className="text-[9px] font-black text-slate-400   leading-none">Logistics Oversight Terminal</p>
+                 <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Asset<br/><span className="text-amber-600 uppercase">List</span></h2>
+                 <p className="text-[9px] font-black text-slate-400   leading-none">Logistics Oversight System</p>
               </div>
               <div className="flex flex-wrap justify-center gap-3">
                  <div className="bg-white border border-slate-100 px-6 py-3 rounded-2xl flex items-center gap-3 shadow-inner">
@@ -252,7 +252,7 @@ const ManageInventory = () => {
         <div className="pt-12 text-center">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50 transition-opacity hover:opacity-100 group cursor-default">
               <ShieldCheck size={14} className="text-amber-500" />
-              <p className="text-[9px] font-black text-slate-400  tracking-widest">Institutional Standard ASM v3.0 Authorized Logistics</p>
+              <p className="text-[9px] font-black text-slate-400  tracking-widest">School Standard ASM v3.0 Paid Logistics</p>
            </div>
         </div>
 

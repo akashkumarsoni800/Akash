@@ -85,7 +85,7 @@ const AddTeacher = () => {
                 <span className="text-[var(--accent-admin)]">Induction</span>
               </h1>
               <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center gap-2">
-                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Academic Staff Registry Terminal v4.2
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid Academic Staff Records System v4.2
               </p>
            </motion.div>
         </div>
@@ -131,7 +131,7 @@ const AddTeacher = () => {
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <InputField 
-                    label="Authorized Email Node *" 
+                    label="Paid Email Node *" 
                     name="email" 
                     type="email" 
                     placeholder="teacher@asm-portal.com" 
@@ -173,7 +173,7 @@ const AddTeacher = () => {
                  {isPending ? (
                     <RefreshCw className="animate-spin" size={20} />
                  ) : (
-                    <><Zap size={20} className="group-hover:translate-y-[-2px] transition-transform" /> Synchronize Staff Registry</>
+                    <><Zap size={20} className="group-hover:translate-y-[-2px] transition-transform" /> Synchronize Staff Records</>
                  )}
                </button>
                
@@ -192,7 +192,7 @@ const AddTeacher = () => {
         <div className="mt-12 text-center group cursor-default">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm transition-all group-hover:scale-105">
               <Star size={14} className="text-amber-400 fill-amber-400" />
-              <p className="text-[9px] font-black text-slate-400  tracking-widest">Institutional Standard ASM v4.2 Authorized</p>
+              <p className="text-[9px] font-black text-slate-400  tracking-widest">School Standard ASM v4.2 Paid</p>
            </div>
         </div>
       </div>

@@ -88,7 +88,7 @@ export default function ExamsManagement() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div className="space-y-1">
             <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Scholastic Assessments</h3>
-            <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Digital Examination Registry Hub v4.2</p>
+            <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Digital Examination Records Hub v4.2</p>
          </div>
          <button 
            onClick={() => setIsModalOpen(true)}
@@ -176,7 +176,7 @@ export default function ExamsManagement() {
                   <div className="flex justify-between items-center mb-10">
                      <div className="space-y-1">
                         <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Schedule Exam</h2>
-                        <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Institutional Assessment Config</p>
+                        <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">School Assessment Config</p>
                      </div>
                      <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
                         <Plus size={20} className="rotate-45" />

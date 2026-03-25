@@ -155,7 +155,7 @@ const ResetPassword = () => {
                             placeholder="Father/Guardian name..."
                           />
                           <InputField 
-                            label="Contact Registry (Mobile)" 
+                            label="Contact Records (Mobile)" 
                             value={contactNumber} 
                             onChange={(e: any) => setContactNumber(e.target.value)} 
                             icon={Smartphone}
@@ -177,7 +177,7 @@ const ResetPassword = () => {
                             onClick={() => navigate('/')}
                             className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black   text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
                           >
-                             <ChevronLeft size={16} /> Revert to Terminal
+                             <ChevronLeft size={16} /> Revert to System
                           </button>
                        </div>
                     </motion.form>
@@ -202,7 +202,7 @@ const ResetPassword = () => {
                             placeholder="••••••••"
                           />
                           <InputField 
-                            label="Confirm Security Matrix" 
+                            label="Confirm Security Table" 
                             type="password"
                             value={confirmPassword} 
                             onChange={(e: any) => setConfirmPassword(e.target.value)} 
@@ -247,7 +247,7 @@ const ResetPassword = () => {
                          onClick={() => navigate('/')}
                          className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
                        >
-                          Return to Terminal <ArrowRight size={18} />
+                          Return to System <ArrowRight size={18} />
                        </button>
                     </motion.div>
                  )}
