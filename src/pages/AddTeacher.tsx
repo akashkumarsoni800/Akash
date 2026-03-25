@@ -80,11 +80,11 @@ const AddTeacher = () => {
         {/* --- HEADER --- */}
         <div className="mb-12 text-center space-y-4">
            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-5xl md:text-6xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-6xl font-black text-slate-900   leading-none uppercase">
                 Faculty<br/>
                 <span className="text-[var(--accent-admin)]">Induction</span>
               </h1>
-              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center gap-2">
                 <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Academic Staff Registry Terminal v4.2
               </p>
            </motion.div>
@@ -102,8 +102,8 @@ const AddTeacher = () => {
                 <UserPlus size={24} />
              </div>
              <div>
-                <h2 className="text-2xl font-medium text-slate-900   uppercase">Credential Entry</h2>
-                <p className="text-[9px] font-medium text-slate-300  tracking-widest leading-none">ASM REGISTRY INDEX: STAFF_NEW</p>
+                <h2 className="text-2xl font-black text-slate-900   uppercase">Credential Entry</h2>
+                <p className="text-[9px] font-black text-slate-300  tracking-widest leading-none">ASM REGISTRY INDEX: STAFF_NEW</p>
              </div>
           </div>
 
@@ -157,10 +157,10 @@ const AddTeacher = () => {
                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-2xl rounded-full" />
                <div className="flex items-center gap-3 relative z-10">
                   <Info size={16} className="text-blue-500" />
-                  <p className="text-[10px] font-medium text-slate-400  tracking-widest leading-none">Security Protocol Note</p>
+                  <p className="text-[10px] font-black text-slate-400  tracking-widest leading-none">Security Protocol Note</p>
                </div>
-               <p className="text-[11px] font-medium text-slate-500 leading-relaxed relative z-10">
-                  Upon synchronization, a secure authentication node will be established. The default access token will be initialized as: <span className="text-blue-600 font-medium notranslate">Teacher@123</span>. Instruct member to update credentials post-induction.
+               <p className="text-[11px] font-black text-slate-500 leading-relaxed relative z-10">
+                  Upon synchronization, a secure authentication node will be established. The default access token will be initialized as: <span className="text-blue-600 font-black notranslate">Teacher@123</span>. Instruct member to update credentials post-induction.
                </p>
             </div>
 
@@ -180,7 +180,7 @@ const AddTeacher = () => {
                <button 
                  type="button"
                  onClick={() => navigate('/admin/dashboard')}
-                 className="px-10 py-6 rounded-[2rem] font-medium   text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
+                 className="px-10 py-6 rounded-[2rem] font-black   text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
                >
                  Abort Induction
                </button>
@@ -192,7 +192,7 @@ const AddTeacher = () => {
         <div className="mt-12 text-center group cursor-default">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm transition-all group-hover:scale-105">
               <Star size={14} className="text-amber-400 fill-amber-400" />
-              <p className="text-[9px] font-medium text-slate-400  tracking-widest">Institutional Standard ASM v4.2 Authorized</p>
+              <p className="text-[9px] font-black text-slate-400  tracking-widest">Institutional Standard ASM v4.2 Authorized</p>
            </div>
         </div>
       </div>
@@ -202,7 +202,7 @@ const AddTeacher = () => {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
+    <label className="block text-[9px] font-black text-slate-400   ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
       <input className="premium-input pl-16" {...props} />

@@ -162,7 +162,7 @@ const TeacherAnalytics: React.FC = () => {
           <h1 className="text-6xl md:text-7xl font-black   bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6 uppercase">
             📊 Analytics Dashboard
           </h1>
-          <p className="text-xl text-gray-600 font-semibold max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 font-black max-w-2xl mx-auto">
             Real-time insights • {selectedPeriod.toUpperCase()} view • Auto-updated
           </p>
         </motion.div>
@@ -368,7 +368,7 @@ const TeacherAnalytics: React.FC = () => {
           className="text-center mt-16 p-6 bg-white/50 backdrop-blur-xl rounded-3xl border border-white/30"
         >
           <div className="text-2xl mb-2">🔄</div>
-          <p className="text-lg font-semibold text-gray-700">Live Data • Updates every 30 seconds</p>
+          <p className="text-lg font-black text-gray-700">Live Data • Updates every 30 seconds</p>
           <p className="text-sm text-gray-500 mt-1">{selectedPeriod} view • {new Date().toLocaleTimeString()}</p>
         </motion.div>
       </div>

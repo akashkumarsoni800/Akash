@@ -95,11 +95,11 @@ const TeacherAttendance = () => {
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Presence<br/>
                 <span className="text-blue-600">Registry</span>
               </h1>
-              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-blue-500" /> Faculty Log & Registry Protocol
               </p>
            </motion.div>
@@ -107,8 +107,8 @@ const TeacherAttendance = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📝</div>
              <div>
-               <p className="text-[9px] font-medium text-slate-400   mb-1">Session Date</p>
-               <p className="text-2xl font-medium text-slate-900  ">{today}</p>
+               <p className="text-[9px] font-black text-slate-400   mb-1">Session Date</p>
+               <p className="text-2xl font-black text-slate-900  ">{today}</p>
              </div>
            </div>
         </div>
@@ -118,7 +118,7 @@ const TeacherAttendance = () => {
           <div className="md:col-span-3">
              <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-xl transition-all duration-500">
                 <div className="w-full md:w-1/3 space-y-3">
-                  <label className="text-[9px] font-medium text-slate-400  tracking-widest ml-2">Select Target Manifest</label>
+                  <label className="text-[9px] font-black text-slate-400  tracking-widest ml-2">Select Target Manifest</label>
                   <div className="relative group/sel">
                     <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/sel:text-blue-500 transition-colors" size={18} />
                     <select 
@@ -136,12 +136,12 @@ const TeacherAttendance = () => {
                 {selectedClass && (
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex gap-4 w-full md:w-auto">
                     <div className="flex-1 bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex flex-col justify-center">
-                       <p className="text-[8px] font-medium text-emerald-600  tracking-widest mb-1">Authenticated</p>
-                       <p className="text-2xl font-medium text-emerald-700  leading-none">{presentCount} Present</p>
+                       <p className="text-[8px] font-black text-emerald-600  tracking-widest mb-1">Authenticated</p>
+                       <p className="text-2xl font-black text-emerald-700  leading-none">{presentCount} Present</p>
                     </div>
                     <div className="flex-1 bg-red-50 border border-red-100 p-6 rounded-[2rem] flex flex-col justify-center">
-                       <p className="text-[8px] font-medium text-red-600  tracking-widest mb-1">Flagged</p>
-                       <p className="text-2xl font-medium text-red-700  leading-none">{absentCount} Absent</p>
+                       <p className="text-[8px] font-black text-red-600  tracking-widest mb-1">Flagged</p>
+                       <p className="text-2xl font-black text-red-700  leading-none">{absentCount} Absent</p>
                     </div>
                   </motion.div>
                 )}
@@ -150,7 +150,7 @@ const TeacherAttendance = () => {
                   <button 
                     onClick={saveAttendance} 
                     disabled={loading}
-                    className="w-full md:w-auto px-10 py-6 bg-slate-900 text-white rounded-[2rem] font-medium  tracking-widest text-[11px] shadow-2xl shadow-slate-200 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 "
+                    className="w-full md:w-auto px-10 py-6 bg-slate-900 text-white rounded-[2rem] font-black  tracking-widest text-[11px] shadow-2xl shadow-slate-200 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 "
                   >
                     {loading ? <CheckCircle2 className="animate-spin" size={18}/> : <CheckSquare size={18}/>}
                     Secure Registry
@@ -163,8 +163,8 @@ const TeacherAttendance = () => {
              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                <ShieldCheck className="text-blue-400 group-hover:text-white" size={24} />
              </div>
-             <p className="text-blue-400 group-hover:text-white/80 font-medium  text-[8px] tracking-widest mb-1">Cloud Sync</p>
-             <p className="text-white text-lg font-medium  ">Active Nodes</p>
+             <p className="text-blue-400 group-hover:text-white/80 font-black  text-[8px] tracking-widest mb-1">Cloud Sync</p>
+             <p className="text-white text-lg font-black  ">Active Nodes</p>
           </div>
         </div>
 
@@ -179,7 +179,7 @@ const TeacherAttendance = () => {
               className="space-y-8"
             >
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3  uppercase">
+                <h2 className="text-2xl font-black text-slate-800  tracking-tight flex items-center gap-3  uppercase">
                   <span className="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-xs">01</span>
                   Presence Manifest <span className="text-slate-300 ml-2">Class {selectedClass}</span>
                 </h2>
@@ -210,14 +210,14 @@ const TeacherAttendance = () => {
                     }`}
                   >
                     <div className="flex items-center gap-6">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-medium  shadow-sm transition-all ${
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black  shadow-sm transition-all ${
                         attendance[s.id] === 'P' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
                       }`}>
                         {s.full_name[0].toUpperCase()}
                       </div>
                       <div>
-                        <h4 className="font-medium text-slate-800   leading-none mb-1 ">{s.full_name}</h4>
-                        <p className="text-[9px] font-medium text-slate-400  tracking-widest flex items-center gap-1">
+                        <h4 className="font-black text-slate-800   leading-none mb-1 ">{s.full_name}</h4>
+                        <p className="text-[9px] font-black text-slate-400  tracking-widest flex items-center gap-1">
                           <Zap size={10} className={attendance[s.id] === 'P' ? 'text-emerald-500' : 'text-red-500'}/> Node Secured
                         </p>
                       </div>
@@ -242,8 +242,8 @@ const TeacherAttendance = () => {
               <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                 <Calendar size={48} className="text-slate-400" />
               </div>
-              <h3 className="text-2xl font-medium text-slate-900   mb-2  uppercase">Identity Recognition Locked</h3>
-              <p className="max-w-xs text-[9px] font-medium text-slate-400   leading-relaxed text-center">Select a target class manifest from the registry portal to begin real-time presence logging.</p>
+              <h3 className="text-2xl font-black text-slate-900   mb-2  uppercase">Identity Recognition Locked</h3>
+              <p className="max-w-xs text-[9px] font-black text-slate-400   leading-relaxed text-center">Select a target class manifest from the registry portal to begin real-time presence logging.</p>
             </div>
           )}
         </AnimatePresence>

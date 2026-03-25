@@ -154,7 +154,7 @@ const ManageFees = () => {
             <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
             <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
          </div>
-         <p className="font-medium   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Fiscal Manifest...</p>
+         <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Fiscal Manifest...</p>
       </div>
     );
   }
@@ -166,11 +166,11 @@ const ManageFees = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Financial<br/>
                 <span className="text-[var(--accent-admin)]">Oversight</span>
               </h1>
-              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
                 <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Billing Suite v4.2
               </p>
            </motion.div>
@@ -178,12 +178,12 @@ const ManageFees = () => {
            <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm relative z-20">
              <button 
                onClick={() => setBulkMode(false)} 
-               className={`px-10 py-4 rounded-2xl font-medium text-[10px]  tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+               className={`px-10 py-4 rounded-2xl font-black text-[10px]  tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
                Single Registry
              </button>
              <button 
                onClick={() => setBulkMode(true)} 
-               className={`px-10 py-4 rounded-2xl font-medium text-[10px]  tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+               className={`px-10 py-4 rounded-2xl font-black text-[10px]  tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
                Bulk Distribution
              </button>
            </div>
@@ -203,20 +203,20 @@ const ManageFees = () => {
                 <form onSubmit={handleAssignFee} className="space-y-12 relative z-10">
                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b border-slate-50">
                       <div className="space-y-4 text-center md:text-left">
-                        <h2 className="text-4xl font-medium text-slate-900   leading-none uppercase">
+                        <h2 className="text-4xl font-black text-slate-900   leading-none uppercase">
                           Fiscal<br/>
                           <span className="text-[var(--accent-admin)]">Assignment</span>
                         </h2>
-                        <p className="text-[10px] font-medium text-slate-400  tracking-widest leading-none mt-1">Manual Account Distribution Terminal</p>
+                        <p className="text-[10px] font-black text-slate-400  tracking-widest leading-none mt-1">Manual Account Distribution Terminal</p>
                       </div>
-                      <div className="px-6 py-2.5 bg-blue-50 rounded-2xl text-[10px] font-medium text-blue-600  tracking-widest border border-blue-100 shadow-sm">
+                      <div className="px-6 py-2.5 bg-blue-50 rounded-2xl text-[10px] font-black text-blue-600  tracking-widest border border-blue-100 shadow-sm">
                         Registry Active
                       </div>
                    </div>
 
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <div className="space-y-3">
-                         <label className="text-[10px] font-medium text-slate-400   ml-2">Target Cohort/Candidate</label>
+                         <label className="text-[10px] font-black text-slate-400   ml-2">Target Cohort/Candidate</label>
                          <div className="relative group/input">
                             <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
                             {bulkMode ? (
@@ -234,7 +234,7 @@ const ManageFees = () => {
                          </div>
                       </div>
                       <div className="space-y-3">
-                         <label className="text-[10px] font-medium text-slate-400   ml-2">Billing Period</label>
+                         <label className="text-[10px] font-black text-slate-400   ml-2">Billing Period</label>
                          <div className="relative group/input">
                             <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
                             <input type="month" className="premium-input pl-16" value={month} onChange={(e)=>setMonth(e.target.value)} required />
@@ -248,15 +248,15 @@ const ManageFees = () => {
                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
                             <Plus size={20} />
                          </div>
-                         <h3 className="text-[10px] font-medium text-slate-400   leading-none uppercase">Structure Breakdown</h3>
+                         <h3 className="text-[10px] font-black text-slate-400   leading-none uppercase">Structure Breakdown</h3>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                          {feeHeads.map(head => (
                            <div key={head.id} className="bg-white p-6 rounded-2xl flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 group/item">
-                              <span className="font-medium text-[10px] text-slate-400  tracking-widest group-hover/item:text-blue-600 transition-colors">{head.name}</span>
+                              <span className="font-black text-[10px] text-slate-400  tracking-widest group-hover/item:text-blue-600 transition-colors">{head.name}</span>
                               <div className="flex items-center gap-3">
-                                <span className="text-slate-200 font-medium text-[9px] ">INR</span>
-                                <input type="number" placeholder="0" className="w-24 text-right font-medium text-slate-900 border-none focus:ring-0 text-xl bg-transparent" 
+                                <span className="text-slate-200 font-black text-[9px] ">INR</span>
+                                <input type="number" placeholder="0" className="w-24 text-right font-black text-slate-900 border-none focus:ring-0 text-xl bg-transparent" 
                                  value={feeValues[head.id] || ''}
                                  onChange={(e) => handleFeeValueChange(head.id, e.target.value)} />
                               </div>
@@ -268,8 +268,8 @@ const ManageFees = () => {
                    <div className="bg-slate-900 p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
                       <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
                       <div className="text-center md:text-left mb-0 relative z-10">
-                         <p className="text-[10px] font-medium  text-blue-400  mb-2">Authenticated Total</p>
-                         <h2 className="text-5xl md:text-6xl font-medium text-white  leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
+                         <p className="text-[10px] font-black  text-blue-400  mb-2">Authenticated Total</p>
+                         <h2 className="text-5xl md:text-6xl font-black text-white  leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
                       </div>
                       <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl relative z-10 px-12">
                          {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
@@ -289,23 +289,23 @@ const ManageFees = () => {
                className="premium-card p-12 relative overflow-hidden group"
              >
                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
-                <h3 className="text-[10px] font-medium text-slate-300   mb-12 relative z-10 uppercase">
+                <h3 className="text-[10px] font-black text-slate-300   mb-12 relative z-10 uppercase">
                   Fiscal Index
                 </h3>
                 <div className="space-y-8 relative z-10">
                    <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
-                      <p className="text-[9px] font-medium text-slate-400 group-hover/card:text-blue-400  tracking-widest mb-3">Fund Allocation</p>
-                      <p className="text-4xl font-medium text-slate-900 group-hover/card:text-white ">₹{feeStats.totalCollected.toLocaleString()}</p>
+                      <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400  tracking-widest mb-3">Fund Allocation</p>
+                      <p className="text-4xl font-black text-slate-900 group-hover/card:text-white ">₹{feeStats.totalCollected.toLocaleString()}</p>
                    </div>
                    <div className="grid grid-cols-2 gap-6">
                       <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                         <p className="text-[8px] font-medium text-slate-400  tracking-widest mb-2">Pending Units</p>
-                         <p className="text-2xl font-medium text-slate-900 ">{feeStats.totalPending}</p>
+                         <p className="text-[8px] font-black text-slate-400  tracking-widest mb-2">Pending Units</p>
+                         <p className="text-2xl font-black text-slate-900 ">{feeStats.totalPending}</p>
                       </div>
                       <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                         <p className="text-[8px] font-medium text-slate-400  tracking-widest mb-2">Overdue Alert</p>
-                         <p className="text-2xl font-medium text-rose-500 ">{feeStats.overdue}</p>
+                         <p className="text-[8px] font-black text-slate-400  tracking-widest mb-2">Overdue Alert</p>
+                         <p className="text-2xl font-black text-rose-500 ">{feeStats.overdue}</p>
                       </div>
                    </div>
                 </div>
@@ -318,7 +318,7 @@ const ManageFees = () => {
                className="premium-card p-12 flex flex-col min-h-[500px] relative group"
              >
                 <div className="flex items-center justify-between mb-12">
-                   <h3 className="text-[10px] font-medium text-slate-300   uppercase">Transaction Feed</h3>
+                   <h3 className="text-[10px] font-black text-slate-300   uppercase">Transaction Feed</h3>
                    <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
                 </div>
                 <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
@@ -335,8 +335,8 @@ const ManageFees = () => {
                              {p.status === 'Paid' ? <CheckCircle size={20}/> : <RefreshCw size={20} className="animate-spin" />}
                            </div>
                            <div>
-                              <p className="font-medium text-[12px] text-slate-800   leading-tight">{p.students?.full_name}</p>
-                              <p className="text-[9px] font-medium text-slate-400  tracking-widest mt-1.5">₹{p.total_amount} • {p.month}</p>
+                              <p className="font-black text-[12px] text-slate-800   leading-tight">{p.students?.full_name}</p>
+                              <p className="text-[9px] font-black text-slate-400  tracking-widest mt-1.5">₹{p.total_amount} • {p.month}</p>
                            </div>
                         </div>
                         <ArrowRight size={16} className="text-slate-200 group-hover/item:text-blue-500 transition-transform group-hover/item:translate-x-1 relative z-10" />
@@ -344,11 +344,11 @@ const ManageFees = () => {
                    )) : (
                      <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-20">
                         <RefreshCw size={60} className="mb-6 animate-spin text-slate-300" />
-                        <p className="text-[10px] font-medium  tracking-widest">Awaiting Records...</p>
+                        <p className="text-[10px] font-black  tracking-widest">Awaiting Records...</p>
                      </div>
                    )}
                 </div>
-                <button className="mt-10 py-5 bg-slate-50 rounded-2xl text-[10px] font-medium  text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100">
+                <button className="mt-10 py-5 bg-slate-50 rounded-2xl text-[10px] font-black  text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100">
                    Audit Sequential Logs →
                 </button>
              </motion.div>

@@ -46,7 +46,7 @@ const ActionCard = ({ icon: Icon, label, color, onClick }: any) => {
        <div className="p-3 rounded-xl transition-all duration-300">
           <Icon size={20} className="group-hover:scale-110 transition-transform" />
        </div>
-       <span className="text-[10px] font-medium  tracking-widest text-center leading-tight">{label}</span>
+       <span className="text-[10px] font-black  tracking-[0.2em] text-center leading-tight">{label}</span>
     </button>
   );
 };
@@ -62,10 +62,10 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
     <motion.div variants={itemVar} className="premium-card p-6 md:p-8 bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all">
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-slate-400 text-[10px] font-medium  tracking-widest mb-4">{title}</p>
+          <p className="text-slate-400 text-[10px] font-black  tracking-widest mb-4 italic uppercase">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{value}</h3>
-            {subText && <span className="text-[10px] text-slate-400 font-medium  tracking-tight">{subText}</span>}
+            <h3 className="text-4xl font-black text-slate-900  tracking-tighter leading-none uppercase">{value}</h3>
+            {subText && <span className="text-[10px] text-slate-400 font-bold  tracking-tight">{subText}</span>}
           </div>
         </div>
         <div className={`p-4 rounded-xl ${colorStyles[color as keyof typeof colorStyles]}`}>
@@ -75,7 +75,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
       <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
          <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${color === 'blue' ? 'bg-blue-500 animate-pulse' : color === 'amber' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
-            <span className="text-[9px] font-medium  text-slate-400 tracking-wider">Live System Sync</span>
+            <span className="text-[9px] font-black  text-slate-400 tracking-wider">Live System Sync</span>
          </div>
          <Activity size={14} className="text-slate-200" />
       </div>
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
     else { toast.error(err.message); setLoading(false); }
   };
 
-  if (loading && !counts.students) return <div className="h-screen flex items-center justify-center font-medium text-slate-400   text-xs">ASM SYNCING...</div>;
+  if (loading && !counts.students) return <div className="h-screen flex items-center justify-center font-black text-slate-400   text-xs">ASM SYNCING...</div>;
 
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 pb-32">
@@ -149,18 +149,18 @@ const AdminDashboard = () => {
                 <LayoutDashboard size={28}/>
               </div>
               <div>
-                <h1 className="text-3xl font-medium text-slate-900   leading-none uppercase">Command Center</h1>
-                <p className="text-[10px] font-medium text-blue-500  tracking-widest mt-2">Administrative Authority Level 4</p>
+                <h1 className="text-3xl font-black text-slate-900   leading-none uppercase">Command Center</h1>
+                <p className="text-[10px] font-black text-blue-500  tracking-widest mt-2">Administrative Authority Level 4</p>
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
-               <button onClick={() => navigate('/admin/create-exam')} className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-medium  tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
+               <button onClick={() => navigate('/admin/create-exam')} className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black  tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
                  <Zap size={14} className="text-yellow-400"/> Examination
                </button>
-               <button onClick={() => navigate('/admin/manage-fees')} className="px-6 py-3 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-medium  tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2">
+               <button onClick={() => navigate('/admin/manage-fees')} className="px-6 py-3 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black  tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2">
                  <CreditCard size={14}/> Financials
                </button>
-               <button onClick={() => navigate('/admin/upload-result')} className="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-medium  tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm flex items-center gap-2">
+               <button onClick={() => navigate('/admin/upload-result')} className="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black  tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm flex items-center gap-2">
                  <CheckCircle size={14}/> Assessments
                </button>
             </div>
@@ -191,7 +191,7 @@ const AdminDashboard = () => {
               <button 
                 key={tab} 
                 onClick={() => setActiveTab(tab)} 
-                className={`px-8 py-3.5 text-[10px] font-medium  tracking-widest rounded-2xl transition-all duration-300 ${
+                className={`px-8 py-3.5 text-[10px] font-black  tracking-widest rounded-2xl transition-all duration-300 ${
                   activeTab === tab 
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' 
                     : 'text-slate-400 hover:text-slate-600 hover:bg-white'
@@ -209,16 +209,16 @@ const AdminDashboard = () => {
                     {pendingStudents.map(s => (
                       <div key={s.student_id} className="p-6 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between h-48 group hover:border-blue-200 transition-all">
                         <div>
-                          <h4 className="font-medium text-slate-800  text-lg leading-tight tracking-tight">{s.full_name}</h4>
-                          <span className="inline-block mt-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-medium  tracking-wider">Class {s.class_name}</span>
+                          <h4 className="font-black text-slate-800  text-lg leading-tight tracking-tight">{s.full_name}</h4>
+                          <span className="inline-block mt-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-black  tracking-wider">Class {s.class_name}</span>
                         </div>
                         <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
-                           <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-blue-600 text-white py-3 rounded-xl text-[9px] font-medium  tracking-widest hover:bg-blue-700 shadow-md transition-all">Approve</button>
-                           <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-white text-rose-500 py-3 rounded-xl text-[9px] font-medium  tracking-widest border border-rose-100 hover:bg-rose-50 transition-all">Reject</button>
+                           <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-blue-600 text-white py-3 rounded-xl text-[9px] font-black  tracking-widest hover:bg-blue-700 shadow-md transition-all">Approve</button>
+                           <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-white text-rose-500 py-3 rounded-xl text-[9px] font-black  tracking-widest border border-rose-100 hover:bg-rose-50 transition-all">Reject</button>
                         </div>
                       </div>
                     ))}
-                    {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-medium   text-[10px] text-slate-400">Zero Pending Authority Tasks</div>}
+                    {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black   text-[10px] text-slate-400">Zero Pending Authority Tasks</div>}
                 </motion.div>
               )}
 

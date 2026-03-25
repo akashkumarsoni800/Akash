@@ -19,7 +19,7 @@ const Home = () => {
             ADARSH <span className="text-blue-600">SHISHU</span> <span className="hidden xs:inline">MANDIR</span>
           </span>
         </div>
-        <div className="hidden md:flex space-x-10 font-medium text-slate-600">
+        <div className="hidden md:flex space-x-10 font-black text-slate-600">
           <a href="#" className="hover:text-blue-600 transition-colors">Curriculum</a>
           <a href="#" className="hover:text-blue-600 transition-colors">Admissions</a>
           <a href="#" className="hover:text-blue-600 transition-colors">Portal</a>

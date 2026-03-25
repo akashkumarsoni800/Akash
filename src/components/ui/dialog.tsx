@@ -8,5 +8,5 @@ export const DialogContent = ({ children, className }: any) => (
   </div>
 );
 export const DialogHeader = ({ className, children }: any) => <div className={`flex flex-col space-y-1.5 text-center sm:text-left ${className}`}>{children}</div>;
-export const DialogTitle = ({ className, children }: any) => <h2 className={`text-lg font-semibold leading-none tracking-tight ${className}`}>{children}</h2>;
+export const DialogTitle = ({ className, children }: any) => <h2 className={`text-lg font-black leading-none tracking-tight ${className}`}>{children}</h2>;
 export const DialogDescription = ({ className, children }: any) => <p className={`text-sm text-muted-foreground ${className}`}>{children}</p>;

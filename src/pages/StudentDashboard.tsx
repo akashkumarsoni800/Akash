@@ -76,7 +76,7 @@ export default function StudentDashboard() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center animate-pulse">
         <GraduationCap size={64} className="mx-auto text-indigo-600 mb-4" />
-        <p className="font-medium  tracking-widest text-gray-400">Syncing Your Portal...</p>
+        <p className="font-black  tracking-widest text-gray-400">Syncing Your Portal...</p>
       </div>
     </div>
   );
@@ -95,11 +95,11 @@ export default function StudentDashboard() {
           
           <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12 text-center lg:text-left">
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-5 py-2 bg-purple-50 rounded-full text-[9px] font-medium   text-purple-600 border border-purple-100 animate-pulse">
+              <div className="inline-flex items-center gap-2 px-5 py-2 bg-purple-50 rounded-full text-[9px] font-black   text-purple-600 border border-purple-100 animate-pulse">
                 < Award size={14} /> Academic Excellence 2024-25
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Welcome Back,<br/>
                 <span className="text-purple-600">
                   {student?.full_name?.split(' ')[0] || 'Scholar'}!
@@ -108,12 +108,12 @@ export default function StudentDashboard() {
 
               <div className="flex flex-wrap justify-center lg:justify-start gap-3">
                 <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
-                   <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Assigned Batch</p>
-                   <p className="text-lg font-medium text-slate-800 ">Class {student?.class_name}</p>
+                   <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Assigned Batch</p>
+                   <p className="text-lg font-black text-slate-800 ">Class {student?.class_name}</p>
                 </div>
                 <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
-                   <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Registry No</p>
-                   <p className="text-lg font-medium text-slate-800 ">#{student?.roll_no}</p>
+                   <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Registry No</p>
+                   <p className="text-lg font-black text-slate-800 ">#{student?.roll_no}</p>
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@ export default function StudentDashboard() {
           {/* --- SYSTEM ACCESS GRID --- */}
           <div className="lg:col-span-2 space-y-8">
              <div className="flex items-center justify-between">
-               <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 uppercase">
+               <h3 className="text-[10px] font-black text-slate-400   flex items-center gap-3 uppercase">
                  <Layout size={16} className="text-purple-600"/> Core System Access
                </h3>
              </div>
@@ -180,7 +180,7 @@ export default function StudentDashboard() {
 
           {/* --- BROADCAST BOARD --- */}
           <div className="space-y-8">
-             <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 uppercase">
+             <h3 className="text-[10px] font-black text-slate-400   flex items-center gap-3 uppercase">
                <Bell size={16} className="text-purple-600"/> Latest Broadcasts
              </h3>
              
@@ -191,14 +191,14 @@ export default function StudentDashboard() {
                        <Calendar size={18}/>
                      </div>
                      <div className="flex-1">
-                        <h4 className="font-medium text-slate-800 text-sm  tracking-tight line-clamp-1">{notice.title}</h4>
-                        <p className="text-slate-400 text-[10px] font-medium mt-1 line-clamp-2 leading-relaxed">{notice.description}</p>
+                        <h4 className="font-black text-slate-800 text-sm  tracking-tight line-clamp-1">{notice.title}</h4>
+                        <p className="text-slate-400 text-[10px] font-black mt-1 line-clamp-2 leading-relaxed">{notice.description}</p>
                      </div>
                   </div>
                 )) : (
-                  <div className="text-center py-12 opacity-30 font-medium  text-[10px] tracking-widest text-slate-400">Zero System Broadcasts</div>
+                  <div className="text-center py-12 opacity-30 font-black  text-[10px] tracking-widest text-slate-400">Zero System Broadcasts</div>
                 )}
-                <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-2xl text-[10px] font-medium  tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group">
+                <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-2xl text-[10px] font-black  tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group">
                   Full Archive Access <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform"/>
                 </button>
              </div>
@@ -222,10 +222,10 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-4">{title}</p>
+          <p className="text-[9px] font-black text-slate-400  tracking-widest mb-4">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{value}</h3>
-            <span className="text-[9px] font-medium text-slate-400  ">{subText}</span>
+            <h3 className="text-4xl font-black text-slate-900  leading-none uppercase">{value}</h3>
+            <span className="text-[9px] font-black text-slate-400  ">{subText}</span>
           </div>
         </div>
         <div className={`p-4 rounded-2xl group-hover:scale-110 transition-transform ${accentColors[color as keyof typeof accentColors]}`}>
@@ -235,7 +235,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
       <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
          <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full animate-pulse ${color === 'rose' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
-            <span className="text-[8px] font-medium  text-slate-400 tracking-wider">Live System Sync</span>
+            <span className="text-[8px] font-black  text-slate-400 tracking-wider">Live System Sync</span>
          </div>
       </div>
     </motion.div>
@@ -258,8 +258,8 @@ const ActionCard = ({ icon, label, path, color, navigate }: any) => {
       className={`bg-white border border-slate-100 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
     >
        <div className="text-4xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">{icon}</div>
-       <h4 className="font-medium   text-lg leading-tight">{label}</h4>
-       <div className="mt-4 flex items-center gap-2 text-[8px] font-medium  tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+       <h4 className="font-black   text-lg leading-tight">{label}</h4>
+       <div className="mt-4 flex items-center gap-2 text-[8px] font-black  tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
           Open Registry <ArrowRight size={10} />
        </div>
     </button>

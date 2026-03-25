@@ -31,18 +31,18 @@ const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, s
           <Icon size={28} />
         </div>
         {badgeCount > 0 && (
-          <span className="bg-rose-500 text-white text-[10px] font-medium px-3 py-1.5 rounded-xl shadow-lg shadow-rose-100 flex items-center gap-1 animate-pulse">
+          <span className="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-rose-100 flex items-center gap-1 animate-pulse">
             <Bell size={10} /> {badgeCount}
           </span>
         )}
       </div>
 
       <div className="relative z-10">
-        <h3 className="text-xl font-medium text-slate-800  tracking-tight mb-2 leading-tight uppercase">{title}</h3>
-        <p className="text-[10px] font-medium text-slate-400  tracking-widest leading-relaxed mb-6">{desc}</p>
+        <h3 className="text-xl font-black text-slate-800  tracking-tight mb-2 leading-tight uppercase">{title}</h3>
+        <p className="text-[10px] font-black text-slate-400  tracking-widest leading-relaxed mb-6">{desc}</p>
         
         <div className="flex items-center justify-between pt-6 border-t border-slate-50">
-          <span className="text-[9px] font-medium text-slate-900  tracking-wider">{status || 'COMMAND ACTIVE'}</span>
+          <span className="text-[9px] font-black text-slate-900  tracking-wider">{status || 'COMMAND ACTIVE'}</span>
           <ArrowRight size={16} className="text-slate-200 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function TeacherDashboard() {
 
   if (loading) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center font-medium text-blue-900 animate-pulse  tracking-widest space-y-4 bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="h-screen flex flex-col items-center justify-center font-black text-blue-900 animate-pulse  tracking-widest space-y-4 bg-gradient-to-br from-slate-50 to-blue-50">
         <motion.div 
           animate={{ rotate: 360 }} 
           transition={{ duration: 1, repeat: Infinity }}
@@ -202,30 +202,30 @@ export default function TeacherDashboard() {
                     <Activity size={32}/>
                   </div>
                   <div>
-                    <h1 className="text-4xl md:text-6xl font-medium text-slate-900   leading-none uppercase">
+                    <h1 className="text-4xl md:text-6xl font-black text-slate-900   leading-none uppercase">
                       Hello, <span className="text-emerald-600">{teacher?.full_name?.split(' ')[0] || 'Teacher'}</span>
                     </h1>
-                    <p className="text-[10px] font-medium text-emerald-500   mt-3">Faculty Command Level 3</p>
+                    <p className="text-[10px] font-black text-emerald-500   mt-3">Faculty Command Level 3</p>
                   </div>
                 </div>
                 
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                   <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Active Batch</p>
-                    <p className="text-lg font-medium text-slate-800 ">{teacher?.subject || 'General'}</p>
+                    <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Active Batch</p>
+                    <p className="text-lg font-black text-slate-800 ">{teacher?.subject || 'General'}</p>
                   </div>
                   <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Staff ID</p>
-                    <p className="text-lg font-medium text-slate-800 ">#{teacher?.id?.slice(0, 5) || 'SYNC'}</p>
+                    <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Staff ID</p>
+                    <p className="text-lg font-black text-slate-800 ">#{teacher?.id?.slice(0, 5) || 'SYNC'}</p>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-wrap justify-center gap-3">
-                 <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-medium  tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
+                 <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black  tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
                    Record Presence
                  </button>
-                 <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-medium  tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
+                 <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black  tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
                    Sync System
                  </button>
               </div>
@@ -239,10 +239,10 @@ export default function TeacherDashboard() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Pupil Directory</p>
+                  <p className="text-[10px] font-black text-slate-400  tracking-widest mb-4">Pupil Directory</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.totalStudents}</h3>
-                    <span className="text-[9px] font-medium text-slate-400  tracking-tight">Active</span>
+                    <h3 className="text-4xl font-black text-slate-900  leading-none uppercase">{stats.totalStudents}</h3>
+                    <span className="text-[9px] font-black text-slate-400  tracking-tight">Active</span>
                   </div>
                 </div>
                 <div className="p-4 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -250,7 +250,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
               <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[9px] font-medium text-slate-400  tracking-widest">Enrollment Meta</span>
+                <span className="text-[9px] font-black text-slate-400  tracking-widest">Enrollment Meta</span>
                 <div className="flex gap-1">
                   <div className="w-1 h-1 rounded-full bg-blue-400"></div>
                   <div className="w-1 h-1 rounded-full bg-blue-200"></div>
@@ -263,10 +263,10 @@ export default function TeacherDashboard() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Daily Presence</p>
+                  <p className="text-[10px] font-black text-slate-400  tracking-widest mb-4">Daily Presence</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.attendancePercentage}%</h3>
-                    <span className="text-[9px] font-medium text-slate-400  tracking-tight">Sync</span>
+                    <h3 className="text-4xl font-black text-slate-900  leading-none uppercase">{stats.attendancePercentage}%</h3>
+                    <span className="text-[9px] font-black text-slate-400  tracking-tight">Sync</span>
                   </div>
                 </div>
                 <div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -274,7 +274,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
               <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[9px] font-medium text-slate-400  tracking-widest">Attendance Logic</span>
+                <span className="text-[9px] font-black text-slate-400  tracking-widest">Attendance Logic</span>
                 <div className="w-10 h-1 bg-emerald-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500" style={{ width: `${stats.attendancePercentage}%` }}></div>
                 </div>
@@ -286,10 +286,10 @@ export default function TeacherDashboard() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Submission Hub</p>
+                  <p className="text-[10px] font-black text-slate-400  tracking-widest mb-4">Submission Hub</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.pendingHomework}</h3>
-                    <span className="text-[9px] font-medium text-slate-400  tracking-tight">Queue</span>
+                    <h3 className="text-4xl font-black text-slate-900  leading-none uppercase">{stats.pendingHomework}</h3>
+                    <span className="text-[9px] font-black text-slate-400  tracking-tight">Queue</span>
                   </div>
                 </div>
                 <div className="p-4 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -297,7 +297,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
               <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[9px] font-medium text-slate-400  tracking-widest">Approval Pending</span>
+                <span className="text-[9px] font-black text-slate-400  tracking-widest">Approval Pending</span>
                 <Activity size={12} className="text-amber-400 animate-pulse" />
               </div>
             </div>
@@ -307,10 +307,10 @@ export default function TeacherDashboard() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Academic Index</p>
+                  <p className="text-[10px] font-black text-slate-400  tracking-widest mb-4">Academic Index</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.avgPerformance}%</h3>
-                    <span className="text-[9px] font-medium text-slate-400  tracking-tight">KPI</span>
+                    <h3 className="text-4xl font-black text-slate-900  leading-none uppercase">{stats.avgPerformance}%</h3>
+                    <span className="text-[9px] font-black text-slate-400  tracking-tight">KPI</span>
                   </div>
                 </div>
                 <div className="p-4 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -318,8 +318,8 @@ export default function TeacherDashboard() {
                 </div>
               </div>
               <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[9px] font-medium text-slate-400  tracking-widest">Performance Meta</span>
-                <span className="text-[10px] font-medium text-purple-600">PRO LEVEL</span>
+                <span className="text-[9px] font-black text-slate-400  tracking-widest">Performance Meta</span>
+                <span className="text-[10px] font-black text-purple-600">PRO LEVEL</span>
               </div>
             </div>
           </motion.div>
@@ -384,23 +384,23 @@ export default function TeacherDashboard() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
             
             <div className="flex justify-between items-start mb-10 relative z-10">
-              <div className="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-medium shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
+              <div className="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
                 {teacher?.full_name?.[0] || 'T'}
               </div>
-              <span className="bg-emerald-50 text-emerald-600 text-[9px] font-medium px-4 py-2 rounded-xl  tracking-widest border border-emerald-100/50">
+              <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-xl  tracking-widest border border-emerald-100/50">
                 Verified Faculty
               </span>
             </div>
 
             <div className="space-y-4 relative z-10">
-              <h3 className="font-medium text-2xl text-slate-900   leading-tight uppercase">
+              <h3 className="font-black text-2xl text-slate-900   leading-tight uppercase">
                 {teacher?.full_name || 'Faculty Member'}
               </h3>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-medium  tracking-widest border border-slate-100">
+                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black  tracking-widest border border-slate-100">
                   📚 {teacher?.subject || 'Education'}
                 </span>
-                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-medium  tracking-widest border border-slate-100">
+                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black  tracking-widest border border-slate-100">
                   👥 {stats.totalStudents} Pupils
                 </span>
               </div>
@@ -408,7 +408,7 @@ export default function TeacherDashboard() {
 
             <button 
               onClick={() => navigate('/profile-setup')}
-              className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-medium text-[10px]   shadow-xl transition-all active:scale-95"
+              className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[10px]   shadow-xl transition-all active:scale-95"
             >
               Manage Profile Registry
             </button>
@@ -425,13 +425,13 @@ export default function TeacherDashboard() {
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-emerald-600 mb-8 shadow-inner relative z-10">
             <RefreshCw size={32} className="animate-spin-slow" />
           </div>
-          <h4 className="text-2xl font-medium text-slate-900   mb-2 relative z-10">Command Sync Terminal</h4>
-          <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-10 relative z-10">
+          <h4 className="text-2xl font-black text-slate-900   mb-2 relative z-10">Command Sync Terminal</h4>
+          <p className="text-[10px] font-black text-slate-400  tracking-widest mb-10 relative z-10">
             Last Integrity Check: {new Date().toLocaleTimeString()} • REAL-TIME ACTIVE
           </p>
           <button 
             onClick={fetchDashboardData}
-            className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-medium text-[11px]   shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
+            className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black text-[11px]   shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
           >
             <Activity size={18} /> Forced System Sync
           </button>

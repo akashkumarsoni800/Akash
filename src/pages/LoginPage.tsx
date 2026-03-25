@@ -118,7 +118,7 @@ const LoginPage = () => {
             }`}>
               <CheckCircle2 size={48} />
             </div>
-            <h2 className="text-5xl font-medium text-slate-800   mb-4 uppercase">Identity<br/>Verified</h2>
+            <h2 className="text-5xl font-black text-slate-800   mb-4 uppercase">Identity<br/>Verified</h2>
             <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
@@ -136,11 +136,11 @@ const LoginPage = () => {
               <div className="w-24 h-24 bg-white shadow-xl rounded-3xl p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
                 <ShieldCheck className="text-blue-600" size={48} />
               </div>
-              <h1 className="text-6xl md:text-7xl font-medium text-slate-900   leading-[0.9] mb-4 uppercase">
+              <h1 className="text-6xl md:text-7xl font-black text-slate-900   leading-[0.9] mb-4 uppercase">
                 School Management<br/>
                 <span className="text-slate-400">System</span>
               </h1>
-              <p className="text-slate-500 font-medium   text-[10px] flex items-center justify-center gap-2">
+              <p className="text-slate-500 font-black   text-[10px] flex items-center justify-center gap-2">
                 <Globe size={14} className="text-blue-500" /> Adarsh Shishu Mandir Digital Ecosystem
               </p>
             </div>
@@ -157,8 +157,8 @@ const LoginPage = () => {
                      {role.icon}
                    </div>
                    <div>
-                     <h3 className="text-2xl font-medium text-slate-800   uppercase">{role.label}</h3>
-                     <p className="text-xs font-medium text-slate-400  tracking-widest mt-1">{role.sub}</p>
+                     <h3 className="text-2xl font-black text-slate-800   uppercase">{role.label}</h3>
+                     <p className="text-xs font-black text-slate-400  tracking-widest mt-1">{role.sub}</p>
                    </div>
                    <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mt-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
                      <ArrowRight size={20} />
@@ -168,7 +168,7 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-20 text-center opacity-40">
-              <p className="text-[10px] font-medium text-slate-400  ">Authorized Access Protocol v4.0</p>
+              <p className="text-[10px] font-black text-slate-400  ">Authorized Access Protocol v4.0</p>
             </div>
           </motion.div>
         ) : (
@@ -180,7 +180,7 @@ const LoginPage = () => {
           >
              <button 
                onClick={() => setSelectedRole(null)}
-               className="mb-8 flex items-center gap-2 text-[10px] font-medium text-slate-400  tracking-widest hover:text-slate-900 transition-colors"
+               className="mb-8 flex items-center gap-2 text-[10px] font-black text-slate-400  tracking-widest hover:text-slate-900 transition-colors"
              >
                <ArrowRight size={14} className="rotate-180" /> Change Protocol
              </button>
@@ -190,27 +190,27 @@ const LoginPage = () => {
                   selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
                 }`}></div>
                 
-                <h2 className="text-4xl font-medium text-slate-900   mb-2 uppercase">
+                <h2 className="text-4xl font-black text-slate-900   mb-2 uppercase">
                   {selectedRole}<br/><span className="text-slate-400">Entry</span>
                 </h2>
-                <p className="text-[10px] font-medium text-slate-400   mb-10">Verification required to proceed</p>
+                <p className="text-[10px] font-black text-slate-400   mb-10">Verification required to proceed</p>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                   {selectedRole === 'student' ? (
                     <>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Asset Nomenclature</label>
+                        <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Asset Nomenclature</label>
                         <input type="text" placeholder="Full Student Name" required className="premium-input" 
                           onChange={e => setLoginData({...loginData, full_name: e.target.value})} />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Patrilineal Reference</label>
+                        <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Patrilineal Reference</label>
                         <input type="text" placeholder="Father's Name" required className="premium-input" 
                           onChange={e => setLoginData({...loginData, father_name: e.target.value})} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Archive ID</label>
+                          <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Archive ID</label>
                           <input type="text" placeholder="Class (Ex: 10A)" required className="premium-input " 
                             onChange={e => setLoginData({...loginData, class_name: e.target.value})} />
                         </div>
@@ -224,7 +224,7 @@ const LoginPage = () => {
                   ) : (
                     <>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Identity Token</label>
+                        <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Identity Token</label>
                         <div className="relative">
                           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                           <input type="email" placeholder="staff@institution.com" required className="premium-input pl-12" 
@@ -232,14 +232,14 @@ const LoginPage = () => {
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Access Cipher</label>
+                        <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Access Cipher</label>
                         <div className="relative">
                           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                           <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12" 
                             onChange={e => setLoginData({...loginData, password: e.target.value})} />
                         </div>
                       </div>
-                      <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white   font-medium shadow-lg hover:shadow-xl mt-4 ${
+                      <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white   font-black shadow-lg hover:shadow-xl mt-4 ${
                         selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
                       }`}>
                          {loading ? 'Authenticating...' : 'Establish Link'}
@@ -249,7 +249,7 @@ const LoginPage = () => {
                 </form>
 
                 <div className="mt-8 pt-8 border-t border-slate-50 text-center opacity-30">
-                   <p className="text-[8px] font-medium text-slate-500  ">Proprietary Educational System</p>
+                   <p className="text-[8px] font-black text-slate-500  ">Proprietary Educational System</p>
                 </div>
              </div>
           </motion.div>

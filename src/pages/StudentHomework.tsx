@@ -158,7 +158,7 @@ const StudentHomework = () => {
                              </div>
                           </div>
 
-                          <p className="text-slate-600 font-medium text-lg leading-relaxed max-w-2xl border-l-[6px] border-slate-50 pl-8 py-2 group-hover:border-purple-100 transition-colors">
+                          <p className="text-slate-600 font-black text-lg leading-relaxed max-w-2xl border-l-[6px] border-slate-50 pl-8 py-2 group-hover:border-purple-100 transition-colors">
                             {hw.description || 'Institutional instructions for this task manifest have not been detailed. Please consult individual faculty nodes.'}
                           </p>
                        </div>

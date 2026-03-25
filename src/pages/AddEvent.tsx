@@ -141,7 +141,7 @@ const AddEvent = () => {
                         required
                         rows={6}
                         placeholder="Detail the operational notice here..."
-                        className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-8 py-6 text-base font-medium text-slate-600 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner leading-relaxed"
+                        className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-8 py-6 text-base font-black text-slate-600 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner leading-relaxed"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       />

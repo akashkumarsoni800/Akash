@@ -127,11 +127,11 @@ const UploadResult = () => {
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Academic<br/>
                 <span className="text-emerald-600">Registry</span>
               </h1>
-              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
                 <Target size={12} className="text-emerald-500" /> Scholastic Performance Ledger & Registry v4.2
               </p>
            </motion.div>
@@ -139,8 +139,8 @@ const UploadResult = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">🎓</div>
              <div>
-               <p className="text-[9px] font-medium text-slate-400   mb-1">Active Scholars</p>
-               <p className="text-3xl font-medium text-slate-900 ">{students.length} Records</p>
+               <p className="text-[9px] font-black text-slate-400   mb-1">Active Scholars</p>
+               <p className="text-3xl font-black text-slate-900 ">{students.length} Records</p>
              </div>
            </div>
         </div>
@@ -153,7 +153,7 @@ const UploadResult = () => {
             className="lg:col-span-1 premium-card p-8 flex flex-col h-[850px] group"
           >
             <div className="mb-10 space-y-8">
-              <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3 uppercase">
+              <h2 className="text-2xl font-black text-slate-800  tracking-tight flex items-center gap-3 uppercase">
                 <Search size={22} className="text-emerald-600" /> Discovery Hub
               </h2>
               
@@ -190,8 +190,8 @@ const UploadResult = () => {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className={`text-[9px] font-medium  tracking-widest mb-1 ${selectedStudent?.student_id === s.student_id ? 'text-emerald-400' : 'text-slate-400'}`}>Class {s.class_name}</p>
-                      <h4 className="font-medium text-lg   leading-none ">{s.full_name}</h4>
+                      <p className={`text-[9px] font-black  tracking-widest mb-1 ${selectedStudent?.student_id === s.student_id ? 'text-emerald-400' : 'text-slate-400'}`}>Class {s.class_name}</p>
+                      <h4 className="font-black text-lg   leading-none ">{s.full_name}</h4>
                     </div>
                     {selectedStudent?.student_id === s.student_id && <CheckCircle size={20} className="text-emerald-400" />}
                   </div>
@@ -210,21 +210,21 @@ const UploadResult = () => {
               <div className="space-y-12 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div>
-                    <h3 className="text-4xl font-medium text-slate-800   leading-none mb-3 uppercase">Entry Session</h3>
-                    <p className="text-slate-400 font-medium  text-[10px] tracking-widest flex items-center gap-2">
+                    <h3 className="text-4xl font-black text-slate-800   leading-none mb-3 uppercase">Entry Session</h3>
+                    <p className="text-slate-400 font-black  text-[10px] tracking-widest flex items-center gap-2">
                       <User size={14} className="text-emerald-500" /> {selectedStudent.full_name} <span className="w-1 h-1 bg-slate-200 rounded-full"></span> #{selectedStudent.student_id}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100">
                      <Award size={20} />
-                     <span className="text-xs font-medium  tracking-widest">Merit Authorized</span>
+                     <span className="text-xs font-black  tracking-widest">Merit Authorized</span>
                   </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-10">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                       <label className="text-[10px] font-medium text-slate-400  tracking-widest ml-1">Protocol Selection</label>
+                       <label className="text-[10px] font-black text-slate-400  tracking-widest ml-1">Protocol Selection</label>
                        <select 
                          required 
                          className="premium-input w-full"
@@ -238,7 +238,7 @@ const UploadResult = () => {
 
                     <div className="space-y-4 flex flex-col justify-end">
                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex items-center justify-between">
-                          <label className="text-[10px] font-medium text-slate-600  tracking-widest cursor-pointer flex items-center gap-3">
+                          <label className="text-[10px] font-black text-slate-600  tracking-widest cursor-pointer flex items-center gap-3">
                             <Zap size={16} className={isFinalExam ? "text-emerald-500" : "text-slate-300"} /> 
                             Apply Scholarship Promotion?
                           </label>
@@ -253,7 +253,7 @@ const UploadResult = () => {
                   </div>
 
                   <div className="space-y-8">
-                    <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 ml-1 uppercase">
+                    <h3 className="text-[10px] font-black text-slate-400   flex items-center gap-3 ml-1 uppercase">
                       <BookOpen size={16} className="text-emerald-600"/> Metrics Compilation
                     </h3>
                     
@@ -261,15 +261,15 @@ const UploadResult = () => {
                       <table className="w-full">
                         <thead className="bg-slate-100/50 border-b border-slate-100">
                           <tr>
-                            <th className="text-left px-8 py-5 text-[10px] font-medium text-slate-500  tracking-widest">Course Title</th>
-                            <th className="text-center px-8 py-5 text-[10px] font-medium text-slate-500  tracking-widest">Achieved</th>
-                            <th className="text-center px-8 py-5 text-[10px] font-medium text-slate-500  tracking-widest">Max Score</th>
+                            <th className="text-left px-8 py-5 text-[10px] font-black text-slate-500  tracking-widest">Course Title</th>
+                            <th className="text-center px-8 py-5 text-[10px] font-black text-slate-500  tracking-widest">Achieved</th>
+                            <th className="text-center px-8 py-5 text-[10px] font-black text-slate-500  tracking-widest">Max Score</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {results.map((r, i) => (
                             <tr key={i} className="group/row hover:bg-white transition-colors">
-                              <td className="px-8 py-6 font-medium text-slate-800 text-sm  tracking-tight group-hover/row:text-emerald-600 transition-colors">{r.subject}</td>
+                              <td className="px-8 py-6 font-black text-slate-800 text-sm  tracking-tight group-hover/row:text-emerald-600 transition-colors">{r.subject}</td>
                               <td className="px-8 py-6 text-center">
                                 <input 
                                   type="number" 
@@ -280,7 +280,7 @@ const UploadResult = () => {
                                     newRes[i].marks = e.target.value;
                                     setResults(newRes);
                                   }}
-                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm mx-auto"
+                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm mx-auto"
                                   placeholder="0"
                                 />
                               </td>
@@ -294,7 +294,7 @@ const UploadResult = () => {
                                     newRes[i].max_marks = e.target.value;
                                     setResults(newRes);
                                   }}
-                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm text-slate-400 mx-auto"
+                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm text-slate-400 mx-auto"
                                 />
                               </td>
                             </tr>
@@ -306,7 +306,7 @@ const UploadResult = () => {
                     <button 
                       type="button" 
                       onClick={() => setResults([...results, { subject: '', marks: '', max_marks: '100' }])}
-                      className="w-full py-5 border-2 border-dashed border-slate-100 rounded-2xl text-[10px] font-medium  text-slate-400 tracking-widest hover:bg-emerald-50/30 hover:text-emerald-600 transition-all active:scale-[0.98]"
+                      className="w-full py-5 border-2 border-dashed border-slate-100 rounded-2xl text-[10px] font-black  text-slate-400 tracking-widest hover:bg-emerald-50/30 hover:text-emerald-600 transition-all active:scale-[0.98]"
                     >
                       + Append Subject Metric
                     </button>
@@ -324,7 +324,7 @@ const UploadResult = () => {
                     <button 
                       type="button" 
                       onClick={() => setSelectedStudent(null)}
-                      className="px-10 py-6 bg-slate-50 text-slate-400 rounded-[1.5rem] font-medium   text-[11px] hover:bg-slate-900 hover:text-white transition-all active:scale-[0.98]"
+                      className="px-10 py-6 bg-slate-50 text-slate-400 rounded-[1.5rem] font-black   text-[11px] hover:bg-slate-900 hover:text-white transition-all active:scale-[0.98]"
                     >
                       Reset Session
                     </button>
@@ -336,8 +336,8 @@ const UploadResult = () => {
                 <div className="w-32 h-32 bg-slate-100 rounded-[3rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <User size={60} className="text-slate-400" />
                 </div>
-                <h3 className="text-3xl font-medium text-slate-900   mb-4 uppercase">Manifest Locked</h3>
-                <p className="max-w-xs text-[10px] font-medium text-slate-400   leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
+                <h3 className="text-3xl font-black text-slate-900   mb-4 uppercase">Manifest Locked</h3>
+                <p className="max-w-xs text-[10px] font-black text-slate-400   leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
               </div>
             )}
           </motion.div>

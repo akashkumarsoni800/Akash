@@ -130,7 +130,7 @@ const StudentProfile = () => {
            <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
            <Fingerprint size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
         </div>
-        <p className="font-medium   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Individual Registry...</p>
+        <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Individual Registry...</p>
      </div>
   );
 
@@ -139,11 +139,11 @@ const StudentProfile = () => {
       <div className="w-32 h-32 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 mb-10 shadow-inner">
          <AlertCircle size={60} />
       </div>
-      <h1 className="text-5xl font-medium text-slate-900    uppercase">Registry Error</h1>
-      <p className="text-slate-400 mt-4 font-medium  tracking-widest text-xs">{error || "Reference node not found"}</p>
+      <h1 className="text-5xl font-black text-slate-900    uppercase">Registry Error</h1>
+      <p className="text-slate-400 mt-4 font-black  tracking-widest text-xs">{error || "Reference node not found"}</p>
       <div className="flex gap-6 mt-12">
-        <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[2rem] font-medium  text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
-        <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-medium  text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
+        <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[2rem] font-black  text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
+        <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black  text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
       </div>
     </div>
   );
@@ -155,16 +155,16 @@ const StudentProfile = () => {
         {/* --- TOP ACTIONS --- */}
         <div className="flex justify-between items-center no-print">
           <div className="flex gap-4">
-            <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[2rem] font-medium text-[10px]  text-slate-900 shadow-sm hover:shadow-xl transition-all  ">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[2rem] font-black text-[10px]  text-slate-900 shadow-sm hover:shadow-xl transition-all  ">
               <ChevronLeft size={18} /> Back
             </button>
-            <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[2rem] font-medium text-[10px]  shadow-2xl flex items-center gap-4  hover:bg-indigo-600 transition-all ">
+            <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[2rem] font-black text-[10px]  shadow-2xl flex items-center gap-4  hover:bg-indigo-600 transition-all ">
               <Printer size={18} /> Print Dossier
             </button>
           </div>
           <div className="bg-white px-6 py-3 rounded-full border border-slate-100 shadow-sm flex items-center gap-3">
              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-             <p className="text-[10px] font-medium text-slate-400  tracking-widest ">Registry Live</p>
+             <p className="text-[10px] font-black text-slate-400  tracking-widest ">Registry Live</p>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ const StudentProfile = () => {
                 )}
                 <div className="absolute inset-0 bg-indigo-900/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                   <Camera size={30} className="text-indigo-400" />
-                  <span className="text-white text-[9px] font-medium   mt-3">Sync Biometric</span>
+                  <span className="text-white text-[9px] font-black   mt-3">Sync Biometric</span>
                 </div>
                 <input type="file" className="hidden" accept="image/*" onChange={uploadPhoto} disabled={uploading} />
               </label>
@@ -196,25 +196,25 @@ const StudentProfile = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 bg-emerald-500/20 text-emerald-400 px-6 py-2 rounded-full border border-emerald-500/30 shadow-lg backdrop-blur-md">
                    <ShieldCheck size={14} />
-                   <span className="text-[10px] font-medium   ">Verified Academic Node</span>
+                   <span className="text-[10px] font-black   ">Verified Academic Node</span>
                 </div>
-                <h1 className="text-5xl md:text-8xl font-medium   leading-none  uppercase">{student.full_name}</h1>
+                <h1 className="text-5xl md:text-8xl font-black   leading-none  uppercase">{student.full_name}</h1>
                 <div className="flex flex-wrap justify-center md:justify-start gap-5">
-                   <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-medium border border-white/5    flex items-center gap-3"><BookOpen size={14} className="text-indigo-400" /> Class: {student.class_name}</div>
-                   <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-medium border border-white/5    flex items-center gap-3"><GraduationCap size={14} className="text-indigo-400" /> Roll: {student.roll_no}</div>
+                   <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-black border border-white/5    flex items-center gap-3"><BookOpen size={14} className="text-indigo-400" /> Class: {student.class_name}</div>
+                   <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-black border border-white/5    flex items-center gap-3"><GraduationCap size={14} className="text-indigo-400" /> Roll: {student.roll_no}</div>
                 </div>
               </div>
             </div>
 
             <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center min-w-[280px] shadow-2xl relative overflow-hidden group/stat transition-all hover:bg-white/10">
               <div className="absolute inset-0 bg-indigo-500/5 group-hover/stat:bg-indigo-500/10 transition-colors"></div>
-              <p className="text-[11px] font-medium  text-indigo-300 mb-4   relative z-10 leading-none">Attendance Rate</p>
-              <p className={`text-8xl font-medium  relative z-10 leading-none  transition-colors duration-500 ${attendanceRate >= 75 ? 'text-emerald-400 group-hover/stat:text-emerald-300' : 'text-rose-400 group-hover/stat:text-rose-300'}`}>
+              <p className="text-[11px] font-black  text-indigo-300 mb-4   relative z-10 leading-none">Attendance Rate</p>
+              <p className={`text-8xl font-black  relative z-10 leading-none  transition-colors duration-500 ${attendanceRate >= 75 ? 'text-emerald-400 group-hover/stat:text-emerald-300' : 'text-rose-400 group-hover/stat:text-rose-300'}`}>
                 {attendanceRate}%
               </p>
               <div className="mt-8 flex items-center justify-center gap-3 relative z-10">
                  <CalendarDays size={14} className="text-indigo-400" />
-                 <p className="text-[9px] font-medium text-indigo-300/40  tracking-widest ">Sequential Lifecycle Sync</p>
+                 <p className="text-[9px] font-black text-indigo-300/40  tracking-widest ">Sequential Lifecycle Sync</p>
               </div>
             </div>
           </div>
@@ -236,7 +236,7 @@ const StudentProfile = () => {
                  <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
                     <Fingerprint size={24} />
                  </div>
-                 <h3 className="font-medium  text-[12px] text-slate-900   uppercase">Student Dossier</h3>
+                 <h3 className="font-black  text-[12px] text-slate-900   uppercase">Student Dossier</h3>
               </div>
               
               <div className="space-y-10 relative z-10">
@@ -248,7 +248,7 @@ const StudentProfile = () => {
 
               <div className="pt-8 border-t border-slate-50 opacity-30 flex items-center justify-center gap-3">
                  <ShieldCheck size={14} />
-                 <p className="text-[8px] font-medium   ">End-to-End Encrypted Registry</p>
+                 <p className="text-[8px] font-black   ">End-to-End Encrypted Registry</p>
               </div>
             </motion.div>
 
@@ -262,9 +262,9 @@ const StudentProfile = () => {
                <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                      <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white shadow-lg"><CreditCard size={20}/></div>
-                     <h3 className="font-medium  text-[10px]  text-slate-900  uppercase">Identity Card</h3>
+                     <h3 className="font-black  text-[10px]  text-slate-900  uppercase">Identity Card</h3>
                   </div>
-                  <div className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[8px] font-medium  tracking-widest ">ASM-001-ST</div>
+                  <div className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[8px] font-black  tracking-widest ">ASM-001-ST</div>
                </div>
                <div className="p-12 flex justify-center bg-slate-50/50 backdrop-blur-sm relative overflow-hidden">
                   <div className="absolute inset-0 bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors"></div>
@@ -273,7 +273,7 @@ const StudentProfile = () => {
                   </div>
                </div>
                <div className="px-10 py-6 bg-white border-t border-slate-50 flex justify-center">
-                  <button className="text-[9px] font-medium  text-indigo-600  hover:text-indigo-900 transition-colors">Recalibrate Visual Identity →</button>
+                  <button className="text-[9px] font-black  text-indigo-600  hover:text-indigo-900 transition-colors">Recalibrate Visual Identity →</button>
                </div>
             </motion.div>
           </div>
@@ -292,8 +292,8 @@ const StudentProfile = () => {
                        <Wallet size={28}/>
                     </div>
                     <div className="space-y-1">
-                       <h3 className="font-medium  text-[14px]  text-slate-900  leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
-                       <p className="text-[8px] font-medium text-slate-400  tracking-widest leading-none">Real-time Fiscal Indexing</p>
+                       <h3 className="font-black  text-[14px]  text-slate-900  leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
+                       <p className="text-[8px] font-black text-slate-400  tracking-widest leading-none">Real-time Fiscal Indexing</p>
                     </div>
                  </div>
                  <div className="flex gap-4">
@@ -310,33 +310,33 @@ const StudentProfile = () => {
 
                 <div className="space-y-6">
                   <div className="flex items-center justify-between px-6 border-b border-slate-50 pb-4">
-                     <p className="text-[10px] font-medium text-slate-300   ">Sequential Billing Feed</p>
+                     <p className="text-[10px] font-black text-slate-300   ">Sequential Billing Feed</p>
                   </div>
                   
                   <div className="space-y-4">
                     {fees.length === 0 ? (
                       <div className="py-24 text-center opacity-10">
                         <CreditCard size={80} className="mx-auto mb-6 text-slate-500" />
-                        <p className="font-medium  text-xs  ">No Ledger Entries Recorded</p>
+                        <p className="font-black  text-xs  ">No Ledger Entries Recorded</p>
                       </div>
                     ) : (
                       fees.map((fee: any) => (
                         <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
                            <div className="flex items-center gap-6">
-                              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors  font-medium text-xs ">
+                              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors  font-black text-xs ">
                                  {fee.month ? fee.month.charAt(0) : 'C'}
                               </div>
                               <div>
-                                 <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Billing Cycle</p>
-                                 <h4 className="font-medium text-slate-900  text-lg  ">{fee.month || "Current Cycle"}</h4>
+                                 <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Billing Cycle</p>
+                                 <h4 className="font-black text-slate-900  text-lg  ">{fee.month || "Current Cycle"}</h4>
                               </div>
                            </div>
                            <div className="flex items-center gap-12">
                               <div className="text-right">
-                                 <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-1">Impact</p>
-                                 <p className="font-medium text-indigo-600 text-2xl   leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
+                                 <p className="text-[9px] font-black text-slate-400  tracking-widest mb-1">Impact</p>
+                                 <p className="font-black text-indigo-600 text-2xl   leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
                               </div>
-                              <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-medium   shadow-sm  border transition-all ${
+                              <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black   shadow-sm  border transition-all ${
                                  fee.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100 animate-pulse"
                               }`}>
                                  {fee.status || "Pending"}
@@ -363,17 +363,17 @@ const DossierItem = ({ icon: Icon, label, value }: any) => (
        <Icon size={22} />
     </div>
     <div className="space-y-1">
-      <p className="text-[9px] font-medium text-slate-300    group-hover/item:text-indigo-400 transition-colors leading-none">{label}</p>
-      <p className="font-medium text-slate-900 text-md tracking-tight  ">{value || "Restricted Info"}</p>
+      <p className="text-[9px] font-black text-slate-300    group-hover/item:text-indigo-400 transition-colors leading-none">{label}</p>
+      <p className="font-black text-slate-900 text-md tracking-tight  ">{value || "Restricted Info"}</p>
     </div>
   </div>
 );
 
 const MiniStatCard = ({ label, value, icon: Icon, color }: any) => {
    const colorMap = {
-      slate: "text-slate-400 bg-slate-50 border-slate-100 font-medium",
-      emerald: "text-emerald-500 bg-emerald-50 border-emerald-100 font-medium",
-      rose: "text-rose-500 bg-rose-50 border-rose-100 font-medium"
+      slate: "text-slate-400 bg-slate-50 border-slate-100 font-black",
+      emerald: "text-emerald-500 bg-emerald-50 border-emerald-100 font-black",
+      rose: "text-rose-500 bg-rose-50 border-rose-100 font-black"
    };
 
    return (
@@ -383,8 +383,8 @@ const MiniStatCard = ({ label, value, icon: Icon, color }: any) => {
             <div className={`w-1.5 h-1.5 rounded-full ${color === 'emerald' ? 'bg-emerald-500' : color === 'rose' ? 'bg-rose-500' : 'bg-slate-300'}`} />
          </div>
          <div className="space-y-1">
-            <p className="text-[9px] font-medium    opacity-40 leading-none">{label}</p>
-            <p className="text-2xl font-medium   leading-none ">{value}</p>
+            <p className="text-[9px] font-black    opacity-40 leading-none">{label}</p>
+            <p className="text-2xl font-black   leading-none ">{value}</p>
          </div>
       </div>
    );

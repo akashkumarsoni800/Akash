@@ -66,7 +66,7 @@ const StudentICardPage = () => {
                      <div className="flex items-center justify-center gap-2 text-emerald-600 font-black text-[10px]  ">
                         <ShieldCheck size={16}/> Digitally Verified
                      </div>
-                     <p className="text-gray-400 font-medium text-xs leading-relaxed">"Always carry this ID card within school premises. This card is non-transferable and must be presented on demand."</p>
+                     <p className="text-gray-400 font-black text-xs leading-relaxed">"Always carry this ID card within school premises. This card is non-transferable and must be presented on demand."</p>
                   </div>
                 </>
               ) : (

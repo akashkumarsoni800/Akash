@@ -12,7 +12,7 @@ export const CardHeader = ({ className, children }: any) => (
 );
 
 export const CardTitle = ({ className, children }: any) => (
-  <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className || ""}`}>{children}</h3>
+  <h3 className={`text-2xl font-black leading-none tracking-tight ${className || ""}`}>{children}</h3>
 );
 
 // ✅ This was missing previously

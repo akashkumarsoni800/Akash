@@ -117,7 +117,7 @@ const StudentNotices = () => {
                     
                     <div className="relative">
                        <Quote className="absolute -left-4 -top-4 text-blue-100/50" size={60} />
-                       <p className="text-slate-600 font-medium text-lg md:text-xl leading-relaxed pl-12 border-l-[6px] border-blue-50 py-4 group-hover:border-blue-200 transition-colors">
+                       <p className="text-slate-600 font-black text-lg md:text-xl leading-relaxed pl-12 border-l-[6px] border-blue-50 py-4 group-hover:border-blue-200 transition-colors">
                           {notice.description}
                        </p>
                     </div>

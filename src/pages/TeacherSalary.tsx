@@ -159,7 +159,7 @@ const TeacherSalary = () => {
              <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
              <CreditCard size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
           </div>
-          <p className="font-medium   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Payroll Terminal...</p>
+          <p className="font-black   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Payroll Terminal...</p>
        </div>
     );
   }
@@ -171,11 +171,11 @@ const TeacherSalary = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Payroll<br/>
                 <span className="text-[var(--accent-admin)]">Operations</span>
               </h1>
-              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
                 <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Compensation Terminal v4.2
               </p>
            </motion.div>
@@ -183,8 +183,8 @@ const TeacherSalary = () => {
            <div className="bg-white border border-slate-100 rounded-[3rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
              <div>
-                <p className="text-[10px] font-medium text-slate-400   mb-2 leading-none">Cumulative Payload</p>
-                <p className="text-4xl font-medium text-slate-900   leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
+                <p className="text-[10px] font-black text-slate-400   mb-2 leading-none">Cumulative Payload</p>
+                <p className="text-4xl font-black text-slate-900   leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
              </div>
            </div>
         </div>
@@ -203,13 +203,13 @@ const TeacherSalary = () => {
                <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
                   <Receipt size={30} />
                </div>
-               <h2 className="text-4xl font-medium text-slate-900   leading-none uppercase">Disbursement<br/><span className="text-[var(--accent-admin)] uppercase">Entry</span></h2>
+               <h2 className="text-4xl font-black text-slate-900   leading-none uppercase">Disbursement<br/><span className="text-[var(--accent-admin)] uppercase">Entry</span></h2>
             </div>
             
             <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                  <div className="space-y-3 group">
-                    <label className="text-[10px] font-medium text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Faculty Identity</label>
+                    <label className="text-[10px] font-black text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Faculty Identity</label>
                     <div className="relative">
                        <UserCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
                        <select 
@@ -235,7 +235,7 @@ const TeacherSalary = () => {
                  </div>
 
                  <div className="space-y-3 group">
-                    <label className="text-[10px] font-medium text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Payroll frequency</label>
+                    <label className="text-[10px] font-black text-slate-400   ml-2 group-focus-within:text-blue-600 transition-colors">Payroll frequency</label>
                     <div className="relative">
                        <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
                        <input 
@@ -253,7 +253,7 @@ const TeacherSalary = () => {
                  <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
                  
                  <div className="flex items-center gap-4 relative z-10 border-b border-slate-100 pb-6">
-                    <p className="text-[10px] font-medium text-slate-400  ">Structure Parameters</p>
+                    <p className="text-[10px] font-black text-slate-400  ">Structure Parameters</p>
                  </div>
 
                  {(dbColumns.includes('basic_salary') || dbColumns.length === 0) && (
@@ -319,8 +319,8 @@ const TeacherSalary = () => {
                  <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                     <div className="text-center md:text-left">
-                       <p className="text-[10px] font-medium  text-blue-400  mb-2 leading-none">Net Institutional Payload</p>
-                       <h2 className="text-5xl md:text-6xl font-medium  leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
+                       <p className="text-[10px] font-black  text-blue-400  mb-2 leading-none">Net Institutional Payload</p>
+                       <h2 className="text-5xl md:text-6xl font-black  leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
                     </div>
                     <button 
                       type="submit" 
@@ -343,16 +343,16 @@ const TeacherSalary = () => {
           >
             <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
                <div className="space-y-3">
-                  <h2 className="text-3xl font-medium text-slate-900   leading-none uppercase">Archive<br/><span className="text-[var(--accent-admin)] uppercase">Manifest</span></h2>
-                  <p className="text-[9px] font-medium text-slate-400   leading-none">Historical Disbursement Registry</p>
+                  <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Archive<br/><span className="text-[var(--accent-admin)] uppercase">Manifest</span></h2>
+                  <p className="text-[9px] font-black text-slate-400   leading-none">Historical Disbursement Registry</p>
                </div>
                <div className="flex flex-col items-end gap-2">
-                  <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-2xl text-[10px] font-medium border border-blue-100 shadow-sm">
+                  <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-2xl text-[10px] font-black border border-blue-100 shadow-sm">
                     {salaries.length} Slips Indexed
                   </div>
                   <div className="flex items-center gap-2">
                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                     <p className="text-[8px] font-medium text-slate-300  tracking-widest">Live Accounting Sync</p>
+                     <p className="text-[8px] font-black text-slate-300  tracking-widest">Live Accounting Sync</p>
                   </div>
                </div>
             </div>
@@ -361,7 +361,7 @@ const TeacherSalary = () => {
               {salaries.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-48">
                   <Wallet size={100} className="mb-10 text-slate-200" />
-                  <p className="text-[12px] font-medium   text-slate-400">Manifest Clean</p>
+                  <p className="text-[12px] font-black   text-slate-400">Manifest Clean</p>
                 </div>
               ) : (
                 salaries.map((salary: any, idx: number) => (
@@ -377,17 +377,17 @@ const TeacherSalary = () => {
                     <div className="relative z-10">
                       <div className="flex justify-between items-start gap-6 mb-12">
                         <div className="flex items-center gap-5">
-                           <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-medium text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl transition-colors">
+                           <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl transition-colors">
                               {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
                            </div>
                            <div>
-                              <h3 className="font-medium text-2xl text-slate-900   group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
-                              <p className="text-[10px] font-medium text-slate-400  tracking-widest flex items-center gap-3">
-                                {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-medium">{salary.month}</span>
+                              <h3 className="font-black text-2xl text-slate-900   group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
+                              <p className="text-[10px] font-black text-slate-400  tracking-widest flex items-center gap-3">
+                                {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-black">{salary.month}</span>
                               </p>
                            </div>
                         </div>
-                        <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-medium   border transition-all ${
+                        <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black   border transition-all ${
                           salary.status === 'Paid' 
                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
                             : 'bg-rose-50 text-rose-600 border-rose-100 animate-pulse'
@@ -398,20 +398,20 @@ const TeacherSalary = () => {
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 bg-slate-50/50 rounded-[3rem] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
                          <div className="text-center md:text-left space-y-2">
-                            <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Base</p>
-                            <p className="text-lg font-medium text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
+                            <p className="text-[9px] font-black text-slate-400  tracking-widest leading-none">Base</p>
+                            <p className="text-lg font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
                          </div>
                          <div className="text-center md:text-left space-y-2">
-                            <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Benefits</p>
-                            <p className="text-lg font-medium text-emerald-500 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
+                            <p className="text-[9px] font-black text-slate-400  tracking-widest leading-none">Benefits</p>
+                            <p className="text-lg font-black text-emerald-500 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
                          </div>
                          <div className="text-center md:text-left space-y-2">
-                            <p className="text-[9px] font-medium text-rose-400  tracking-widest leading-none">Reductions</p>
-                            <p className="text-lg font-medium text-rose-500 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
+                            <p className="text-[9px] font-black text-rose-400  tracking-widest leading-none">Reductions</p>
+                            <p className="text-lg font-black text-rose-500 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
                          </div>
                          <div className="text-center md:text-left space-y-2">
-                            <p className="text-[9px] font-medium text-blue-500  tracking-widest leading-none">Net Pay</p>
-                            <p className="text-2xl font-medium text-slate-900  leading-none">₹{(salary.net_salary || 0).toLocaleString()}</p>
+                            <p className="text-[9px] font-black text-blue-500  tracking-widest leading-none">Net Pay</p>
+                            <p className="text-2xl font-black text-slate-900  leading-none">₹{(salary.net_salary || 0).toLocaleString()}</p>
                          </div>
                       </div>
                       
@@ -419,7 +419,7 @@ const TeacherSalary = () => {
                         <button 
                           onClick={() => markSalaryPaid(salary.id)}
                           disabled={salaryLoading[salary.id] || salary.status === 'Paid'}
-                          className="flex-1 py-5 bg-slate-900 text-white rounded-[1.5rem] font-medium text-[11px]  tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
+                          className="flex-1 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-[11px]  tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
                         >
                           {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
                           {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
@@ -434,7 +434,7 @@ const TeacherSalary = () => {
               )}
             </div>
             
-            <button className="mt-10 py-5 bg-slate-50 rounded-[2rem] text-[10px] font-medium  text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
+            <button className="mt-10 py-5 bg-slate-50 rounded-[2rem] text-[10px] font-black  text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
                Open Audit Vault →
             </button>
           </motion.div>
@@ -446,10 +446,10 @@ const TeacherSalary = () => {
 
 const InputField = ({ label, icon: Icon, prefix, accent, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className={`block text-[9px] font-medium text-slate-400   ml-2 transition-colors ${accent === 'blue' ? 'group-focus-within:text-blue-500' : accent === 'rose' ? 'group-focus-within:text-rose-500' : 'group-focus-within:text-slate-900'}`}>{label}</label>
+    <label className={`block text-[9px] font-black text-slate-400   ml-2 transition-colors ${accent === 'blue' ? 'group-focus-within:text-blue-500' : accent === 'rose' ? 'group-focus-within:text-rose-500' : 'group-focus-within:text-slate-900'}`}>{label}</label>
     <div className="relative">
       {Icon && <Icon className={`absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 transition-colors ${accent === 'blue' ? 'group-focus-within/input:text-blue-400' : accent === 'rose' ? 'group-focus-within/input:text-rose-400' : 'group-focus-within/input:text-slate-400'}`} size={18} />}
-      {prefix && <span className={`absolute ${Icon ? 'left-16' : 'left-8'} top-1/2 -translate-y-1/2 font-medium text-[9px]  tracking-widest ${accent === 'blue' ? 'text-blue-300' : accent === 'rose' ? 'text-rose-300' : 'text-slate-200'}`}>{prefix}</span>}
+      {prefix && <span className={`absolute ${Icon ? 'left-16' : 'left-8'} top-1/2 -translate-y-1/2 font-black text-[9px]  tracking-widest ${accent === 'blue' ? 'text-blue-300' : accent === 'rose' ? 'text-rose-300' : 'text-slate-200'}`}>{prefix}</span>}
       <input className="premium-input" style={{ paddingLeft: Icon ? (prefix ? '6rem' : '4rem') : (prefix ? '4rem' : '2rem') }} {...props} />
     </div>
   </div>
