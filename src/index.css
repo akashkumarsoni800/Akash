@@ -11,19 +11,20 @@
   --accent-teacher: #10b981;
   --accent-student: #8b5cf6;
   
-  --: 'Outfit', system-ui, sans-serif;
+  --font-outfit: 'Outfit', system-ui, sans-serif;
   --font-inter: 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
   body {
     @apply bg-[var(--bg-main)] text-slate-900 antialiased selection:bg-blue-600 selection:text-white;
-    font-family: var(--);
-    font-weight: 450; /* Slightly more defined than normal */
+    font-family: var(--font-inter);
+    font-weight: 450;
   }
   
   h1, h2, h3 {
     @apply tracking-tighter font-black uppercase text-slate-900;
+    font-family: var(--font-outfit);
   }
 
   h4, h5, h6 {
@@ -102,7 +103,7 @@
   .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
 
-  . { font-family: var(--); }
+  .font-outfit { font-family: var(--font-outfit); }
   .font-inter { font-family: var(--font-inter); }
 }
 
