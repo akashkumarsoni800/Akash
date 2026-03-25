@@ -12,6 +12,7 @@
   --accent-student: #8b5cf6;
   
   --font-primary: 'Inter', system-ui, sans-serif;
+  --font-outfit: 'Outfit', system-ui, sans-serif;
 }
 
 @layer base {
@@ -22,7 +23,7 @@
   
   h1, h2, h3 {
     @apply font-black uppercase text-slate-900 tracking-tight;
-    font-family: var(--font-primary);
+    font-family: var(--font-outfit);
   }
 
   h4, h5, h6 {
