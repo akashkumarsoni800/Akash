@@ -237,55 +237,8 @@ const AddStudent = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-         <InputField label="Student Name *" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required icon={User} />
-         <InputField label="Father's Name *" name="father" placeholder="Father's Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
-         
-         <div className="grid grid-cols-2 gap-6">
-          <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
-          <div className="space-y-1 group">
-           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">GenderSelection</label>
-           <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" required>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-           </select>
-          </div>
-         </div>
-
-         <InputField label="Phone Number" name="phone" placeholder="Mobile Number" value={formData.phone} onChange={handleChange} icon={Fingerprint} />
-
-         <div className="space-y-1 group">
-          <label className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
-          <div className="flex gap-4">
-           <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full premium-input pl-8 uppercase" required />
-           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
-            <RefreshCw size={20}/>
-           </button>
-          </div>
-         </div>
-
-         <InputField label="Roll Number *" name="roll" value={formData.roll} onChange={handleChange} required icon={Award} />
-
-         <div className="md:col-span-2">
-           <InputField label="Email (Login ID) *" name="email" type="email" placeholder="student@school.com" value={formData.email} onChange={handleChange} required icon={Mail} />
-         </div>
-
-         <div className="md:col-span-2 space-y-1 group">
-          <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Address</label>
-          <textarea
-           placeholder="Home Address..."
-           name="address"
-           value={formData.address}
-           onChange={handleChange}
-           className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
-           required
-          />
-         </div>
-        </div>
-
         {/* --- PHOTO UPLOAD SECTION --- */}
-        <div className="space-y-8 bg-slate-50/50 p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-inner">
+        <div className="space-y-8 bg-slate-50/50 p-8 md:p-10 rounded-[3rem] border border-slate-100 shadow-inner">
           <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
             <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
              <Camera size={20} />
@@ -295,7 +248,7 @@ const AddStudent = () => {
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="relative group">
-              <div className="w-40 h-40 rounded-[2rem] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
+              <div className="w-40 h-40 rounded-[2.5rem] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
                 {photoPreview ? (
                   <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
                 ) : (
@@ -394,6 +347,54 @@ const AddStudent = () => {
             )}
           </AnimatePresence>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+         <InputField label="Student Name *" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required icon={User} />
+         <InputField label="Father's Name *" name="father" placeholder="Father's Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
+         
+         <div className="grid grid-cols-2 gap-6">
+          <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
+          <div className="space-y-1 group">
+           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">GenderSelection</label>
+           <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+           </select>
+          </div>
+         </div>
+
+         <InputField label="Phone Number" name="phone" placeholder="Mobile Number" value={formData.phone} onChange={handleChange} icon={Fingerprint} />
+
+         <div className="space-y-1 group">
+          <label className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
+          <div className="flex gap-4">
+           <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full premium-input pl-8 uppercase" required />
+           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
+            <RefreshCw size={20}/>
+           </button>
+          </div>
+         </div>
+
+         <InputField label="Roll Number *" name="roll" value={formData.roll} onChange={handleChange} required icon={Award} />
+
+         <div className="md:col-span-2">
+           <InputField label="Email (Login ID) *" name="email" type="email" placeholder="student@school.com" value={formData.email} onChange={handleChange} required icon={Mail} />
+         </div>
+
+         <div className="md:col-span-2 space-y-1 group">
+          <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Address</label>
+          <textarea
+           placeholder="Home Address..."
+           name="address"
+           value={formData.address}
+           onChange={handleChange}
+           className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
+           required
+          />
+         </div>
+        </div>
+
 
         <button 
           type="submit" 
