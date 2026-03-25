@@ -393,7 +393,7 @@ const TeacherSalary = () => {
                {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
               </div>
               <div>
-               <h3 className="font-black text-2xl text-slate-900  group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
+               <h3 className="font-semibold text-2xl text-slate-900  group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
                <p className="text-[10px] font-black text-slate-400 tracking-widest flex items-center gap-3">
                 {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-black">{salary.month}</span>
                </p>

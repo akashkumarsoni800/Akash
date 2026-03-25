@@ -152,10 +152,10 @@ const UploadResult = () => {
           </div>
         </div>
         
-        {selectedStudent && (
+{selectedStudent && (
           <div className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100 flex items-center gap-4">
             <User size={18} />
-            <span className="text-xs font-black tracking-widest">{selectedStudent.full_name} ({selectedStudent.class_name})</span>
+            <span className="text-xs font-semibold tracking-widest">{selectedStudent.full_name} ({selectedStudent.class_name})</span>
           </div>
         )}
        </div>

@@ -216,7 +216,7 @@ const TeacherAttendance = () => {
             {s.full_name[0].toUpperCase()}
            </div>
            <div>
-            <h4 className="font-black text-slate-800  leading-none mb-1 ">{s.full_name}</h4>
+            <h4 className="font-semibold text-slate-800  leading-none mb-1 ">{s.full_name}</h4>
             <p className="text-[9px] font-black text-slate-400 tracking-widest flex items-center gap-1">
              <Zap size={10} className={attendance[s.id] === 'P' ? 'text-emerald-500' : 'text-red-500'}/> Node Secured
             </p>
