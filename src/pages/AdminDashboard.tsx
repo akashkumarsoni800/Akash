@@ -64,7 +64,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
         <div>
           <p className="text-slate-400 text-[10px] font-medium  tracking-widest mb-4">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-medium text-slate-900  leading-none">{value}</h3>
+            <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{value}</h3>
             {subText && <span className="text-[10px] text-slate-400 font-medium  tracking-tight">{subText}</span>}
           </div>
         </div>
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
                 <LayoutDashboard size={28}/>
               </div>
               <div>
-                <h1 className="text-3xl font-medium text-slate-900   leading-none">Command Center</h1>
+                <h1 className="text-3xl font-medium text-slate-900   leading-none uppercase">Command Center</h1>
                 <p className="text-[10px] font-medium text-blue-500  tracking-widest mt-2">Administrative Authority Level 4</p>
               </div>
             </div>

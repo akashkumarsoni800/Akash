@@ -87,8 +87,8 @@ export default function ExamsManagement() {
       {/* --- TOP BAR --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div className="space-y-1">
-            <h3 className="text-2xl font-bold text-slate-900   leading-none">Scholastic Assessments</h3>
-            <p className="text-[10px] font-bold text-slate-400  tracking-widest mt-1">Digital Examination Registry Hub v4.2</p>
+            <h3 className="text-2xl font-black text-slate-900   leading-none uppercase">Scholastic Assessments</h3>
+            <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Digital Examination Registry Hub v4.2</p>
          </div>
          <button 
            onClick={() => setIsModalOpen(true)}
@@ -101,14 +101,14 @@ export default function ExamsManagement() {
       {/* --- STATS MINI --- */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
          <div className="premium-card p-6 shadow-sm">
-            <p className="text-[9px] font-bold text-slate-400  tracking-widest mb-2">Active Exams</p>
-            <p className="text-2xl font-bold text-slate-900  leading-none">{exams.length}</p>
+            <p className="text-[9px] font-black text-slate-400  tracking-widest mb-2">Active Exams</p>
+            <p className="text-2xl font-black text-slate-900  leading-none">{exams.length}</p>
          </div>
          <div className="premium-card p-6 shadow-sm">
-            <p className="text-[9px] font-bold text-slate-400  tracking-widest mb-2">Sync Status</p>
+            <p className="text-[9px] font-black text-slate-400  tracking-widest mb-2">Sync Status</p>
             <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-               <p className="text-[10px] font-bold text-emerald-600   leading-none">Live Protocol Active</p>
+               <p className="text-[10px] font-black text-emerald-600   leading-none">Live Protocol Active</p>
             </div>
          </div>
       </div>
@@ -135,16 +135,16 @@ export default function ExamsManagement() {
                         <FileText size={24} />
                      </div>
                      <div>
-                        <h4 className="text-xl font-bold text-slate-900   leading-none mb-2">{exam.title}</h4>
+                        <h4 className="text-xl font-black text-slate-900   leading-none mb-2">{exam.title}</h4>
                         <div className="flex items-center gap-2">
                            <Calendar size={12} className="text-slate-300" />
-                           <p className="text-[10px] font-bold text-slate-400  tracking-wide">{exam.exam_date || 'TBD'}</p>
+                           <p className="text-[10px] font-black text-slate-400  tracking-wide">{exam.exam_date || 'TBD'}</p>
                         </div>
                      </div>
 
                      <div className="flex flex-wrap gap-2">
                         {exam.subjects?.map((sub: string) => (
-                           <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[9px] font-bold   border border-slate-100">{sub}</span>
+                           <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[9px] font-black   border border-slate-100">{sub}</span>
                         ))}
                      </div>
                   </div>
@@ -157,8 +157,8 @@ export default function ExamsManagement() {
                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
                   <Search size={40} />
                </div>
-               <p className="text-[10px] font-bold text-slate-300   mb-2">No active assessment nodes found</p>
-               <p className="text-[9px] font-bold text-slate-200  tracking-widest leading-relaxed">Initialize a new exam to begin scheduling.</p>
+               <p className="text-[10px] font-black text-slate-300   mb-2">No active assessment nodes found</p>
+               <p className="text-[9px] font-black text-slate-200  tracking-widest leading-relaxed">Initialize a new exam to begin scheduling.</p>
             </div>
          )}
       </div>
@@ -175,8 +175,8 @@ export default function ExamsManagement() {
                >
                   <div className="flex justify-between items-center mb-10">
                      <div className="space-y-1">
-                        <h2 className="text-3xl font-bold text-slate-900   leading-none">Schedule Exam</h2>
-                        <p className="text-[10px] font-bold text-slate-400  tracking-widest mt-1">Institutional Assessment Config</p>
+                        <h2 className="text-3xl font-black text-slate-900   leading-none uppercase">Schedule Exam</h2>
+                        <p className="text-[10px] font-black text-slate-400  tracking-widest mt-1">Institutional Assessment Config</p>
                      </div>
                      <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
                         <Plus size={20} className="rotate-45" />
@@ -200,11 +200,11 @@ export default function ExamsManagement() {
                           onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
                         />
                         <div className="space-y-2 group">
-                          <label className="block text-[9px] font-bold text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600">Included Subject Nodes</label>
+                          <label className="block text-[9px] font-black text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600">Included Subject Nodes</label>
                           <div className="relative">
                             <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
                             <textarea 
-                              className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
+                              className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
                               placeholder="Mathematics, Physics, Chemistry... (comma separated)"
                               value={formData.subjects}
                               onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
@@ -217,7 +217,7 @@ export default function ExamsManagement() {
                         <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-blue-600 border-none shadow-xl">
                            {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Lock Protocol</>}
                         </button>
-                        <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-bold   text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+                        <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black   text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
                      </div>
                   </form>
                </motion.div>
@@ -231,7 +231,7 @@ export default function ExamsManagement() {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-2 group/input">
-    <label className="block text-[9px] font-bold text-slate-400   ml-2 transition-colors group-focus-within/input:text-blue-600">{label}</label>
+    <label className="block text-[9px] font-black text-slate-400   ml-2 transition-colors group-focus-within/input:text-blue-600">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
       <input className={`premium-input text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-5`} {...props} />

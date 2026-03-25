@@ -80,7 +80,7 @@ const AddTeacher = () => {
         {/* --- HEADER --- */}
         <div className="mb-12 text-center space-y-4">
            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-5xl md:text-6xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-6xl font-medium text-slate-900   leading-none uppercase">
                 Faculty<br/>
                 <span className="text-[var(--accent-admin)]">Induction</span>
               </h1>
@@ -102,7 +102,7 @@ const AddTeacher = () => {
                 <UserPlus size={24} />
              </div>
              <div>
-                <h2 className="text-2xl font-medium text-slate-900  ">Credential Entry</h2>
+                <h2 className="text-2xl font-medium text-slate-900   uppercase">Credential Entry</h2>
                 <p className="text-[9px] font-medium text-slate-300  tracking-widest leading-none">ASM REGISTRY INDEX: STAFF_NEW</p>
              </div>
           </div>

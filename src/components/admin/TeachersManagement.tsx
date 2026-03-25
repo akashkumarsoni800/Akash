@@ -105,7 +105,7 @@ export default function TeachersManagement() {
       {/* --- TOP BAR --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div className="space-y-1">
-            <h3 className="text-2xl font-medium text-slate-900   leading-none">Faculty Registry</h3>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none uppercase">Faculty Registry</h3>
             <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Academic Personnel Management v4.2</p>
          </div>
          <button 
@@ -181,7 +181,7 @@ export default function TeachersManagement() {
                >
                   <div className="flex justify-between items-center mb-10">
                      <div className="space-y-1">
-                        <h2 className="text-3xl font-medium text-slate-900   leading-none">Induct Faculty</h2>
+                        <h2 className="text-3xl font-medium text-slate-900   leading-none uppercase">Induct Faculty</h2>
                         <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Academic Personnel Initialization</p>
                      </div>
                      <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">

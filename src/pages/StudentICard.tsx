@@ -37,7 +37,7 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
           {/* Right Data Section */}
           <div className="flex-1 p-4 flex flex-col justify-between relative">
             <div className="space-y-0.5">
-               <h2 className="text-[16px] font-medium text-blue-950  leading-none ">Adarsh Shishu Mandir</h2>
+               <h2 className="text-[16px] font-medium text-blue-950  leading-none  uppercase">Adarsh Shishu Mandir</h2>
                <p className="text-[6px] font-medium text-gray-400   leading-none mb-3">Institutional Identity Module</p>
             </div>
 

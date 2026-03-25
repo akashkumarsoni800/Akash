@@ -68,7 +68,7 @@ const StudentAttendance = () => {
           <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
           <Activity size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
        </div>
-       <p className="font-bold   text-slate-400 text-[10px] mt-8">Syncing Presence Manifest...</p>
+       <p className="font-black   text-slate-400 text-[10px] mt-8">Syncing Presence Manifest...</p>
     </div>
   );
 
@@ -83,23 +83,23 @@ const StudentAttendance = () => {
             className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
           >
             <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-bold  tracking-widest text-[10px] text-slate-600">Portal Exit</span>
+            <span className="font-black  tracking-widest text-[10px] text-slate-600">Portal Exit</span>
           </button>
 
           <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-             <span className="text-[10px] font-bold   text-blue-400 ">Real-Time Sync Active</span>
+             <span className="text-[10px] font-black   text-blue-400 ">Real-Time Sync Active</span>
           </div>
         </div>
 
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-bold text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Presence<br/>
                 <span className="text-blue-600">Analytics</span>
               </h1>
-              <p className="text-slate-400 font-bold  text-[10px]  mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-blue-500" /> Institutional Presence & Activity Audit
               </p>
            </motion.div>
@@ -107,8 +107,8 @@ const StudentAttendance = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📅</div>
              <div>
-               <p className="text-[9px] font-bold text-slate-400   mb-1">Audit Score</p>
-               <p className="text-3xl font-bold text-slate-900  ">{stats.percentage}% Consistent</p>
+               <p className="text-[9px] font-black text-slate-400   mb-1">Audit Score</p>
+               <p className="text-3xl font-black text-slate-900  ">{stats.percentage}% Consistent</p>
              </div>
            </div>
         </div>
@@ -129,13 +129,13 @@ const StudentAttendance = () => {
           className="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group"
         >
            <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row justify-between items-center gap-6 px-12">
-              <h3 className="font-bold text-[10px] text-slate-400   flex items-center gap-3">
+              <h3 className="font-black text-[10px] text-slate-400   flex items-center gap-3 uppercase">
                  <Clock size={16} className="text-blue-600"/> Chronological Presence Timeline
               </h3>
               <div className="flex items-center gap-4">
                  <div className="relative group/filter">
                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/filter:text-blue-500 transition-colors" size={14}/>
-                    <select className="bg-white border border-slate-100 rounded-xl pl-10 pr-6 py-2 text-[9px] font-bold  tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
+                    <select className="bg-white border border-slate-100 rounded-xl pl-10 pr-6 py-2 text-[9px] font-black  tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
                        <option>Full Manifest</option>
                        <option>Last 30 Cycles</option>
                        <option>Flagged Only</option>
@@ -164,17 +164,17 @@ const StudentAttendance = () => {
                               <Calendar size={24}/>
                            </div>
                            <div className="space-y-1">
-                              <p className="font-bold text-slate-900 text-xl   ">
+                              <p className="font-black text-slate-900 text-xl   ">
                                  {new Date(record.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                               </p>
-                              <p className="text-[9px] font-bold text-slate-400   flex items-center gap-2">
+                              <p className="text-[9px] font-black text-slate-400   flex items-center gap-2">
                                  <Zap size={10} className="text-blue-500"/> {new Date(record.date).toLocaleDateString('en-GB', { weekday: 'long' })} Protocol
                               </p>
                            </div>
                         </div>
 
                         <div className="mt-6 md:mt-0 flex items-center gap-6 w-full md:w-auto">
-                           <div className={`px-10 py-4 rounded-[1.5rem] font-bold text-[10px]   shadow-xl  transition-all duration-500 ${
+                           <div className={`px-10 py-4 rounded-[1.5rem] font-black text-[10px]   shadow-xl  transition-all duration-500 ${
                               record.status === 'P' 
                               ? 'bg-slate-900 text-white shadow-slate-200 group-hover/row:bg-blue-600' 
                               : 'bg-rose-600 text-white shadow-rose-200 animate-pulse'
@@ -189,8 +189,8 @@ const StudentAttendance = () => {
                 <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200 opacity-30 group">
                    <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
                    <div className="space-y-2">
-                      <h4 className="text-xl font-bold text-slate-900   ">Registry Nullified</h4>
-                      <p className="text-[9px] font-bold text-slate-400  ">No presence records found in the current session cycle.</p>
+                      <h4 className="text-xl font-black text-slate-900   ">Registry Nullified</h4>
+                      <p className="text-[9px] font-black text-slate-400  ">No presence records found in the current session cycle.</p>
                    </div>
                 </div>
               )}
@@ -214,8 +214,8 @@ const PremiumStatBox = ({ label, value, icon: Icon, accent }: any) => {
          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all group-hover:scale-110 group-hover:rotate-3 ${colors[accent]}`}>
             <Icon size={24}/>
          </div>
-         <p className="text-[9px] font-bold text-slate-400  tracking-widest mb-2 ">{label}</p>
-         <p className="text-3xl font-bold text-slate-900  ">{value}</p>
+         <p className="text-[9px] font-black text-slate-400  tracking-widest mb-2 ">{label}</p>
+         <p className="text-3xl font-black text-slate-900  ">{value}</p>
          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <Icon size={40} />
          </div>

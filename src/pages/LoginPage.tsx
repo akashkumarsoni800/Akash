@@ -118,7 +118,7 @@ const LoginPage = () => {
             }`}>
               <CheckCircle2 size={48} />
             </div>
-            <h2 className="text-5xl font-medium text-slate-800   mb-4">Identity<br/>Verified</h2>
+            <h2 className="text-5xl font-medium text-slate-800   mb-4 uppercase">Identity<br/>Verified</h2>
             <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
@@ -136,7 +136,7 @@ const LoginPage = () => {
               <div className="w-24 h-24 bg-white shadow-xl rounded-3xl p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
                 <ShieldCheck className="text-blue-600" size={48} />
               </div>
-              <h1 className="text-6xl md:text-7xl font-medium text-slate-900   leading-[0.9] mb-4">
+              <h1 className="text-6xl md:text-7xl font-medium text-slate-900   leading-[0.9] mb-4 uppercase">
                 School Management<br/>
                 <span className="text-slate-400">System</span>
               </h1>
@@ -157,7 +157,7 @@ const LoginPage = () => {
                      {role.icon}
                    </div>
                    <div>
-                     <h3 className="text-2xl font-medium text-slate-800  ">{role.label}</h3>
+                     <h3 className="text-2xl font-medium text-slate-800   uppercase">{role.label}</h3>
                      <p className="text-xs font-medium text-slate-400  tracking-widest mt-1">{role.sub}</p>
                    </div>
                    <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mt-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
@@ -190,7 +190,7 @@ const LoginPage = () => {
                   selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
                 }`}></div>
                 
-                <h2 className="text-4xl font-medium text-slate-900   mb-2">
+                <h2 className="text-4xl font-medium text-slate-900   mb-2 uppercase">
                   {selectedRole}<br/><span className="text-slate-400">Entry</span>
                 </h2>
                 <p className="text-[10px] font-medium text-slate-400   mb-10">Verification required to proceed</p>

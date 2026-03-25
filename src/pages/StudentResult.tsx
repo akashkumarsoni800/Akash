@@ -109,7 +109,7 @@ const StudentResult = () => {
                            <ShieldCheck className="text-emerald-400" size={18}/>
                            <span className="text-[9px] md:text-[10px] font-medium   text-emerald-400/80 ">Verified Scholastic Identity</span>
                         </div>
-                        <h2 className="text-4xl md:text-7xl font-medium   leading-none ">{studentData.full_name}</h2>
+                        <h2 className="text-4xl md:text-7xl font-medium   leading-none  uppercase">{studentData.full_name}</h2>
                         <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
                            <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-medium  border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
                            <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-medium  border border-white/5 tracking-widest backdrop-blur-md">Manifest #{studentData.roll_no}</span>
@@ -137,7 +137,7 @@ const StudentResult = () => {
                         <FileText size={28}/>
                      </div>
                      <div>
-                        <h3 className="text-3xl font-medium text-slate-900   ">{results[0].exams?.title || 'Comprehensive Examination'}</h3>
+                        <h3 className="text-3xl font-medium text-slate-900    uppercase">{results[0].exams?.title || 'Comprehensive Examination'}</h3>
                         <p className="text-[11px] font-medium text-slate-400   mt-1">Registry Session: 2024-25</p>
                      </div>
                   </div>
@@ -216,7 +216,7 @@ const StudentResult = () => {
           >
              <div className="bg-slate-50 w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-[360deg] transition-transform duration-1000 rotate-12">🎓</div>
              <div className="space-y-4">
-                <h3 className="text-3xl font-medium text-slate-900   ">Manifest Unavailable</h3>
+                <h3 className="text-3xl font-medium text-slate-900    uppercase">Manifest Unavailable</h3>
                 <p className="max-w-md mx-auto text-slate-400 font-medium text-[10px]   leading-relaxed px-10">
                   The academic registry for this session has not yet been authorized. Please maintain scholastic excellence while waiting for final publication.
                 </p>

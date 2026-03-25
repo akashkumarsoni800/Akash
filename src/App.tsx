@@ -112,7 +112,7 @@ function App() {
               >
                  🚫 404
               </motion.div>
-              <h1 className="text-4xl md:text-5xl font-bold text-red-600 mb-4  tracking-widest animate-pulse">
+              <h1 className="text-4xl md:text-5xl font-black text-red-600 mb-4  tracking-widest animate-pulse uppercase">
                 404 - Page Not Found
               </h1>
               <p className="text-xl text-gray-600 mb-8 max-w-md leading-relaxed">
@@ -120,7 +120,7 @@ function App() {
               </p>
               <a 
                 href="/" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-3xl font-bold text-xl  tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 border-0"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-3xl font-black text-xl  tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 border-0"
               >
                 ← Back to Login
               </a>

@@ -93,7 +93,7 @@ const DocumentHub = () => {
         
         <div className="no-print flex justify-between items-center">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Digital<br/>
                 <span className="text-purple-600">Archive</span>
               </h1>
@@ -182,7 +182,7 @@ const DocumentHub = () => {
               className="no-print premium-card p-10 md:p-14 space-y-10"
             >
                <div className="flex justify-between items-center border-b border-slate-50 pb-8">
-                  <h3 className="font-medium text-slate-900  tracking-widest flex items-center gap-4">
+                  <h3 className="font-medium text-slate-900  tracking-widest flex items-center gap-4 uppercase">
                      <Users className="text-purple-600" /> {student ? "Manifest Target Selected" : `Extracted Records (${studentsList.length})`}
                   </h3>
                   <div className="flex items-center gap-3 bg-purple-50 px-4 py-2 rounded-xl">
@@ -358,7 +358,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
            </div>
            
            <div className="text-center flex-1 mx-4">
-              <h2 className="text-3xl font-medium text-slate-900   leading-none">Adarsh Shishu Mandir</h2>
+              <h2 className="text-3xl font-medium text-slate-900   leading-none uppercase">Adarsh Shishu Mandir</h2>
               <p className="text-[8px] font-medium text-slate-400 mt-1   leading-none">Basantpatti, Purnahiya (Sheohar) Bihar</p>
               <div className="inline-block bg-slate-900 text-white px-8 py-1.5 rounded-full text-[10px] font-medium   mt-3">Annual Examination Admit Terminal 2026</div>
            </div>
@@ -459,7 +459,7 @@ const TCTemplate = ({ student }: any) => (
 
     <div>
       <div className="text-center border-b-4 border-slate-900 pb-8 mb-16 space-y-3">
-        <h1 className="text-6xl font-medium   text-slate-900 leading-none ">Adarsh Shishu Mandir</h1>
+        <h1 className="text-6xl font-medium   text-slate-900 leading-none  uppercase">Adarsh Shishu Mandir</h1>
         <p className="text-xs font-medium   text-slate-400">Institutional Transfer Protocol • UDise: 10032201107</p>
       </div>
       
@@ -505,7 +505,7 @@ const DOBTemplate = ({ student }: any) => (
          </div>
       </div>
 
-      <h1 className="text-7xl font-medium   mb-20 text-slate-900 leading-none ">Birth<br/><span className="text-purple-600">Certification</span></h1>
+      <h1 className="text-7xl font-medium   mb-20 text-slate-900 leading-none  uppercase">Birth<br/><span className="text-purple-600 uppercase">Certification</span></h1>
       
       <div className="space-y-16">
          <div className="grid grid-cols-1 gap-12 border-l-[8px] border-purple-50 pl-12 py-4">
@@ -550,7 +550,7 @@ const GatePassTemplate = ({ student }: any) => (
     </div>
     
     <div className="flex justify-between items-center border-b-2 border-rose-100 pb-3 mb-4">
-       <h2 className="text-2xl font-medium  text-rose-600  leading-none ">Gate Pass</h2>
+       <h2 className="text-2xl font-medium  text-rose-600  leading-none  uppercase">Gate Pass</h2>
        <div className="bg-rose-600 text-white px-4 py-1 rounded-full text-[9px] font-medium  tracking-widest ">Authorized</div>
     </div>
     

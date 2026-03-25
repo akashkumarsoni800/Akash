@@ -59,7 +59,7 @@ const CreateAdmin = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Master<br/>
                 <span className="text-blue-600">Registry</span>
               </h1>
@@ -95,7 +95,7 @@ const CreateAdmin = () => {
                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
                       <UserPlus size={24} />
                    </div>
-                   <h2 className="text-3xl font-medium text-slate-900  ">Induction Flow</h2>
+                   <h2 className="text-3xl font-medium text-slate-900   uppercase">Induction Flow</h2>
                 </div>
 
                 <div className="bg-amber-50/50 p-6 rounded-3xl border border-amber-100 flex gap-5 items-start">
@@ -164,7 +164,7 @@ const CreateAdmin = () => {
                 className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
               >
                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
-                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10 text-center md:text-left">Protocol Insights</h3>
+                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10 text-center md:text-left uppercase">Protocol Insights</h3>
                  
                  <div className="space-y-10 relative z-10">
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">

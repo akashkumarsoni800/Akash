@@ -95,7 +95,7 @@ const TeacherAttendance = () => {
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Presence<br/>
                 <span className="text-blue-600">Registry</span>
               </h1>
@@ -179,7 +179,7 @@ const TeacherAttendance = () => {
               className="space-y-8"
             >
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3 ">
+                <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3  uppercase">
                   <span className="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-xs">01</span>
                   Presence Manifest <span className="text-slate-300 ml-2">Class {selectedClass}</span>
                 </h2>
@@ -242,7 +242,7 @@ const TeacherAttendance = () => {
               <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                 <Calendar size={48} className="text-slate-400" />
               </div>
-              <h3 className="text-2xl font-medium text-slate-900   mb-2 ">Identity Recognition Locked</h3>
+              <h3 className="text-2xl font-medium text-slate-900   mb-2  uppercase">Identity Recognition Locked</h3>
               <p className="max-w-xs text-[9px] font-medium text-slate-400   leading-relaxed text-center">Select a target class manifest from the registry portal to begin real-time presence logging.</p>
             </div>
           )}

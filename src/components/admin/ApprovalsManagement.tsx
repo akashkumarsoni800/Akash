@@ -58,7 +58,7 @@ export default function ApprovalsManagement() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
          <div className="space-y-1">
-            <h3 className="text-2xl font-medium text-slate-900   leading-none">Authority Oversight</h3>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none uppercase">Authority Oversight</h3>
             <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Pending Identity Verification Queue v4.2</p>
          </div>
          <div className="flex items-center gap-3">

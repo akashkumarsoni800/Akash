@@ -119,7 +119,7 @@ const Sidebar = () => {
               <Shield size={22} />
             </div>
             <div>
-              <h2 className="text-sm font-medium text-white   leading-none">ASMD</h2>
+              <h2 className="text-sm font-medium text-white   leading-none uppercase">ASMD</h2>
               <p className="text-[9px] font-medium text-slate-500  tracking-widest mt-1">Platform v4.0</p>
             </div>
           </div>

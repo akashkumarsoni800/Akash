@@ -102,7 +102,7 @@ export default function StudentRegistrationForm() {
                        <Compass size={32} />
                     </div>
                     <div>
-                       <h2 className="text-3xl font-medium text-white    leading-none">
+                       <h2 className="text-3xl font-medium text-white    leading-none uppercase">
                           Scholar<br/>Induction
                        </h2>
                        <p className="text-[10px] font-medium text-blue-400   mt-4">Protocol Version 4.0</p>
@@ -136,7 +136,7 @@ export default function StudentRegistrationForm() {
               <div className="flex-1 p-10 md:p-14 space-y-10">
                  <div className="flex items-center justify-between">
                     <div>
-                       <h3 className="text-2xl font-medium text-slate-900   ">Registration</h3>
+                       <h3 className="text-2xl font-medium text-slate-900    uppercase">Registration</h3>
                        <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Personnel Entry Matrix</p>
                     </div>
                     <div className="text-right hidden sm:block">

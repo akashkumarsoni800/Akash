@@ -212,7 +212,7 @@ const AddStudent = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Personnel<br/>
                 <span className="text-[var(--accent-admin)]">Onboarding</span>
               </h1>
@@ -256,7 +256,7 @@ const AddStudent = () => {
                       <User size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-medium text-slate-900  ">Primary Identity</h2>
+                      <h2 className="text-3xl font-medium text-slate-900   uppercase">Primary Identity</h2>
                       <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Legal Candidate Details</p>
                    </div>
                 </div>
@@ -317,7 +317,7 @@ const AddStudent = () => {
                       <Layout size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-medium text-slate-900  ">Fleet Assignment</h2>
+                      <h2 className="text-3xl font-medium text-slate-900   uppercase">Fleet Assignment</h2>
                       <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Academic Node Allocation</p>
                    </div>
                 </div>
@@ -374,7 +374,7 @@ const AddStudent = () => {
                       <Camera size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-medium text-slate-900  ">Visual Registry</h2>
+                      <h2 className="text-3xl font-medium text-slate-900   uppercase">Visual Registry</h2>
                       <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Biometric Capture Terminal</p>
                    </div>
                 </div>

@@ -55,7 +55,7 @@ export default function StudentsManagement() {
       {/* --- TOP BAR & FILTERS --- */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
          <div className="space-y-1 text-left">
-            <h3 className="text-2xl font-medium text-slate-900   leading-none">Personnel Registry</h3>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none uppercase">Personnel Registry</h3>
             <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
          </div>
  

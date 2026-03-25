@@ -68,7 +68,7 @@ const StudentHomework = () => {
           <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
           <BookOpen size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
        </div>
-       <p className="font-bold   text-slate-400 text-[10px] mt-8 text-center">Syncing Assignment Manifest...</p>
+       <p className="font-black   text-slate-400 text-[10px] mt-8 text-center">Syncing Assignment Manifest...</p>
     </div>
   );
 
@@ -83,23 +83,23 @@ const StudentHomework = () => {
             className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-purple-200 transition-all active:scale-95"
           >
             <ChevronLeft size={18} className="text-purple-600 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-bold  tracking-widest text-[10px] text-slate-600">Portal Exit</span>
+            <span className="font-black  tracking-widest text-[10px] text-slate-600">Portal Exit</span>
           </button>
 
           <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
              <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-             <span className="text-[10px] font-bold   text-purple-400 ">Digital Classroom Active</span>
+             <span className="text-[10px] font-black   text-purple-400 ">Digital Classroom Active</span>
           </div>
         </div>
 
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-bold text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900   leading-none uppercase">
                 Academic<br/>
                 <span className="text-purple-600">Assets</span>
               </h1>
-              <p className="text-slate-400 font-bold  text-[10px]  mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-black  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-purple-500" /> Authorized Scholastic Tasks & Resource Manifest
               </p>
            </motion.div>
@@ -107,8 +107,8 @@ const StudentHomework = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📚</div>
              <div>
-               <p className="text-[9px] font-bold text-slate-400   mb-1">Task Density</p>
-               <p className="text-3xl font-bold text-slate-900  ">{homeworks.length} Assignments</p>
+               <p className="text-[9px] font-black text-slate-400   mb-1">Task Density</p>
+               <p className="text-3xl font-black text-slate-900  ">{homeworks.length} Assignments</p>
              </div>
            </div>
         </div>
@@ -133,12 +133,12 @@ const StudentHomework = () => {
                        <div className="p-8 rounded-[2rem] bg-white shadow-xl mb-6 group-hover:scale-110 transition-transform duration-500">
                           {hw.isSubmitted ? <CheckCircle2 size={40}/> : <Clock size={40} className="animate-pulse"/>}
                        </div>
-                       <p className="text-[10px] font-bold   ">{hw.subject || 'Core Discipline'}</p>
-                       <h3 className="text-3xl font-bold   mt-2 ">{hw.isSubmitted ? 'Authenticated' : 'Pending'}</h3>
+                       <p className="text-[10px] font-black   ">{hw.subject || 'Core Discipline'}</p>
+                       <h3 className="text-3xl font-black   mt-2  uppercase">{hw.isSubmitted ? 'Authenticated' : 'Pending'}</h3>
                        {hw.submissionDate && (
                          <div className="mt-4 flex items-center gap-2 bg-emerald-100/50 px-4 py-1.5 rounded-full">
                             <Zap size={10} className="text-emerald-600" />
-                            <p className="text-[9px] font-bold text-emerald-700  tracking-widest">{new Date(hw.submissionDate).toLocaleDateString()} Logged</p>
+                            <p className="text-[9px] font-black text-emerald-700  tracking-widest">{new Date(hw.submissionDate).toLocaleDateString()} Logged</p>
                          </div>
                        )}
                     </div>
@@ -151,8 +151,8 @@ const StudentHomework = () => {
                        
                        <div className="relative z-10 space-y-8">
                           <div className="space-y-4">
-                             <h2 className="text-3xl md:text-5xl font-bold text-slate-900   leading-none ">{hw.title}</h2>
-                             <div className="flex items-center gap-4 text-[10px] font-bold   text-slate-400">
+                             <h2 className="text-3xl md:text-5xl font-black text-slate-900   leading-none  uppercase">{hw.title}</h2>
+                             <div className="flex items-center gap-4 text-[10px] font-black   text-slate-400">
                                 <Calendar size={16} className="text-purple-600"/> 
                                 <span className="bg-slate-100 px-4 py-1.5 rounded-xl">Deadline: {new Date(hw.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                              </div>
@@ -164,11 +164,11 @@ const StudentHomework = () => {
                        </div>
 
                        <div className="mt-12 flex flex-col sm:flex-row gap-6 items-center relative z-10">
-                          <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-[10px]   shadow-xl shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
+                          <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px]   shadow-xl shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
                              <FileText size={18} className="group-hover/btn:rotate-12 transition-transform"/> Access Materials
                           </button>
                           {!hw.isSubmitted && (
-                            <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-2xl font-bold text-[10px]   shadow-xl shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
+                            <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-2xl font-black text-[10px]   shadow-xl shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
                                <Send size={18} className="group-hover/submit:translate-x-1 group-hover/submit:-translate-y-1 transition-transform"/> Submit Execution
                             </button>
                           )}
@@ -184,8 +184,8 @@ const StudentHomework = () => {
               >
                  <div className="w-32 h-32 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📚</div>
                  <div className="space-y-4">
-                    <h3 className="text-3xl font-bold text-slate-900   ">Repository Clear</h3>
-                    <p className="max-w-md mx-auto text-slate-400 font-bold text-[10px]   leading-relaxed px-10">
+                    <h3 className="text-3xl font-black text-slate-900    uppercase">Repository Clear</h3>
+                    <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]   leading-relaxed px-10">
                       No pending assignments detected for your current cohort. Maintain operational readiness for upcoming task emissions.
                     </p>
                  </div>

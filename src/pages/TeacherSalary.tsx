@@ -171,7 +171,7 @@ const TeacherSalary = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Payroll<br/>
                 <span className="text-[var(--accent-admin)]">Operations</span>
               </h1>
@@ -203,7 +203,7 @@ const TeacherSalary = () => {
                <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
                   <Receipt size={30} />
                </div>
-               <h2 className="text-4xl font-medium text-slate-900   leading-none">Disbursement<br/><span className="text-[var(--accent-admin)]">Entry</span></h2>
+               <h2 className="text-4xl font-medium text-slate-900   leading-none uppercase">Disbursement<br/><span className="text-[var(--accent-admin)] uppercase">Entry</span></h2>
             </div>
             
             <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
@@ -320,7 +320,7 @@ const TeacherSalary = () => {
                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                     <div className="text-center md:text-left">
                        <p className="text-[10px] font-medium  text-blue-400  mb-2 leading-none">Net Institutional Payload</p>
-                       <h2 className="text-5xl md:text-6xl font-medium  leading-none">₹ {calculateNetSalary().toLocaleString()}</h2>
+                       <h2 className="text-5xl md:text-6xl font-medium  leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
                     </div>
                     <button 
                       type="submit" 
@@ -343,7 +343,7 @@ const TeacherSalary = () => {
           >
             <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
                <div className="space-y-3">
-                  <h2 className="text-3xl font-medium text-slate-900   leading-none">Archive<br/><span className="text-[var(--accent-admin)]">Manifest</span></h2>
+                  <h2 className="text-3xl font-medium text-slate-900   leading-none uppercase">Archive<br/><span className="text-[var(--accent-admin)] uppercase">Manifest</span></h2>
                   <p className="text-[9px] font-medium text-slate-400   leading-none">Historical Disbursement Registry</p>
                </div>
                <div className="flex flex-col items-end gap-2">
@@ -381,7 +381,7 @@ const TeacherSalary = () => {
                               {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
                            </div>
                            <div>
-                              <h3 className="font-medium text-2xl text-slate-900   group-hover/item:text-blue-600 transition-colors leading-none mb-3">{salary.teacher_name}</h3>
+                              <h3 className="font-medium text-2xl text-slate-900   group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
                               <p className="text-[10px] font-medium text-slate-400  tracking-widest flex items-center gap-3">
                                 {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-medium">{salary.month}</span>
                               </p>

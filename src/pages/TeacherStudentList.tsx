@@ -103,7 +103,7 @@ const StudentList: React.FC = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Faculty<br/>
                 <span className="text-emerald-600">Liaison</span>
               </h1>
@@ -185,7 +185,7 @@ const StudentList: React.FC = () => {
                     {!student.photo_url && student.full_name[0]}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-medium text-slate-900   leading-none mb-3 group-hover:text-emerald-600 transition-colors">{student.full_name}</h3>
+                    <h3 className="text-2xl font-medium text-slate-900   leading-none mb-3 group-hover:text-emerald-600 transition-colors uppercase">{student.full_name}</h3>
                     <div className="flex items-center gap-3">
                        <span className="text-[10px] font-medium text-slate-400  tracking-widest">{student.roll_number}</span>
                        <span className="w-1.5 h-1.5 bg-slate-100 rounded-full" />

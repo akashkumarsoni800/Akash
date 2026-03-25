@@ -173,7 +173,7 @@ const ProfileSetupPage = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className=" text-center md:text-left">
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Protocol<br/>
                 <span className="text-blue-600">Initialization</span>
               </h1>
@@ -203,7 +203,7 @@ const ProfileSetupPage = () => {
               <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110 pointer-events-none"></div>
 
               <div className="text-center md:text-left relative z-10 border-b border-slate-50 pb-10">
-                 <h2 className="text-3xl font-medium text-slate-900    leading-none">{id ? `Update ${targetType} Identity` : "Identity Refinement"}</h2>
+                 <h2 className="text-3xl font-medium text-slate-900    leading-none uppercase">{id ? `Update ${targetType} Identity` : "Identity Refinement"}</h2>
                  <p className="text-[10px] font-medium text-slate-400   mt-3">Sequential Data Alignment</p>
               </div>
 
@@ -310,7 +310,7 @@ const ProfileSetupPage = () => {
                 className="bg-slate-950 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
               >
                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
-                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10  text-center md:text-left">Calibration Pulse</h3>
+                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10  text-center md:text-left uppercase">Calibration Pulse</h3>
                  
                  <div className="space-y-10 relative z-10">
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">

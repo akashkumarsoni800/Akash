@@ -99,7 +99,7 @@ export default function StudentDashboard() {
                 < Award size={14} /> Academic Excellence 2024-25
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Welcome Back,<br/>
                 <span className="text-purple-600">
                   {student?.full_name?.split(' ')[0] || 'Scholar'}!
@@ -163,7 +163,7 @@ export default function StudentDashboard() {
           {/* --- SYSTEM ACCESS GRID --- */}
           <div className="lg:col-span-2 space-y-8">
              <div className="flex items-center justify-between">
-               <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3">
+               <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 uppercase">
                  <Layout size={16} className="text-purple-600"/> Core System Access
                </h3>
              </div>
@@ -180,7 +180,7 @@ export default function StudentDashboard() {
 
           {/* --- BROADCAST BOARD --- */}
           <div className="space-y-8">
-             <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3">
+             <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 uppercase">
                <Bell size={16} className="text-purple-600"/> Latest Broadcasts
              </h3>
              
@@ -224,7 +224,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
         <div>
           <p className="text-[9px] font-medium text-slate-400  tracking-widest mb-4">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-medium text-slate-900  leading-none">{value}</h3>
+            <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{value}</h3>
             <span className="text-[9px] font-medium text-slate-400  ">{subText}</span>
           </div>
         </div>

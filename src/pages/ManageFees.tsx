@@ -166,7 +166,7 @@ const ManageFees = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Financial<br/>
                 <span className="text-[var(--accent-admin)]">Oversight</span>
               </h1>
@@ -203,7 +203,7 @@ const ManageFees = () => {
                 <form onSubmit={handleAssignFee} className="space-y-12 relative z-10">
                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b border-slate-50">
                       <div className="space-y-4 text-center md:text-left">
-                        <h2 className="text-4xl font-medium text-slate-900   leading-none">
+                        <h2 className="text-4xl font-medium text-slate-900   leading-none uppercase">
                           Fiscal<br/>
                           <span className="text-[var(--accent-admin)]">Assignment</span>
                         </h2>
@@ -248,7 +248,7 @@ const ManageFees = () => {
                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
                             <Plus size={20} />
                          </div>
-                         <h3 className="text-[10px] font-medium text-slate-400   leading-none">Structure Breakdown</h3>
+                         <h3 className="text-[10px] font-medium text-slate-400   leading-none uppercase">Structure Breakdown</h3>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                          {feeHeads.map(head => (
@@ -269,7 +269,7 @@ const ManageFees = () => {
                       <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
                       <div className="text-center md:text-left mb-0 relative z-10">
                          <p className="text-[10px] font-medium  text-blue-400  mb-2">Authenticated Total</p>
-                         <h2 className="text-5xl md:text-6xl font-medium text-white  leading-none">₹ {totalAmountValue.toLocaleString()}</h2>
+                         <h2 className="text-5xl md:text-6xl font-medium text-white  leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
                       </div>
                       <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl relative z-10 px-12">
                          {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
@@ -289,7 +289,7 @@ const ManageFees = () => {
                className="premium-card p-12 relative overflow-hidden group"
              >
                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
-                <h3 className="text-[10px] font-medium text-slate-300   mb-12 relative z-10">
+                <h3 className="text-[10px] font-medium text-slate-300   mb-12 relative z-10 uppercase">
                   Fiscal Index
                 </h3>
                 <div className="space-y-8 relative z-10">
@@ -318,7 +318,7 @@ const ManageFees = () => {
                className="premium-card p-12 flex flex-col min-h-[500px] relative group"
              >
                 <div className="flex items-center justify-between mb-12">
-                   <h3 className="text-[10px] font-medium text-slate-300  ">Transaction Feed</h3>
+                   <h3 className="text-[10px] font-medium text-slate-300   uppercase">Transaction Feed</h3>
                    <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
                 </div>
                 <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">

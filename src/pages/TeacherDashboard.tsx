@@ -38,7 +38,7 @@ const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, s
       </div>
 
       <div className="relative z-10">
-        <h3 className="text-xl font-medium text-slate-800  tracking-tight mb-2 leading-tight">{title}</h3>
+        <h3 className="text-xl font-medium text-slate-800  tracking-tight mb-2 leading-tight uppercase">{title}</h3>
         <p className="text-[10px] font-medium text-slate-400  tracking-widest leading-relaxed mb-6">{desc}</p>
         
         <div className="flex items-center justify-between pt-6 border-t border-slate-50">
@@ -202,7 +202,7 @@ export default function TeacherDashboard() {
                     <Activity size={32}/>
                   </div>
                   <div>
-                    <h1 className="text-4xl md:text-6xl font-medium text-slate-900   leading-none">
+                    <h1 className="text-4xl md:text-6xl font-medium text-slate-900   leading-none uppercase">
                       Hello, <span className="text-emerald-600">{teacher?.full_name?.split(' ')[0] || 'Teacher'}</span>
                     </h1>
                     <p className="text-[10px] font-medium text-emerald-500   mt-3">Faculty Command Level 3</p>
@@ -241,7 +241,7 @@ export default function TeacherDashboard() {
                 <div>
                   <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Pupil Directory</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none">{stats.totalStudents}</h3>
+                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.totalStudents}</h3>
                     <span className="text-[9px] font-medium text-slate-400  tracking-tight">Active</span>
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export default function TeacherDashboard() {
                 <div>
                   <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Daily Presence</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none">{stats.attendancePercentage}%</h3>
+                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.attendancePercentage}%</h3>
                     <span className="text-[9px] font-medium text-slate-400  tracking-tight">Sync</span>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export default function TeacherDashboard() {
                 <div>
                   <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Submission Hub</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none">{stats.pendingHomework}</h3>
+                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.pendingHomework}</h3>
                     <span className="text-[9px] font-medium text-slate-400  tracking-tight">Queue</span>
                   </div>
                 </div>
@@ -309,7 +309,7 @@ export default function TeacherDashboard() {
                 <div>
                   <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-4">Academic Index</p>
                   <div className="flex items-baseline gap-2">
-                    <h3 className="text-4xl font-medium text-slate-900  leading-none">{stats.avgPerformance}%</h3>
+                    <h3 className="text-4xl font-medium text-slate-900  leading-none uppercase">{stats.avgPerformance}%</h3>
                     <span className="text-[9px] font-medium text-slate-400  tracking-tight">KPI</span>
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export default function TeacherDashboard() {
             </div>
 
             <div className="space-y-4 relative z-10">
-              <h3 className="font-medium text-2xl text-slate-900   leading-tight">
+              <h3 className="font-medium text-2xl text-slate-900   leading-tight uppercase">
                 {teacher?.full_name || 'Faculty Member'}
               </h3>
               <div className="flex flex-wrap items-center gap-2">

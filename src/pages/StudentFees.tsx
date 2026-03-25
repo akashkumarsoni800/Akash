@@ -85,7 +85,7 @@ const StudentFees = () => {
               <div className="text-center md:text-left space-y-6">
                  <div className="space-y-2">
                     <p className="text-[10px] font-medium text-blue-400   ">Financial Management</p>
-                    <h1 className="text-5xl md:text-7xl font-medium   leading-none ">Personal<br/>Ledger</h1>
+                    <h1 className="text-5xl md:text-7xl font-medium   leading-none  uppercase">Personal<br/>Ledger</h1>
                  </div>
                  <div className="flex items-center justify-center md:justify-start gap-4">
                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white/40">
@@ -114,7 +114,7 @@ const StudentFees = () => {
         <div className="space-y-8">
            <div className="flex items-center gap-4 px-6">
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 font-medium text-xs  shadow-sm">IV</div>
-              <h3 className="text-xl font-medium text-slate-900   ">Invoiced Settlements</h3>
+              <h3 className="text-xl font-medium text-slate-900    uppercase">Invoiced Settlements</h3>
            </div>
 
            <div className="grid grid-cols-1 gap-8">
@@ -132,7 +132,7 @@ const StudentFees = () => {
                             <Zap size={200} className="rotate-12 translate-x-10 translate-y-10" />
                          </div>
                          <p className="text-[10px] font-medium   mb-2  relative z-10">{fee.month}</p>
-                         <h3 className="text-4xl font-medium    relative z-10">{fee.status}</h3>
+                         <h3 className="text-4xl font-medium    relative z-10 uppercase">{fee.status}</h3>
                          {fee.status === 'Paid' ? (
                             <CheckCircle2 size={40} className="mt-6 opacity-40 group-hover:scale-110 transition-transform relative z-10"/>
                          ) : (

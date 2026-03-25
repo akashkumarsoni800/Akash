@@ -139,7 +139,7 @@ const StudentProfile = () => {
       <div className="w-32 h-32 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 mb-10 shadow-inner">
          <AlertCircle size={60} />
       </div>
-      <h1 className="text-5xl font-medium text-slate-900   ">Registry Error</h1>
+      <h1 className="text-5xl font-medium text-slate-900    uppercase">Registry Error</h1>
       <p className="text-slate-400 mt-4 font-medium  tracking-widest text-xs">{error || "Reference node not found"}</p>
       <div className="flex gap-6 mt-12">
         <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[2rem] font-medium  text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
@@ -198,7 +198,7 @@ const StudentProfile = () => {
                    <ShieldCheck size={14} />
                    <span className="text-[10px] font-medium   ">Verified Academic Node</span>
                 </div>
-                <h1 className="text-5xl md:text-8xl font-medium   leading-none ">{student.full_name}</h1>
+                <h1 className="text-5xl md:text-8xl font-medium   leading-none  uppercase">{student.full_name}</h1>
                 <div className="flex flex-wrap justify-center md:justify-start gap-5">
                    <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-medium border border-white/5    flex items-center gap-3"><BookOpen size={14} className="text-indigo-400" /> Class: {student.class_name}</div>
                    <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-medium border border-white/5    flex items-center gap-3"><GraduationCap size={14} className="text-indigo-400" /> Roll: {student.roll_no}</div>
@@ -236,7 +236,7 @@ const StudentProfile = () => {
                  <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
                     <Fingerprint size={24} />
                  </div>
-                 <h3 className="font-medium  text-[12px] text-slate-900  ">Student Dossier</h3>
+                 <h3 className="font-medium  text-[12px] text-slate-900   uppercase">Student Dossier</h3>
               </div>
               
               <div className="space-y-10 relative z-10">
@@ -262,7 +262,7 @@ const StudentProfile = () => {
                <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                      <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white shadow-lg"><CreditCard size={20}/></div>
-                     <h3 className="font-medium  text-[10px]  text-slate-900 ">Identity Card</h3>
+                     <h3 className="font-medium  text-[10px]  text-slate-900  uppercase">Identity Card</h3>
                   </div>
                   <div className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[8px] font-medium  tracking-widest ">ASM-001-ST</div>
                </div>
@@ -292,7 +292,7 @@ const StudentProfile = () => {
                        <Wallet size={28}/>
                     </div>
                     <div className="space-y-1">
-                       <h3 className="font-medium  text-[14px]  text-slate-900  leading-none">Financial<br/><span className="text-indigo-600">Summary</span></h3>
+                       <h3 className="font-medium  text-[14px]  text-slate-900  leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
                        <p className="text-[8px] font-medium text-slate-400  tracking-widest leading-none">Real-time Fiscal Indexing</p>
                     </div>
                  </div>

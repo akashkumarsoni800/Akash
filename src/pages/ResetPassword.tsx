@@ -122,7 +122,7 @@ const ResetPassword = () => {
                  <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
                     <ShieldCheck size={36} className="text-blue-600" />
                  </div>
-                 <h2 className="text-4xl font-medium text-slate-900    leading-none">
+                 <h2 className="text-4xl font-medium text-slate-900    leading-none uppercase">
                     Credential<br/>
                     <span className="text-blue-600">Restoration</span>
                  </h2>
@@ -236,7 +236,7 @@ const ResetPassword = () => {
                        </div>
                        
                        <div className="space-y-4">
-                          <h3 className="text-2xl font-medium text-slate-900    leading-none">Dispatched</h3>
+                          <h3 className="text-2xl font-medium text-slate-900    leading-none uppercase">Dispatched</h3>
                           <p className="text-slate-500 font-medium text-[11px] leading-relaxed max-w-xs mx-auto">
                              An institutional restoration link has been transmitted to <span className="text-blue-600">{targetEmail}</span>. 
                              Access the mail node to initialize re-calibration.

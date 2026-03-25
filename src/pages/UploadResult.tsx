@@ -127,7 +127,7 @@ const UploadResult = () => {
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none uppercase">
                 Academic<br/>
                 <span className="text-emerald-600">Registry</span>
               </h1>
@@ -153,7 +153,7 @@ const UploadResult = () => {
             className="lg:col-span-1 premium-card p-8 flex flex-col h-[850px] group"
           >
             <div className="mb-10 space-y-8">
-              <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3">
+              <h2 className="text-2xl font-medium text-slate-800  tracking-tight flex items-center gap-3 uppercase">
                 <Search size={22} className="text-emerald-600" /> Discovery Hub
               </h2>
               
@@ -210,7 +210,7 @@ const UploadResult = () => {
               <div className="space-y-12 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div>
-                    <h3 className="text-4xl font-medium text-slate-800   leading-none mb-3">Entry Session</h3>
+                    <h3 className="text-4xl font-medium text-slate-800   leading-none mb-3 uppercase">Entry Session</h3>
                     <p className="text-slate-400 font-medium  text-[10px] tracking-widest flex items-center gap-2">
                       <User size={14} className="text-emerald-500" /> {selectedStudent.full_name} <span className="w-1 h-1 bg-slate-200 rounded-full"></span> #{selectedStudent.student_id}
                     </p>
@@ -253,7 +253,7 @@ const UploadResult = () => {
                   </div>
 
                   <div className="space-y-8">
-                    <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 ml-1">
+                    <h3 className="text-[10px] font-medium text-slate-400   flex items-center gap-3 ml-1 uppercase">
                       <BookOpen size={16} className="text-emerald-600"/> Metrics Compilation
                     </h3>
                     
@@ -336,7 +336,7 @@ const UploadResult = () => {
                 <div className="w-32 h-32 bg-slate-100 rounded-[3rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <User size={60} className="text-slate-400" />
                 </div>
-                <h3 className="text-3xl font-medium text-slate-900   mb-4">Manifest Locked</h3>
+                <h3 className="text-3xl font-medium text-slate-900   mb-4 uppercase">Manifest Locked</h3>
                 <p className="max-w-xs text-[10px] font-medium text-slate-400   leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
               </div>
             )}
