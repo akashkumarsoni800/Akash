@@ -104,13 +104,13 @@ const Sidebar = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-slate-900/60 z-[90] lg:hidden backdrop-blur-sm" 
+      className="fixed inset-0 bg-slate-900/40 z-[90] lg:hidden" 
       onClick={() => setIsMobileOpen(false)}
      />
     )}
    </AnimatePresence>
 
-   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 ease-out flex flex-col pt-8`}>
+   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float ${

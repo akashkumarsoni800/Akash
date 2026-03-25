@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { 
  Users, Search, GraduationCap, 
- Trash2, Mail, Phone, 
+ Trash2, Mail, Phone, Edit2, 
  MoreVertical, ChevronRight, 
  RefreshCw, Filter, CheckCircle2,
  Calendar, ShieldCheck, UserCheck
@@ -55,8 +55,8 @@ export default function StudentsManagement() {
    {/* --- TOP BAR & FILTERS --- */}
    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
      <div className="space-y-1 text-left">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Personnel </h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
+      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Student List</h3>
+      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage all student records</p>
      </div>
  
      <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
@@ -64,7 +64,7 @@ export default function StudentsManagement() {
         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-blue-500 transition-colors" size={18} />
         <input 
          type="text" 
-         placeholder="Search registry index..."
+         placeholder="Search students..."
          value={searchTerm}
          onChange={(e) => setSearchTerm(e.target.value)}
          className="premium-input text-sm pl-16 py-4"
@@ -86,14 +86,14 @@ export default function StudentsManagement() {
    {/* --- STUDENT LIST --- */}
    <div className="premium-card overflow-hidden shadow-sm">
      <div className="overflow-x-auto">
-      <table className="w-full text-left min-w-[800px]">
+      <table className="w-full text-left min-w-[900px]">
         <thead>
          <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black text-slate-400 ">
-           <th className="px-10 py-6"> Position</th>
-           <th className="px-10 py-6">Scholar Identity</th>
-           <th className="px-10 py-6 text-center">Batch Logic</th>
-           <th className="px-10 py-6">Parent Identity</th>
-           <th className="px-10 py-6 text-right">Status</th>
+           <th className="px-10 py-6">Roll No</th>
+           <th className="px-10 py-6">Student Name</th>
+           <th className="px-10 py-6 text-center">Class</th>
+           <th className="px-10 py-6">Father's Name</th>
+           <th className="px-10 py-6 text-right">Actions</th>
          </tr>
         </thead>
         <tbody className="divide-y divide-slate-50">
@@ -107,8 +107,8 @@ export default function StudentsManagement() {
            >
             <td className="px-10 py-5">
               <div className="flex items-center gap-4">
-               <span className="text-[10px] font-black text-slate-300 group-hover:text-blue-200 transition-colors ">UID-0{idx + 1}</span>
-               <p className="text-sm font-black text-blue-600 ">#{s.roll_no}</p>
+               <span className="text-[10px] font-black text-slate-300 group-hover:text-blue-200 transition-colors ">#{idx + 1}</span>
+               <p className="text-sm font-black text-blue-600 ">{s.roll_no}</p>
               </div>
             </td>
             <td className="px-10 py-5">
@@ -123,7 +123,7 @@ export default function StudentsManagement() {
               </div>
             </td>
             <td className="px-10 py-5 text-center">
-              <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black  border border-slate-50">Grade {s.class_name}</span>
+              <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black  border border-slate-50">{s.class_name}</span>
             </td>
             <td className="px-10 py-5">
               <div className="flex items-center gap-3">
@@ -132,8 +132,16 @@ export default function StudentsManagement() {
               </div>
             </td>
             <td className="px-10 py-5 text-right">
-              <div className="flex items-center justify-end gap-2 text-emerald-600 font-black text-[9px] tracking-widest leading-none">
-               <CheckCircle2 size={16} /> Verified
+              <div className="flex items-center justify-end gap-2">
+                <button className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm shadow-blue-50">
+                  <Edit2 size={14} />
+                </button>
+                <button className="p-2.5 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm shadow-rose-50">
+                  <Trash2 size={14} />
+                </button>
+                <button className="p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                  <MoreVertical size={14} />
+                </button>
               </div>
             </td>
            </motion.tr>
@@ -147,8 +155,8 @@ export default function StudentsManagement() {
         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
          <GraduationCap size={40} />
         </div>
-        <p className="text-[10px] font-black text-slate-300  mb-2">No scholar records in this sector</p>
-        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Adjust filters or search parameters to expand query.</p>
+        <p className="text-[10px] font-black text-slate-300  mb-2">No student records found</p>
+        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Try adjusting your filters or search.</p>
       </div>
      )}
    </div>

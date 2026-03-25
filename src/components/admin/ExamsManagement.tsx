@@ -87,14 +87,14 @@ export default function ExamsManagement() {
    {/* --- TOP BAR --- */}
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
      <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Scholastic Assessments</h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Digital Examination Hub v4.2</p>
+      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Exam List</h3>
+      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage school examinations</p>
      </div>
      <button 
       onClick={() => setIsModalOpen(true)}
       className="premium-button-admin bg-slate-950 text-white hover:bg-blue-600 border-none shadow-xl"
      >
-      <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Initialize Exam
+      <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Add Exam
      </button>
    </div>
 
@@ -108,7 +108,7 @@ export default function ExamsManagement() {
       <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2">Sync Status</p>
       <div className="flex items-center gap-2">
         <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-        <p className="text-[10px] font-black text-emerald-600  leading-none">Live Protocol Active</p>
+        <p className="text-[10px] font-black text-emerald-600  leading-none">System Online</p>
       </div>
      </div>
    </div>
@@ -157,8 +157,8 @@ export default function ExamsManagement() {
         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
          <Search size={40} />
         </div>
-        <p className="text-[10px] font-black text-slate-300  mb-2">No active assessment nodes found</p>
-        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Initialize a new exam to begin scheduling.</p>
+        <p className="text-[10px] font-black text-slate-300  mb-2">No exams scheduled yet</p>
+        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Add a new exam to see it here.</p>
       </div>
      )}
    </div>
@@ -175,8 +175,8 @@ export default function ExamsManagement() {
         >
          <div className="flex justify-between items-center mb-10">
            <div className="space-y-1">
-            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Schedule Exam</h2>
-            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">School Assessment Config</p>
+            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Exam</h2>
+            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Create a new exam schedule</p>
            </div>
            <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
             <Plus size={20} className="rotate-45" />
@@ -186,21 +186,21 @@ export default function ExamsManagement() {
          <form onSubmit={handleSubmit} className="space-y-8">
            <div className="space-y-8">
             <InputField 
-             label="Assessment Nomenclature" 
+             label="Exam Name" 
              icon={Zap} 
              placeholder="e.g., Annual Exam 2026..."
              value={formData.title}
              onChange={(e: any) => setFormData({ ...formData, title: e.target.value })}
             />
             <InputField 
-             label="Calibration Date" 
+             label="Exam Date" 
              type="date"
              icon={Calendar} 
              value={formData.examDate}
              onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
             />
             <div className="space-y-2 group">
-             <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600">Included Subject Nodes</label>
+             <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600">Subjects</label>
              <div className="relative">
               <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
               <textarea 
@@ -215,7 +215,7 @@ export default function ExamsManagement() {
 
            <div className="flex gap-4 pt-6">
             <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-blue-600 border-none shadow-xl">
-              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Lock Protocol</>}
+              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Save Exam</>}
             </button>
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>

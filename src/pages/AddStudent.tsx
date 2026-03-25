@@ -284,6 +284,117 @@ const AddStudent = () => {
          </div>
         </div>
 
+        {/* --- PHOTO UPLOAD SECTION --- */}
+        <div className="space-y-8 bg-slate-50/50 p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-inner">
+          <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+             <Camera size={20} />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 uppercase">Student Photo</h3>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="relative group">
+              <div className="w-40 h-40 rounded-[2rem] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
+                {photoPreview ? (
+                  <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
+                ) : (
+                  <User size={64} />
+                )}
+              </div>
+              {photoPreview && (
+                <button 
+                  type="button" 
+                  onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+                  className="absolute -top-2 -right-2 w-8 h-8 bg-rose-500 text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-rose-600 transition-all active:scale-90"
+                >
+                  <RefreshCw size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="flex-1 space-y-4 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button 
+                  type="button"
+                  onClick={() => setShowWebcam(true)}
+                  className="flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-2xl text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
+                >
+                  <Camera size={18} /> OPEN CAMERA
+                </button>
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handlePhotoChange}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  />
+                  <button 
+                    type="button"
+                    className="w-full flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-2xl text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
+                  >
+                    <Upload size={18} /> UPLOAD FILE
+                  </button>
+                </div>
+              </div>
+              <p className="text-[9px] font-black text-slate-400 tracking-widest flex items-center gap-2 px-2">
+                <Info size={12} className="text-blue-500" /> Max size 1MB. Recommended 1:1 ratio.
+              </p>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {showWebcam && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl flex items-center justify-center p-6"
+              >
+                <div className="bg-white rounded-[3rem] p-10 w-full max-w-xl shadow-2xl space-y-8 relative overflow-hidden">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-2xl font-black text-slate-900 uppercase">Live Capture</h3>
+                    <button onClick={() => setShowWebcam(false)} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-600 transition-all">
+                      <ChevronRight size={24} className="rotate-90" />
+                    </button>
+                  </div>
+                  
+                  <div className="relative rounded-3xl overflow-hidden bg-slate-100 shadow-inner aspect-video flex items-center justify-center">
+                    {WebcamComp ? (
+                      <WebcamComp
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={{ facingMode }}
+                        className="w-full"
+                      />
+                    ) : (
+                      <div className="text-slate-300 font-black animate-pulse uppercase text-xs">Awaiting Vision Node...</div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button 
+                      type="button"
+                      onClick={capturePhoto}
+                      className="flex-1 bg-blue-600 text-white py-6 rounded-2xl font-black tracking-widest text-xs shadow-xl shadow-blue-100 hover:bg-slate-900 transition-all active:scale-95"
+                    >
+                      CAPTURE
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={toggleCamera}
+                      className="px-8 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all active:scale-95"
+                    >
+                      <FlipHorizontal size={24} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         <button 
           type="submit" 
           disabled={loading}

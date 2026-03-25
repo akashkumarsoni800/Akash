@@ -38,7 +38,7 @@ export default function ApprovalsManagement() {
 
  const handleAction = async (id: string, action: 'approved' | 'rejected') => {
   try {
-   if (action === 'rejected' && !window.confirm("Purge this registration request?")) return;
+   if (action === 'rejected' && !window.confirm("Delete this registration request?")) return;
    
    const { error } = await supabase
     .from('students')
@@ -47,7 +47,7 @@ export default function ApprovalsManagement() {
 
    if (error) throw error;
    
-   toast.success(action === 'approved' ? "Identity Paid ✅" : "Identity Purged ❌");
+   toast.success(action === 'approved' ? "Approved ✅" : "Rejected ❌");
    fetchApprovals();
   } catch (err: any) {
    toast.error(err.message);
@@ -58,8 +58,8 @@ export default function ApprovalsManagement() {
   <div className="space-y-8">
    <div className="flex justify-between items-center">
      <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Authority Oversight</h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Pending Identity Verification Queue v4.2</p>
+      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Pending Approvals</h3>
+      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Confirm new registrations</p>
      </div>
      <div className="flex items-center gap-3">
       <div className={`w-2 h-2 rounded-full ${approvals.length > 0 ? 'bg-amber-500 animate-pulse' : 'bg-slate-200'}`}></div>
@@ -103,13 +103,13 @@ export default function ApprovalsManagement() {
             onClick={() => handleAction(req.student_id, 'approved')}
             className="premium-button-admin flex-1 md:flex-none bg-slate-950 text-white hover:bg-blue-600 border-none shadow-xl"
            >
-            <CheckCircle size={16} /> Authorize
+            <CheckCircle size={16} /> Approve
            </button>
            <button 
             onClick={() => handleAction(req.student_id, 'rejected')}
             className="premium-button-admin flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 hover:bg-rose-50 shadow-sm"
            >
-            <XCircle size={16} /> Purge
+            <XCircle size={16} /> Reject
            </button>
          </div>
         </motion.div>
@@ -121,8 +121,8 @@ export default function ApprovalsManagement() {
         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200 shadow-inner">
          <ShieldCheck size={48} />
         </div>
-        <h4 className="text-[10px] font-black text-slate-400  mb-2"> Compliant</h4>
-        <p className="text-[9px] font-black text-slate-300 tracking-widest leading-relaxed">No pending identity verification requests found.</p>
+        <h4 className="text-[10px] font-black text-slate-400  mb-2"> All Clear</h4>
+        <p className="text-[9px] font-black text-slate-300 tracking-widest leading-relaxed">No pending registration requests found.</p>
       </div>
      )}
    </div>

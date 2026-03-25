@@ -105,14 +105,14 @@ export default function TeachersManagement() {
    {/* --- TOP BAR --- */}
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
      <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Faculty </h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Academic Personnel Management v4.2</p>
+      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Teacher List</h3>
+      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage all staff records</p>
      </div>
      <button 
       onClick={() => setIsModalOpen(true)}
       className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 border-none shadow-xl"
      >
-      <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Induct Faculty
+      <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Add Teacher
      </button>
    </div>
 
@@ -163,8 +163,8 @@ export default function TeachersManagement() {
         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
          <GraduationCap size={40} />
         </div>
-        <p className="text-[10px] font-black text-slate-300  mb-2">Zero faculty records indexed</p>
-        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Initialize faculty induction to begin indexing.</p>
+        <p className="text-[10px] font-black text-slate-300  mb-2">No teacher records found</p>
+        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Add a new teacher to see them here.</p>
       </div>
      )}
    </div>
@@ -181,8 +181,8 @@ export default function TeachersManagement() {
         >
          <div className="flex justify-between items-center mb-10">
            <div className="space-y-1">
-            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Induct Faculty</h2>
-            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Academic Personnel Initialization</p>
+            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Teacher</h2>
+            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Fill in details to add staff</p>
            </div>
            <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
             <X size={20} />
@@ -192,21 +192,21 @@ export default function TeachersManagement() {
          <form onSubmit={handleSubmit} className="space-y-8">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <InputField 
-             label="Legal Nomenclature" 
+             label="Full Name" 
              icon={UserPlus} 
              placeholder="Full Name..."
              value={formData.fullName}
              onChange={(e: any) => setFormData({ ...formData, fullName: e.target.value })}
             />
             <InputField 
-             label="Academic Discipline" 
+             label="Subject" 
              icon={GraduationCap} 
              placeholder="Primary Subject..."
              value={formData.subject}
              onChange={(e: any) => setFormData({ ...formData, subject: e.target.value })}
             />
             <InputField 
-             label="Primary Identity (Email)" 
+             label="Email Address" 
              type="email"
              icon={Mail} 
              placeholder="faculty@institution.com"
@@ -214,7 +214,7 @@ export default function TeachersManagement() {
              onChange={(e: any) => setFormData({ ...formData, email: e.target.value })}
             />
             <InputField 
-             label="Comms Frequency (Mobile)" 
+             label="Phone Number" 
              icon={Phone} 
              placeholder="Contact identifier..."
              value={formData.phone}
@@ -222,7 +222,7 @@ export default function TeachersManagement() {
             />
             <div className="md:col-span-2">
               <InputField 
-               label="Security Key (Password)" 
+               label="Password" 
                type="password"
                icon={Lock} 
                value={formData.password}
@@ -233,7 +233,7 @@ export default function TeachersManagement() {
 
            <div className="flex gap-4 pt-6">
             <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-emerald-600 border-none shadow-xl">
-              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Verify & Induct</>}
+              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Save Teacher</>}
             </button>
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>
