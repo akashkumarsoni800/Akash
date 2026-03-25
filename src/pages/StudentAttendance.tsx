@@ -224,4 +224,3 @@ const PremiumStatBox = ({ label, value, icon: Icon, accent }: any) => {
 };
 
 export default StudentAttendance;
-endance;
