@@ -136,45 +136,6 @@ const UploadResult = () => {
           </motion.div>
         </div>
 
-        {/* --- CONTROLS --- */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-10 bg-white rounded-[3.5rem] shadow-sm border border-slate-100 relative overflow-hidden group"
-        >
-          <div className="absolute top-0 left-0 w-full h-[6px] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600" />
-          
-          <div className="relative group/search">
-            <Search size={22} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/search:text-emerald-500 transition-colors" />
-            <input
-              type="text"
-              placeholder="Search scholar by name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="premium-input text-sm placeholder:text-slate-200 pl-16 py-5"
-            />
-          </div>
-
-          <div className="relative group/filter">
-            <Filter size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/filter:text-emerald-500 transition-colors" />
-            <select 
-              value={classFilter} 
-              onChange={(e) => setClassFilter(e.target.value)}
-              className="premium-input text-sm pl-16 py-5 appearance-none"
-            >
-              {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
-            </select>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-4 px-6 text-slate-400">
-            <Database size={20} />
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest">Active Index</p>
-              <p className="text-sm font-black text-slate-900 leading-none">{filteredStudents.length} Students</p>
-            </div>
-          </div>
-        </motion.div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -200,29 +161,49 @@ const UploadResult = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-12">
-            <div className="grid md:grid-cols-2 gap-10">
+            <div className="grid md:grid-cols-3 gap-10">
+              {/* --- CLASS FILTER --- */}
+              <div className="space-y-4 group">
+                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Filter Class</label>
+                <div className="relative drop-shadow-sm">
+                  <Filter size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
+                  <select 
+                    value={classFilter} 
+                    onChange={(e) => {
+                      setClassFilter(e.target.value);
+                      setSelectedStudent(null);
+                    }}
+                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
+                  >
+                    {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* --- STUDENT SELECT --- */}
               <div className="space-y-4 group">
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Student *</label>
-                <div className="relative drop-shadow-sm transition-all focus-within:drop-shadow-lg">
+                <div className="relative drop-shadow-sm">
                   <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
                   <select
                     required
                     className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
                     onChange={(e) => {
-                      const student = students.find(s => s.student_id === e.target.value);
+                      const student = students.find(s => (s.student_id || s.id) === e.target.value);
                       setSelectedStudent(student);
                     }}
-                    value={selectedStudent?.student_id || ''}
+                    value={selectedStudent?.student_id || selectedStudent?.id || ''}
                   >
-                    <option value="">{filteredStudents.length === 0 ? "No Students Matching Filters" : "Choose Student From List"}</option>
-                    {filteredStudents.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} ({s.class_name})</option>)}
+                    <option value="">{filteredStudents.length === 0 ? "No Students Found" : "Choose Student"}</option>
+                    {filteredStudents.map(s => <option key={s.student_id || s.id} value={s.student_id || s.id}>{s.full_name} {s.roll_no ? `(${s.roll_no})` : ''}</option>)}
                   </select>
                 </div>
               </div>
 
+              {/* --- EXAM SELECT --- */}
               <div className="space-y-4 group">
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Exam *</label>
-                <div className="relative drop-shadow-sm transition-all focus-within:drop-shadow-lg">
+                <div className="relative drop-shadow-sm">
                   <BookOpen size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
                   <select
                     required
@@ -230,20 +211,32 @@ const UploadResult = () => {
                     onChange={(e) => handleExamSelect(e.target.value)}
                     value={selectedExamId}
                   >
-                    <option value="">Choose Exam From List</option>
+                    <option value="">Choose Exam</option>
                     {exams.map((e: any) => <option key={e.id} value={e.id}>{e.exam_name || e.title} ({e.session_year || 'Current'})</option>)}
                   </select>
                 </div>
               </div>
             </div>
 
+            {/* --- SEARCH --- */}
+            <div className="relative group/search max-w-md mx-auto">
+              <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-emerald-500 transition-colors" />
+              <input
+                type="text"
+                placeholder="Quick search by name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="premium-input w-full pl-16 py-4 bg-slate-50/50"
+              />
+            </div>
+
             <AnimatePresence mode="wait">
               {selectedStudent && selectedExamId ? (
                 <motion.div 
-                  key="form"
-                  initial={{ opacity: 0, height: 0 }} 
-                  animate={{ opacity: 1, height: 'auto' }} 
-                  exit={{ opacity: 0, height: 0 }}
+                  key="form-content"
+                  initial={{ opacity: 0, y: 10 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -10 }}
                   className="space-y-10"
                 >
                   <div className="bg-slate-100/30 rounded-[2.5rem] border border-slate-100/50 overflow-hidden shadow-inner p-2">
@@ -324,10 +317,10 @@ const UploadResult = () => {
             </AnimatePresence>
           </form>
         </motion.div>
-
       </div>
     </div>
   );
+
 };
 
 export default UploadResult;
