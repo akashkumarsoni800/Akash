@@ -189,7 +189,7 @@ const TeacherSalary = () => {
            </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+        <div className="space-y-16">
           
           {/* --- DISBURSEMENT ENTRY --- */}
           <motion.div 
