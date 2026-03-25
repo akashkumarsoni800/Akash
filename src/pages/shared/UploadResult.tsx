@@ -127,7 +127,7 @@ const UploadResult = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
+            <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-none uppercase">
               Exam Results
             </h1>
             <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2">
@@ -136,190 +136,166 @@ const UploadResult = () => {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="premium-card p-10 md:p-16 relative overflow-hidden group shadow-2xl"
-        >
+        <div className="premium-card p-10 md:p-16 relative overflow-hidden bg-white rounded-[4rem] shadow-2xl">
+          {/* Form Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-50 pb-10 mb-12">
             <div className="flex items-center gap-6">
               <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shadow-inner">
                 <Award size={28} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-slate-900  uppercase">Enter Marks</h2>
-                <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">RESULT ENTRY NODE</p>
+                <h2 className="text-3xl font-black text-slate-900 uppercase">Enter Marks</h2>
+                <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">Sequence Activation Node</p>
               </div>
             </div>
 
             {selectedStudent && (
               <div className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100 flex items-center gap-4">
                 <User size={18} />
-                <span className="text-xs font-semibold tracking-widest">{selectedStudent.full_name} ({selectedStudent.class_name})</span>
+                <span className="text-xs font-black tracking-widest uppercase">{selectedStudent.full_name} ({selectedStudent.class_name})</span>
               </div>
             )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-12">
+            {/* Pickers */}
             <div className="grid md:grid-cols-3 gap-10">
-              {/* --- CLASS FILTER --- */}
-              <div className="space-y-4 group">
-                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Filter Class</label>
-                <div className="relative drop-shadow-sm">
-                  <Filter size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
-                  <select 
-                    value={classFilter} 
-                    onChange={(e) => {
-                      setClassFilter(e.target.value);
-                      setSelectedStudent(null);
-                    }}
-                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
-                  >
-                    {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
-                  </select>
-                </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">1. Class Filter</label>
+                <select 
+                  value={classFilter} 
+                  onChange={(e) => {
+                    setClassFilter(e.target.value);
+                    setSelectedStudent(null);
+                  }}
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                >
+                  {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
+                </select>
               </div>
 
-              {/* --- STUDENT SELECT --- */}
-              <div className="space-y-4 group">
-                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Student *</label>
-                <div className="relative drop-shadow-sm">
-                  <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
-                  <select
-                    required
-                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
-                    onChange={(e) => {
-                      const student = students.find(s => (s.student_id || s.id) === e.target.value);
-                      setSelectedStudent(student);
-                    }}
-                    value={selectedStudent?.student_id || selectedStudent?.id || ''}
-                  >
-                    <option value="">{filteredStudents.length === 0 ? "No Students Found" : "Choose Student"}</option>
-                    {filteredStudents.map(s => <option key={s.student_id || s.id} value={s.student_id || s.id}>{s.full_name} {s.roll_no ? `(${s.roll_no})` : ''}</option>)}
-                  </select>
-                </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">2. Select Student</label>
+                <select
+                  required
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                  onChange={(e) => {
+                    const found = students.find(s => String(s.student_id) === String(e.target.value));
+                    setSelectedStudent(found || null);
+                  }}
+                  value={selectedStudent ? String(selectedStudent.student_id) : ''}
+                >
+                  <option value="">-- Choose Student --</option>
+                  {filteredStudents.map(s => (
+                    <option key={String(s.student_id)} value={String(s.student_id)}>
+                      {s.full_name} {s.roll_no ? `(Roll: ${s.roll_no})` : ''}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* --- EXAM SELECT --- */}
-              <div className="space-y-4 group">
-                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Exam *</label>
-                <div className="relative drop-shadow-sm">
-                  <BookOpen size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
-                  <select
-                    required
-                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
-                    onChange={(e) => handleExamSelect(e.target.value)}
-                    value={selectedExamId}
-                  >
-                    <option value="">Choose Exam</option>
-                    {exams.map((e: any) => <option key={e.id} value={e.id}>{e.exam_name || e.title} ({e.session_year || 'Current'})</option>)}
-                  </select>
-                </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">3. Choose Exam</label>
+                <select
+                  required
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                  onChange={(e) => handleExamSelect(e.target.value)}
+                  value={selectedExamId}
+                >
+                  <option value="">-- Choose Exam --</option>
+                  {exams.map((e: any) => <option key={e.id} value={e.id}>{e.exam_name || e.title}</option>)}
+                </select>
               </div>
             </div>
 
-            {/* --- SEARCH --- */}
-            <div className="relative group/search max-w-md mx-auto">
-              <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-emerald-500 transition-colors" />
-              <input
+            {/* Sub-search */}
+            <div className="max-w-md mx-auto space-y-4">
+               <label className="text-[10px] font-black text-slate-300 tracking-widest text-center block uppercase">Search By Name</label>
+               <input
                 type="text"
-                placeholder="Quick search by name..."
+                placeholder="Type name to narrow list..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="premium-input w-full pl-16 py-4 bg-slate-50/50"
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all text-center"
               />
             </div>
 
-            <AnimatePresence mode="wait">
-              {selectedStudent && selectedExamId ? (
-                <motion.div 
-                  key="form-content"
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-10"
-                >
-                  <div className="bg-slate-100/30 rounded-[2.5rem] border border-slate-100/50 overflow-hidden shadow-inner p-2">
-                    <table className="w-full text-left">
-                      <thead className="bg-white/50 border-b border-slate-100">
-                        <tr>
-                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase">Subject Title</th>
-                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase text-center">Marks Obtained</th>
-                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase text-center">Maximum Marks</th>
+            {/* Results Table Area */}
+            {selectedStudent && selectedExamId ? (
+              <div className="pt-10 border-t border-slate-50 space-y-10">
+                <div className="bg-slate-50/50 rounded-[3rem] border border-slate-100 overflow-hidden">
+                  <table className="w-full text-left">
+                    <thead className="bg-white/50 border-b border-slate-100">
+                      <tr>
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Marks</th>
+                        <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Max</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {results.map((r, i) => (
+                        <tr key={i} className="hover:bg-white transition-colors">
+                          <td className="px-10 py-6 font-black text-slate-800 text-sm">{r.subject}</td>
+                          <td className="px-10 py-6 text-center">
+                            <input
+                              type="number"
+                              required
+                              value={r.marks}
+                              onChange={(e) => {
+                                const newRes = [...results];
+                                newRes[i].marks = e.target.value;
+                                setResults(newRes);
+                              }}
+                              className="w-24 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 outline-none"
+                            />
+                          </td>
+                          <td className="px-10 py-6 text-center text-slate-400 text-sm font-black">{r.max_marks}</td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-50">
-                        {results.map((r, i) => (
-                          <tr key={i} className="group/row hover:bg-white transition-all duration-300">
-                            <td className="px-10 py-8 font-black text-slate-800 text-base tracking-tight group-hover/row:text-emerald-600 transition-colors">{r.subject || 'Empty Subject'}</td>
-                            <td className="px-10 py-8 text-center">
-                              <input
-                                type="number"
-                                required
-                                value={r.marks}
-                                onChange={(e) => {
-                                  const newRes = [...results];
-                                  newRes[i].marks = e.target.value;
-                                  setResults(newRes);
-                                }}
-                                className="w-28 bg-white border border-slate-100 rounded-2xl px-6 py-4 text-lg font-black text-center focus:border-emerald-400 focus:ring-[12px] focus:ring-emerald-50 outline-none transition-all shadow-sm"
-                                placeholder="0"
-                              />
-                            </td>
-                            <td className="px-10 py-8 text-center text-slate-400 font-bold text-lg">
-                              {r.max_marks}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-                  <div className="flex flex-col md:flex-row gap-8 items-center justify-between bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                    <div className="flex items-center gap-6">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-100' : 'bg-slate-50 text-slate-300'}`}>
-                        <Zap size={24} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-slate-900 leading-none">AUTO PROMOTION</p>
-                        <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1 uppercase">Move student to next grade?</p>
-                      </div>
+                {/* Promotion Check */}
+                <div className="flex justify-between items-center bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
+                   <div className="flex items-center gap-6">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl' : 'bg-white text-slate-200 border border-slate-100'}`}>
+                      <Zap size={20} />
                     </div>
-                    <input
-                      type="checkbox"
-                      className="w-12 h-12 rounded-2xl border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer shadow-sm hover:scale-110"
-                      checked={isFinalExam}
-                      onChange={(e) => setIsFinalExam(e.target.checked)}
-                    />
+                    <div>
+                      <p className="text-sm font-black text-slate-900 leading-none">PROMOTE TO NEXT CLASS</p>
+                      <p className="text-[9px] font-black text-slate-400 mt-1 uppercase tracking-widest">Auto-upgrade scholar tier?</p>
+                    </div>
                   </div>
+                  <input
+                    type="checkbox"
+                    className="w-10 h-10 rounded-xl border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer"
+                    checked={isFinalExam}
+                    onChange={(e) => setIsFinalExam(e.target.checked)}
+                  />
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="premium-button w-full bg-slate-900 text-white hover:bg-emerald-600 p-10 text-xl font-black tracking-widest group"
-                  >
-                    {loading ? <RefreshCw className="animate-spin" size={28} /> : <FileUp size={28} className="group-hover:-translate-y-1 transition-transform" />}
-                    {loading ? 'UPLOADING DATA...' : 'SAVE EXAM RESULT'}
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }}
-                  className="py-40 flex flex-col items-center justify-center text-center opacity-30 border-2 border-dashed border-slate-100 rounded-[4rem]"
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-slate-900 text-white hover:bg-emerald-600 py-8 rounded-[2.5rem] text-lg font-black tracking-widest flex items-center justify-center gap-4 shadow-2xl transition-all"
                 >
-                  <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-8">
-                    <Target size={48} className="text-slate-200" />
-                  </div>
-                  <p className="font-black text-slate-400 text-sm tracking-widest uppercase">Select student and exam to activate marking sequence</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {loading ? <RefreshCw className="animate-spin" size={24} /> : <FileUp size={24} />}
+                  {loading ? 'PROCESSING...' : 'SAVE ASSESSMENT DATA'}
+                </button>
+              </div>
+            ) : (
+              <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-[4rem] opacity-30">
+                <Target size={48} className="mx-auto mb-6 text-slate-300" />
+                <p className="font-black text-[10px] text-slate-400 tracking-widest uppercase">Select student and exam to activate entry node</p>
+              </div>
+            )}
           </form>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
+
 
 };
 
