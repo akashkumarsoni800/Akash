@@ -76,7 +76,7 @@ const CreateExam = () => {
         <span className="text-purple-600"></span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2">
-        <ShieldCheck size={12} className="text-purple-500" /> Paid Scholastic Assessment Architect
+        <ShieldCheck size={12} className="text-purple-500" /> Professional Exam Setup v4.8
        </p>
       </motion.div>
 
@@ -106,14 +106,14 @@ const CreateExam = () => {
           <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
            <Layout size={20} />
           </div>
-          <h2 className="text-2xl font-black text-slate-900  uppercase">List Parameters</h2>
+          <h2 className="text-2xl font-black text-slate-900  uppercase">Basic Info</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-8">
           <InputField 
-           label="Examination Title *" 
+           label="Exam Name *" 
            name="title" 
-           placeholder="e.g. Periodic Assessment 01" 
+           placeholder="e.g. Final Exam" 
            value={examTitle}
            onChange={(e: any) => setExamTitle(e.target.value)} 
            required 
@@ -121,7 +121,7 @@ const CreateExam = () => {
           />
 
           <InputField 
-           label="Commencement Date" 
+           label="Exam Date" 
            name="date" 
            type="date" 
            value={examDate}
@@ -136,7 +136,7 @@ const CreateExam = () => {
           <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
            <BookOpen size={20} />
           </div>
-          <h2 className="text-2xl font-black text-slate-900  uppercase">Subject Arsenal</h2>
+          <h2 className="text-2xl font-black text-slate-900  uppercase">Subjects</h2>
         </div>
 
         <div className="space-y-6">
@@ -145,7 +145,7 @@ const CreateExam = () => {
             <Plus className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-purple-400 transition-colors" size={18} />
             <input 
              type="text" 
-             placeholder="Synthesize Subject Index (e.g. Physics)"
+             placeholder="Enter Subject Name (e.g. Math)"
              className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all text-sm"
              value={currentSubject}
              onChange={e => setCurrentSubject(e.target.value)}
@@ -156,7 +156,7 @@ const CreateExam = () => {
            onClick={handleAddSubject}
            className="bg-slate-900 text-white px-8 py-5 rounded-2xl font-black  text-[10px] shadow-lg hover:bg-purple-600 active:scale-95 transition-all "
           >
-           Initialize
+           Add Subject
           </button>
          </div>
 
@@ -180,7 +180,7 @@ const CreateExam = () => {
          </AnimatePresence>
          {subjects.length === 0 && (
           <div className="py-10 text-center border-2 border-dashed border-slate-100 rounded-[2.5rem] bg-slate-50/50">
-            <p className="text-[10px] font-black text-slate-300 tracking-widest">Awaiting Subject Induction...</p>
+            <p className="text-[10px] font-black text-slate-300 tracking-widest">No subjects added yet...</p>
           </div>
          )}
         </div>
@@ -195,14 +195,14 @@ const CreateExam = () => {
           {loading ? (
            <RefreshCw className="animate-spin" size={20} />
           ) : (
-           <><ShieldCheck size={24} className="group-hover:rotate-12 transition-transform" /> Authorize Exam Fleet</>
+           'Save Exam Details'
           )}
          </button>
          <button 
           onClick={() => navigate('/admin/dashboard')}
           className="px-10 py-6 rounded-[2rem] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all "
          >
-          Abort Logic
+          Cancel
          </button>
        </div>
       </motion.div>
@@ -223,11 +223,11 @@ const CreateExam = () => {
 
          <div className="space-y-6 relative z-10">
           <div className="flex justify-between items-end border-b border-white/5 pb-6">
-            <p className="text-[10px] font-black text-slate-400 tracking-widest">Subject Density</p>
+            <p className="text-[10px] font-black text-slate-400 tracking-widest">Subjects</p>
             <p className="text-3xl font-black ">{subjects.length}</p>
           </div>
           <div className="flex justify-between items-end border-b border-white/5 pb-6">
-            <p className="text-[10px] font-black text-slate-400 tracking-widest">Temporal Status</p>
+            <p className="text-[10px] font-black text-slate-400 tracking-widest">Status</p>
             <p className="text-xl font-black  text-blue-400 ">{examDate ? 'Scheduled' : 'Pending'}</p>
           </div>
           <div className="flex justify-between items-end border-b border-white/5 pb-6">
@@ -238,7 +238,7 @@ const CreateExam = () => {
 
          <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
           <p className="text-[9px] font-black text-white/40 tracking-widest leading-relaxed">
-            Notice: The generated matrix will be broadcasted to all cohort terminals upon authorization. Ensure sequential validation.
+            Notice: The exam details will be visible to all students and teachers once you save it.
           </p>
          </div>
        </div>

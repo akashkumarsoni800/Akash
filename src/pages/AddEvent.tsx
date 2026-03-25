@@ -62,7 +62,7 @@ const AddEvent = () => {
 
      <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-       <span className="text-[10px] font-black  text-blue-400 ">Satellite Broadcast Ready</span>
+       <span className="text-[10px] font-black  text-blue-400 ">Ready to Save</span>
      </div>
     </div>
 
@@ -74,15 +74,15 @@ const AddEvent = () => {
         <span className="text-blue-600">Hub</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2">
-        <ShieldCheck size={12} className="text-blue-500" /> Authorize & Distribute School Notices
+        <ShieldCheck size={12} className="text-blue-500" /> Write and Publish Notices
        </p>
       </motion.div>
       
       <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
-        <p className="text-[9px] font-black text-slate-400  mb-1">Channel Status</p>
-        <p className="text-3xl font-black text-slate-900  ">Priority High</p>
+        <p className="text-[9px] font-black text-slate-400  mb-1">Status</p>
+        <p className="text-3xl font-black text-slate-900  ">Active</p>
        </div>
       </div>
     </div>
@@ -97,7 +97,7 @@ const AddEvent = () => {
      >
        <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex justify-between items-center px-12">
         <h3 className="font-black text-[10px] text-slate-400  flex items-center gap-3 uppercase">
-          <Layout size={16} className="text-blue-600"/> Drafting Chamber
+          <Layout size={16} className="text-blue-600"/> Compose Notice
         </h3>
        </div>
 
