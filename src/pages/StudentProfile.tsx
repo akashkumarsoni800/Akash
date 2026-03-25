@@ -151,8 +151,8 @@ const StudentProfile = () => {
  );
 
  return (
-  <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-7xl mx-auto space-y-12">
+  <div className="min-h-screen bg-slate-50 py-12 px-1 md:px-2 pb-32 font-inter">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- TOP ACTIONS --- */}
     <div className="flex justify-between items-center no-print">

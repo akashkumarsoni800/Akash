@@ -82,8 +82,8 @@ export default function StudentDashboard() {
  );
 
  return (
-  <div className="min-h-screen bg-[#F8FAFC] py-8 px-4 md:px-10 pb-32">
-   <div className="max-w-7xl mx-auto space-y-10">
+  <div className="min-h-screen bg-[#F8FAFC] py-8 px-1 md:px-2 pb-32">
+   <div className="max-w-full mx-auto space-y-10">
     
     {/* --- STUDENT HERO SECTION --- */}
     <motion.div 

@@ -138,8 +138,8 @@ const AdminDashboard = () => {
  if (loading && !counts.students) return <div className="h-screen flex items-center justify-center font-black text-slate-400  text-xs">ASM SYNCING...</div>;
 
  return (
-  <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 pb-32">
-   <div className="max-w-7xl mx-auto space-y-10">
+  <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#F8FAFC] p-1 md:p-2 pb-32">
+   <div className="max-w-full mx-auto space-y-10">
     
     {/* --- HEADER & TOP ACTIONS --- */}
     <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm transition-all hover:shadow-md">

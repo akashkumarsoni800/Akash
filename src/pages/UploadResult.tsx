@@ -121,8 +121,8 @@ const UploadResult = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-      <div className="max-w-4xl mx-auto space-y-12">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-1 md:px-2 pb-32">
+      <div className="max-w-full mx-auto space-y-12">
 
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
