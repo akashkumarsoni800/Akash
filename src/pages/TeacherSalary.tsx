@@ -256,37 +256,49 @@ const TeacherSalary = () => {
                     <p className="text-[10px] font-black text-slate-400  ">Structure Parameters</p>
                  </div>
 
-                 {(dbColumns.includes('basic_salary') || dbColumns.length === 0) && (
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
-                     <InputField 
-                       label="Base Compensation" 
-                       type="number" 
-                       value={newSalary.basic_salary || ''}
-                       prefix="INR"
-                       icon={CreditCard}
-                       onChange={(e: any) => {
-                         const val = Number(e.target.value);
-                         setNewSalary({
-                           ...newSalary, 
-                           basic_salary: val,
-                           hra: Math.round(val * 0.24)
-                         });
-                       }}
-                       placeholder="0"
-                     />
-                     {dbColumns.includes('hra') && (
-                       <InputField 
-                         label="HRA Index (24%)" 
-                         type="number" 
-                         value={newSalary.hra}
-                         prefix="INR"
-                         accent="blue"
-                         readOnly
-                         icon={ShieldCheck}
-                       />
-                     )}
-                   </div>
-                 )}
+                  {(!dbColumns.includes('basic_salary') && dbColumns.length > 0) ? (
+                    <div className="relative z-10">
+                      <InputField 
+                        label="Total Disbursement Amount" 
+                        type="number" 
+                        value={newSalary.basic_salary || ''}
+                        prefix="INR"
+                        icon={Wallet}
+                        onChange={(e: any) => setNewSalary({...newSalary, basic_salary: Number(e.target.value)})}
+                        placeholder="Enter direct amount"
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                      <InputField 
+                        label="Base Compensation" 
+                        type="number" 
+                        value={newSalary.basic_salary || ''}
+                        prefix="INR"
+                        icon={CreditCard}
+                        onChange={(e: any) => {
+                          const val = Number(e.target.value);
+                          setNewSalary({
+                            ...newSalary, 
+                            basic_salary: val,
+                            hra: Math.round(val * 0.24)
+                          });
+                        }}
+                        placeholder="0"
+                      />
+                      {(!dbColumns.length || dbColumns.includes('hra')) && (
+                        <InputField 
+                          label="HRA Index (24%)" 
+                          type="number" 
+                          value={newSalary.hra}
+                          prefix="INR"
+                          accent="blue"
+                          readOnly
+                          icon={ShieldCheck}
+                        />
+                      )}
+                    </div>
+                  )}
 
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                    {dbColumns.includes('allowances') && (
