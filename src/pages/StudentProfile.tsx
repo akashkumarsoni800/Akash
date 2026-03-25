@@ -3,12 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import {
- User, Phone, MapPin, ChevronLeft, 
- Printer, RefreshCw, AlertCircle, Download, 
- CreditCard, ShieldCheck, Zap, Info, 
- Star, Layout, Camera, Fingerprint,
- ArrowUpRight, ArrowDownRight, Wallet,
- CalendarDays, BookOpen, GraduationCap
+ User, Phone, MapPin, ChevronLeft, Printer, RefreshCw, AlertCircle, Download, 
+  CreditCard, ShieldCheck, Zap, Info, 
+  Star, Layout, Camera, Fingerprint,
+  ArrowUpRight, ArrowDownRight, Wallet,
+  CalendarDays, BookOpen, GraduationCap, Award, ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import StudentICard from "./StudentICard";
@@ -46,7 +45,7 @@ const StudentProfile = () => {
     { data: attendanceData, error: attendanceError }
    ] = await Promise.all([
     supabase.from("students").select("*").eq("student_id", studentIdNum).maybeSingle(),
-    supabase.from("fees").select("*").eq("student_id", studentIdNum).order('created_at', { ascending: false }),
+    supabase.from("fees").select("*").eq("student_id", studentIdNum).order('updated_at', { ascending: false }),
     supabase.from("results").select("*, exams(title)").eq("student_id", studentIdNum).order('uploaded_at', { ascending: false }),
     supabase.from("attendance").select("status").eq("student_id", studentIdNum)
    ]);
