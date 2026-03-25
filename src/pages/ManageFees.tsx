@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-  Plus, Search, Users, Calendar, 
+  Plus, Search, Users, Calendar, ArrowRight,
   Wallet, Send, RefreshCw, Trash2, CheckCircle 
 } from 'lucide-react';
 
@@ -156,97 +156,153 @@ const ManageFees = () => {
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans">
       <div className="max-w-7xl mx-auto space-y-12">
         
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 text-center md:text-left">
+         {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase italic">Fee Management</h1>
-              <p className="text-gray-400 font-bold uppercase text-[9px] md:text-[10px] tracking-widest mt-2 italic">Institutional Billing ASM v3.0</p>
+              <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+                Fee<br/>
+                <span className="text-indigo-600">Management</span>
+              </h1>
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+                <Wallet size={12} className="text-indigo-500" /> Institutional Billing Suite v3.0
+              </p>
            </motion.div>
-           <button onClick={() => setBulkMode(!bulkMode)} className={`px-6 md:px-8 py-3 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all ${bulkMode ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'bg-white text-gray-400 border border-gray-100'}`}>
-              {bulkMode ? '🚀 Bulk Mode: ON' : 'Single Entry'}
-           </button>
+           <div className="flex bg-white p-2 rounded-3xl border border-gray-100 shadow-sm">
+             <button 
+               onClick={() => setBulkMode(false)} 
+               className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${!bulkMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-400 hover:text-indigo-600'}`}>
+               Single Entry
+             </button>
+             <button 
+               onClick={() => setBulkMode(true)} 
+               className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${bulkMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-400 hover:text-indigo-600'}`}>
+               Bulk Distribution
+             </button>
+           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-          {/* Assignment Form */}
-          <div className="lg:col-span-2 bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl shadow-gray-200/50 border border-gray-50">
-             <form onSubmit={handleAssignFee} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase ml-2 italic">1. Target {bulkMode ? 'Class' : 'Student'}</label>
-                      {bulkMode ? (
-                        <select className="w-full p-5 bg-gray-50 rounded-2xl font-black text-indigo-900 border-none outline-none focus:ring-2 focus:ring-indigo-100 appearance-none" value={selectedClass} onChange={(e)=>setSelectedClass(e.target.value)}>
-                           <option value="">Choose Class</option>
-                           {[...new Set(students.map(s => s.class_name))].map(c => <option key={c} value={c}>Class {c}</option>)}
-                        </select>
-                      ) : (
-                        <select className="w-full p-5 bg-gray-50 rounded-2xl font-black text-indigo-900 border-none outline-none focus:ring-2 focus:ring-indigo-100" value={selectedStudent} onChange={(e)=>setSelectedStudent(e.target.value)}>
-                           <option value="">Select Candidate</option>
-                           {students.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} ({s.class_name})</option>)}
-                        </select>
-                      )}
+          <div className="lg:col-span-2 space-y-10">
+             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 opacity-20 rounded-full -mr-32 -mt-32 transition-transform duration-[3s] group-hover:scale-110"></div>
+                
+                <form onSubmit={handleAssignFee} className="space-y-12 relative z-10">
+                   <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-4">
+                        <Wallet size={28} className="text-emerald-500" /> Fiscal Assignment
+                      </h2>
+                      <div className="px-5 py-2 bg-emerald-50 rounded-xl text-[9px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-100">
+                        Registry Active
+                      </div>
                    </div>
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase ml-2 italic">2. Billing Cycle</label>
-                      <input type="month" className="w-full p-5 bg-gray-50 rounded-2xl font-black text-indigo-900 border-none outline-none focus:ring-2 focus:ring-indigo-100" value={month} onChange={(e)=>setMonth(e.target.value)} required />
-                   </div>
-                </div>
 
-                <div className="bg-gray-50/50 p-8 rounded-[2.5rem] border border-dashed border-gray-200">
-                   <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Setup Breakdown</h3>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {feeHeads.map(head => (
-                        <div key={head.id} className="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-gray-50">
-                           <span className="font-black text-xs text-gray-500 uppercase italic">{head.name}</span>
-                           <input type="number" placeholder="0" className="w-24 text-right font-black text-indigo-600 border-none focus:ring-0" 
-                            value={feeValues[head.id] || ''}
-                            onChange={(e) => handleFeeValueChange(head.id, e.target.value)} />
-                        </div>
-                      ))}
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                           Target Scope
+                         </label>
+                         {bulkMode ? (
+                           <select className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={selectedClass} onChange={(e)=>setSelectedClass(e.target.value)}>
+                              <option value="">Select Target Class</option>
+                              {[...new Set(students.map(s => s.class_name))].map(c => <option key={c} value={c}>Class {c} Division</option>)}
+                           </select>
+                         ) : (
+                           <select className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={selectedStudent} onChange={(e)=>setSelectedStudent(e.target.value)}>
+                              <option value="">Identify Candidate</option>
+                              {students.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} — Roll #{s.roll_no}</option>)}
+                           </select>
+                         )}
+                      </div>
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                           Billing Period
+                         </label>
+                         <input type="month" className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={month} onChange={(e)=>setMonth(e.target.value)} required />
+                      </div>
                    </div>
-                </div>
 
-                <div className="flex items-center justify-between bg-indigo-900 p-8 rounded-[2.5rem] text-white shadow-2xl">
-                   <div>
-                      <p className="text-[10px] font-black uppercase opacity-60 italic">Total Payable</p>
-                      <h2 className="text-4xl font-black tracking-tighter">₹ {totalAmountValue.toLocaleString()}</h2>
+                   <div className="bg-slate-50/50 p-10 rounded-[2rem] border border-slate-100 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100 opacity-20 blur-3xl"></div>
+                      <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-8 flex items-center gap-2">
+                        <Plus size={14} className="text-emerald-500" /> Fee Structure Breakdown
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
+                         {feeHeads.map(head => (
+                           <div key={head.id} className="bg-white p-5 rounded-2xl flex justify-between items-center border border-slate-100 hover:border-emerald-200 transition-all hover:shadow-md group">
+                              <span className="font-black text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-emerald-600 transition-colors">{head.name}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-300 font-bold text-xs uppercase">INR</span>
+                                <input type="number" placeholder="0" className="w-24 text-right font-black text-slate-900 border-none focus:ring-0 text-lg bg-transparent" 
+                                 value={feeValues[head.id] || ''}
+                                 onChange={(e) => handleFeeValueChange(head.id, e.target.value)} />
+                              </div>
+                           </div>
+                         ))}
+                      </div>
                    </div>
-                   <button disabled={loading} className="bg-white text-indigo-900 px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all active:scale-95 shadow-xl disabled:opacity-50">
-                      {loading ? 'Processing...' : '💾 Confirm Entry'}
-                   </button>
-                </div>
-             </form>
+
+                   <div className="flex flex-col md:flex-row items-center justify-between bg-white border-2 border-slate-900 p-8 rounded-[2.5rem] shadow-xl group">
+                      <div className="text-center md:text-left mb-8 md:mb-0">
+                         <p className="text-[9px] font-black uppercase text-slate-400 tracking-[0.3em] mb-1">Authenticated Total</p>
+                         <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">₹ {totalAmountValue.toLocaleString()}</h2>
+                      </div>
+                      <button disabled={loading} className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200">
+                         {loading ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                         {loading ? 'Processing...' : 'Authorize Transaction'}
+                      </button>
+                   </div>
+                </form>
+             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8">
-             <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-50">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">Quick Stats</h3>
-                <div className="space-y-4">
-                   <div className="p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
-                      <p className="text-[9px] font-black text-indigo-400 uppercase">Collected Total</p>
-                      <p className="text-2xl font-black text-indigo-900">₹{feeStats.totalCollected.toLocaleString()}</p>
+          <div className="space-y-10">
+             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm overflow-hidden relative group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-50"></div>
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10 relative z-10 italic">
+                  Fiscal Index
+                </h3>
+                <div className="space-y-6 relative z-10">
+                   <div className="p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-20 blur-2xl"></div>
+                      <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-2">Fund Allocation</p>
+                      <p className="text-3xl font-black text-white tracking-tighter italic">₹{feeStats.totalCollected.toLocaleString()}</p>
                    </div>
-                   <div className="p-5 bg-rose-50 rounded-2xl border border-rose-100">
-                      <p className="text-[9px] font-black text-rose-400 uppercase">Pending Slips</p>
-                      <p className="text-2xl font-black text-rose-900">{feeStats.totalPending}</p>
+                   <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Pending Invoices</p>
+                      <p className="text-3xl font-black text-slate-900 tracking-tighter">{feeStats.totalPending}</p>
                    </div>
                 </div>
              </div>
 
-             <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-50 h-[400px] flex flex-col overflow-hidden">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 italic">Live Feed</h3>
-                <div className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-                   {recentPayments.map(p => (
-                     <div key={p.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center group hover:bg-white hover:border-indigo-200 transition-all">
-                        <div>
-                           <p className="font-black text-xs text-gray-900 uppercase italic leading-tight">{p.students?.full_name}</p>
-                           <p className="text-[9px] font-bold text-gray-400 uppercase">₹{p.total_amount} - {p.month}</p>
-                        </div>
-                        <span className={`text-[9px] font-black px-3 py-1 rounded-full ${p.status === 'Paid' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>{p.status}</span>
-                     </div>
-                   ))}
+             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm flex flex-col h-[600px] overflow-hidden group">
+                <div className="flex items-center justify-between mb-10">
+                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">Transaction Feed</h3>
+                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                 </div>
+                <div className="space-y-5 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+                   {recentPayments.length > 0 ? recentPayments.map(p => (
+                     <div key={p.id} className="p-5 bg-slate-50/50 rounded-2xl border border-slate-50 flex justify-between items-center group-hover:bg-white group-hover:shadow-md group-hover:border-emerald-100 transition-all cursor-pointer">
+                        <div className="flex items-center gap-4">
+                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${p.status === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
+                             {p.status === 'Paid' ? <CheckCircle size={18}/> : <RefreshCw size={18}/>}
+                           </div>
+                           <div>
+                              <p className="font-black text-[11px] text-slate-800 uppercase tracking-tighter leading-tight">{p.students?.full_name}</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹{p.total_amount} • {p.month}</p>
+                           </div>
+                        </div>
+                        <ArrowRight size={14} className="text-slate-200 group-hover:text-emerald-500 transition-transform group-hover:translate-x-1" />
+                     </div>
+                   )) : (
+                     <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20">
+                        <RefreshCw size={40} className="mb-4 animate-spin-slow" />
+                        <p className="text-[10px] font-black uppercase tracking-widest italic">Awaiting Records...</p>
+                     </div>
+                   )}
+                </div>
+                <button className="mt-8 py-4 bg-slate-50 rounded-2xl text-[9px] font-black uppercase text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all">
+                  Open Audit Logs
+                </button>
              </div>
           </div>
         </div>
@@ -256,3 +312,4 @@ const ManageFees = () => {
 };
 
 export default ManageFees;
+

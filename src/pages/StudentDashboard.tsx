@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { motion } from 'framer-motion';
 import { 
   User, BookOpen, CreditCard, Bell, 
   Calendar, Award, CheckCircle2, AlertCircle,
@@ -81,131 +82,188 @@ export default function StudentDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans space-y-8 md:space-y-10 pb-24">
-      {/* 🟢 TOP HEADER - HERO SECTION */}
-      <div className="bg-indigo-900 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-10">
-        <div className="relative z-10 text-center md:text-left">
-          <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-white/10 mb-6">
-            ✨ Academic Session 2024-25
-          </div>
-          <h1 className="text-3xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4">
-            Welcome Back,<br/>{student?.full_name?.split(' ')[0] || 'Scholar'}!
-          </h1>
-          <p className="text-indigo-200 font-bold uppercase text-xs tracking-[0.2em] flex items-center justify-center md:justify-start gap-3">
-             <span className="opacity-60">Class:</span> {student?.class_name} 
-             <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-             <span className="opacity-60">Roll:</span> {student?.roll_no}
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4 md:px-10 pb-32">
+      <div className="max-w-7xl mx-auto space-y-10">
         
-        <div className="relative group">
-           <div className="w-32 h-32 md:w-44 md:h-44 rounded-[3rem] bg-white/10 border-4 border-white/20 p-2 overflow-hidden backdrop-blur-3xl shadow-2xl transition-transform hover:scale-105">
-              <img 
-                src={student?.photo_url || `https://ui-avatars.com/api/?name=${student?.full_name}&background=6366f1&color=fff`} 
-                className="w-full h-full object-cover rounded-[2.5rem]" 
-                alt="Profile"
-              />
-           </div>
-           <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-3 rounded-2xl shadow-xl border-4 border-indigo-900">
-             <CheckCircle2 size={24} />
-           </div>
-        </div>
-        
-        <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"></div>
-      </div>
+        {/* --- STUDENT HERO SECTION --- */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 w-80 h-80 bg-purple-50 opacity-20 rounded-full -mr-40 -mt-40 transition-transform duration-[3s] group-hover:scale-110"></div>
+          
+          <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12 text-center lg:text-left">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-5 py-2 bg-purple-50 rounded-full text-[9px] font-black uppercase tracking-[0.2em] text-purple-600 border border-purple-100 animate-pulse">
+                < Award size={14} /> Academic Excellence 2024-25
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+                Welcome Back,<br/>
+                <span className="text-purple-600">
+                  {student?.full_name?.split(' ')[0] || 'Scholar'}!
+                </span>
+              </h1>
 
-      {/* 🔵 STATS GRID - LIVE DATA */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StatSummaryCard 
-          icon={Clock} 
-          label="Attendance" 
-          value={`${stats.attendance}%`} 
-          sub="Monthly Presence"
-          color="indigo"
-        />
-        <StatSummaryCard 
-          icon={CreditCard} 
-          label="Fees Due" 
-          value={`₹${stats.pendingFees.toLocaleString()}`} 
-          sub="Academic Arrears"
-          color={stats.pendingFees > 0 ? "rose" : "emerald"}
-        />
-        <StatSummaryCard 
-          icon={BookOpen} 
-          label="Active Tasks" 
-          value={stats.activeHomework} 
-          sub="Pending Homework"
-          color="amber"
-        />
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-10">
-        {/* 🟡 QUICK ACTIONS */}
-        <div className="lg:col-span-2 space-y-8">
-           <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-3 italic">
-             <Layout size={16}/> Essential Systems
-           </h3>
-           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-              <ActionCard icon="💸" label="Fees" path="/student/fees" color="emerald" navigate={navigate}/>
-              <ActionCard icon="📊" label="Results" path="/student/result" color="indigo" navigate={navigate}/>
-              <ActionCard icon="📑" label="Homework" path="/student/homework" color="amber" navigate={navigate}/>
-              <ActionCard icon="📅" label="Attendance" path="/student/attendance" color="blue" navigate={navigate}/>
-              <ActionCard icon="🆔" label="ID Card" path="/student/id-card" color="purple" navigate={navigate}/>
-              <ActionCard icon="📢" label="Notices" path="/student/notices" color="rose" navigate={navigate}/>
-           </div>
-        </div>
-
-        {/* 🔴 RECENT NOTICES */}
-        <div className="space-y-8">
-           <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-3 italic">
-             <Bell size={16}/> Latest Updates
-           </h3>
-           <div className="bg-white rounded-[3rem] p-8 shadow-xl border border-gray-100 flex flex-col gap-6">
-              {stats.notices.length > 0 ? stats.notices.map((notice, idx) => (
-                <div key={idx} className="flex gap-4 group cursor-pointer" onClick={() => navigate('/student/notices')}>
-                   <div className="bg-indigo-50 p-4 rounded-2xl text-indigo-600 self-start group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                     <Calendar size={18}/>
-                   </div>
-                   <div>
-                      <h4 className="font-black text-gray-900 text-sm">{notice.title}</h4>
-                      <p className="text-gray-400 text-[10px] font-bold mt-1 line-clamp-2 leading-relaxed">{notice.description}</p>
-                   </div>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Assigned Batch</p>
+                   <p className="text-lg font-black text-slate-800 tracking-tighter">Class {student?.class_name}</p>
                 </div>
-              )) : (
-                <div className="text-center py-10 opacity-20 italic font-black uppercase text-xs tracking-widest">No recent notices.</div>
-              )}
-              <button onClick={() => navigate('/student/notices')} className="w-full bg-gray-50 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-2">
-                View All Board <ArrowRight size={14}/>
-              </button>
-           </div>
+                <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Registry No</p>
+                   <p className="text-lg font-black text-slate-800 tracking-tighter">#{student?.roll_no}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="w-48 h-48 md:w-60 md:h-60 rounded-[3rem] p-2 bg-slate-50 border border-slate-100 shadow-2xl relative z-10 overflow-hidden group-hover:rotate-2 transition-transform duration-700">
+                <img 
+                  src={student?.photo_url || `https://ui-avatars.com/api/?name=${student?.full_name}&background=1e293b&color=fff`} 
+                  className="w-full h-full object-cover rounded-[2.5rem]" 
+                  alt="Profile"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-2xl shadow-xl border-4 border-white z-20 animate-bounce">
+                <CheckCircle2 size={24} />
+              </div>
+              <div className="absolute -top-6 -left-6 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* --- PERFORMANCE INDEX --- */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+           <StatCard 
+             icon={Clock} 
+             title="Attendance Log" 
+             value={`${stats.attendance}%`} 
+             color="purple"
+             subText="Real-time Presence"
+           />
+           <StatCard 
+             icon={CreditCard} 
+             title="Financial Status" 
+             value={`₹${stats.pendingFees.toLocaleString()}`} 
+             color={stats.pendingFees > 0 ? "rose" : "emerald"}
+             subText="Pending Dues"
+           />
+           <StatCard 
+             icon={BookOpen} 
+             title="Homework Portal" 
+             value={stats.activeHomework} 
+             color="amber"
+             subText="Assigned Tasks"
+           />
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-10">
+          {/* --- SYSTEM ACCESS GRID --- */}
+          <div className="lg:col-span-2 space-y-8">
+             <div className="flex items-center justify-between">
+               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
+                 <Layout size={16} className="text-purple-600"/> Core System Access
+               </h3>
+             </div>
+             
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <ActionCard icon="💸" label="Fees Registry" path="/student/fees" color="emerald" navigate={navigate}/>
+                <ActionCard icon="📊" label="Academic Data" path="/student/result" color="purple" navigate={navigate}/>
+                <ActionCard icon="📑" label="Homework Hub" path="/student/homework" color="amber" navigate={navigate}/>
+                <ActionCard icon="📅" label="Presence Log" path="/student/attendance" color="blue" navigate={navigate}/>
+                <ActionCard icon="🆔" label="Identity Card" path="/student/id-card" color="slate" navigate={navigate}/>
+                <ActionCard icon="📢" label="Broadcasts" path="/student/notices" color="rose" navigate={navigate}/>
+             </div>
+          </div>
+
+          {/* --- BROADCAST BOARD --- */}
+          <div className="space-y-8">
+             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
+               <Bell size={16} className="text-purple-600"/> Latest Broadcasts
+             </h3>
+             
+             <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm flex flex-col gap-6">
+                {stats.notices.length > 0 ? stats.notices.map((notice, idx) => (
+                  <div key={idx} className="flex gap-4 group cursor-pointer hover:bg-slate-50 p-4 -mx-4 rounded-2xl transition-all" onClick={() => navigate('/student/notices')}>
+                     <div className="bg-purple-50 p-3.5 rounded-xl text-purple-600 self-start group-hover:bg-purple-600 group-hover:text-white transition-all">
+                       <Calendar size={18}/>
+                     </div>
+                     <div className="flex-1">
+                        <h4 className="font-black text-slate-800 text-sm uppercase tracking-tight line-clamp-1">{notice.title}</h4>
+                        <p className="text-slate-400 text-[10px] font-bold mt-1 line-clamp-2 leading-relaxed">{notice.description}</p>
+                     </div>
+                  </div>
+                )) : (
+                  <div className="text-center py-12 opacity-30 italic font-black uppercase text-[10px] tracking-widest text-slate-400">Zero System Broadcasts</div>
+                )}
+                <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group">
+                  Full Archive Access <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform"/>
+                </button>
+             </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// Sub-components for cleaner structure
-const StatSummaryCard = ({ icon: Icon, label, value, sub, color }: any) => (
-  <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-100 hover:border-indigo-100 transition-all flex items-center gap-4 md:gap-6 group">
-    <div className={`bg-${color}-50 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2.5rem] text-${color}-600 group-hover:scale-110 transition-transform flex-shrink-0`}>
-      <Icon size={28} className="md:w-8 md:h-8" />
-    </div>
-    <div>
-      <p className="text-[9px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1 italic">{label}</p>
-      <h3 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter italic">{value}</h3>
-      <p className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase mt-1">{sub}</p>
-    </div>
-  </div>
-);
+// --- REDESIGNED SUBCOMPONENTS ---
+const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
+  const accentColors: { [key: string]: string } = {
+    purple: 'text-purple-600 bg-purple-50',
+    rose: 'text-rose-600 bg-rose-50',
+    emerald: 'text-emerald-600 bg-emerald-50',
+    amber: 'text-amber-600 bg-amber-50',
+  };
 
-const ActionCard = ({ icon, label, path, color, navigate }: any) => (
-  <div 
-    onClick={() => navigate(path)}
-    className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.8rem] shadow-sm border border-gray-50 hover:shadow-2xl hover:border-indigo-100 cursor-pointer transition-all flex flex-col items-center justify-center text-center group active:scale-95"
-  >
-     <div className="text-3xl md:text-5xl mb-3 md:mb-4 group-hover:rotate-12 transition-transform">{icon}</div>
-     <h4 className="font-black text-gray-800 uppercase tracking-tighter italic text-sm md:text-lg">{label}</h4>
-     <div className={`w-6 md:w-8 h-1 bg-${color}-500 rounded-full mt-2 md:mt-3 opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-  </div>
-);
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 italic">{title}</p>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{value}</h3>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">{subText}</span>
+          </div>
+        </div>
+        <div className={`p-4 rounded-2xl group-hover:scale-110 transition-transform ${accentColors[color as keyof typeof accentColors]}`}>
+          <Icon size={24} />
+        </div>
+      </div>
+      <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+         <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full animate-pulse ${color === 'rose' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
+            <span className="text-[8px] font-black uppercase text-slate-400 tracking-wider">Live System Sync</span>
+         </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const ActionCard = ({ icon, label, path, color, navigate }: any) => {
+  const themes: { [key: string]: string } = {
+    emerald: 'text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white',
+    purple: 'text-purple-600 bg-purple-50 hover:bg-purple-600 hover:text-white',
+    amber: 'text-amber-600 bg-amber-50 hover:bg-amber-600 hover:text-white',
+    blue: 'text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white',
+    slate: 'text-slate-600 bg-slate-50 hover:bg-slate-900 hover:text-white',
+    rose: 'text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white',
+  };
+
+  return (
+    <button 
+      onClick={() => navigate(path)}
+      className={`bg-white border border-slate-100 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
+    >
+       <div className="text-4xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">{icon}</div>
+       <h4 className="font-black uppercase tracking-tighter text-lg leading-tight">{label}</h4>
+       <div className="mt-4 flex items-center gap-2 text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+          Open Registry <ArrowRight size={10} />
+       </div>
+    </button>
+  );
+};
+
 

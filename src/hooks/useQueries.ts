@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabaseClient";
-import { UserRole } from '../backend';
+import { UserRole, ApprovalStatus } from '../backend';
 import { toast } from "sonner";
 
 // --- 1. AUTHENTICATION (Magic Login Fix) ---
@@ -65,7 +65,7 @@ export const useGetCallerUserRole = () => {
 
 
 // ✅ YE RAHA WO MISSING FUNCTION (Jiska Error Aa Raha Tha)
-export const useSaveCallerUserProfile = () => {
+export const useSaveCallerUserProfile = (): any => {
   return useMutation({
     mutationFn: async (data: any) => {
       console.log("Saving Profile (Mock):", data);
@@ -80,7 +80,7 @@ export const useSaveCallerUserProfile = () => {
 // --- 3. ADMIN MODULES (Supabase) ---
 
 // Fetch Pending Students
-export const useListApprovals = () => {
+export const useListApprovals = (): any => {
   return useQuery({
     queryKey: ['approvals'],
     queryFn: async () => {
@@ -95,7 +95,7 @@ export const useListApprovals = () => {
 };
 
 // Approve Student
-export const useApproveStudent = () => {
+export const useApproveStudent = (): any => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
@@ -114,7 +114,7 @@ export const useApproveStudent = () => {
 };
 
 // Fetch All Approved Students
-export const useGetAllApprovedStudents = () => {
+export const useGetAllApprovedStudents = (): any => {
   return useQuery({
     queryKey: ['students'],
     queryFn: async () => {
@@ -131,7 +131,7 @@ export const useGetAllApprovedStudents = () => {
 // --- 4. TEACHER MANAGEMENT MODULES ---
 
 // Fetch All Teachers
-export const useGetAllTeachers = () => {
+export const useGetAllTeachers = (): any => {
   return useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
@@ -143,7 +143,7 @@ export const useGetAllTeachers = () => {
 };
 
 // Register New Teacher
-export const useRegisterTeacher = () => {
+export const useRegisterTeacher = (): any => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (formData: any) => {
@@ -164,7 +164,7 @@ export const useRegisterTeacher = () => {
 
 
 
-export const useAddExam = () => {
+export const useAddExam = (): any => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (examData: any) => {
@@ -179,7 +179,7 @@ export const useAddExam = () => {
 };
 
 // --- 6. PUBLIC REGISTRATION ---
-export const useRegisterStudent = () => {
+export const useRegisterStudent = (): any => {
   return useMutation({
     mutationFn: async (studentData: any) => {
       const { error } = await supabase.from('students').insert([{
@@ -204,8 +204,25 @@ export const useGetStudentById = (id: any) => ({ data: {}, isLoading: false });
 export const useIsStudentApproved = () => ({ data: true, isLoading: false });
 export const useGetMyTeacherId = () => ({ data: "TCH-001", isLoading: false });
 export const useGetTeacherById = (id: any) => ({ data: {}, isLoading: false });
-export const useSetApproval = () => ({ mutate: () => {} });// --- EXAMS MODULE (Exams ki list laane ke liye) ---
-export const useGetAllExams = () => {
+// ✅ Fixed: Real Approval Mutation
+export const useSetApproval = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ user, status }: { user: string; status: ApprovalStatus }) => {
+      const { error } = await supabase
+        .from('students')
+        .update({ approval_status: status })
+        .eq('student_id', user); // Using student_id as it's the primary key in this schema
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['approvals'] });
+    }
+  });
+};
+
+// --- EXAMS MODULE (Exams ki list laane ke liye) ---
+export const useGetAllExams = (): any => {
   return useQuery({
     queryKey: ['exams'],
     queryFn: async () => {
@@ -225,7 +242,7 @@ export const useGetAllExams = () => {
 };
 
 // --- RESULTS MODULE (Marks upload karne ke liye) ---
-export const useAddResult = () => {
+export const useAddResult = (): any => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -255,7 +272,7 @@ export const useAddResult = () => {
 };
 // --- STUDENT RESULT MODULE ---
 // Bracket ke andar "studentId: any" hona zaroori hai 👇
-export const useGetStudentResults = (studentId: any) => {
+export const useGetStudentResults = (studentId: any): any => {
   return useQuery({
     queryKey: ['results', studentId],
     queryFn: async () => {

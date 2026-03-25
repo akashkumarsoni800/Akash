@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  TrendingUp, Activity, CheckCircle, FileText 
+} from 'lucide-react';
 
 const ManageSalaries= () => {
   const [stats, setStats] = useState({
@@ -67,122 +70,119 @@ const ManageSalaries= () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 py-16 px-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-20">
-          <h1 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-8 uppercase tracking-[-0.03em]">
-            💼 Accounting Dashboard
-          </h1>
-          <p className="text-2xl text-gray-600 font-semibold max-w-2xl mx-auto">
-            Real-time Profit & Loss tracking for complete financial overview
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
+           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+              <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+                Financial<br/>
+                <span className="text-indigo-600">Vault</span>
+              </h1>
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+                <Activity size={12} className="text-indigo-500" /> Economic Integrity & Asset Monitoring
+              </p>
+           </motion.div>
+           
+           <div className="flex gap-4">
+             <button onClick={fetchAccountingData} className="premium-button bg-white text-gray-900 px-6 py-4 flex items-center gap-2 text-[10px]">
+               <Activity size={14} /> Sync Ledger
+             </button>
+             <button className="premium-button bg-indigo-600 text-white px-6 py-4 flex items-center gap-2 text-[10px]">
+               <TrendingUp size={14} /> Export Audit
+             </button>
+           </div>
+        </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-          <motion.div className="bg-white/90 p-12 rounded-4xl shadow-3xl border border-indigo-100 backdrop-blur-xl group hover:shadow-4xl transition-all duration-500 hover:-translate-y-4">
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">💰</div>
-            <div className="text-5xl font-black text-green-600 mb-4">
-              ₹{stats.totalRevenue.toLocaleString()}
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card p-8 bg-white border-transparent">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-6 font-black text-xl">₹</div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Gross Revenue</p>
+            <h2 className="text-3xl font-black text-emerald-600 tracking-tighter">₹ {stats.totalRevenue.toLocaleString()}</h2>
+            <div className="mt-4 h-1 w-full bg-emerald-50 rounded-full overflow-hidden">
+               <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${stats.collectionRate}%` }}></div>
             </div>
-            <div className="text-2xl font-bold text-gray-700 uppercase tracking-wider">Total Revenue</div>
           </motion.div>
 
-          <motion.div className="bg-white/90 p-12 rounded-4xl shadow-3xl border border-red-100 backdrop-blur-xl group hover:shadow-4xl transition-all duration-500 hover:-translate-y-4">
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">💸</div>
-            <div className="text-5xl font-black text-red-600 mb-4">
-              ₹{stats.totalExpense.toLocaleString()}
-            </div>
-            <div className="text-2xl font-bold text-gray-700 uppercase tracking-wider">Total Expense</div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="premium-card p-8 bg-white border-transparent">
+            <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 mb-6 font-black text-xl">₹</div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Operational Burn</p>
+            <h2 className="text-3xl font-black text-rose-600 tracking-tighter">₹ {stats.totalExpense.toLocaleString()}</h2>
+            <p className="text-[9px] font-bold text-gray-400 mt-2 flex items-center gap-1">
+              <Activity size={10} /> Salaries & Inventory
+            </p>
           </motion.div>
 
-          <motion.div className={`bg-white/90 p-12 rounded-4xl shadow-3xl border backdrop-blur-xl group hover:shadow-4xl transition-all duration-500 hover:-translate-y-4 ${
-            stats.netProfit >= 0 
-              ? 'border-green-200' 
-              : 'border-red-200'
-          }`}>
-            <div className={`text-6xl mb-6 group-hover:scale-110 transition-transform ${
-              stats.netProfit >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {stats.netProfit >= 0 ? '📈' : '📉'}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card p-8 bg-indigo-600 border-transparent text-white ring-8 ring-indigo-50">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6">
+               <TrendingUp size={24} />
             </div>
-            <div className={`text-5xl font-black mb-4 ${stats.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              ₹{stats.netProfit.toLocaleString()}
-            </div>
-            <div className="text-2xl font-bold text-gray-700 uppercase tracking-wider">Net Profit</div>
+            <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Net Reserve</p>
+            <h2 className="text-3xl font-black text-white tracking-tighter">₹ {stats.netProfit.toLocaleString()}</h2>
+            <p className="text-[9px] font-bold text-white/40 mt-2 uppercase tracking-widest">Liquid Capital Assets</p>
           </motion.div>
 
-          <motion.div className="bg-white/90 p-12 rounded-4xl shadow-3xl border border-blue-100 backdrop-blur-xl group hover:shadow-4xl transition-all duration-500 hover:-translate-y-4">
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">📊</div>
-            <div className="text-5xl font-black text-blue-600 mb-4">{stats.collectionRate}%</div>
-            <div className="text-2xl font-bold text-gray-700 uppercase tracking-wider">Collection Rate</div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="premium-card p-8 bg-white border-transparent">
+            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-6 font-black text-xl">%</div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Efficient Yield</p>
+            <h2 className="text-3xl font-black text-indigo-900 tracking-tighter">{stats.collectionRate}%</h2>
+            <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-widest flex items-center gap-1">
+              <CheckCircle size={10} className="text-indigo-500" /> Collection Target
+            </p>
           </motion.div>
         </div>
 
-        {/* Recent Transactions */}
-        <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} 
-          className="bg-white/90 backdrop-blur-3xl p-12 rounded-4xl shadow-4xl border border-gray-200 max-h-[70vh] overflow-y-auto">
-          <h2 className="text-5xl font-black text-gray-900 mb-12 uppercase tracking-tight flex items-center gap-6">
-            📋 Recent Transactions
-          </h2>
+        {/* Ledger */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-0 overflow-hidden border-transparent bg-white">
+          <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-3">
+              <FileText size={18} className="text-indigo-600" /> Transaction Ledger
+            </h3>
+            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase">Live Feed</span>
+          </div>
           
-          <div className="space-y-6">
-            {recentTransactions.map((transaction: any, index: number) => (
-              <motion.div 
-                key={transaction.id || index}
-                initial={{ opacity: 0, x: 50 }} 
-                animate={{ opacity: 1, x: 0 }} 
-                transition={{ delay: index * 0.05 }}
-                className="flex justify-between items-center p-10 bg-gradient-to-r from-gray-50 to-blue-50 rounded-4xl border-l-8 border-blue-400 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group"
-              >
-                <div>
-                  <div className="text-3xl font-black text-gray-900 mb-2 group-hover:text-blue-700">
-                    {transaction.teacher_name || 'Fee Collection'}
-                  </div>
-                  <div className="text-xl text-gray-600">
-                    {transaction.month || new Date(transaction.created_at).toLocaleDateString('en-IN')}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className={`text-4xl font-black ${
-                    transaction.status === 'Paid' || transaction.teacher_name 
-                      ? 'text-green-600' 
-                      : 'text-orange-600'
-                  }`}>
-                    {transaction.status === 'Paid' || transaction.teacher_name 
-                      ? '+₹' + Number(transaction.total_amount || transaction.net_salary || 0).toLocaleString()
-                      : '-₹' + Number(transaction.net_salary || 0).toLocaleString()
-                    }
-                  </div>
-                  <div className="text-lg text-gray-500 capitalize">{transaction.status || 'Salary'}</div>
-                </div>
-              </motion.div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                 <tr className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] bg-gray-50/30">
+                   <th className="px-8 py-4">Transaction Entity</th>
+                   <th className="px-8 py-4">Timeline</th>
+                   <th className="px-8 py-4">Amount</th>
+                   <th className="px-8 py-4">Classification</th>
+                 </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {recentTransactions.map((tx, idx) => (
+                  <tr key={idx} className="hover:bg-gray-50/50 transition-colors group">
+                    <td className="px-8 py-6">
+                       <p className="text-sm font-black text-gray-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tighter">
+                         {tx.teacher_name || 'System Fee Collection'}
+                       </p>
+                    </td>
+                    <td className="px-8 py-6">
+                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                         {tx.month || new Date(tx.created_at || tx.updated_at).toLocaleDateString('en-IN')}
+                       </p>
+                    </td>
+                    <td className="px-8 py-6">
+                       <p className={`text-sm font-black ${tx.teacher_name ? 'text-rose-600' : 'text-emerald-600'}`}>
+                         {tx.teacher_name ? '-' : '+'}₹{(tx.total_amount || tx.net_salary || 0).toLocaleString()}
+                       </p>
+                    </td>
+                    <td className="px-8 py-6">
+                       <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                         tx.teacher_name ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
+                       }`}>
+                         {tx.teacher_name ? 'Payroll' : 'Revenue'}
+                       </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </motion.div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
-          <motion.button 
-            whileHover={{ scale: 1.05 }} 
-            onClick={fetchAccountingData}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1"
-          >
-            🔄 Refresh Data
-          </motion.button>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            onClick={() => toast.info("Report Exported to CSV")}
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
-            📊 Export Report
-          </motion.button>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            onClick={() => toast.info("Expense Modal Coming Soon")}
-            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white py-12 px-16 rounded-4xl font-black text-2xl uppercase tracking-wider shadow-4xl hover:shadow-5xl transition-all duration-500 flex items-center justify-center gap-6 col-span-full md:col-span-1">
-            💰 Add Expense
-          </motion.button>
-        </div>
       </div>
     </div>
   );

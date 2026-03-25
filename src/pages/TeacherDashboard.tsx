@@ -3,56 +3,53 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { 
+  Activity, Users, GraduationCap, Clock, PieChart, 
+  BookOpen, CheckCircle2, ClipboardList, BarChart3,
+  UserCircle, RefreshCw, ArrowRight, Bell, Calendar
+} from 'lucide-react';
 
-// --- Enhanced Action Card ---
-const ActionCard = ({ icon, title, desc, onClick, color = 'blue', badgeCount = 0, stats }: any) => {
-  const colors: { [key: string]: string } = {
-    blue: 'bg-blue-50 text-blue-600 hover:border-blue-500 ring-blue-200',
-    green: 'bg-green-50 text-green-600 hover:border-green-500 ring-green-200',
-    purple: 'bg-purple-50 text-purple-600 hover:border-purple-500 ring-purple-200',
-    orange: 'bg-orange-50 text-orange-600 hover:border-orange-500 ring-orange-200',
-    red: 'bg-red-50 text-red-600 hover:border-red-500 ring-red-200',
+// --- Improved Action Card Component ---
+const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, status }: any) => {
+  const accentColors: { [key: string]: string } = {
+    emerald: 'text-emerald-600 bg-emerald-50 group-hover:bg-emerald-600 group-hover:text-white',
+    blue: 'text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white',
+    amber: 'text-amber-600 bg-amber-50 group-hover:bg-amber-600 group-hover:text-white',
+    purple: 'text-purple-600 bg-purple-50 group-hover:bg-purple-600 group-hover:text-white',
+    rose: 'text-rose-600 bg-rose-50 group-hover:bg-rose-600 group-hover:text-white',
   };
 
   return (
-    <div 
+    <button 
       onClick={onClick}
-      className={`group relative bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-2 border-transparent cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:border-opacity-100 overflow-hidden ${colors[color]} ring-1 ring-transparent hover:ring-opacity-50`}
+      className="bg-white border border-slate-100 rounded-3xl p-8 text-left transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
     >
-      {badgeCount > 0 && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-8 h-8 flex items-center justify-center font-bold animate-pulse shadow-lg">
-          {badgeCount > 9 ? '9+' : badgeCount}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+      
+      <div className="flex justify-between items-start mb-8 relative z-10">
+        <div className={`p-4 rounded-2xl transition-all duration-500 shadow-sm ${accentColors[color as keyof typeof accentColors]}`}>
+          <Icon size={28} />
         </div>
-      )}
-      
-      <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-[2rem]"></div>
-      
-      <div className={`relative z-10 ${colors[color].split(' ')[0]} w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center text-3xl md:text-4xl mb-4 md:mb-6 shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 mx-auto`}>
-        <span className="group-hover:animate-bounce">{icon}</span>
+        {badgeCount > 0 && (
+          <span className="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-rose-100 flex items-center gap-1 animate-pulse">
+            <Bell size={10} /> {badgeCount}
+          </span>
+        )}
       </div>
-      
-      <h3 className="font-black text-xl md:text-2xl text-gray-800 uppercase tracking-tight text-center mb-2 md:mb-3 group-hover:text-gray-900 transition-colors">
-        {title}
-      </h3>
-      <p className="text-sm text-gray-500 mt-2 font-semibold text-center leading-relaxed">
-        {desc}
-      </p>
-      
-      {stats && (
-        <div className="mt-4 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500">
-          <p className="text-xs text-gray-500 uppercase tracking-wider font-bold">{stats.label}</p>
-          <p className="text-lg font-black text-gray-900">{stats.value}</p>
+
+      <div className="relative z-10">
+        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2 leading-tight">{title}</h3>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed mb-6">{desc}</p>
+        
+        <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+          <span className="text-[9px] font-black text-slate-900 uppercase tracking-wider">{status || 'COMMAND ACTIVE'}</span>
+          <ArrowRight size={16} className="text-slate-200 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
         </div>
-      )}
-      
-      <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
-        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
       </div>
-    </div>
+    </button>
   );
 };
+
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -186,184 +183,257 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 px-4">
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-12">
+    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4 md:px-10 pb-32">
+      <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* Welcome Banner */}
+        {/* --- HEADER & TOP ACTIONS --- */}
         <motion.div 
-          initial={{ opacity: 0, y: -50 }} 
+          initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="group bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-16 text-white mb-8 md:mb-12 shadow-2xl relative overflow-hidden hover:scale-[1.02] transition-all duration-1000"
+          className="bg-white border border-slate-100 rounded-3xl p-8 md:p-12 shadow-sm transition-all relative overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-transparent to-purple-500/20 animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 opacity-20 rounded-full -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
+          
           <div className="relative z-10">
-            <span className="bg-white/20 backdrop-blur-sm text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest border border-white/30">
-              Teacher Control Panel • Live Data
-            </span>
-            <h1 className="text-3xl md:text-7xl font-black mt-6 tracking-[-0.05em] uppercase bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent leading-tight">
-              Welcome Back,
-              <br />
-              <span className="text-4xl md:text-8xl bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text">
-                {teacher?.full_name?.split(' ')[0] || 'Teacher'}!
-              </span>
-            </h1>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-sm">
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl text-center">
-                <div className="font-black text-2xl">{stats.totalStudents}</div>
-                <div className="uppercase tracking-wider">Students</div>
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
+              <div className="text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
+                  <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-emerald-100 animate-float">
+                    <Activity size={32}/>
+                  </div>
+                  <div>
+                    <h1 className="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+                      Hello, <span className="text-emerald-600">{teacher?.full_name?.split(' ')[0] || 'Teacher'}</span>
+                    </h1>
+                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.3em] mt-3">Faculty Command Level 3</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                  <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Batch</p>
+                    <p className="text-lg font-black text-slate-800 tracking-tighter">{teacher?.subject || 'General'}</p>
+                  </div>
+                  <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Staff ID</p>
+                    <p className="text-lg font-black text-slate-800 tracking-tighter">#{teacher?.id?.slice(0, 5) || 'SYNC'}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl text-center">
-                <div className="font-black text-2xl">{stats.attendancePercentage}%</div>
-                <div className="uppercase tracking-wider">Attendance</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl text-center">
-                <div className="font-black text-2xl">{stats.pendingHomework}</div>
-                <div className="uppercase tracking-wider">Pending HW</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl text-center">
-                <div className="font-black text-2xl">{teacher?.subject || 'Math'}</div>
-                <div className="uppercase tracking-wider">Subject</div>
+
+              <div className="flex flex-wrap justify-center gap-3">
+                 <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
+                   Record Presence
+                 </button>
+                 <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
+                   Sync System
+                 </button>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* ✅ DYNAMIC QUICK STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-3xl md:text-4xl mb-3 md:mb-4">👥</div>
-              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.totalStudents}</div>
-              <div className="text-blue-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Total Students</div>
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Pupil Directory</p>
+                  <div className="flex items-baseline gap-2">
+                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{stats.totalStudents}</h3>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
+                  </div>
+                </div>
+                <div className="p-4 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <Users size={24} />
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Enrollment Meta</span>
+                <div className="flex gap-1">
+                  <div className="w-1 h-1 rounded-full bg-blue-400"></div>
+                  <div className="w-1 h-1 rounded-full bg-blue-200"></div>
+                </div>
+              </div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-3xl md:text-4xl mb-3 md:mb-4">📊</div>
-              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.attendancePercentage}%</div>
-              <div className="text-green-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Today Attendance</div>
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Daily Presence</p>
+                  <div className="flex items-baseline gap-2">
+                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{stats.attendancePercentage}%</h3>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Sync</span>
+                  </div>
+                </div>
+                <div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <PieChart size={24} />
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Attendance Logic</span>
+                <div className="w-10 h-1 bg-emerald-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500" style={{ width: `${stats.attendancePercentage}%` }}></div>
+                </div>
+              </div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-            <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-3xl md:text-4xl mb-3 md:mb-4">✏️</div>
-              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.pendingHomework}</div>
-              <div className="text-orange-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Pending Homework</div>
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Submission Hub</p>
+                  <div className="flex items-baseline gap-2">
+                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{stats.pendingHomework}</h3>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Queue</span>
+                  </div>
+                </div>
+                <div className="p-4 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <Clock size={24} />
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Approval Pending</span>
+                <Activity size={12} className="text-amber-400 animate-pulse" />
+              </div>
             </div>
           </motion.div>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-            <div className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 text-center">
-              <div className="text-3xl md:text-4xl mb-3 md:mb-4">⭐</div>
-              <div className="text-3xl md:text-4xl font-black mb-1 md:mb-2">{stats.avgPerformance}%</div>
-              <div className="text-purple-100 uppercase tracking-wider font-bold text-[10px] md:text-sm">Avg Performance</div>
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Academic Index</p>
+                  <div className="flex items-baseline gap-2">
+                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">{stats.avgPerformance}%</h3>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">KPI</span>
+                  </div>
+                </div>
+                <div className="p-4 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <GraduationCap size={24} />
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Performance Meta</span>
+                <span className="text-[10px] font-black text-purple-600">PRO LEVEL</span>
+              </div>
             </div>
           </motion.div>
         </div>
 
-        {/* ✅ FULLY FUNCTIONAL ACTION CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {/* Action Cards & Profile Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <ActionCard 
-            icon="📅" 
-            title="Mark Attendance" 
-            desc="Record today's presence"
+            icon={ClipboardList} 
+            title="Mark Presence" 
+            desc="Batch Attendance Authority"
             onClick={() => navigate('/teacher/attendance')}
-            color="blue"
+            color="emerald"
             badgeCount={stats.classesToday}
-            stats={{ label: 'Today', value: `${stats.classesToday} classes` }}
+            status={`${stats.classesToday} Classes Today`}
           />
 
           <ActionCard 
-            icon="📝" 
-            title="Homework" 
-            desc="Assign & track submissions"
+            icon={BookOpen} 
+            title="Syllabus Management" 
+            desc="Content Delivery & Homework"
             onClick={() => navigate('/teacher/homework')}
-            color="purple"
+            color="blue"
             badgeCount={stats.pendingHomework}
-            stats={{ label: 'Pending', value: stats.pendingHomework }}
+            status={`${stats.totalHomework} Tasks Assigned`}
           />
 
           <ActionCard 
-            icon="📊" 
-            title="Upload Results" 
-            desc="Enter exam marks"
+            icon={BarChart3} 
+            title="Result Registry" 
+            desc="Academic KPI Management"
             onClick={() => navigate('/teacher/upload-result')}
-            color="green"
-            stats={{ label: 'Live', value: 'Upload Now' }}
+            color="amber"
+            status="Live Registry Ready"
           />
 
           <ActionCard 
-            icon="👥" 
-            title="Student List" 
-            desc="View all students"
+            icon={Users} 
+            title="Pupil Records" 
+            desc="Student Identity Management"
             onClick={() => navigate('/teacher/students')}
-            color="orange"
-            stats={{ label: 'Total', value: stats.totalStudents }}
+            color="purple"
+            status={`${stats.totalStudents} Managed Records`}
           />
 
           <ActionCard 
-            icon="📈" 
-            title="Analytics" 
-            desc="Performance insights"
+            icon={PieChart} 
+            title="Analytics Center" 
+            desc="Strategic Intelligence"
             onClick={() => navigate('/teacher/analytics')}
-            color="red"
-            stats={{ label: 'Avg', value: `${stats.avgPerformance}%` }}
+            color="rose"
+            status={`Avg: ${stats.avgPerformance}% INDEX`}
           />
 
-          {/* Teacher Profile */}
+          {/* Teacher Profile Card */}
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
             transition={{ delay: 0.5 }}
-            className="bg-gradient-to-br from-white via-blue-50 to-purple-50 p-10 rounded-[2.5rem] shadow-2xl border-2 border-white/50 backdrop-blur-sm hover:shadow-3xl transition-all duration-700 hover:-translate-y-3 relative overflow-hidden cursor-pointer group"
-            onClick={() => navigate('/profile-setup')}
+            className="bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden group hover:shadow-2xl hover:border-emerald-100 transition-all duration-500"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5 group-hover:from-purple-500/10"></div>
-            <div className="relative flex justify-between items-start mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-3xl flex items-center justify-center text-4xl shadow-2xl ring-4 ring-white/50 group-hover:scale-110 transition-all duration-500">
-                👤
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+            
+            <div className="flex justify-between items-start mb-10 relative z-10">
+              <div className="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
+                {teacher?.full_name?.[0] || 'T'}
               </div>
-              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-black px-4 py-2 rounded-2xl uppercase tracking-widest shadow-lg">
-                Verified Teacher
+              <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100/50">
+                Verified Faculty
               </span>
             </div>
-            <div className="space-y-3">
-              <h3 className="font-black text-3xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent uppercase tracking-tight leading-tight">
-                {teacher?.full_name || 'Teacher Name'}
+
+            <div className="space-y-4 relative z-10">
+              <h3 className="font-black text-2xl text-slate-900 uppercase tracking-tighter leading-tight">
+                {teacher?.full_name || 'Faculty Member'}
               </h3>
-              <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-gray-600 uppercase tracking-wide">
-                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
-                  📚 {teacher?.subject || 'Mathematics'}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-100">
+                  📚 {teacher?.subject || 'Education'}
                 </span>
-                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
-                  👥 {stats.totalStudents} Students
+                <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-100">
+                  👥 {stats.totalStudents} Pupils
                 </span>
               </div>
             </div>
-            <button className="mt-8 w-full py-4 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-800 rounded-2xl font-black text-lg uppercase tracking-widest shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-gray-200">
-              Edit Profile →
+
+            <button 
+              onClick={() => navigate('/profile-setup')}
+              className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] shadow-xl transition-all active:scale-95"
+            >
+              Manage Profile Registry
             </button>
           </motion.div>
         </div>
 
-        {/* Live Data Status */}
+        {/* --- SYSTEM SYNC STATUS --- */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="text-center p-8 bg-white/50 backdrop-blur-xl rounded-3xl border border-white/30 shadow-xl"
+          className="bg-white border border-slate-100 rounded-3xl p-12 flex flex-col items-center text-center relative overflow-hidden group"
         >
-          <div className="text-3xl mb-4 animate-pulse">🔄</div>
-          <p className="text-xl font-black text-gray-800 mb-2">Live Dashboard</p>
-          <p className="text-lg text-gray-600">
-            Updated {new Date().toLocaleTimeString()} • Auto-refreshes every 30s
+          <div className="absolute inset-0 bg-slate-50/30 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-emerald-600 mb-8 shadow-inner relative z-10">
+            <RefreshCw size={32} className="animate-spin-slow" />
+          </div>
+          <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-2 relative z-10">Command Sync Terminal</h4>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10 relative z-10">
+            Last Integrity Check: {new Date().toLocaleTimeString()} • REAL-TIME ACTIVE
           </p>
           <button 
             onClick={fetchDashboardData}
-            className="mt-4 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg hover:shadow-xl transition-all duration-300 ml-4"
+            className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
           >
-            🔄 Refresh Now
+            <Activity size={18} /> Forced System Sync
           </button>
         </motion.div>
       </div>

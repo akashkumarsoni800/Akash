@@ -118,7 +118,7 @@ const TeacherAnalytics: React.FC = () => {
 
       setAnalytics({
         totalStudents: totalStudents || 0,
-        attendanceRate: totalAttendanceRecords ? Math.round((presentCount / totalAttendanceRecords) * 100) : 0,
+        attendanceRate: totalAttendanceRecords ? Math.round(((presentCount || 0) / totalAttendanceRecords) * 100) : 0,
         avgMarks,
         passPercentage: resultsData?.length ? Math.round((passCount / resultsData.length) * 100) : 0,
         topPerformers,

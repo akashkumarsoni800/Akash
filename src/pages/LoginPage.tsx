@@ -2,13 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '../supabaseClient';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ShieldCheck, UserCircle, GraduationCap, 
+  ArrowRight, Lock, Mail, Globe, 
+  Briefcase, CheckCircle2
+} from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState('student');
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [studentData, setStudentData] = useState({
+  
+  const [loginData, setLoginData] = useState({
     full_name: '',
     father_name: '',
     class_name: '',
@@ -16,24 +24,24 @@ const LoginPage = () => {
     email: ''
   });
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (role === 'student') {
+      if (selectedRole === 'student') {
         const { data: studentRecord, error: dbError } = await supabase
           .from('students')
           .select('student_id, full_name, father_name, class_name, email, is_approved')
-          .ilike('full_name', `%${studentData.full_name.trim()}%`)
-          .ilike('father_name', `%${studentData.father_name.trim()}%`)
-          .ilike('class_name', `%${studentData.class_name.trim()}%`)
+          .ilike('full_name', `%${loginData.full_name.trim()}%`)
+          .ilike('father_name', `%${loginData.father_name.trim()}%`)
+          .ilike('class_name', `%${loginData.class_name.trim()}%`)
           .limit(1)
           .maybeSingle();
 
         if (dbError) throw dbError;
         if (!studentRecord) {
-          toast.error("Record not found! Check Name, Father's Name and Class.");
+          toast.error("Record not found! Please verify credentials.");
           setLoading(false);
           return;
         }
@@ -44,251 +52,209 @@ const LoginPage = () => {
           return;
         }
         
-        // Internal Auth link for Dashboard validation
+        // Student static password for simple sessions
         const { error: authError } = await supabase.auth.signInWithPassword({
             email: studentRecord.email,
             password: 'Student123'
         });
         
-        if (authError) {
-            console.error(authError);
-            toast.error("Internal Auth Error linking session. Ensure admin migration completed.");
-            setLoading(false);
-            return;
-        }
+        if (authError) throw authError;
 
-        toast.success(`Welcome, ${studentRecord.full_name}!`);
-        navigate('/student/dashboard');
+        setShowWelcome(true);
+        setTimeout(() => navigate('/student/dashboard'), 2000);
       } 
       else {
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email: studentData.email,
-          password: studentData.password,
+        const { error: authError } = await supabase.auth.signInWithPassword({
+          email: loginData.email,
+          password: loginData.password,
         });
 
         if (authError) throw authError;
 
         const { data: staffRecord } = await supabase
           .from('teachers')
-          .select('role, full_name')
-          .eq('email', studentData.email.trim())
+          .select('role')
+          .eq('email', loginData.email.trim())
           .limit(1)
           .maybeSingle();
 
-        if (!staffRecord || staffRecord.role !== role) {
+        if (!staffRecord || staffRecord.role !== selectedRole) {
           await supabase.auth.signOut();
-          throw new Error(`Access Denied: You are registered as ${staffRecord?.role || 'staff'}, not ${role}.`);
+          throw new Error(`Unauthorized: Role mismatch.`);
         }
 
-        toast.success(`Welcome ${role.charAt(0).toUpperCase() + role.slice(1)}!`);
-        navigate(`/${role === 'admin' ? 'admin' : 'teacher'}/dashboard`);
+        setShowWelcome(true);
+        setTimeout(() => navigate(`/${selectedRole === 'admin' ? 'admin' : 'teacher'}/dashboard`), 2000);
       }
 
-    } catch (error) {
-      toast.error(error.message || "Login failed");
+    } catch (error: any) {
+      toast.error(error.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
   };
 
+  const roles = [
+    { id: 'admin', icon: <ShieldCheck size={40} />, label: 'Administration', sub: 'Control Center', color: 'bg-blue-600' },
+    { id: 'teacher', icon: <Briefcase size={40} />, label: 'Teacher', sub: 'Educator Hub', color: 'bg-emerald-600' },
+    { id: 'student', icon: <GraduationCap size={40} />, label: 'Student', sub: 'Learning Portal', color: 'bg-purple-600' }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-200/30 to-purple-200/30 rounded-full blur-xl animate-pulse-slow"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-emerald-200/30 to-blue-200/30 rounded-full blur-xl animate-pulse-slow delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-100/20 to-pink-100/20 rounded-full blur-3xl animate-float"></div>
-      </div>
+    <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 relative overflow-hidden font-inter">
+      {/* Background Subtle Grid */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] pointer-events-none"></div>
 
-      <div className="relative z-10 w-full max-w-2xl bg-white/80 backdrop-blur-xl shadow-2xl rounded-[2rem] md:rounded-3xl border border-white/50 p-6 md:p-10 max-h-[90vh] overflow-y-auto">
-        {/* Header Section */}
-        <div className="text-center mb-8 md:mb-10">
-          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-white shadow-lg rounded-2xl p-3 md:p-4 border border-gray-100 flex items-center justify-center transform hover:scale-105 transition-transform duration-300 group">
-            <img 
-              src="/logo.png" 
-              alt="Adarsh Shishu Mandir" 
-              className="w-12 h-12 md:w-16 md:h-16 object-contain"
-            />
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
-            School Portal
-          </h1>
-          <p className="text-gray-600 font-medium text-lg">Adarsh Shishu Mandir</p>
-        </div>
-
-        {/* Role Selection - Horizontal on all screens to save space */}
-        <div className="grid grid-cols-3 gap-1 md:gap-2 mb-6 md:mb-10 p-1.5 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 shadow-inner">
-          {['student', 'teacher', 'admin'].map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => {
-                setRole(r);
-                setStudentData({ full_name: '', father_name: '', class_name: '', password: '', email: '' });
-              }}
-              className={`group relative py-3 md:py-4 px-1 md:px-3 rounded-xl font-semibold text-[10px] md:text-sm capitalize transition-all duration-300 transform hover:scale-[1.02] border-2 flex items-center justify-center ${
-                role === r
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-500/25 border-blue-500 shadow-lg scale-[1.02]'
-                  : 'bg-white/70 border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 shadow-md'
-              }`}
-            >
-              <span className="relative z-10">{r.charAt(0).toUpperCase() + r.slice(1)}</span>
-              {role === r && (
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl blur opacity-75 animate-ping-slow"></div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Login Form */}
-        <form onSubmit={handleLogin} className="space-y-6">
-          {/* Student Fields */}
-          {role === 'student' && (
-            <>
-              <div className="space-y-3 md:space-y-4">
-                <div className="group">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Student Name</label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
-                    placeholder="Enter full name"
-                    value={studentData.full_name}
-                    onChange={(e) => setStudentData({ ...studentData, full_name: e.target.value })}
-                  />
-                </div>
-                <div className="group">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Father's Name</label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
-                    placeholder="Enter father's name"
-                    value={studentData.father_name}
-                    onChange={(e) => setStudentData({ ...studentData, father_name: e.target.value })}
-                  />
-                </div>
-                <div className="group">
-                  <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Class</label>
-                  <input 
-                    type="text" 
-                    required 
-                    className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
-                    placeholder="Ex: 10A, LKG"
-                    value={studentData.class_name}
-                    onChange={(e) => setStudentData({ ...studentData, class_name: e.target.value.toUpperCase() })}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Staff Email Field */}
-          {role !== 'student' && (
-            <div className="group">
-              <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Email Address</label>
-              <input 
-                type="email" 
-                required 
-                className="w-full px-4 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
-                placeholder="teacher@example.com"
-                value={studentData.email}
-                onChange={(e) => setStudentData({ ...studentData, email: e.target.value })}
-              />
+      <AnimatePresence mode="wait">
+        {showWelcome ? (
+          <motion.div 
+            key="success"
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
+          >
+            <div className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-3xl text-white ${
+              selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
+            }`}>
+              <CheckCircle2 size={48} />
             </div>
-          )}
+            <h2 className="text-5xl font-black text-slate-800 tracking-tighter uppercase mb-4">Identity<br/>Verified</h2>
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+            </div>
+          </motion.div>
+        ) : !selectedRole ? (
+          <motion.div 
+            key="selector"
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="w-full max-w-6xl"
+          >
+            <div className="text-center mb-16">
+              <div className="w-24 h-24 bg-white shadow-xl rounded-3xl p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
+                <ShieldCheck className="text-blue-600" size={48} />
+              </div>
+              <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9] mb-4">
+                School Management<br/>
+                <span className="text-slate-400">System</span>
+              </h1>
+              <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px] flex items-center justify-center gap-2">
+                <Globe size={14} className="text-blue-500" /> Adarsh Shishu Mandir Digital Ecosystem
+              </p>
+            </div>
 
-          {/* Password Field (Only for Staff) */}
-          {role !== 'student' && (
-            <div className="group">
-              <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1.5 md:mb-2">Password</label>
-              <div className="relative">
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  required 
-                  className="w-full pl-4 pr-12 py-2.5 md:py-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 rounded-xl md:rounded-2xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 shadow-sm text-base md:text-lg placeholder-gray-400"
-                  placeholder="Enter your password"
-                  value={studentData.password}
-                  onChange={(e) => setStudentData({ ...studentData, password: e.target.value })}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center transition-all duration-300 hover:scale-110 group-hover:text-blue-600"
-                  onClick={() => setShowPassword(!showPassword)}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {roles.map((role) => (
+                <motion.div 
+                  key={role.id}
+                  onClick={() => setSelectedRole(role.id)}
+                  whileHover={{ y: -10 }}
+                  className={`role-card role-card-${role.id}`}
                 >
-                  {showPassword ? (
-                    <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  ) : (
-                    <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+                   <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-white mb-4 ${role.color} shadow-lg`}>
+                     {role.icon}
+                   </div>
+                   <div>
+                     <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">{role.label}</h3>
+                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{role.sub}</p>
+                   </div>
+                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mt-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                     <ArrowRight size={20} />
+                   </div>
+                </motion.div>
+              ))}
             </div>
-          )}
 
-          {/* Login Button */}
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group"
+            <div className="mt-20 text-center opacity-40">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">Authorized Access Protocol v4.0</p>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="login"
+            initial={{ opacity: 0, x: 20 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            className="w-full max-w-md"
           >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Verifying...
-              </span>
-            ) : (
-              `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}`
-            )}
-          </button>
-        </form>
+             <button 
+               onClick={() => setSelectedRole(null)}
+               className="mb-8 flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors"
+             >
+               <ArrowRight size={14} className="rotate-180" /> Change Protocol
+             </button>
 
-        {/* Footer Links - Simple */}
-        <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-          <button 
-            onClick={() => navigate('/reset-password')} 
-            className="w-full py-3 px-4 text-gray-700 font-semibold text-sm hover:text-blue-600 hover:underline transition-colors duration-200 border border-gray-200 rounded-xl hover:bg-gray-50 hover:shadow-md"
-          >
-            Forgot Password?
-          </button>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <span className="text-gray-500 text-sm">New Student? </span> 
-            <button 
-              onClick={() => navigate('/register')} 
-              className="text-blue-600 font-semibold text-sm hover:underline transition-colors duration-200"
-            >
-              Register Student
-            </button>
-          </div>
-        </div>
-      </div>
+             <div className="premium-card p-10 bg-white border-slate-200/60 shadow-2xl relative overflow-hidden">
+                <div className={`absolute top-0 left-0 w-full h-2 ${
+                  selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
+                }`}></div>
+                
+                <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase mb-2">
+                  {selectedRole}<br/><span className="text-slate-400">Entry</span>
+                </h2>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-10">Verification required to proceed</p>
 
-      <style jsx>{`
-        @keyframes pulse-slow {
-          0%, 100% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.1); opacity: 0.3; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-20px) rotate(120deg); }
-          66% { transform: translateY(-10px) rotate(240deg); }
-        }
-        @keyframes ping-slow {
-          0% { transform: scale(1); opacity: 1; }
-          75%, 100% { transform: scale(2); opacity: 0; }
-        }
-        .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
-        .animate-float { animation: float 20s ease-in-out infinite; }
-        .animate-ping-slow { animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-      `}</style>
+                <form onSubmit={handleLogin} className="space-y-6">
+                  {selectedRole === 'student' ? (
+                    <>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Asset Nomenclature</label>
+                        <input type="text" placeholder="Full Student Name" required className="premium-input" 
+                          onChange={e => setLoginData({...loginData, full_name: e.target.value})} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Patrilineal Reference</label>
+                        <input type="text" placeholder="Father's Name" required className="premium-input" 
+                          onChange={e => setLoginData({...loginData, father_name: e.target.value})} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Archive ID</label>
+                          <input type="text" placeholder="Class (Ex: 10A)" required className="premium-input uppercase" 
+                            onChange={e => setLoginData({...loginData, class_name: e.target.value})} />
+                        </div>
+                        <div className="flex items-end">
+                           <button type="submit" disabled={loading} className="premium-button w-full text-white uppercase tracking-widest text-[10px] h-[46px] bg-purple-600">
+                             {loading ? '...' : 'Unlock'}
+                           </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Token</label>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                          <input type="email" placeholder="staff@institution.com" required className="premium-input pl-12" 
+                            onChange={e => setLoginData({...loginData, email: e.target.value})} />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Cipher</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                          <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12" 
+                            onChange={e => setLoginData({...loginData, password: e.target.value})} />
+                        </div>
+                      </div>
+                      <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white uppercase tracking-[0.2em] font-black shadow-lg hover:shadow-xl mt-4 ${
+                        selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
+                      }`}>
+                         {loading ? 'Authenticating...' : 'Establish Link'}
+                      </button>
+                    </>
+                  )}
+                </form>
+
+                <div className="mt-8 pt-8 border-t border-slate-50 text-center opacity-30">
+                   <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Proprietary Educational System</p>
+                </div>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

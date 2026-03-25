@@ -1,81 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
-import GallerySlider from './GallerySlider'; // ✅ 1. GallerySlider इम्पोर्ट किया गया
+import GallerySlider from './GallerySlider';
 import { 
   X, LayoutDashboard, CreditCard, UserPlus, Users, 
   ShieldCheck, ClipboardList, Calendar, FileText,
-  BookOpen, Package, Wallet, PieChart, Users2, Bell
+  BookOpen, Package, Wallet, PieChart, Users2, Bell,
+  LogOut, Shield, ChevronRight
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false); 
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' });
+  const [profile, setProfile] = useState({ name: 'Authorized User', avatar: '', role: '' as any });
 
   useEffect(() => {
-  let isMounted = true;
-  const fetchProfile = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !isMounted) return;
+    let isMounted = true;
+    const fetchProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user || !isMounted) return;
 
-      // 1. Try Staff table first (Teacher/Admin)
-      const { data: staffData } = await supabase
-        .from('teachers')
-        .select('full_name, avatar_url, role')
-        .eq('email', user.email)
-        .limit(1)
-        .maybeSingle();
+        const { data: staffData } = await supabase
+          .from('teachers')
+          .select('full_name, avatar_url, role')
+          .eq('email', user.email)
+          .limit(1)
+          .maybeSingle();
 
-      if (staffData && isMounted) {
-        setProfile({ 
-          name: staffData.full_name, 
-          avatar: staffData.avatar_url, 
-          role: staffData.role 
-        });
-        setLoading(false);
-        return;
+        if (staffData && isMounted) {
+          setProfile({ name: staffData.full_name, avatar: staffData.avatar_url, role: staffData.role });
+          setLoading(false);
+          return;
+        }
+
+        const { data: studentData } = await supabase
+          .from('students')
+          .select('full_name, avatar_url, is_approved')
+          .eq('email', user.email)
+          .limit(1)
+          .maybeSingle();
+
+        if (studentData && studentData.is_approved === 'approved' && isMounted) {
+          setProfile({ name: studentData.full_name, avatar: studentData.avatar_url, role: 'student' });
+        }
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+      } finally {
+        if (isMounted) setLoading(false);
       }
+    };
+    fetchProfile();
+    return () => { isMounted = false; };
+  }, []);
 
-      // 2. Fallback to Students table
-      const { data: studentData } = await supabase
-        .from('students')
-        .select('full_name, avatar_url, is_approved')
-        .eq('email', user.email)
-        .limit(1)
-        .maybeSingle();
-
-      if (studentData && studentData.is_approved === 'approved' && isMounted) {
-        setProfile({ 
-          name: studentData.full_name, 
-          avatar: studentData.avatar_url, 
-          role: 'student' 
-        });
-      }
-    } catch (err) {
-      console.error("Profile fetch error:", err);
-    } finally {
-      if (isMounted) setLoading(false);
-    }
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
   };
 
-  fetchProfile();
-  return () => { isMounted = false; };
-}, []);
+  const activeClass = profile.role === 'admin' ? 'active-admin' : profile.role === 'teacher' ? 'active-teacher' : 'active-student';
 
-  const navLinkClass = (path: string) => `
-    flex items-center gap-3 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all
-    ${location.pathname === path ? 'bg-blue-900 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-blue-50'}
-  `;
+  const NavItem = ({ to, icon, label }: { to: string, icon: any, label: string }) => {
+    const isActive = location.pathname === to;
+    return (
+      <Link 
+        to={to} 
+        onClick={() => setIsMobileOpen(false)}
+        className={`premium-nav-item ${isActive ? activeClass : ''}`}
+      >
+        <span className={`${isActive ? 'scale-110' : ''} transition-transform`}>{icon}</span>
+        <span className="flex-1">{label}</span>
+        {isActive && <ChevronRight size={14} className="opacity-50" />}
+      </Link>
+    );
+  };
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-bold text-blue-900">ASM Loading...</div>;
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center bg-[#f9fafb]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-slate-800 border-t-slate-300 rounded-full animate-spin"></div>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encrypting Session...</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      
+    <div className="min-h-screen bg-[#F8FAFC]">
       <DashboardHeader 
         full_name={profile.name} 
         userRole={profile.role} 
@@ -83,76 +98,106 @@ const Sidebar = () => {
         onMenuClick={() => setIsMobileOpen(true)} 
       />
 
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div className="fixed inset-0 bg-black/60 z-[90] lg:hidden backdrop-blur-sm" onClick={() => setIsMobileOpen(false)}></div>
-      )}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-900/60 z-[90] lg:hidden backdrop-blur-sm" 
+            onClick={() => setIsMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      {/* SIDEBAR DRAWER */}
-      <aside className={`fixed top-0 left-0 h-full w-64 md:w-72 bg-white shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out 
-        lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} no-print`}>
-        
-        <div className="h-32 md:h-40 bg-blue-900 flex flex-col items-center justify-center text-white relative p-4 md:p-6 rounded-br-[2rem] md:rounded-br-[3rem]">
-          <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-blue-900 font-black text-xl md:text-2xl mb-1 md:mb-2 shadow-xl">ASM</div>
-          <h2 className="font-black text-[9px] md:text-[10px] tracking-widest uppercase opacity-80 text-center px-2">Adarsh Shishu Mandir</h2>
-          <button onClick={() => setIsMobileOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white lg:hidden"><X size={20}/></button>
+      <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 ease-out flex flex-col pt-8`}>
+        <div className="px-8 mb-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float ${
+              profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
+            }`}>
+              <Shield size={22} />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-white uppercase tracking-tighter leading-none">ASMD</h2>
+              <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Platform v4.0</p>
+            </div>
+          </div>
+          <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors">
+            <X size={20}/>
+          </button>
         </div>
 
-        <nav className="p-3 md:p-4 space-y-1 overflow-y-auto h-[calc(100vh-128px)] md:h-[calc(100vh-160px)] asm-hide-scrollbar">
-          <p className="text-[10px] font-black text-gray-300 uppercase px-4 mb-2 tracking-widest">Navigation</p>
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto asm-hide-scrollbar">
+          <p className="text-[10px] font-black text-slate-500 uppercase px-4 mb-4 tracking-widest">Navigation</p>
           
           {profile.role === 'admin' && (
             <>
-              <Link to="/admin/dashboard" className={navLinkClass("/admin/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Overview </Link>
-              <Link to="/admin/manage-fees" className={navLinkClass("/admin/manage-fees")} onClick={() => setIsMobileOpen(false)}> <CreditCard size={18}/> Fees Management </Link>
-              <Link to="/admin/add-student" className={navLinkClass("/admin/add-student")} onClick={() => setIsMobileOpen(false)}> <UserPlus size={18}/> New Student </Link>
-              <Link to="/admin/dashboard?tab=teachers" className={navLinkClass("/admin/dashboard")} onClick={() => setIsMobileOpen(false)}> <Users size={18}/> Staff Directory </Link>
-              <Link to="/admin/teacher-salary" className={navLinkClass("/admin/teacher-salary")} onClick={() => setIsMobileOpen(false)}> <Wallet size={18}/> Teacher Salaries </Link>
-              <Link to="/admin/manage-salaries" className={navLinkClass("/admin/manage-salaries")} onClick={() => setIsMobileOpen(false)}> <PieChart size={18}/> Accounting </Link>
-              <Link to="/admin/inventory" className={navLinkClass("/admin/inventory")} onClick={() => setIsMobileOpen(false)}> <Package size={18}/> Inventory Mgmt </Link>
-              <Link to="/admin/upload-result" className={navLinkClass("/admin/upload-result")} onClick={() => setIsMobileOpen(false)}> <ClipboardList size={18}/> Results </Link>
-              <Link to="/admin/documents" className={navLinkClass("/admin/documents")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Document Hub </Link>
-              <Link to="/admin/add-event" className={navLinkClass("/admin/add-event")} onClick={() => setIsMobileOpen(false)}> <Bell size={18}/> Notice Board </Link>
-              <Link to="/admin/create-admin" className={navLinkClass("/admin/create-admin")} onClick={() => setIsMobileOpen(false)}> <ShieldCheck size={18}/> System Admins </Link>
+              <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={18}/>} label="Command Center" />
+              <NavItem to="/admin/manage-fees" icon={<CreditCard size={18}/>} label="Financial Hub" />
+              <NavItem to="/admin/add-student" icon={<UserPlus size={18}/>} label="Enrollment" />
+              <NavItem to="/admin/teacher-salary" icon={<Wallet size={18}/>} label="Payroll" />
+              <NavItem to="/admin/manage-salaries" icon={<PieChart size={18}/>} label="Accounting" />
+              <NavItem to="/admin/inventory" icon={<Package size={18}/>} label="Logistics" />
+              <NavItem to="/admin/upload-result" icon={<ClipboardList size={18}/>} label="Assessments" />
+              <NavItem to="/admin/documents" icon={<FileText size={18}/>} label="Document Hub" />
+              <NavItem to="/admin/add-event" icon={<Bell size={18}/>} label="Bulletins" />
+              <NavItem to="/admin/create-admin" icon={<ShieldCheck size={18}/>} label="System Admins" />
             </>
           )}
 
           {profile.role === 'teacher' && (
             <>
-              <Link to="/teacher/dashboard" className={navLinkClass("/teacher/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> Dashboard </Link>
-              <Link to="/teacher/students" className={navLinkClass("/teacher/students")} onClick={() => setIsMobileOpen(false)}> <Users2 size={18}/> My Students </Link>
-              <Link to="/teacher/attendance" className={navLinkClass("/teacher/attendance")} onClick={() => setIsMobileOpen(false)}> <Calendar size={18}/> Attendance </Link>
-              <Link to="/teacher/upload-result" className={navLinkClass("/teacher/upload-result")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Mark Entry </Link>
-              <Link to="/teacher/analytics" className={navLinkClass("/teacher/analytics")} onClick={() => setIsMobileOpen(false)}> <PieChart size={18}/> Class Analytics </Link>
+              <NavItem to="/teacher/dashboard" icon={<LayoutDashboard size={18}/>} label="Faculty Desk" />
+              <NavItem to="/teacher/students" icon={<Users2 size={18}/>} label="My Cohort" />
+              <NavItem to="/teacher/attendance" icon={<Calendar size={18}/>} label="Attendance" />
+              <NavItem to="/teacher/upload-result" icon={<FileText size={18}/>} label="Marking" />
+              <NavItem to="/teacher/analytics" icon={<PieChart size={18}/>} label="Performance" />
             </>
           )}
 
           {profile.role === 'student' && (
             <>
-              <Link to="/student/dashboard" className={navLinkClass("/student/dashboard")} onClick={() => setIsMobileOpen(false)}> <LayoutDashboard size={18}/> My Dashboard </Link>
-              <Link to="/student/homework" className={navLinkClass("/student/homework")} onClick={() => setIsMobileOpen(false)}> <BookOpen size={18}/> Homework </Link>
-              <Link to="/student/attendance" className={navLinkClass("/student/attendance")} onClick={() => setIsMobileOpen(false)}> <Calendar size={18}/> Attendance </Link>
-              <Link to="/student/fees" className={navLinkClass("/student/fees")} onClick={() => setIsMobileOpen(false)}> <CreditCard size={18}/> Fee Records </Link>
-              <Link to="/student/result" className={navLinkClass("/student/result")} onClick={() => setIsMobileOpen(false)}> <ClipboardList size={18}/> Examination </Link>
-              <Link to="/student/id-card" className={navLinkClass("/student/id-card")} onClick={() => setIsMobileOpen(false)}> <ShieldCheck size={18}/> My ID Card </Link>
-              <Link to="/student/notices" className={navLinkClass("/student/notices")} onClick={() => setIsMobileOpen(false)}> <FileText size={18}/> Notice Board </Link>
+              <NavItem to="/student/dashboard" icon={<LayoutDashboard size={18}/>} label="Overview" />
+              <NavItem to="/student/homework" icon={<BookOpen size={18}/>} label="Academic Plan" />
+              <NavItem to="/student/attendance" icon={<Calendar size={18}/>} label="Lifecycle" />
+              <NavItem to="/student/fees" icon={<CreditCard size={18}/>} label="Bursary" />
+              <NavItem to="/student/result" icon={<ClipboardList size={18}/>} label="Report Card" />
+              <NavItem to="/student/id-card" icon={<ShieldCheck size={18}/>} label="Identity" />
+              <NavItem to="/student/notices" icon={<FileText size={18}/>} label="Briefings" />
             </>
           )}
         </nav>
+
+        <div className="p-4 mt-auto">
+          <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 mb-4">
+             <div className="flex items-center gap-3 mb-3">
+               <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden border border-slate-600 flex items-center justify-center">
+                 {profile.avatar ? <img src={profile.avatar} className="w-full h-full object-cover" /> : <Users size={14} className="text-slate-400" />}
+               </div>
+               <div className="flex-1 min-w-0">
+                 <p className="text-[10px] font-black text-white uppercase truncate">{profile.name}</p>
+                 <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">{profile.role}</p>
+               </div>
+             </div>
+             <button 
+               onClick={handleLogout}
+               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-rose-500/20"
+             >
+               <LogOut size={12} /> Terminate session
+             </button>
+          </div>
+          <p className="text-[8px] font-black text-slate-600 uppercase text-center tracking-[0.4em]">Integrated Logic</p>
+        </div>
       </aside>
 
-      {/* CONTENT AREA */}
-      <main className={`transition-all duration-300 pt-16 min-h-screen lg:ml-72`}>
-        <div className="p-4 md:p-8 w-full max-w-7xl mx-auto">
-          
-        
-
+      <main className={`transition-all duration-500 pt-20 min-h-screen lg:ml-64`}>
+        <div className="px-6 md:px-10 pb-10 w-full max-w-[1600px] mx-auto">
           <Outlet />
+          <div className="mt-16 no-print opacity-80 hover:opacity-100 transition-opacity">
+            <GallerySlider />
+          </div>
         </div>
-        {/* 🖼️ स्लाइडर अब कंटेंट के नीचे "बीच" में दिखेगा */}
-    <div className="mt-10 no-print">
-      <GallerySlider />
-    </div>
       </main>
     </div>
   );

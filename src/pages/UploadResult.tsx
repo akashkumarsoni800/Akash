@@ -8,17 +8,17 @@ import {
 
 const UploadResult = () => {
   const [loading, setLoading] = useState(false);
-  const [students, setAllStudents] = useState([]);
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [exams, setExams] = useState([]); 
+  const [students, setAllStudents] = useState<any[]>([]);
+  const [filteredStudents, setFilteredStudents] = useState<any[]>([]);
+  const [exams, setExams] = useState<any[]>([]); 
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [selectedExamId, setSelectedExamId] = useState('');
   const [isFinalExam, setIsFinalExam] = useState(false); 
   const [passMarkPercent, setPassMarkPercent] = useState(33); 
   const [searchTerm, setSearchTerm] = useState('');
   const [classFilter, setClassFilter] = useState('All');
-  const [classes, setClasses] = useState([]);
-  const [results, setResults] = useState([{ subject: '', marks: '', max_marks: '100' }]);
+  const [classes, setClasses] = useState<string[]>([]);
+  const [results, setResults] = useState<{ subject: string; marks: string; max_marks: string }[]>([{ subject: '', marks: '', max_marks: '100' }]);
 
   useEffect(() => { fetchInitialData(); }, []);
 

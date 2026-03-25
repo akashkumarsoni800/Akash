@@ -86,7 +86,7 @@ const ResetPassword = () => {
       toast.error(error.message);
     } else {
       toast.success("Password successfully updated! ✅");
-      navigate(isLoggedIn ? -1 : '/'); // Login hai to piche jayein, warna login par
+      navigate((isLoggedIn ? -1 : '/') as any); // Login hai to piche jayein, warna login par
     }
     setLoading(false);
   };

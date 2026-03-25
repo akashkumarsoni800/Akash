@@ -73,7 +73,7 @@ export default function TeachersManagement() {
                   <Input
                     id="fullName"
                     value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, fullName: e.target.value })}
                     placeholder="Enter teacher's full name"
                     required
                   />
@@ -84,7 +84,7 @@ export default function TeachersManagement() {
                   <Input
                     id="contactNumber"
                     value={formData.contactNumber}
-                    onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, contactNumber: e.target.value })}
                     placeholder="Enter contact number"
                     required
                   />
@@ -95,7 +95,7 @@ export default function TeachersManagement() {
                   <Input
                     id="subjects"
                     value={formData.subjects}
-                    onChange={(e) => setFormData({ ...formData, subjects: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
                     placeholder="e.g., Mathematics, Physics, Chemistry"
                   />
                 </div>
@@ -105,7 +105,7 @@ export default function TeachersManagement() {
                   <Input
                     id="classes"
                     value={formData.classes}
-                    onChange={(e) => setFormData({ ...formData, classes: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, classes: e.target.value })}
                     placeholder="e.g., Grade 10A, Grade 11B"
                   />
                 </div>

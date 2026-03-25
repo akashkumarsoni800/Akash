@@ -16,7 +16,7 @@ export default function StudentsManagement() {
   const approveStudent = useApproveStudent();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredStudents = students?.filter(student =>
+  const filteredStudents = students?.filter((student: any) =>
     student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.classAssignment.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -48,7 +48,7 @@ export default function StudentsManagement() {
             <Input
               placeholder="Search by name or class..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e: any) => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>
@@ -81,7 +81,7 @@ export default function StudentsManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.map((student) => (
+                {filteredStudents.map((student: any) => (
                   <TableRow key={student.id.toString()}>
                     <TableCell className="font-medium">{student.id.toString()}</TableCell>
                     <TableCell>{student.fullName}</TableCell>

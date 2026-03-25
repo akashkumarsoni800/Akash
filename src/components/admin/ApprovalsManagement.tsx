@@ -24,8 +24,8 @@ export default function ApprovalsManagement() {
     }
   };
 
-  const pendingApprovals = approvals?.filter(a => a.status === 'pending') || [];
-  const processedApprovals = approvals?.filter(a => a.status !== 'pending') || [];
+  const pendingApprovals = approvals?.filter((a: any) => a.status === 'pending') || [];
+  const processedApprovals = approvals?.filter((a: any) => a.status !== 'pending') || [];
 
   return (
     <div className="space-y-6">
@@ -51,7 +51,7 @@ export default function ApprovalsManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendingApprovals.map((approval) => (
+                  {pendingApprovals.map((approval: any) => (
                     <TableRow key={approval.principal.toString()}>
                       <TableCell className="font-mono text-xs">{approval.principal.toString()}</TableCell>
                       <TableCell>
@@ -110,7 +110,7 @@ export default function ApprovalsManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {processedApprovals.map((approval) => (
+                  {processedApprovals.map((approval: any) => (
                     <TableRow key={approval.principal.toString()}>
                       <TableCell className="font-mono text-xs">{approval.principal.toString()}</TableCell>
                       <TableCell>

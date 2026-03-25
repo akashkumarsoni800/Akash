@@ -68,7 +68,7 @@ export default function ExamsManagement() {
                   <Input
                     id="subject"
                     value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Enter subject name"
                     required
                   />
@@ -80,7 +80,7 @@ export default function ExamsManagement() {
                     id="examDate"
                     type="date"
                     value={formData.examDate}
-                    onChange={(e) => setFormData({ ...formData, examDate: e.target.value })}
+                    onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
                     required
                   />
                 </div>

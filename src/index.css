@@ -2,126 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
- 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* 📱 MOBILE RESPONSIVE UTILITIES */
-@layer utilities {
-  .asm-table-container {
-    @apply overflow-x-auto overflow-y-hidden rounded-[2.5rem] border shadow-inner bg-white;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .asm-hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .asm-hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  /* Custom Clean Scrollbar */
-  .custom-scrollbar::-webkit-scrollbar {
-    @apply w-1.5 h-1.5;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-200 rounded-full hover:bg-indigo-200 transition-colors;
-  }
-}
-
-/* 🎨 CUSTOM GLOBAL STYLES */
-.notranslate {
-  unicode-range: U+000-5FF;
-}
-
-@media (max-width: 640px) {
-  .asm-mobile-card-padding {
-    @apply p-6 !important;
-  }
-  .asm-mobile-text-xl {
-    @apply text-2xl !important;
-  }
-}
-
-/* 🖨️ PRINT UTILITIES */
-@media print {
-  .no-print {
-    display: none !important;
-  }
+:root {
+  --primary-slate: #1e293b;
+  --bg-main: #f9fafb;
   
-  body, html {
-    background: white !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+  /* Role Accents from Figma */
+  --accent-admin: #2563eb;
+  --accent-teacher: #16a34a;
+  --accent-student: #9333ea;
+  
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
-  /* Force exact sizing for ID Cards */
-  .custom-print-style {
-    width: 210mm !important;
-    height: 297mm !important;
-    padding: 10mm !important;
-    margin: 0 auto !important;
-  }
-
-  .print-card-content {
-    background: white !important;
-    box-shadow: none !important;
-    border: none !important;
+@layer base {
+  body {
+    @apply bg-[var(--bg-main)] text-slate-900 antialiased;
+    font-family: var(--font-inter);
   }
 }
+
+@layer components {
+  /* Premium Design System components */
+  
+  .premium-sidebar {
+    @apply bg-[var(--primary-slate)] text-slate-300 w-64 h-screen fixed left-0 top-0 border-r border-slate-700/50 shadow-2xl z-40;
+  }
+
+  .premium-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-slate-700/50 hover:text-white mb-1;
+  }
+
+  /* Role specific active states */
+  .premium-nav-item.active-admin {
+    @apply bg-[var(--accent-admin)] text-white shadow-lg shadow-blue-500/20;
+  }
+
+  .premium-nav-item.active-teacher {
+    @apply bg-[var(--accent-teacher)] text-white shadow-lg shadow-green-500/20;
+  }
+
+  .premium-nav-item.active-student {
+    @apply bg-[var(--accent-student)] text-white shadow-lg shadow-purple-500/20;
+  }
+
+  .premium-card {
+    @apply bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden transition-all duration-300;
+  }
+
+  .premium-stat-card {
+    @apply premium-card p-6 flex items-center gap-6 hover:shadow-lg;
+  }
+
+  .premium-stat-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center text-white text-xl font-bold;
+  }
+
+  .premium-table-header {
+    @apply bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 px-6 py-4;
+  }
+
+  .premium-input {
+    @apply w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all;
+  }
+
+  .premium-button {
+    @apply px-6 py-3 rounded-lg font-bold text-sm transition-all duration-200 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2;
+  }
+
+  .premium-button-admin { @apply premium-button bg-[var(--accent-admin)] text-white hover:bg-blue-700; }
+  .premium-button-teacher { @apply premium-button bg-[var(--accent-teacher)] text-white hover:bg-green-700; }
+  .premium-button-student { @apply premium-button bg-[var(--accent-student)] text-white hover:bg-purple-700; }
+  .premium-button-slate { @apply premium-button bg-slate-800 text-white hover:bg-slate-900; }
+
+  /* Role Selection Cards */
+  .role-card {
+    @apply premium-card p-10 flex flex-col items-center justify-center gap-6 text-center hover:scale-[1.05] transition-transform duration-500 cursor-pointer border-2 border-transparent;
+  }
+
+  .role-card-admin { @apply hover:border-[var(--accent-admin)] hover:shadow-blue-100/50; }
+  .role-card-teacher { @apply hover:border-[var(--accent-teacher)] hover:shadow-green-100/50; }
+  .role-card-student { @apply hover:border-[var(--accent-student)] hover:shadow-purple-100/50; }
+}
+
+@layer utilities {
+  .asm-hide-scrollbar::-webkit-scrollbar { display: none; }
+  .asm-hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .custom-scrollbar::-webkit-scrollbar { @apply w-1.5 h-1.5; }
+  .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
