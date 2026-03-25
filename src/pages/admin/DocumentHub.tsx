@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { useReactToPrint } from 'react-to-print';
 import { 
@@ -8,7 +8,7 @@ import {
  ShieldCheck, Zap, Scissors, ChevronRight, Layout, Info, Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import StudentICard from './StudentICard';
+import StudentICard from '../../components/shared/StudentICard';
 
 const DocumentHub = () => {
  const [studentId, setStudentId] = useState('');

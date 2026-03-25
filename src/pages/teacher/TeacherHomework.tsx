@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
  Plus, Users, CheckCircle2, Clock, 

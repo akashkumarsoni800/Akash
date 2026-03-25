@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
  User, Mail, Phone, MapPin, 

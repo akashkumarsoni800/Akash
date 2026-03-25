@@ -10,42 +10,42 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 // --- PUBLIC PAGES ---
 import Home from './pages/Home';
-import LoginPage from './pages/LoginPage';
-import ResetPassword from './pages/ResetPassword';
-import ProfileSetupPage from './pages/ProfileSetupPage';
+import LoginPage from './pages/auth/LoginPage';
+import ResetPassword from './pages/auth/ResetPassword';
+import ProfileSetupPage from './pages/auth/ProfileSetupPage';
 
 // --- DASHBOARDS ---
-import AdminDashboard from './pages/AdminDashboard';
-import TeacherDashboard from './pages/TeacherDashboard';
-import StudentDashboard from './pages/StudentDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import TeacherDashboard from './pages/teacher/TeacherDashboard';
+import StudentDashboard from './pages/student/StudentDashboard';
 
 // --- TEACHER FEATURES (NEW & EXISTING) ---
-import TeacherAttendance from './pages/TeacherAttendance';
-import TeacherHomework from './pages/TeacherHomework';           // ✅ EXISTING
-import TeacherStudentList from './pages/TeacherStudentList';    // ✅ NEW 
-import TeacherAnalytics from './pages/TeacherAnalytics';        // ✅ NEW
-import UploadResult from './pages/UploadResult';
+import TeacherAttendance from './pages/teacher/TeacherAttendance';
+import TeacherHomework from './pages/teacher/TeacherHomework';           // ✅ EXISTING
+import TeacherStudentList from './pages/teacher/TeacherStudentList';    // ✅ NEW 
+import TeacherAnalytics from './pages/teacher/TeacherAnalytics';        // ✅ NEW
+import UploadResult from './pages/shared/UploadResult';
 
 // --- STUDENT FEATURES ---
-import StudentResult from './pages/StudentResult';
-import StudentNotices from './pages/StudentNotices';
-import StudentFees from './pages/StudentFees';
-import StudentAttendance from './pages/StudentAttendance';
-import StudentHomework from './pages/StudentHomework';
-import StudentICardPage from './pages/StudentICardPage';
+import StudentResult from './pages/student/StudentResult';
+import StudentNotices from './pages/student/StudentNotices';
+import StudentFees from './pages/student/StudentFees';
+import StudentAttendance from './pages/student/StudentAttendance';
+import StudentHomework from './pages/student/StudentHomework';
+import StudentICardPage from './pages/student/StudentICardPage';
 
 // --- ADMIN FEATURES ---
-import AddStudent from './pages/AddStudent';
-import AddTeacher from './pages/AddTeacher';
-import AddEvent from './pages/AddEvent';
-import CreateExam from './pages/CreateExam';
-import ManageFees from './pages/ManageFees';
-import StudentProfile from './pages/StudentProfile';
-import CreateAdmin from './pages/CreateAdmin';
-import TeacherSalary from './pages/TeacherSalary';
-import ManageSalaries from './pages/ManageSalaries';
-import ManageInventory from './pages/ManageInventory';
-import DocumentHub from './pages/DocumentHub';
+import AddStudent from './pages/admin/AddStudent';
+import AddTeacher from './pages/admin/AddTeacher';
+import AddEvent from './pages/admin/AddEvent';
+import CreateExam from './pages/admin/CreateExam';
+import ManageFees from './pages/admin/ManageFees';
+import StudentProfile from './pages/admin/StudentProfile';
+import CreateAdmin from './pages/admin/CreateAdmin';
+import TeacherSalary from './pages/admin/TeacherSalary';
+import ManageSalaries from './pages/admin/ManageSalaries';
+import ManageInventory from './pages/admin/ManageInventory';
+import DocumentHub from './pages/admin/DocumentHub';
 
 
 function App() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -10,10 +10,10 @@ import {
  Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
  Upload, Camera, FlipHorizontal, X, ChevronDown, Calendar
 } from 'lucide-react';
-import StudentsManagement from '../components/admin/StudentsManagement';
-import TeachersManagement from '../components/admin/TeachersManagement';
-import ExamsManagement from '../components/admin/ExamsManagement';
-import ApprovalsManagement from '../components/admin/ApprovalsManagement';
+import StudentsManagement from '../../components/admin/StudentsManagement';
+import TeachersManagement from '../../components/admin/TeachersManagement';
+import ExamsManagement from '../../components/admin/ExamsManagement';
+import ApprovalsManagement from '../../components/admin/ApprovalsManagement';
 
 // --- ANIMATION VARIANTS ---
 const containerVar = {

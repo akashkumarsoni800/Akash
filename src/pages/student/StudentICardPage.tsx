@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { ChevronLeft, RefreshCw, Printer, ShieldCheck } from 'lucide-react';
-import StudentICard from './StudentICard';
+import StudentICard from '../../components/shared/StudentICard';
 
 const StudentICardPage = () => {
  const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { toast } from "sonner";
 import {
  User, Phone, MapPin, ChevronLeft, Printer, RefreshCw, AlertCircle, Download, 
@@ -10,7 +10,7 @@ import {
   CalendarDays, BookOpen, GraduationCap, Award, ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import StudentICard from "./StudentICard";
+import StudentICard from "../../components/shared/StudentICard";
 
 const StudentProfile = () => {
  const { id } = useParams<{ id: string }>();
