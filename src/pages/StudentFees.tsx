@@ -6,7 +6,7 @@ import {
   Wallet, ChevronLeft, Send, 
   Printer, CheckCircle2, AlertCircle, 
   RefreshCw, ShieldCheck, Zap, 
-  Info, Star, ChevronRight, Layout, Download
+  Info, Star, ChevronRight, Layout, Download, User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

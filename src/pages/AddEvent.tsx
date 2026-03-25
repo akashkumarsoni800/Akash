@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { 
   ChevronLeft, Megaphone, Send, 
   Calendar, FileText, ShieldCheck, Zap,
-  Clock, Info, Layout
+  Clock, Info, Layout, RefreshCw
 } from 'lucide-react';
 
 const AddEvent = () => {

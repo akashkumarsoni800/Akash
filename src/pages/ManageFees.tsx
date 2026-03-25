@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { 
   Plus, Search, Users, Calendar, ArrowRight,
   Wallet, Send, RefreshCw, Trash2, CheckCircle,
-  ShieldCheck, Zap, Info, Star, ChevronRight, Layout
+  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown
 } from 'lucide-react';
 
 const ManageFees = () => {

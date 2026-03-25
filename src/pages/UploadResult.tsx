@@ -3,8 +3,9 @@ import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { 
   FileUp, Search, User, BookOpen, 
-  Trash2, Plus, ChevronDown, CheckCircle, Zap, Target
+  Trash2, Plus, ChevronDown, CheckCircle, Zap, Target, Award
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const UploadResult = () => {
   const [loading, setLoading] = useState(false);

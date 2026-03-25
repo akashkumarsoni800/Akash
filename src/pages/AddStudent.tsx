@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { 
   User, Camera, Upload, ShieldCheck, 
   RefreshCw, FlipHorizontal, Fingerprint, 
-  Zap, ChevronRight, Info, Star, ChevronLeft
+  Zap, ChevronRight, Info, Star, ChevronLeft, Award, ShieldAlert, Mail, CheckCircle2, Layout
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
