@@ -110,7 +110,7 @@ const Sidebar = () => {
     )}
    </AnimatePresence>
 
-   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
+   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 z-[100]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float ${

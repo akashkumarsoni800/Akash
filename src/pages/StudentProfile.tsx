@@ -41,17 +41,20 @@ const StudentProfile = () => {
 
    const [
     { data: studentData, error: studentError },
-    { data: feesData },
-    { data: resultsData },
-    { data: attendanceData }
+    { data: feesData, error: feesError },
+    { data: resultsData, error: resultsError },
+    { data: attendanceData, error: attendanceError }
    ] = await Promise.all([
     supabase.from("students").select("*").eq("student_id", studentIdNum).maybeSingle(),
-    supabase.from("fees").select("id, month, total_amount, status, created_at").eq("student_id", studentIdNum),
-    supabase.from("results").select("id, marks_obtained, total_marks, grade").eq("student_id", studentIdNum),
+    supabase.from("fees").select("*").eq("student_id", studentIdNum).order('created_at', { ascending: false }),
+    supabase.from("results").select("*, exams(title)").eq("student_id", studentIdNum).order('uploaded_at', { ascending: false }),
     supabase.from("attendance").select("status").eq("student_id", studentIdNum)
    ]);
 
    if (studentError) throw studentError;
+   if (feesError) console.error("Fees fetch error:", feesError);
+   if (resultsError) console.error("Results fetch error:", resultsError);
+   if (attendanceError) console.error("Attendance fetch error:", attendanceError);
 
    if (!studentData) {
     setStudent(null);
@@ -280,79 +283,146 @@ const StudentProfile = () => {
 
      {/* --- RIGHT: FINANCIAL & RESULTS --- */}
      <div className="lg:col-span-3 space-y-10">
-      <motion.div 
-       initial={{ opacity: 0, y: 30 }}
-       animate={{ opacity: 1, y: 0 }}
-       transition={{ delay: 0.4 }}
-       className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group"
-      >
-       <div className="p-12 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
-         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-200">
-            <Wallet size={28}/>
+       <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group"
+       >
+        <div className="p-12 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
+          <div className="flex items-center gap-5">
+           <div className="w-14 h-14 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-200">
+             <Wallet size={28}/>
+           </div>
+           <div className="space-y-1">
+             <h3 className="font-black text-[14px] text-slate-900 leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
+             <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Real-time Fiscal Indexing</p>
+           </div>
           </div>
-          <div className="space-y-1">
-            <h3 className="font-black text-[14px] text-slate-900 leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
-            <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Real-time Fiscal Indexing</p>
+          <div className="flex gap-4">
+           <button className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm"><Download size={20} /></button>
           </div>
-         </div>
-         <div className="flex gap-4">
-          <button className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm"><Download size={20} /></button>
-         </div>
-       </div>
-       
-       <div className="p-12 space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-         <MiniStatCard label="School Cost" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
-         <MiniStatCard label="Released Fund" value={`₹${paidFees.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
-         <MiniStatCard label="Outstanding" value={`₹${dueFees.toLocaleString()}`} icon={ArrowDownRight} color={dueFees > 0 ? "rose" : "emerald"} />
         </div>
+        
+        <div className="p-12 space-y-12">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <MiniStatCard label="School Cost" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
+          <MiniStatCard label="Released Fund" value={`₹${paidFees.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
+          <MiniStatCard label="Outstanding" value={`₹${dueFees.toLocaleString()}`} icon={ArrowDownRight} color={dueFees > 0 ? "rose" : "emerald"} />
+         </div>
 
-        <div className="space-y-6">
-         <div className="flex items-center justify-between px-6 border-b border-slate-50 pb-4">
-           <p className="text-[10px] font-black text-slate-300  ">Sequential Billing Feed</p>
+         <div className="space-y-6">
+          <div className="flex items-center justify-between px-6 border-b border-slate-50 pb-4">
+            <p className="text-[10px] font-black text-slate-300  ">Sequential Billing Feed</p>
+          </div>
+          
+          <div className="space-y-4">
+           {fees.length === 0 ? (
+            <div className="py-24 text-center opacity-10">
+             <CreditCard size={80} className="mx-auto mb-6 text-slate-500" />
+             <p className="font-black text-xs ">No Ledger Entries Recorded</p>
+            </div>
+           ) : (
+            fees.map((fee: any) => (
+             <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
+               <div className="flex items-center gap-6">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors font-black text-xs ">
+                  {fee.month ? fee.month.charAt(0) : 'C'}
+                 </div>
+                 <div>
+                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Billing Cycle</p>
+                   <h4 className="font-black text-slate-900 text-lg ">{fee.month || "Current Cycle"}</h4>
+                 </div>
+                </div>
+                <div className="flex items-center gap-12">
+                 <div className="text-right">
+                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Impact</p>
+                   <p className="font-black text-indigo-600 text-2xl  leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
+                 </div>
+                 <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black  shadow-sm border transition-all ${
+                   fee.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100 animate-pulse"
+                 }`}>
+                   {fee.status || "Pending"}
+                 </span>
+                </div>
+              </div>
+             ))
+            )}
+           </div>
+          </div>
+         </div>
+        </motion.div>
+
+        {/* --- ACADEMIC PERFORMANCE --- */}
+        <motion.div 
+         initial={{ opacity: 0, y: 30 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ delay: 0.5 }}
+         className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group"
+        >
+         <div className="p-12 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
+           <div className="flex items-center gap-5">
+            <div className="w-14 h-14 bg-emerald-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-emerald-200">
+              <GraduationCap size={28}/>
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-black text-[14px] text-slate-900 leading-none uppercase">Academic<br/><span className="text-emerald-600 uppercase">Performance</span></h3>
+              <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Standardized Assessment Index</p>
+            </div>
+           </div>
          </div>
          
-         <div className="space-y-4">
-          {fees.length === 0 ? (
-           <div className="py-24 text-center opacity-10">
-            <CreditCard size={80} className="mx-auto mb-6 text-slate-500" />
-            <p className="font-black text-xs ">No Ledger Entries Recorded</p>
-           </div>
-          ) : (
-           fees.map((fee: any) => (
-            <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
-              <div className="flex items-center gap-6">
-               <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors font-black text-xs ">
-                 {fee.month ? fee.month.charAt(0) : 'C'}
-               </div>
-               <div>
-                 <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Billing Cycle</p>
-                 <h4 className="font-black text-slate-900 text-lg ">{fee.month || "Current Cycle"}</h4>
-               </div>
-              </div>
-              <div className="flex items-center gap-12">
-               <div className="text-right">
-                 <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Impact</p>
-                 <p className="font-black text-indigo-600 text-2xl  leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
-               </div>
-               <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black  shadow-sm border transition-all ${
-                 fee.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100 animate-pulse"
-               }`}>
-                 {fee.status || "Pending"}
-               </span>
-              </div>
+         <div className="p-12 space-y-8">
+           {results.length === 0 ? (
+            <div className="py-24 text-center opacity-10">
+             <Award size={80} className="mx-auto mb-6 text-slate-500" />
+             <p className="font-black text-xs ">No Academic Records Authorized</p>
             </div>
-           ))
-          )}
+           ) : (
+            results.map((res: any) => (
+             <div key={res.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-10 border border-transparent hover:border-emerald-100 hover:shadow-xl group/res">
+               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div className="space-y-4">
+                 <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200" />
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest ">{res.exams?.title || "Examination Node"}</p>
+                 </div>
+                 <h4 className="text-3xl font-black text-slate-900 ">{Math.round(res.percentage || 0)}% Aggregate Score</h4>
+                </div>
+                
+                <div className="flex items-center gap-8">
+                 <div className="text-right">
+                  <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Status</p>
+                  <span className={`px-6 py-2 rounded-xl text-[10px] font-black border ${
+                   res.status === 'PASS' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                  }`}>
+                   {res.status}
+                  </span>
+                 </div>
+                 <div className="w-px h-12 bg-slate-100 hidden md:block" />
+                 <button className="p-4 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                  <ArrowRight size={20} />
+                 </button>
+                </div>
+               </div>
+               
+               <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
+                {(res.marks_data as any[])?.slice(0, 4).map((m: any, i: number) => (
+                 <div key={i} className="bg-white/50 p-4 rounded-2xl border border-slate-50">
+                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-tighter truncate">{m.subject}</p>
+                  <p className="text-lg font-black text-slate-900">{m.marks}/{m.max_marks}</p>
+                 </div>
+                ))}
+               </div>
+             </div>
+            ))
+           )}
          </div>
-        </div>
-       </div>
-      </motion.div>
+        </motion.div>
+      </div>
      </div>
     </div>
    </div>
-  </div>
  );
 };
 
