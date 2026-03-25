@@ -226,8 +226,8 @@ const AddStudent = () => {
         <Fingerprint size={24} />
        </div>
        <div>
-        <p className="text-[9px] font-black text-slate-400  mb-0.5 leading-none">Biometric Status</p>
-        <p className="text-xs font-black text-slate-900 "> Link Active</p>
+        <p className="text-[9px] font-black text-slate-400  mb-0.5 leading-none">Status</p>
+        <p className="text-xs font-black text-slate-900 "> Active</p>
        </div>
       </div>
     </div>

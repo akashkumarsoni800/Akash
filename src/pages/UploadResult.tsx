@@ -154,7 +154,7 @@ const UploadResult = () => {
      >
       <div className="mb-10 space-y-8">
        <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3 uppercase">
-        <Search size={22} className="text-emerald-600" /> Discovery Hub
+        <Search size={22} className="text-emerald-600" /> Search Student
        </h2>
        
        <div className="space-y-4">
@@ -210,14 +210,14 @@ const UploadResult = () => {
        <div className="space-y-12 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div>
-          <h3 className="text-4xl font-black text-slate-800  leading-none mb-3 uppercase">Entry Session</h3>
+          <h3 className="text-4xl font-black text-slate-800  leading-none mb-3 uppercase">Enter Marks</h3>
           <p className="text-slate-400 font-black text-[10px] tracking-widest flex items-center gap-2">
            <User size={14} className="text-emerald-500" /> {selectedStudent.full_name} <span className="w-1 h-1 bg-slate-200 rounded-full"></span> #{selectedStudent.student_id}
           </p>
          </div>
          <div className="flex items-center gap-3 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100">
            <Award size={20} />
-           <span className="text-xs font-black tracking-widest">Merit Paid</span>
+           <span className="text-xs font-black tracking-widest">Scholarship</span>
          </div>
         </div>
 
@@ -240,7 +240,7 @@ const UploadResult = () => {
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex items-center justify-between">
              <label className="text-[10px] font-black text-slate-600 tracking-widest cursor-pointer flex items-center gap-3">
               <Zap size={16} className={isFinalExam ? "text-emerald-500" : "text-slate-300"} /> 
-              Apply Scholarship Promotion?
+              Move to Next Class?
              </label>
              <input 
               type="checkbox" 
@@ -337,7 +337,7 @@ const UploadResult = () => {
          <User size={60} className="text-slate-400" />
         </div>
         <h3 className="text-3xl font-black text-slate-900  mb-4 uppercase">List Locked</h3>
-        <p className="max-w-xs text-[10px] font-black text-slate-400  leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
+        <p className="max-w-xs text-[10px] font-black text-slate-400  leading-relaxed">Select a scholar from the Search Student to initiate the scholastic registry protocol.</p>
        </div>
       )}
      </motion.div>

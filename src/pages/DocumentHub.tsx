@@ -104,7 +104,7 @@ const DocumentHub = () => {
  
       <div className="hidden lg:flex items-center gap-4 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-       <span className="text-[10px] font-black tracking-widest text-slate-400">Secure Link Active</span>
+       <span className="text-[10px] font-black tracking-widest text-slate-400">Secure Active</span>
       </div>
     </div>
 
