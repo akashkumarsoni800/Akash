@@ -91,6 +91,7 @@ function App() {
             <Route path="/admin/create-exam" element={<ProtectedRoute allowedRole="admin"><CreateExam /></ProtectedRoute>} />
             <Route path="/admin/upload-result" element={<ProtectedRoute allowedRole="admin"><UploadResult /></ProtectedRoute>} />
             <Route path="/admin/add-student" element={<ProtectedRoute allowedRole="admin"><AddStudent /></ProtectedRoute>} />
+            <Route path="/admin/edit-student/:id" element={<ProtectedRoute allowedRole="admin"><AddStudent /></ProtectedRoute>} />
             <Route path="/admin/add-teacher" element={<ProtectedRoute allowedRole="admin"><AddTeacher /></ProtectedRoute>} />
             <Route path="/admin/add-event" element={<ProtectedRoute allowedRole="admin"><AddEvent /></ProtectedRoute>} />
             <Route path="/admin/student/:id" element={<ProtectedRoute allowedRole="admin"><StudentProfile /></ProtectedRoute>} />

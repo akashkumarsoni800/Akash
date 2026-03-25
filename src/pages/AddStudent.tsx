@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import { 
@@ -26,21 +26,60 @@ const AddStudent = () => {
  const [photoFile, setPhotoFile] = useState<File | null>(null);
  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
  const [showWebcam, setShowWebcam] = useState(false);
- 
+
  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
  const [step, setStep] = useState(1);
 
- const [formData, setFormData] = useState({
-  name: "",
-  class: "", 
-  roll: "", 
-  father: "",
-  email: "",
-  phone: "",
-  dob: "",
-  gender: "",
-  address: "",
- });
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+  const [formData, setFormData] = useState({
+   name: "",
+   class: "",
+   roll: "",
+   father: "",
+   email: "",
+   phone: "",
+   dob: "",
+   gender: "",
+   address: "",
+  });
+
+  useEffect(() => {
+   if (isEdit && id) {
+    fetchStudent(id);
+   }
+  }, [id]);
+
+  const fetchStudent = async (studentId: string) => {
+   try {
+    setLoading(true);
+    const { data, error } = await supabase
+     .from("students")
+     .select("*")
+     .eq("student_id", studentId)
+     .maybeSingle();
+
+    if (error) throw error;
+    if (data) {
+     setFormData({
+      name: data.full_name || "",
+      class: data.class_name || "",
+      roll: data.roll_no || "",
+      father: data.father_name || "",
+      email: data.email || "",
+      phone: data.contact_number || "",
+      dob: data.date_of_birth || "",
+      gender: data.gender || "",
+      address: data.address || "",
+     });
+     if (data.photo_url) setPhotoPreview(data.photo_url);
+    }
+   } catch (err: any) {
+    toast.error("Failed to load student: " + err.message);
+   } finally {
+    setLoading(false);
+   }
+  };
 
  useEffect(() => {
   if (typeof window !== "undefined") {
@@ -127,7 +166,7 @@ const AddStudent = () => {
   setFacingMode(prev => prev === "user" ? "environment" : "user");
  };
 
- const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!formData.class || !formData.roll) {
    toast.error("Class and Roll are required!");
@@ -136,7 +175,7 @@ const AddStudent = () => {
   setLoading(true);
 
   try {
-   if (formData.email) {
+   if (formData.email && !isEdit) {
     const { data: existingTeacher } = await supabase
      .from('teachers')
      .select('full_name')
@@ -149,7 +188,7 @@ const AddStudent = () => {
     }
    }
 
-   let photoUrl = "";
+   let photoUrl = photoPreview || "";
    if (photoFile) {
     const fileName = `${Date.now()}.jpg`;
     const { error: uploadError } = await supabase.storage.from("student-photos").upload(fileName, photoFile);
@@ -159,13 +198,12 @@ const AddStudent = () => {
    }
 
    const year = new Date().getFullYear();
-   const regNo = `REG/${year}/${formData.class}/${formData.roll.padStart(3, "0")}`;
+   const regNo = isEdit ? undefined : `REG/${year}/${formData.class}/${formData.roll.padStart(3, "0")}`;
 
-   const { error } = await supabase.from("students").insert([{
+   const studentPayload: any = {
     full_name: formData.name,
     class_name: formData.class,
     roll_no: formData.roll,
-    registration_no: regNo,
     father_name: formData.father,
     date_of_birth: formData.dob || null,
     gender: formData.gender,
@@ -173,33 +211,41 @@ const AddStudent = () => {
     contact_number: formData.phone || null,
     email: formData.email || null,
     photo_url: photoUrl,
-    is_approved: "approved",
-   }]);
+   };
+
+   if (!isEdit) {
+    studentPayload.registration_no = regNo;
+    studentPayload.is_approved = "approved";
+   }
+
+   const { error } = isEdit 
+    ? await supabase.from("students").update(studentPayload).eq("student_id", id)
+    : await supabase.from("students").insert([studentPayload]);
 
    if (error) throw error;
-   toast.success(`${formData.name} added successfully! Default Password: asm123`);
+   toast.success(`${formData.name} ${isEdit ? 'updated' : 'added'} successfully!`);
 
-   setFormData(prev => ({
-    ...prev,
-    name: "",
-    roll: (parseInt(prev.roll) + 1).toString(),
-    father: "",
-    email: "",
-    phone: "",
-    dob: "",
-    gender: "",
-   }));
-   setPhotoFile(null);
-   setPhotoPreview(null);
-   setStep(1);
-  } catch (err: any) {
-   console.error("Registration Error Details:", err);
-   const msg = err.message || "Unknown error";
-   if (msg.includes("bucket")) {
-    toast.error("Storage Bucket Error: Please ensure 'student-photos' bucket is public and has proper RLS policies.");
+   if (!isEdit) {
+    setFormData(prev => ({
+     ...prev,
+     name: "",
+     roll: (parseInt(prev.roll) + 1).toString(),
+     father: "",
+     email: "",
+     phone: "",
+     dob: "",
+     gender: "",
+    }));
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setStep(1);
    } else {
-    toast.error(`Registration Failed: ${msg}`);
+    navigate('/admin/dashboard?tab=students');
    }
+  } catch (err: any) {
+   console.error("Operation Error Details:", err);
+   const msg = err.message || "Unknown error";
+   toast.error(`${isEdit ? 'Update' : 'Registration'} Failed: ${msg}`);
   } finally {
    setLoading(false);
   }
@@ -213,7 +259,7 @@ const AddStudent = () => {
      <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
         <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-         Add Student
+         {isEdit ? 'Edit Student' : 'Add Student'}
         </h1>
         <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
          <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Student Details v4.8 Stable
@@ -232,8 +278,8 @@ const AddStudent = () => {
            <User size={24} />
           </div>
           <div>
-           <h2 className="text-3xl font-black text-slate-900  uppercase">Student Details</h2>
-           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">REGISTRATION FORM</p>
+           <h2 className="text-3xl font-black text-slate-900  uppercase">{isEdit ? 'Edit Student' : 'Student Details'}</h2>
+           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">{isEdit ? 'UPDATE RECORDS' : 'REGISTRATION FORM'}</p>
           </div>
         </div>
 
@@ -402,7 +448,7 @@ const AddStudent = () => {
           className="premium-button w-full bg-slate-900 text-white hover:bg-blue-600 p-8 text-lg"
         >
           {loading ? <RefreshCw className="animate-spin" size={24} /> : <ShieldCheck size={24} />}
-          {loading ? 'Adding...' : 'Save Student Details'}
+          {loading ? (isEdit ? 'Updating...' : 'Adding...') : (isEdit ? 'Update Student Details' : 'Save Student Details')}
         </button>
       </motion.div>
      </form>
