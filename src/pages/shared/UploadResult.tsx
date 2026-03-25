@@ -3,9 +3,9 @@ import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import {
   FileUp, Search, User, BookOpen,
-  Trash2, Plus, ChevronDown, CheckCircle, Zap, Target, Award, RefreshCw
+  Trash2, Plus, ChevronDown, CheckCircle, Zap, Target, Award, RefreshCw, Filter, Database
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const UploadResult = () => {
   const [loading, setLoading] = useState(false);
@@ -136,6 +136,45 @@ const UploadResult = () => {
           </motion.div>
         </div>
 
+        {/* --- CONTROLS --- */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-10 bg-white rounded-[3.5rem] shadow-sm border border-slate-100 relative overflow-hidden group"
+        >
+          <div className="absolute top-0 left-0 w-full h-[6px] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600" />
+          
+          <div className="relative group/search">
+            <Search size={22} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/search:text-emerald-500 transition-colors" />
+            <input
+              type="text"
+              placeholder="Search scholar by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="premium-input text-sm placeholder:text-slate-200 pl-16 py-5"
+            />
+          </div>
+
+          <div className="relative group/filter">
+            <Filter size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/filter:text-emerald-500 transition-colors" />
+            <select 
+              value={classFilter} 
+              onChange={(e) => setClassFilter(e.target.value)}
+              className="premium-input text-sm pl-16 py-5 appearance-none"
+            >
+              {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
+            </select>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-4 px-6 text-slate-400">
+            <Database size={20} />
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest">Active Index</p>
+              <p className="text-sm font-black text-slate-900 leading-none">{filteredStudents.length} Students</p>
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -164,30 +203,30 @@ const UploadResult = () => {
             <div className="grid md:grid-cols-2 gap-10">
               <div className="space-y-4 group">
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Student *</label>
-                <div className="relative">
+                <div className="relative drop-shadow-sm transition-all focus-within:drop-shadow-lg">
                   <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
                   <select
                     required
-                    className="premium-input w-full pl-16 appearance-none"
+                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
                     onChange={(e) => {
                       const student = students.find(s => s.student_id === e.target.value);
                       setSelectedStudent(student);
                     }}
                     value={selectedStudent?.student_id || ''}
                   >
-                    <option value="">Choose Student From List</option>
-                    {students.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} ({s.class_name})</option>)}
+                    <option value="">{filteredStudents.length === 0 ? "No Students Matching Filters" : "Choose Student From List"}</option>
+                    {filteredStudents.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} ({s.class_name})</option>)}
                   </select>
                 </div>
               </div>
 
               <div className="space-y-4 group">
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">Select Exam *</label>
-                <div className="relative">
+                <div className="relative drop-shadow-sm transition-all focus-within:drop-shadow-lg">
                   <BookOpen size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
                   <select
                     required
-                    className="premium-input w-full pl-16 appearance-none"
+                    className="premium-input w-full pl-16 appearance-none bg-white font-black text-slate-900"
                     onChange={(e) => handleExamSelect(e.target.value)}
                     value={selectedExamId}
                   >
@@ -198,79 +237,94 @@ const UploadResult = () => {
               </div>
             </div>
 
-            {selectedStudent && selectedExamId && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-                <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-inner">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-100/50 border-b border-slate-100">
-                      <tr>
-                        <th className="px-8 py-6 text-[10px] font-black text-slate-500 tracking-widest uppercase">Subject Title</th>
-                        <th className="px-8 py-6 text-[10px] font-black text-slate-500 tracking-widest uppercase text-center">Marks Obtained</th>
-                        <th className="px-8 py-6 text-[10px] font-black text-slate-500 tracking-widest uppercase text-center">Maximum Marks</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {results.map((r, i) => (
-                        <tr key={i} className="group/row hover:bg-white transition-colors">
-                          <td className="px-8 py-6 font-black text-slate-800 text-sm tracking-tight group-hover/row:text-emerald-600 transition-colors">{r.subject || 'Empty Subject'}</td>
-                          <td className="px-8 py-6 text-center">
-                            <input
-                              type="number"
-                              required
-                              value={r.marks}
-                              onChange={(e) => {
-                                const newRes = [...results];
-                                newRes[i].marks = e.target.value;
-                                setResults(newRes);
-                              }}
-                              className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm"
-                              placeholder="0"
-                            />
-                          </td>
-                          <td className="px-8 py-6 text-center">
-                            <input
-                              type="number"
-                              required
-                              value={r.max_marks}
-                              onChange={(e) => {
-                                const newRes = [...results];
-                                newRes[i].max_marks = e.target.value;
-                                setResults(newRes);
-                              }}
-                              className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm text-slate-400"
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-slate-50 p-8 rounded-3xl border border-slate-100">
-                  <label className="text-[10px] font-black text-slate-600 tracking-widest cursor-pointer flex items-center gap-3">
-                    <Zap size={18} className={isFinalExam ? "text-emerald-500" : "text-slate-300"} />
-                    PASSED TO NEXT CLASS?
-                  </label>
-                  <input
-                    type="checkbox"
-                    className="w-10 h-10 rounded-2xl border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer shadow-sm"
-                    checked={isFinalExam}
-                    onChange={(e) => setIsFinalExam(e.target.checked)}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="premium-button w-full bg-slate-900 text-white hover:bg-emerald-600 p-8 text-lg"
+            <AnimatePresence mode="wait">
+              {selectedStudent && selectedExamId ? (
+                <motion.div 
+                  key="form"
+                  initial={{ opacity: 0, height: 0 }} 
+                  animate={{ opacity: 1, height: 'auto' }} 
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-10"
                 >
-                  {loading ? <RefreshCw className="animate-spin" size={24} /> : <FileUp size={24} />}
-                  {loading ? 'Wait...' : 'Save Exam Result'}
-                </button>
-              </motion.div>
-            )}
+                  <div className="bg-slate-100/30 rounded-[2.5rem] border border-slate-100/50 overflow-hidden shadow-inner p-2">
+                    <table className="w-full text-left">
+                      <thead className="bg-white/50 border-b border-slate-100">
+                        <tr>
+                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase">Subject Title</th>
+                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase text-center">Marks Obtained</th>
+                          <th className="px-10 py-8 text-[11px] font-black text-slate-500 tracking-widest uppercase text-center">Maximum Marks</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {results.map((r, i) => (
+                          <tr key={i} className="group/row hover:bg-white transition-all duration-300">
+                            <td className="px-10 py-8 font-black text-slate-800 text-base tracking-tight group-hover/row:text-emerald-600 transition-colors">{r.subject || 'Empty Subject'}</td>
+                            <td className="px-10 py-8 text-center">
+                              <input
+                                type="number"
+                                required
+                                value={r.marks}
+                                onChange={(e) => {
+                                  const newRes = [...results];
+                                  newRes[i].marks = e.target.value;
+                                  setResults(newRes);
+                                }}
+                                className="w-28 bg-white border border-slate-100 rounded-2xl px-6 py-4 text-lg font-black text-center focus:border-emerald-400 focus:ring-[12px] focus:ring-emerald-50 outline-none transition-all shadow-sm"
+                                placeholder="0"
+                              />
+                            </td>
+                            <td className="px-10 py-8 text-center text-slate-400 font-bold text-lg">
+                              {r.max_marks}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-8 items-center justify-between bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-6">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-100' : 'bg-slate-50 text-slate-300'}`}>
+                        <Zap size={24} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-slate-900 leading-none">AUTO PROMOTION</p>
+                        <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1 uppercase">Move student to next grade?</p>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      className="w-12 h-12 rounded-2xl border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer shadow-sm hover:scale-110"
+                      checked={isFinalExam}
+                      onChange={(e) => setIsFinalExam(e.target.checked)}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="premium-button w-full bg-slate-900 text-white hover:bg-emerald-600 p-10 text-xl font-black tracking-widest group"
+                  >
+                    {loading ? <RefreshCw className="animate-spin" size={28} /> : <FileUp size={28} className="group-hover:-translate-y-1 transition-transform" />}
+                    {loading ? 'UPLOADING DATA...' : 'SAVE EXAM RESULT'}
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }}
+                  className="py-40 flex flex-col items-center justify-center text-center opacity-30 border-2 border-dashed border-slate-100 rounded-[4rem]"
+                >
+                  <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-8">
+                    <Target size={48} className="text-slate-200" />
+                  </div>
+                  <p className="font-black text-slate-400 text-sm tracking-widest uppercase">Select student and exam to activate marking sequence</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </form>
         </motion.div>
+
       </div>
     </div>
   );
