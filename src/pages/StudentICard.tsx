@@ -29,33 +29,33 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
                 />
              </div>
               <div className="relative z-10 text-center">
-                 <p className="text-[10px] font-black italic tracking-wider leading-none opacity-60">ROLL NO</p>
-                 <p className="text-lg font-black italic mt-1 tracking-tighter shadow-sm">{student.roll_no}</p>
+                 <p className="text-[10px] font-medium tracking-wider leading-none opacity-60">ROLL NO</p>
+                 <p className="text-lg font-medium mt-1  shadow-sm">{student.roll_no}</p>
               </div>
           </div>
 
           {/* Right Data Section */}
           <div className="flex-1 p-4 flex flex-col justify-between relative">
             <div className="space-y-0.5">
-               <h2 className="text-[16px] font-black text-blue-950 uppercase leading-none tracking-tighter italic">Adarsh Shishu Mandir</h2>
-               <p className="text-[6px] font-bold text-gray-400 uppercase tracking-[0.2em] leading-none mb-3">Institutional Identity Module</p>
+               <h2 className="text-[16px] font-medium text-blue-950  leading-none ">Adarsh Shishu Mandir</h2>
+               <p className="text-[6px] font-medium text-gray-400   leading-none mb-3">Institutional Identity Module</p>
             </div>
 
             <div className="mt-1 space-y-1.5 flex-1 pt-1 border-t border-gray-100">
                <div>
-                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Student Name</p>
-                  <p className="text-[11px] font-black text-blue-900 uppercase italic leading-none">{student.full_name}</p>
+                  <p className="text-[7px] font-medium text-gray-400  tracking-widest leading-none mb-0.5">Student Name</p>
+                  <p className="text-[11px] font-medium text-blue-900  leading-none">{student.full_name}</p>
                </div>
                
                <div className="flex justify-between items-end">
                   <div className="space-y-1.5 flex-1">
                      <div>
-                        <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Class / Grade</p>
-                        <p className="text-[9px] font-bold text-gray-700 uppercase leading-none">{student.class_name}</p>
+                        <p className="text-[7px] font-medium text-gray-400  tracking-widest leading-none mb-0.5">Class / Grade</p>
+                        <p className="text-[9px] font-medium text-gray-700  leading-none">{student.class_name}</p>
                      </div>
                      <div>
-                        <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest leading-none mb-0.5">Parent/Guardian</p>
-                        <p className="text-[9px] font-bold text-gray-700 uppercase leading-none">{student.father_name}</p>
+                        <p className="text-[7px] font-medium text-gray-400  tracking-widest leading-none mb-0.5">Parent/Guardian</p>
+                        <p className="text-[9px] font-medium text-gray-700  leading-none">{student.father_name}</p>
                      </div>
                   </div>
                   
@@ -64,7 +64,7 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
                         <img src="/logo.png" alt="" className="w-5 h-5 mb-1" />
                      </div>
                      <div className="border-t border-blue-900 pt-1">
-                        <p className="text-[5px] font-black text-blue-900 uppercase tracking-widest leading-none">Principal Sign</p>
+                        <p className="text-[5px] font-medium text-blue-900  tracking-widest leading-none">Principal Sign</p>
                      </div>
                   </div>
                </div>
@@ -80,7 +80,7 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
       {!hidePrintButton && (
         <button 
           onClick={handlePrint}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-medium text-xs   shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
         >
           🖨️ Print Digital Card
         </button>

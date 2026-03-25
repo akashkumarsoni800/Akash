@@ -162,7 +162,7 @@ const ProfileSetupPage = () => {
            <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
            <Fingerprint size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
         </div>
-        <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Synchronizing Identity Protocols...</p>
+        <p className="font-medium   text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Identity Protocols...</p>
      </div>
   );
 
@@ -173,11 +173,11 @@ const ProfileSetupPage = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className=" text-center md:text-left">
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
                 Protocol<br/>
                 <span className="text-blue-600">Initialization</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
                 <ShieldCheck size={12} className="text-blue-500" /> Authorized Identity Calibration Flow
               </p>
            </motion.div>
@@ -185,8 +185,8 @@ const ProfileSetupPage = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 transition-transform">👤</div>
              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]  italic mb-2 leading-none">Access Level</p>
-                <p className="text-3xl font-black text-slate-900  uppercase italic tracking-tighter leading-none">{viewerRole}</p>
+                <p className="text-[10px] font-medium text-slate-400    mb-2 leading-none">Access Level</p>
+                <p className="text-3xl font-medium text-slate-900    leading-none">{viewerRole}</p>
              </div>
            </div>
         </div>
@@ -203,8 +203,8 @@ const ProfileSetupPage = () => {
               <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110 pointer-events-none"></div>
 
               <div className="text-center md:text-left relative z-10 border-b border-slate-50 pb-10">
-                 <h2 className="text-3xl font-black text-slate-900 uppercase italic  italic tracking-tighter leading-none">{id ? `Update ${targetType} Identity` : "Identity Refinement"}</h2>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3 italic">Sequential Data Alignment</p>
+                 <h2 className="text-3xl font-medium text-slate-900    leading-none">{id ? `Update ${targetType} Identity` : "Identity Refinement"}</h2>
+                 <p className="text-[10px] font-medium text-slate-400   mt-3">Sequential Data Alignment</p>
               </div>
 
               <form onSubmit={handleUpdate} className="space-y-12 relative z-10">
@@ -289,7 +289,7 @@ const ProfileSetupPage = () => {
                     <button 
                       type="submit" 
                       disabled={saving || uploading} 
-                      className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                      className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-medium   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                     >
                       {saving ? (
                          <RefreshCw className="animate-spin" size={24} />
@@ -310,25 +310,25 @@ const ProfileSetupPage = () => {
                 className="bg-slate-950 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
               >
                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
-                 <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-12 relative z-10  italic text-center md:text-left">Calibration Pulse</h3>
+                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10  text-center md:text-left">Calibration Pulse</h3>
                  
                  <div className="space-y-10 relative z-10">
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Sync Integrity</p>
-                       <p className="text-3xl font-black  italic tracking-tighter text-blue-400 leading-none">100%</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Sync Integrity</p>
+                       <p className="text-3xl font-medium   text-blue-400 leading-none">100%</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Node Response</p>
-                       <p className="text-xl font-black  italic tracking-tighter uppercase leading-none text-emerald-400">Stable</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Node Response</p>
+                       <p className="text-xl font-medium    leading-none text-emerald-400">Stable</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Protocol ASM</p>
-                       <p className="text-xl font-black  italic tracking-tighter uppercase text-indigo-400 leading-none">v3.0.4</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Protocol ASM</p>
+                       <p className="text-xl font-medium    text-indigo-400 leading-none">v3.0.4</p>
                     </div>
                  </div>
 
                  <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] leading-relaxed italic">
+                    <p className="text-[9px] font-medium text-white/30   leading-relaxed">
                        Notice: Identity calibration requires absolute nomenclature accuracy for institutional indexing.
                     </p>
                  </div>
@@ -344,20 +344,20 @@ const ProfileSetupPage = () => {
                     <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shadow-inner">
                        <Info size={20} />
                     </div>
-                    <h4 className="text-lg font-black text-slate-900 uppercase italic tracking-tighter ">Identity Guide</h4>
+                    <h4 className="text-lg font-medium text-slate-900   ">Identity Guide</h4>
                  </div>
                  <ul className="space-y-6">
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Update nomenclature to match official identification cards.</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Update nomenclature to match official identification cards.</p>
                     </li>
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Biometric capture (photo) should feature a clear, neutral background.</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Biometric capture (photo) should feature a clear, neutral background.</p>
                     </li>
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Mail node updates will require a terminal sign-out for re-authentication.</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Mail node updates will require a terminal sign-out for re-authentication.</p>
                     </li>
                  </ul>
               </motion.div>
@@ -371,10 +371,10 @@ const ProfileSetupPage = () => {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600 ">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  italic text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-medium text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
     </div>
   </div>
 );

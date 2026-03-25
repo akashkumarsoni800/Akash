@@ -59,7 +59,7 @@ const StudentResult = () => {
           <RefreshCw size={60} className="animate-spin text-emerald-600/20"/>
           <GraduationCap size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-emerald-600" />
        </div>
-       <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8">Syncing Scholastic Records...</p>
+       <p className="font-medium   text-slate-400 text-[10px] mt-8">Syncing Scholastic Records...</p>
     </div>
   );
 
@@ -74,12 +74,12 @@ const StudentResult = () => {
             className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all active:scale-95"
           >
             <ChevronLeft size={18} className="text-emerald-600 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-black uppercase tracking-widest text-[10px] text-slate-600">Portal Exit</span>
+            <span className="font-medium  tracking-widest text-[10px] text-slate-600">Portal Exit</span>
           </button>
 
           <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
              <Star size={16} className="text-amber-400 fill-amber-400" />
-             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic ">Academic Distinction Protocol</span>
+             <span className="text-[10px] font-medium  tracking-widest text-slate-400 ">Academic Distinction Protocol</span>
           </div>
         </div>
 
@@ -99,7 +99,7 @@ const StudentResult = () => {
                
                <div className="relative flex flex-col md:flex-row justify-between items-center gap-12">
                   <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-                     <div className="w-24 h-24 md:w-40 md:h-40 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center text-4xl md:text-6xl font-black border border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-700 ">
+                     <div className="w-24 h-24 md:w-40 md:h-40 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center text-4xl md:text-6xl font-medium border border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-700 ">
                         {studentData.photo_url ? (
                           <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[2.5rem]" alt="Profile" />
                         ) : studentData.full_name[0].toUpperCase()}
@@ -107,12 +107,12 @@ const StudentResult = () => {
                      <div className="space-y-4">
                         <div className="flex items-center justify-center md:justify-start gap-3">
                            <ShieldCheck className="text-emerald-400" size={18}/>
-                           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400/80 ">Verified Scholastic Identity</span>
+                           <span className="text-[9px] md:text-[10px] font-medium   text-emerald-400/80 ">Verified Scholastic Identity</span>
                         </div>
-                        <h2 className="text-4xl md:text-7xl font-black uppercase italic tracking-tighter leading-none ">{studentData.full_name}</h2>
+                        <h2 className="text-4xl md:text-7xl font-medium   leading-none ">{studentData.full_name}</h2>
                         <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
-                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
-                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest backdrop-blur-md">Manifest #{studentData.roll_no}</span>
+                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-medium  border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
+                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-medium  border border-white/5 tracking-widest backdrop-blur-md">Manifest #{studentData.roll_no}</span>
                         </div>
                      </div>
                   </div>
@@ -137,13 +137,13 @@ const StudentResult = () => {
                         <FileText size={28}/>
                      </div>
                      <div>
-                        <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic ">{results[0].exams?.title || 'Comprehensive Examination'}</h3>
-                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1">Registry Session: 2024-25</p>
+                        <h3 className="text-3xl font-medium text-slate-900   ">{results[0].exams?.title || 'Comprehensive Examination'}</h3>
+                        <p className="text-[11px] font-medium text-slate-400   mt-1">Registry Session: 2024-25</p>
                      </div>
                   </div>
                   
                   <div className="flex items-center gap-4">
-                     <button onClick={() => window.print()} className="bg-slate-50 text-slate-900 px-8 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-sm border border-slate-100 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-3 ">
+                     <button onClick={() => window.print()} className="bg-slate-50 text-slate-900 px-8 py-5 rounded-2xl font-medium text-[11px]  tracking-widest shadow-sm border border-slate-100 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-3 ">
                         <Printer size={18}/> Print Registry
                      </button>
                   </div>
@@ -163,13 +163,13 @@ const StudentResult = () => {
                             <div className="space-y-3">
                                <div className="flex items-center gap-2">
                                   <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200"></div>
-                                  <span className="font-black text-slate-400 uppercase text-[9px] tracking-[0.3em] group-hover/row:text-emerald-600 transition-colors">Course Metric</span>
+                                  <span className="font-medium text-slate-400  text-[9px]  group-hover/row:text-emerald-600 transition-colors">Course Metric</span>
                                </div>
-                               <h4 className="text-2xl font-black text-slate-800 uppercase italic tracking-tighter ">{m.subject}</h4>
+                               <h4 className="text-2xl font-medium text-slate-800   ">{m.subject}</h4>
                             </div>
                             <div className="text-right">
-                               <span className="text-5xl font-black text-slate-900 tracking-tighter  italic">{m.marks}</span>
-                               <span className="text-sm font-black text-slate-300 ml-2 tracking-widest uppercase italic">/ {m.max_marks}</span>
+                               <span className="text-5xl font-medium text-slate-900  ">{m.marks}</span>
+                               <span className="text-sm font-medium text-slate-300 ml-2 tracking-widest ">/ {m.max_marks}</span>
                             </div>
                          </div>
                          
@@ -188,19 +188,19 @@ const StudentResult = () => {
 
                <div className="mt-20 pt-16 border-t-2 border-dashed border-slate-100 flex flex-col lg:flex-row justify-between items-center gap-12">
                   <div className="text-center lg:text-left space-y-2">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] italic">Cumulative Score Manifest</p>
-                     <h4 className="text-6xl md:text-9xl font-black text-slate-900 tracking-tighter italic  leading-none">
+                     <p className="text-[10px] font-medium text-slate-400  ">Cumulative Score Manifest</p>
+                     <h4 className="text-6xl md:text-9xl font-medium text-slate-900   leading-none">
                        {results[0].total_marks} 
-                       <span className="text-2xl md:text-3xl text-slate-300 not-italic ml-6 uppercase tracking-widest font-inter">Verified Units</span>
+                       <span className="text-2xl md:text-3xl text-slate-300 not-ml-6  tracking-widest font-inter">Verified Units</span>
                      </h4>
                   </div>
                   
                   <div className="flex flex-col gap-6 w-full lg:w-96">
-                     <button className="bg-slate-900 text-white px-12 py-7 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-2xl hover:bg-emerald-600 transition-all active:scale-95 group/btn ">
+                     <button className="bg-slate-900 text-white px-12 py-7 rounded-[2.5rem] font-medium text-xs   flex items-center justify-center gap-4 shadow-2xl hover:bg-emerald-600 transition-all active:scale-95 group/btn ">
                         <Download size={22} className="group-hover/btn:translate-y-1 transition-transform" /> 
                         Archive Digital Protocol
                      </button>
-                     <p className="text-[9px] text-slate-400 font-bold uppercase text-center tracking-widest leading-loose">
+                     <p className="text-[9px] text-slate-400 font-medium  text-center tracking-widest leading-loose">
                        This scholastic report is an electronic reproduction <br/> 
                        authorized by the Central Examination Registry.
                      </p>
@@ -216,8 +216,8 @@ const StudentResult = () => {
           >
              <div className="bg-slate-50 w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-[360deg] transition-transform duration-1000 rotate-12">🎓</div>
              <div className="space-y-4">
-                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic ">Manifest Unavailable</h3>
-                <p className="max-w-md mx-auto text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] leading-relaxed px-10">
+                <h3 className="text-3xl font-medium text-slate-900   ">Manifest Unavailable</h3>
+                <p className="max-w-md mx-auto text-slate-400 font-medium text-[10px]   leading-relaxed px-10">
                   The academic registry for this session has not yet been authorized. Please maintain scholastic excellence while waiting for final publication.
                 </p>
              </div>
@@ -233,8 +233,8 @@ const StudentResult = () => {
 
 const PremiumQuickStat = ({ label, value, accent }: any) => (
   <div className="bg-white/10 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] min-w-[180px] shadow-2xl group/stat hover:bg-white/15 transition-all">
-     <p className="text-[9px] font-black uppercase text-emerald-400 tracking-[0.2em] mb-2 italic ">{label}</p>
-     <p className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none  group-hover/stat:scale-110 transition-transform origin-left">{value}</p>
+     <p className="text-[9px] font-medium  text-emerald-400  mb-2 ">{label}</p>
+     <p className="text-3xl font-medium text-white   leading-none  group-hover/stat:scale-110 transition-transform origin-left">{value}</p>
   </div>
 );
 

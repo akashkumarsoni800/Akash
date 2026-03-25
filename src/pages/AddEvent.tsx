@@ -57,23 +57,23 @@ const AddEvent = () => {
             className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
           >
             <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-black uppercase tracking-widest text-[10px] text-slate-600">Portal Dashboard</span>
+            <span className="font-bold  tracking-widest text-[10px] text-slate-600">Portal Dashboard</span>
           </button>
 
           <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400  italic">Satellite Broadcast Ready</span>
+             <span className="text-[10px] font-bold   text-blue-400 ">Satellite Broadcast Ready</span>
           </div>
         </div>
 
         {/* --- DYNAMIC HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900   leading-none">
                 Broadcast<br/>
                 <span className="text-blue-600">Hub</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-bold  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-blue-500" /> Authorize & Distribute Institutional Notices
               </p>
            </motion.div>
@@ -81,8 +81,8 @@ const AddEvent = () => {
            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
              <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
              <div>
-               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Channel Status</p>
-               <p className="text-3xl font-black text-slate-900 tracking-tighter italic  uppercase">Priority High</p>
+               <p className="text-[9px] font-bold text-slate-400   mb-1">Channel Status</p>
+               <p className="text-3xl font-bold text-slate-900   ">Priority High</p>
              </div>
            </div>
         </div>
@@ -96,7 +96,7 @@ const AddEvent = () => {
             className="lg:col-span-7 bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group"
           >
              <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex justify-between items-center px-12">
-                <h3 className="font-black text-[10px] text-slate-400 uppercase tracking-[0.4em] italic flex items-center gap-3">
+                <h3 className="font-bold text-[10px] text-slate-400   flex items-center gap-3">
                    <Layout size={16} className="text-blue-600"/> Drafting Chamber
                 </h3>
              </div>
@@ -105,14 +105,14 @@ const AddEvent = () => {
                 <div className="grid gap-10">
                    {/* Title Input */}
                    <div className="space-y-4">
-                      <label className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
+                      <label className="flex items-center gap-3 text-[10px] font-bold text-slate-400  tracking-widest pl-2">
                          <Info size={14} className="text-blue-500" /> Broadcast Title
                       </label>
                       <input
                         type="text"
                         required
                         placeholder="e.g. Institutional Maintenance Protocol"
-                        className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-lg font-bold text-slate-900 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner  italic"
+                        className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] px-8 py-5 text-lg font-bold text-slate-900 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner "
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       />
@@ -120,7 +120,7 @@ const AddEvent = () => {
 
                    {/* Date Input */}
                    <div className="space-y-4">
-                      <label className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
+                      <label className="flex items-center gap-3 text-[10px] font-bold text-slate-400  tracking-widest pl-2">
                          <Calendar size={14} className="text-blue-500" /> Effective Date
                       </label>
                       <input
@@ -134,7 +134,7 @@ const AddEvent = () => {
 
                    {/* Description Input */}
                    <div className="space-y-4">
-                      <label className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
+                      <label className="flex items-center gap-3 text-[10px] font-bold text-slate-400  tracking-widest pl-2">
                          <FileText size={14} className="text-blue-500" /> Narrative Content
                       </label>
                       <textarea
@@ -152,7 +152,7 @@ const AddEvent = () => {
                    <button
                      type="submit"
                      disabled={loading}
-                     className="w-full bg-slate-900 text-white py-6 rounded-[2rem] hover:bg-blue-600 font-black uppercase tracking-[0.3em] shadow-2xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 group/btn overflow-hidden relative"
+                     className="w-full bg-slate-900 text-white py-6 rounded-[2rem] hover:bg-blue-600 font-bold   shadow-2xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 group/btn overflow-hidden relative"
                    >
                      {loading ? (
                        <RefreshCw className="animate-spin" size={20} />
@@ -174,21 +174,21 @@ const AddEvent = () => {
                    <Megaphone size={200} />
                 </div>
                 
-                <h4 className="text-blue-400 font-black text-[10px] uppercase tracking-[0.3em] mb-8 flex items-center gap-2 ">
+                <h4 className="text-blue-400 font-bold text-[10px]   mb-8 flex items-center gap-2 ">
                    <Zap size={10} /> Transmission Preview
                 </h4>
                 
                 <div className="space-y-6">
                    <div className="space-y-2">
-                      <p className="text-slate-500 font-black text-[9px] uppercase tracking-widest italic">Header Signal</p>
-                      <h5 className="text-2xl font-black text-white italic tracking-tighter  min-h-[3rem]">
+                      <p className="text-slate-500 font-bold text-[9px]  tracking-widest">Header Signal</p>
+                      <h5 className="text-2xl font-bold text-white   min-h-[3rem]">
                         {formData.title || "Waiting for signal..."}
                       </h5>
                    </div>
                    
                    <div className="space-y-2">
-                      <p className="text-slate-500 font-black text-[9px] uppercase tracking-widest italic">Content Payload</p>
-                      <p className="text-slate-400 text-sm leading-relaxed italic min-h-[8rem]">
+                      <p className="text-slate-500 font-bold text-[9px]  tracking-widest">Content Payload</p>
+                      <p className="text-slate-400 text-sm leading-relaxed min-h-[8rem]">
                         {formData.description || "Synthesize content to generate preview payload..."}
                       </p>
                    </div>
@@ -196,7 +196,7 @@ const AddEvent = () => {
                    <div className="pt-6 border-t border-slate-800 flex justify-between items-center">
                       <div className="flex items-center gap-3">
                          <Calendar className="text-blue-500" size={14} />
-                         <span className="text-white font-black text-[10px] uppercase tracking-widest">
+                         <span className="text-white font-bold text-[10px]  tracking-widest">
                             {formData.event_date ? new Date(formData.event_date).toLocaleDateString() : "No Date Set"}
                          </span>
                       </div>
@@ -209,7 +209,7 @@ const AddEvent = () => {
                 <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                    <Clock size={20} />
                 </div>
-                <p className="text-slate-600 font-bold text-[10px] uppercase tracking-widest leading-relaxed">
+                <p className="text-slate-600 font-bold text-[10px]  tracking-widest leading-relaxed">
                   Notices are instantly distributed to all active <span className="text-blue-600">Scholar Terminals</span>.
                 </p>
              </div>

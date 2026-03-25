@@ -84,7 +84,7 @@ const Sidebar = () => {
     <div className="h-screen flex items-center justify-center bg-[#f9fafb]">
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-4 border-slate-800 border-t-slate-300 rounded-full animate-spin"></div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Encrypting Session...</p>
+        <p className="text-[10px] font-medium text-slate-400  tracking-widest">Encrypting Session...</p>
       </div>
     </div>
   );
@@ -119,8 +119,8 @@ const Sidebar = () => {
               <Shield size={22} />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-tighter leading-none">ASMD</h2>
-              <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Platform v4.0</p>
+              <h2 className="text-sm font-medium text-white   leading-none">ASMD</h2>
+              <p className="text-[9px] font-medium text-slate-500  tracking-widest mt-1">Platform v4.0</p>
             </div>
           </div>
           <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors">
@@ -129,7 +129,7 @@ const Sidebar = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto asm-hide-scrollbar">
-          <p className="text-[10px] font-black text-slate-500 uppercase px-4 mb-4 tracking-widest">Navigation</p>
+          <p className="text-[10px] font-medium text-slate-500  px-4 mb-4 tracking-widest">Navigation</p>
           
           {profile.role === 'admin' && (
             <>
@@ -176,18 +176,18 @@ const Sidebar = () => {
                  {profile.avatar ? <img src={profile.avatar} className="w-full h-full object-cover" /> : <Users size={14} className="text-slate-400" />}
                </div>
                <div className="flex-1 min-w-0">
-                 <p className="text-[10px] font-black text-white uppercase truncate">{profile.name}</p>
-                 <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">{profile.role}</p>
+                 <p className="text-[10px] font-medium text-white  truncate">{profile.name}</p>
+                 <p className="text-[8px] font-medium text-slate-500  tracking-widest mt-0.5">{profile.role}</p>
                </div>
              </div>
              <button 
                onClick={handleLogout}
-               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-rose-500/20"
+               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-medium  tracking-widest border border-transparent hover:border-rose-500/20"
              >
                <LogOut size={12} /> Terminate session
              </button>
           </div>
-          <p className="text-[8px] font-black text-slate-600 uppercase text-center tracking-[0.4em]">Integrated Logic</p>
+          <p className="text-[8px] font-medium text-slate-600  text-center ">Integrated Logic</p>
         </div>
       </aside>
 

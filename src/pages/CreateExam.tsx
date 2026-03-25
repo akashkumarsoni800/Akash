@@ -71,11 +71,11 @@ const CreateExam = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900   leading-none">
                 Exam<br/>
                 <span className="text-purple-600">Terminal</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-bold  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-purple-500" /> Authorized Scholastic Assessment Architect
               </p>
            </motion.div>
@@ -85,8 +85,8 @@ const CreateExam = () => {
                  <FileText size={28} />
               </div>
               <div className="pr-4">
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Batch</p>
-                 <p className="text-xl font-black text-slate-900  uppercase italic leading-none">Session 2026-27</p>
+                 <p className="text-[10px] font-bold text-slate-400  tracking-widest mb-1">Active Batch</p>
+                 <p className="text-xl font-bold text-slate-900   leading-none">Session 2026-27</p>
               </div>
            </div>
         </div>
@@ -106,7 +106,7 @@ const CreateExam = () => {
                    <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
                       <Layout size={20} />
                    </div>
-                   <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter ">Manifest Parameters</h2>
+                   <h2 className="text-2xl font-bold text-slate-900   ">Manifest Parameters</h2>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8">
@@ -136,7 +136,7 @@ const CreateExam = () => {
                    <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
                       <BookOpen size={20} />
                    </div>
-                   <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter ">Subject Arsenal</h2>
+                   <h2 className="text-2xl font-bold text-slate-900   ">Subject Arsenal</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -146,7 +146,7 @@ const CreateExam = () => {
                        <input 
                          type="text" 
                          placeholder="Synthesize Subject Index (e.g. Physics)"
-                         className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all  italic text-sm"
+                         className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all  text-sm"
                          value={currentSubject}
                          onChange={e => setCurrentSubject(e.target.value)}
                          onKeyPress={e => e.key === 'Enter' && handleAddSubject()}
@@ -154,7 +154,7 @@ const CreateExam = () => {
                     </div>
                     <button 
                       onClick={handleAddSubject}
-                      className="bg-slate-900 text-white px-8 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-lg hover:bg-purple-600 active:scale-95 transition-all  italic"
+                      className="bg-slate-900 text-white px-8 py-5 rounded-2xl font-bold   text-[10px] shadow-lg hover:bg-purple-600 active:scale-95 transition-all "
                     >
                       Initialize
                     </button>
@@ -168,7 +168,7 @@ const CreateExam = () => {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
-                          className="bg-white border border-slate-100 pl-6 pr-3 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 flex items-center gap-4 shadow-sm hover:border-purple-200 hover:text-purple-600 transition-all group  italic"
+                          className="bg-white border border-slate-100 pl-6 pr-3 py-3 rounded-2xl text-[10px] font-bold   text-slate-600 flex items-center gap-4 shadow-sm hover:border-purple-200 hover:text-purple-600 transition-all group "
                         >
                           {sub}
                           <button onClick={() => removeSubject(sub)} className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-all">
@@ -180,7 +180,7 @@ const CreateExam = () => {
                   </AnimatePresence>
                   {subjects.length === 0 && (
                     <div className="py-10 text-center border-2 border-dashed border-slate-100 rounded-[2.5rem] bg-slate-50/50">
-                       <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Awaiting Subject Induction...</p>
+                       <p className="text-[10px] font-bold text-slate-300  tracking-widest">Awaiting Subject Induction...</p>
                     </div>
                   )}
                 </div>
@@ -190,7 +190,7 @@ const CreateExam = () => {
                  <button 
                    onClick={handleCreateExam}
                    disabled={loading}
-                   className="flex-1 bg-slate-900 text-white px-10 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-slate-200 hover:bg-purple-600 active:scale-95 transition-all flex items-center justify-center gap-4 group  italic"
+                   className="flex-1 bg-slate-900 text-white px-10 py-6 rounded-[2rem] font-bold   text-xs shadow-2xl shadow-slate-200 hover:bg-purple-600 active:scale-95 transition-all flex items-center justify-center gap-4 group "
                  >
                    {loading ? (
                       <RefreshCw className="animate-spin" size={20} />
@@ -200,7 +200,7 @@ const CreateExam = () => {
                  </button>
                  <button 
                    onClick={() => navigate('/admin/dashboard')}
-                   className="px-10 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all  italic"
+                   className="px-10 py-6 rounded-[2rem] font-bold   text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all "
                  >
                    Abort Logic
                  </button>
@@ -217,27 +217,27 @@ const CreateExam = () => {
               <div className="bg-slate-900 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 blur-3xl group-hover:bg-purple-500/40 transition-all duration-1000" />
                  <div className="relative z-10 space-y-2">
-                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-[0.3em]  italic">Institutional Insight</p>
-                    <h3 className="text-4xl font-black uppercase italic tracking-tighter leading-none ">Assessment<br/>Matrix</h3>
+                    <p className="text-[10px] font-bold text-purple-400   ">Institutional Insight</p>
+                    <h3 className="text-4xl font-bold   leading-none ">Assessment<br/>Matrix</h3>
                  </div>
 
                  <div className="space-y-6 relative z-10">
                     <div className="flex justify-between items-end border-b border-white/5 pb-6">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Subject Density</p>
-                       <p className="text-3xl font-black  italic tracking-tighter">{subjects.length}</p>
+                       <p className="text-[10px] font-bold text-slate-400  tracking-widest">Subject Density</p>
+                       <p className="text-3xl font-bold  ">{subjects.length}</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-6">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Temporal Status</p>
-                       <p className="text-xl font-black  italic tracking-tighter text-blue-400 uppercase">{examDate ? 'Scheduled' : 'Pending'}</p>
+                       <p className="text-[10px] font-bold text-slate-400  tracking-widest">Temporal Status</p>
+                       <p className="text-xl font-bold   text-blue-400 ">{examDate ? 'Scheduled' : 'Pending'}</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-6">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Authorized Level</p>
-                       <p className="text-xl font-black  italic tracking-tighter text-purple-400 uppercase">Lvl 07 Admin</p>
+                       <p className="text-[10px] font-bold text-slate-400  tracking-widest">Authorized Level</p>
+                       <p className="text-xl font-bold   text-purple-400 ">Lvl 07 Admin</p>
                     </div>
                  </div>
 
                  <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
-                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-relaxed">
+                    <p className="text-[9px] font-bold text-white/40  tracking-widest leading-relaxed">
                        Notice: The generated matrix will be broadcasted to all cohort terminals upon authorization. Ensure sequential validation.
                     </p>
                  </div>
@@ -248,20 +248,20 @@ const CreateExam = () => {
                     <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
                        <Info size={20} />
                     </div>
-                    <h4 className="text-lg font-black text-slate-900 uppercase italic tracking-tighter ">Operational Help</h4>
+                    <h4 className="text-lg font-bold text-slate-900   ">Operational Help</h4>
                  </div>
                  <ul className="space-y-4">
                     <li className="flex items-start gap-4">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Enter precise titles for institutional indexing.</p>
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed">Enter precise titles for institutional indexing.</p>
                     </li>
                     <li className="flex items-start gap-4">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Subject arsenal supports batch synthesis.</p>
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed">Subject arsenal supports batch synthesis.</p>
                     </li>
                     <li className="flex items-start gap-4">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Date configuration is non-mandatory for drafts.</p>
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed">Date configuration is non-mandatory for drafts.</p>
                     </li>
                  </ul>
               </div>
@@ -276,10 +276,10 @@ const CreateExam = () => {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-purple-500">{label}</label>
+    <label className="block text-[9px] font-bold text-slate-400   ml-2 transition-colors group-focus-within:text-purple-500">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-purple-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all  italic text-sm`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all  text-sm`} {...props} />
     </div>
   </div>
 );

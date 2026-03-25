@@ -5,7 +5,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#ffffff] text-[#1a202c] overflow-x-hidden relative" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="min-h-screen bg-[#ffffff] text-[#1a202c] overflow-x-hidden relative" style={{ fontFamily: "'', sans-serif" }}>
       {/* 🟢 Mesh Background Component */}
       <div className="absolute top-0 left-0 w-full h-full z-[-1]" 
            style={{ backgroundImage: 'radial-gradient(at 0% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(45,100%,50%,0.05) 0, transparent 50%)' }}>
@@ -15,7 +15,7 @@ const Home = () => {
       <nav className="container mx-auto px-4 md:px-8 py-4 md:py-6 flex justify-between items-center animate__animated animate__fadeIn">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">A</div>
-          <span className="text-base md:text-xl font-extrabold tracking-tight text-slate-800 uppercase">
+          <span className="text-base md:text-xl font-extrabold tracking-tight text-slate-800 ">
             ADARSH <span className="text-blue-600">SHISHU</span> <span className="hidden xs:inline">MANDIR</span>
           </span>
         </div>
@@ -35,10 +35,10 @@ const Home = () => {
       {/* 🟢 Hero Section */}
       <section className="container mx-auto px-8 pt-20 pb-32 grid md:grid-cols-2 gap-12 items-center">
         <div className="animate__animated animate__fadeInLeft">
-          <span className="inline-block px-4 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-bold mb-6 tracking-wide uppercase">
+          <span className="inline-block px-4 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-bold mb-6 tracking-wide ">
             ✨ Excellence in Education
           </span>
-          <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-4 md:mb-6 tracking-tighter">
+          <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-4 md:mb-6 ">
             Where Young <br className="hidden md:block" /> Minds <span className="text-blue-600 underline decoration-yellow-400">Dream big.</span>
           </h1>
           <p className="text-base md:text-lg text-slate-500 mb-8 md:mb-10 leading-relaxed max-w-lg">
@@ -68,13 +68,13 @@ const Home = () => {
         <div className="relative animate__animated animate__fadeInRight flex justify-center">
             {/* School Illustration or Image Placeholder */}
             <div className=" rounded-[3rem] border-0 border-white shadow-2xl relative overflow-hidden flex items-center justify-center">
-                 <div className="text-blue-200 font-black text-9xl select-none"><img src="/logo.png"/></div>
+                 <div className="text-blue-200 font-bold text-9xl select-none"><img src="/logo.png"/></div>
                  {/* Floating Card UI Mockup */}
                  <div className="absolute bottom-10 left-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce flex items-center gap-3">
                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">✓</div>
                     <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Attendance</p>
-                        <p className="text-sm font-black text-gray-800">Completed</p>
+                        <p className="text-[10px] font-bold text-gray-400 ">Attendance</p>
+                        <p className="text-sm font-bold text-gray-800">Completed</p>
                     </div>
                  </div>
             </div>

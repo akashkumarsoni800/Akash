@@ -59,11 +59,11 @@ const CreateAdmin = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
                 Master<br/>
                 <span className="text-blue-600">Registry</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
                 <ShieldCheck size={12} className="text-blue-500" /> Authorized Institutional Node Architect v4.2
               </p>
            </motion.div>
@@ -73,8 +73,8 @@ const CreateAdmin = () => {
                  <Fingerprint size={28} />
               </div>
               <div className="pr-4">
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Security Level</p>
-                 <p className="text-xl font-black text-slate-900 uppercase italic leading-none">Standard 09</p>
+                 <p className="text-[10px] font-medium text-slate-400  tracking-widest mb-1 leading-none">Security Level</p>
+                 <p className="text-xl font-medium text-slate-900  leading-none">Standard 09</p>
               </div>
            </div>
         </div>
@@ -95,13 +95,13 @@ const CreateAdmin = () => {
                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
                       <UserPlus size={24} />
                    </div>
-                   <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Induction Flow</h2>
+                   <h2 className="text-3xl font-medium text-slate-900  ">Induction Flow</h2>
                 </div>
 
                 <div className="bg-amber-50/50 p-6 rounded-3xl border border-amber-100 flex gap-5 items-start">
                   <ShieldAlert className="text-amber-500 shrink-0 mt-1" size={24} />
-                  <p className="text-[11px] font-bold text-amber-700 leading-relaxed italic">
-                    <span className="block font-black uppercase tracking-widest mb-1 text-amber-600">Operational Warning</span>
+                  <p className="text-[11px] font-medium text-amber-700 leading-relaxed">
+                    <span className="block font-medium  tracking-widest mb-1 text-amber-600">Operational Warning</span>
                     Inducting a Super Admin grants unrestricted access to all institutional data nodes including financial, personnel, and scholastic records.
                   </p>
                 </div>
@@ -142,7 +142,7 @@ const CreateAdmin = () => {
                       <button 
                         type="submit"
                         disabled={loading}
-                        className="premium-button-admin w-full bg-slate-900 text-white hover:bg-blue-600 italic border-none shadow-2xl"
+                        className="premium-button-admin w-full bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl"
                       >
                          {loading ? (
                             <RefreshCw className="animate-spin" size={24} />
@@ -164,25 +164,25 @@ const CreateAdmin = () => {
                 className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
               >
                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
-                 <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-12 relative z-10 italic text-center md:text-left">Protocol Insights</h3>
+                 <h3 className="text-[10px] font-medium text-blue-400   mb-12 relative z-10 text-center md:text-left">Protocol Insights</h3>
                  
                  <div className="space-y-10 relative z-10">
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Encryption Level</p>
-                       <p className="text-3xl font-black italic tracking-tighter text-blue-400 leading-none">AES-256</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Encryption Level</p>
+                       <p className="text-3xl font-medium  text-blue-400 leading-none">AES-256</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Propagation</p>
-                       <p className="text-xl font-black italic tracking-tighter uppercase leading-none">Zero-Latency</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">Propagation</p>
+                       <p className="text-xl font-medium   leading-none">Zero-Latency</p>
                     </div>
                     <div className="flex justify-between items-end border-b border-white/5 pb-8">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">MFA Status</p>
-                       <p className="text-xl font-black italic tracking-tighter uppercase text-emerald-400 leading-none">Optional</p>
+                       <p className="text-[9px] font-medium text-slate-400  tracking-widest leading-none">MFA Status</p>
+                       <p className="text-xl font-medium   text-emerald-400 leading-none">Optional</p>
                     </div>
                  </div>
 
                  <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] leading-relaxed italic">
+                    <p className="text-[9px] font-medium text-white/30   leading-relaxed">
                        Notice: Registry induction logs are recorded in the institutional audit vault for perpetual monitoring. Sequential authorization required.
                     </p>
                  </div>
@@ -198,20 +198,20 @@ const CreateAdmin = () => {
                     <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shadow-inner">
                        <Info size={20} />
                     </div>
-                    <h4 className="text-lg font-black text-slate-900 uppercase italic tracking-tighter">Operational Help</h4>
+                    <h4 className="text-lg font-medium text-slate-900  ">Operational Help</h4>
                  </div>
                  <ul className="space-y-6">
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Input precise nomenclature for institutional indexing.</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Input precise nomenclature for institutional indexing.</p>
                     </li>
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Passwords must meet Standard complexity protocols (6+ chars).</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Passwords must meet Standard complexity protocols (6+ chars).</p>
                     </li>
                     <li className="flex items-start gap-5">
                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Identity mail is used for node-to-node communication.</p>
+                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed">Identity mail is used for node-to-node communication.</p>
                     </li>
                  </ul>
               </motion.div>
@@ -223,7 +223,7 @@ const CreateAdmin = () => {
         <div className="pt-12 text-center">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50 transition-opacity hover:opacity-100 group cursor-default">
               <Zap size={14} className="text-blue-500" />
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic transition-colors group-hover:text-blue-600">Institutional Standard ASM v4.2 Powered by Supabase Edge</p>
+              <p className="text-[9px] font-medium text-slate-400  tracking-widest transition-colors group-hover:text-blue-600">Institutional Standard ASM v4.2 Powered by Supabase Edge</p>
            </div>
         </div>
 
@@ -234,10 +234,10 @@ const CreateAdmin = () => {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-      <input className="premium-input italic text-sm placeholder:text-slate-200" style={{ paddingLeft: Icon ? '4rem' : '2rem' }} {...props} />
+      <input className="premium-input text-sm placeholder:text-slate-200" style={{ paddingLeft: Icon ? '4rem' : '2rem' }} {...props} />
     </div>
   </div>
 );

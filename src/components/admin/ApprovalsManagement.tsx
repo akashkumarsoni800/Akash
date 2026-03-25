@@ -58,12 +58,12 @@ export default function ApprovalsManagement() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
          <div className="space-y-1">
-            <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Authority Oversight</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Pending Identity Verification Queue v4.2</p>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none">Authority Oversight</h3>
+            <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Pending Identity Verification Queue v4.2</p>
          </div>
          <div className="flex items-center gap-3">
             <div className={`w-2 h-2 rounded-full ${approvals.length > 0 ? 'bg-amber-500 animate-pulse' : 'bg-slate-200'}`}></div>
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{approvals.length} Awaiting</span>
+            <span className="text-[10px] font-medium text-slate-400  tracking-widest">{approvals.length} Awaiting</span>
          </div>
       </div>
  
@@ -84,15 +84,15 @@ export default function ApprovalsManagement() {
                         <Clock size={28} />
                      </div>
                      <div className="space-y-1 overflow-hidden">
-                        <h4 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter leading-none truncate">{req.full_name}</h4>
+                        <h4 className="text-xl font-medium text-slate-900   leading-none truncate">{req.full_name}</h4>
                         <div className="flex flex-wrap gap-4 items-center mt-2">
                            <div className="flex items-center gap-2 text-slate-400">
                               <GraduationCap size={12} className="text-slate-300" />
-                              <p className="text-[10px] font-bold uppercase tracking-tight italic">Grade {req.class_name}</p>
+                              <p className="text-[10px] font-medium  tracking-tight">Grade {req.class_name}</p>
                            </div>
                            <div className="flex items-center gap-2 text-slate-400">
                               <Mail size={12} className="text-slate-300" />
-                              <p className="text-[10px] font-bold tracking-tight italic">{req.email}</p>
+                              <p className="text-[10px] font-medium tracking-tight">{req.email}</p>
                            </div>
                         </div>
                      </div>
@@ -101,13 +101,13 @@ export default function ApprovalsManagement() {
                   <div className="flex gap-3 w-full md:w-auto">
                      <button 
                        onClick={() => handleAction(req.student_id, 'approved')}
-                       className="premium-button-admin flex-1 md:flex-none bg-slate-950 text-white hover:bg-blue-600 italic border-none shadow-xl"
+                       className="premium-button-admin flex-1 md:flex-none bg-slate-950 text-white hover:bg-blue-600 border-none shadow-xl"
                      >
                         <CheckCircle size={16} /> Authorize
                      </button>
                      <button 
                        onClick={() => handleAction(req.student_id, 'rejected')}
-                       className="premium-button-admin flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 hover:bg-rose-50 italic shadow-sm"
+                       className="premium-button-admin flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 hover:bg-rose-50 shadow-sm"
                      >
                         <XCircle size={16} /> Purge
                      </button>
@@ -121,8 +121,8 @@ export default function ApprovalsManagement() {
                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200 shadow-inner">
                   <ShieldCheck size={48} />
                </div>
-               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic mb-2">Registry Compliant</h4>
-               <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest italic leading-relaxed">No pending identity verification requests found.</p>
+               <h4 className="text-[10px] font-medium text-slate-400   mb-2">Registry Compliant</h4>
+               <p className="text-[9px] font-medium text-slate-300  tracking-widest leading-relaxed">No pending identity verification requests found.</p>
             </div>
          )}
       </div>

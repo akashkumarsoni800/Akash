@@ -102,30 +102,30 @@ export default function StudentRegistrationForm() {
                        <Compass size={32} />
                     </div>
                     <div>
-                       <h2 className="text-3xl font-black text-white uppercase italic  tracking-tighter leading-none">
+                       <h2 className="text-3xl font-medium text-white    leading-none">
                           Scholar<br/>Induction
                        </h2>
-                       <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] italic mt-4">Protocol Version 4.0</p>
+                       <p className="text-[10px] font-medium text-blue-400   mt-4">Protocol Version 4.0</p>
                     </div>
                  </div>
 
                  <div className="relative z-10 space-y-6">
                     <div className="flex items-start gap-4">
                        <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
-                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Verified Identity Vault</p>
+                       <p className="text-[11px] font-medium text-slate-400 leading-relaxed">Verified Identity Vault</p>
                     </div>
                     <div className="flex items-start gap-4">
                        <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
-                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Encrypted Secure Credentialing</p>
+                       <p className="text-[11px] font-medium text-slate-400 leading-relaxed">Encrypted Secure Credentialing</p>
                     </div>
                     <div className="flex items-start gap-4">
                        <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
-                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Immediate Admin Sync</p>
+                       <p className="text-[11px] font-medium text-slate-400 leading-relaxed">Immediate Admin Sync</p>
                     </div>
                  </div>
 
                  <div className="relative z-10 pt-10 border-t border-white/5">
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
+                    <p className="text-[9px] font-medium text-slate-500  tracking-widest leading-relaxed">
                        Adarsh Shishu Mandir<br/>
                        Digital Admission Terminal
                     </p>
@@ -136,12 +136,12 @@ export default function StudentRegistrationForm() {
               <div className="flex-1 p-10 md:p-14 space-y-10">
                  <div className="flex items-center justify-between">
                     <div>
-                       <h3 className="text-2xl font-black text-slate-900 uppercase italic  tracking-tighter">Registration</h3>
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Personnel Entry Matrix</p>
+                       <h3 className="text-2xl font-medium text-slate-900   ">Registration</h3>
+                       <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Personnel Entry Matrix</p>
                     </div>
                     <div className="text-right hidden sm:block">
-                       <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Authority Check</p>
-                       <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Scholastic Registry</p>
+                       <p className="text-[10px] font-medium text-blue-600  tracking-widest leading-none">Authority Check</p>
+                       <p className="text-[10px] font-medium text-slate-300  tracking-widest mt-1">Scholastic Registry</p>
                     </div>
                  </div>
 
@@ -197,7 +197,7 @@ export default function StudentRegistrationForm() {
                        <button 
                          type="submit" 
                          disabled={loading}
-                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-medium   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                        >
                          {loading ? <RefreshCw className="animate-spin" size={20} /> : <><UserPlus size={20} /> Submit Registration</>}
                        </button>
@@ -205,7 +205,7 @@ export default function StudentRegistrationForm() {
                        <button 
                          type="button"
                          onClick={() => navigate('/')}
-                         className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95  italic"
+                         className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-medium   text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
                        >
                           Already have an account? Login <ArrowRight size={14} />
                        </button>
@@ -214,7 +214,7 @@ export default function StudentRegistrationForm() {
 
                  <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-start gap-4">
                     <Info size={18} className="text-blue-500 mt-1" />
-                    <p className="text-[10px] font-bold text-slate-400 leading-relaxed italic">
+                    <p className="text-[10px] font-medium text-slate-400 leading-relaxed">
                        Administrative Protocol: All submissions are filtered through central security audits. 
                        Approval may take up to 24 institutional hours.
                     </p>
@@ -229,10 +229,10 @@ export default function StudentRegistrationForm() {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-2 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600 ">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  italic text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-medium text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
     </div>
   </div>
 );

@@ -55,7 +55,7 @@ const StudentFees = () => {
           <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
           <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
        </div>
-       <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Syncing Financial Ledger...</p>
+       <p className="font-medium   text-slate-400 text-[10px] mt-8 text-center px-10">Syncing Financial Ledger...</p>
     </div>
   );
 
@@ -68,7 +68,7 @@ const StudentFees = () => {
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate(-1)} 
-          className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95"
+          className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl text-[10px] font-medium  tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95"
         >
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Return to Dashboard
         </motion.button>
@@ -84,27 +84,27 @@ const StudentFees = () => {
            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
               <div className="text-center md:text-left space-y-6">
                  <div className="space-y-2">
-                    <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]  italic">Financial Management</p>
-                    <h1 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none ">Personal<br/>Ledger</h1>
+                    <p className="text-[10px] font-medium text-blue-400   ">Financial Management</p>
+                    <h1 className="text-5xl md:text-7xl font-medium   leading-none ">Personal<br/>Ledger</h1>
                  </div>
                  <div className="flex items-center justify-center md:justify-start gap-4">
                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white/40">
                        <User size={20} />
                     </div>
                     <div>
-                       <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Authorized Candidate</p>
-                       <p className="text-sm font-black text-white  uppercase italic tracking-tight">{studentData?.full_name}</p>
+                       <p className="text-[8px] font-medium text-white/30  tracking-widest">Authorized Candidate</p>
+                       <p className="text-sm font-medium text-white   tracking-tight">{studentData?.full_name}</p>
                     </div>
                  </div>
               </div>
 
               <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center min-w-[280px] shadow-inner group/stat relative overflow-hidden">
                  <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/stat:opacity-5 transition-opacity" />
-                 <p className="text-[10px] font-black uppercase text-blue-300 mb-2 tracking-[0.3em] italic ">Outstanding Balance</p>
-                 <p className={`text-6xl font-black tracking-tighter  italic ${totalPending > 0 ? 'text-blue-400' : 'text-emerald-400 '}`}>₹{totalPending.toLocaleString()}</p>
+                 <p className="text-[10px] font-medium  text-blue-300 mb-2  ">Outstanding Balance</p>
+                 <p className={`text-6xl font-medium   ${totalPending > 0 ? 'text-blue-400' : 'text-emerald-400 '}`}>₹{totalPending.toLocaleString()}</p>
                  <div className="mt-4 flex items-center justify-center gap-2">
                     <div className={`w-2 h-2 rounded-full animate-pulse ${totalPending > 0 ? 'bg-blue-400' : 'bg-emerald-400'}`} />
-                    <p className="text-[8px] font-black text-white/20 uppercase tracking-widest">Real-time Sync Active</p>
+                    <p className="text-[8px] font-medium text-white/20  tracking-widest">Real-time Sync Active</p>
                  </div>
               </div>
            </div>
@@ -113,8 +113,8 @@ const StudentFees = () => {
         {/* --- TRANSACTION FEED --- */}
         <div className="space-y-8">
            <div className="flex items-center gap-4 px-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 italic font-black text-xs  shadow-sm">IV</div>
-              <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter ">Invoiced Settlements</h3>
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 font-medium text-xs  shadow-sm">IV</div>
+              <h3 className="text-xl font-medium text-slate-900   ">Invoiced Settlements</h3>
            </div>
 
            <div className="grid grid-cols-1 gap-8">
@@ -131,8 +131,8 @@ const StudentFees = () => {
                          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
                             <Zap size={200} className="rotate-12 translate-x-10 translate-y-10" />
                          </div>
-                         <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-2  italic relative z-10">{fee.month}</p>
-                         <h3 className="text-4xl font-black tracking-tighter italic uppercase  relative z-10">{fee.status}</h3>
+                         <p className="text-[10px] font-medium   mb-2  relative z-10">{fee.month}</p>
+                         <h3 className="text-4xl font-medium    relative z-10">{fee.status}</h3>
                          {fee.status === 'Paid' ? (
                             <CheckCircle2 size={40} className="mt-6 opacity-40 group-hover:scale-110 transition-transform relative z-10"/>
                          ) : (
@@ -147,8 +147,8 @@ const StudentFees = () => {
                             {fee.fee_structure && Object.entries(fee.fee_structure).map(([key, val]: any) => (
                               Number(val) > 0 && (
                                 <div key={key} className="flex justify-between items-end border-b border-slate-50 pb-3 group/item">
-                                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic group-hover/content:text-slate-400 group-hover/item:text-blue-500 transition-colors">{key}</span>
-                                   <span className="font-black text-slate-900 italic  tracking-tight">₹{Number(val).toLocaleString()}</span>
+                                   <span className="text-[10px] font-medium text-slate-300  tracking-widest group-hover/content:text-slate-400 group-hover/item:text-blue-500 transition-colors">{key}</span>
+                                   <span className="font-medium text-slate-900  tracking-tight">₹{Number(val).toLocaleString()}</span>
                                 </div>
                               )
                             ))}
@@ -156,19 +156,19 @@ const StudentFees = () => {
 
                          <div className="flex flex-col lg:flex-row justify-between items-center pt-10 border-t border-slate-50 gap-10">
                             <div className="text-center lg:text-left transition-transform group-hover/content:-translate-y-1 duration-500">
-                               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic mb-1">Authenticated Aggregate</p>
-                               <h4 className="text-5xl font-black text-slate-900 tracking-tighter  italic">₹{Number(fee.total_amount).toLocaleString()}</h4>
+                               <p className="text-[9px] font-medium text-slate-300  tracking-widest mb-1">Authenticated Aggregate</p>
+                               <h4 className="text-5xl font-medium text-slate-900  ">₹{Number(fee.total_amount).toLocaleString()}</h4>
                             </div>
                             <div className="flex gap-4 w-full lg:w-auto">
                                <button 
                                  onClick={() => handleWhatsApp(fee)} 
-                                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-white border border-emerald-100 text-emerald-600 font-black text-[10px] uppercase tracking-widest shadow-sm hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 italic "
+                                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-white border border-emerald-100 text-emerald-600 font-medium text-[10px]  tracking-widest shadow-sm hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 "
                                >
                                   <Send size={16}/> Share
                                </button>
                                <button 
                                  onClick={() => window.print()} 
-                                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 italic  group/print"
+                                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-slate-900 text-white font-medium text-[10px]  tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95  group/print"
                                >
                                   <Download size={16} className="group-hover/print:translate-y-1 transition-transform" /> Download PDF
                                </button>
@@ -185,8 +185,8 @@ const StudentFees = () => {
                       <Wallet size={40} className="text-slate-200"/>
                    </div>
                    <div className="space-y-2">
-                      <p className="text-slate-900 font-black uppercase tracking-tighter italic text-2xl ">Manifest Clean</p>
-                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] ">No institutional billing nodes detected in current cycle.</p>
+                      <p className="text-slate-900 font-medium   text-2xl ">Manifest Clean</p>
+                      <p className="text-[10px] font-medium text-slate-300   ">No institutional billing nodes detected in current cycle.</p>
                    </div>
                 </div>
               )}
@@ -197,7 +197,7 @@ const StudentFees = () => {
         <div className="pt-12 text-center">
            <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50">
               <ShieldCheck size={14} className="text-blue-500" />
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Institutional Standard ASM v3.0 Authorized</p>
+              <p className="text-[9px] font-medium text-slate-400  tracking-widest">Institutional Standard ASM v3.0 Authorized</p>
            </div>
         </div>
 

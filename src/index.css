@@ -3,32 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --primary-slate: #0f172a;
+  --primary-slate: #1e293b;
   --bg-main: #f8fafc;
   
-  /* Role Accents from Figma v4.0 */
-  --accent-admin: #2563eb;
+  /* Role Accents */
+  --accent-admin: #3b82f6;
   --accent-teacher: #10b981;
   --accent-student: #8b5cf6;
   
-  --font-outfit: 'Outfit', system-ui, sans-serif;
-  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-primary: 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-[var(--bg-main)] text-slate-900 antialiased selection:bg-blue-600 selection:text-white;
-    font-family: var(--font-inter);
-    font-weight: 450;
+    @apply bg-[var(--bg-main)] text-slate-900 antialiased;
+    font-family: var(--font-primary);
   }
   
   h1, h2, h3 {
-    @apply tracking-tighter font-black uppercase text-slate-900;
-    font-family: var(--font-outfit);
+    @apply font-bold text-slate-900 tracking-tight;
+    font-family: var(--font-primary);
   }
 
   h4, h5, h6 {
-    @apply tracking-tight font-bold text-slate-800;
+    @apply font-semibold text-slate-800 tracking-tight;
   }
 }
 
@@ -103,8 +101,7 @@
   .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
 
-  .font-outfit { font-family: var(--font-outfit); }
-  .font-inter { font-family: var(--font-inter); }
+  /* Font utilities removed for simplicity */
 }
 
 @keyframes float {

@@ -109,7 +109,7 @@ const TeacherHomework: React.FC = () => {
           <RefreshCw size={60} className="animate-spin text-emerald-600/20"/>
           <Layout size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-emerald-600" />
        </div>
-       <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Initializing Distribution Manifest...</p>
+       <p className="font-bold   text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Distribution Manifest...</p>
     </div>
   );
 
@@ -120,11 +120,11 @@ const TeacherHomework: React.FC = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900   leading-none">
                 Asset<br/>
                 <span className="text-emerald-600">Distribution</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+              <p className="text-slate-400 font-bold  text-[10px]  mt-4 flex items-center gap-2">
                 <ShieldCheck size={12} className="text-emerald-500" /> Authorized Scholastic Task Emission & Oversight Terminal
               </p>
            </motion.div>
@@ -135,11 +135,11 @@ const TeacherHomework: React.FC = () => {
                     <BookOpen size={20} />
                  </div>
                  <div>
-                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Active Fleet</p>
-                    <p className="text-xl font-black text-slate-900  italic">{homeworks.length} Assignments</p>
+                    <p className="text-[8px] font-bold text-slate-400  tracking-widest">Active Fleet</p>
+                    <p className="text-xl font-bold text-slate-900 ">{homeworks.length} Assignments</p>
                  </div>
               </div>
-              <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
+              <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-[10px]   shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
                  <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" /> Emit New Task
               </button>
            </div>
@@ -168,10 +168,10 @@ const TeacherHomework: React.FC = () => {
                  <div className="space-y-6">
                     <div className="flex justify-between items-start">
                        <div className="space-y-2">
-                          <p className={`text-[10px] font-black uppercase tracking-[0.3em]  italic ${
+                          <p className={`text-[10px] font-bold    ${
                              selectedHomework === hw.id ? 'text-emerald-600' : 'text-slate-400'
                           }`}>{hw.subject || 'Core Discipline'}</p>
-                          <h3 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none ">{hw.title}</h3>
+                          <h3 className="text-3xl font-bold text-slate-900   leading-none ">{hw.title}</h3>
                        </div>
                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
                           selectedHomework === hw.id 
@@ -184,14 +184,14 @@ const TeacherHomework: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-8">
                        <div className="space-y-1">
-                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">Cohort Node</p>
-                          <p className="text-xl font-black text-slate-900  italic tracking-tight">Class {hw.class_name}</p>
+                          <p className="text-[10px] font-bold text-slate-300  tracking-widest leading-none">Cohort Node</p>
+                          <p className="text-xl font-bold text-slate-900  tracking-tight">Class {hw.class_name}</p>
                        </div>
                        <div className="space-y-1">
-                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">Emission Due</p>
+                          <p className="text-[10px] font-bold text-slate-300  tracking-widest leading-none">Emission Due</p>
                           <div className="flex items-center gap-2">
                              <Clock size={14} className="text-emerald-500" />
-                             <p className="text-xl font-black text-slate-900  italic tracking-tight">{new Date(hw.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</p>
+                             <p className="text-xl font-bold text-slate-900  tracking-tight">{new Date(hw.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</p>
                           </div>
                        </div>
                     </div>
@@ -204,7 +204,7 @@ const TeacherHomework: React.FC = () => {
                        style={{ width: `${(hw.submissions.submitted / hw.total_students) * 100}%` }}
                      />
                    </div>
-                   <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.2em]  px-2">
+                   <div className="flex justify-between items-center text-[10px] font-bold    px-2">
                      <div className="text-emerald-600 flex items-center gap-2">
                        <CheckCircle2 size={12}/> {hw.submissions.submitted} Authenticated
                      </div>
@@ -232,21 +232,21 @@ const TeacherHomework: React.FC = () => {
               
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-slate-50 pb-10">
                  <div className="space-y-4">
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter leading-none ">
+                    <h2 className="text-4xl md:text-5xl font-bold text-slate-900   leading-none ">
                        Submission<br/>
                        <span className="text-emerald-600">Terminal</span>
                     </h2>
                     <div className="flex items-center gap-4">
-                       <span className="bg-slate-900 text-white px-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest  italic">{selectedHW.title}</span>
-                       <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic flex items-center gap-2">
+                       <span className="bg-slate-900 text-white px-5 py-1.5 rounded-full text-[9px] font-bold  tracking-widest ">{selectedHW.title}</span>
+                       <p className="text-slate-400 font-bold text-[10px]  tracking-widest flex items-center gap-2">
                           <Users size={12} className="text-emerald-500" /> Oversight Cohort: Class {selectedHW.class_name}
                        </p>
                     </div>
                  </div>
                  
                  <div className="flex bg-slate-50 rounded-2xl p-1.5 border border-slate-100 shadow-inner">
-                    <button className="px-8 py-3 font-black uppercase text-[10px] tracking-widest rounded-xl bg-white text-emerald-600 shadow-md transition-all  italic">✅ Authenticated ({submissions.length})</button>
-                    <button className="px-8 py-3 font-black uppercase text-[10px] tracking-widest rounded-xl text-slate-400 hover:text-slate-900 transition-all  italic">⏳ Awaiting ({selectedHW.submissions.pending})</button>
+                    <button className="px-8 py-3 font-bold  text-[10px] tracking-widest rounded-xl bg-white text-emerald-600 shadow-md transition-all ">✅ Authenticated ({submissions.length})</button>
+                    <button className="px-8 py-3 font-bold  text-[10px] tracking-widest rounded-xl text-slate-400 hover:text-slate-900 transition-all ">⏳ Awaiting ({selectedHW.submissions.pending})</button>
                  </div>
               </div>
 
@@ -254,7 +254,7 @@ const TeacherHomework: React.FC = () => {
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]  italic">
+                      <tr className="text-[10px] font-bold text-slate-300   ">
                         <th className="p-8">Oversight Target</th>
                         <th className="p-8 text-center">Temporal Timestamp</th>
                         <th className="p-8 text-center">Status Index</th>
@@ -266,23 +266,23 @@ const TeacherHomework: React.FC = () => {
                         <tr key={submission.id} className="group hover:bg-white hover:shadow-2xl transition-all duration-300 rounded-[2rem]">
                           <td className="p-8">
                              <div className="flex items-center gap-5">
-                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner transition-colors group-hover:border-emerald-200 group-hover:text-emerald-600 text-xl  italic">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center font-bold text-slate-200 border border-slate-100 shadow-inner transition-colors group-hover:border-emerald-200 group-hover:text-emerald-600 text-xl ">
                                    {submission.student_name ? submission.student_name.charAt(0) : 'S'}
                                 </div>
                                 <div>
-                                   <p className="font-black text-slate-900 uppercase text-sm  italic tracking-tight">{submission.student_name}</p>
-                                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ASM REGISTRY INDEX: {submission.student_id}</p>
+                                   <p className="font-bold text-slate-900  text-sm  tracking-tight">{submission.student_name}</p>
+                                   <p className="text-[8px] font-bold text-slate-400  tracking-widest">ASM REGISTRY INDEX: {submission.student_id}</p>
                                 </div>
                              </div>
                           </td>
                           <td className="p-8 text-center">
                              <div className="inline-flex items-center gap-3 bg-slate-100/50 px-5 py-2 rounded-xl group-hover:bg-emerald-50 transition-colors">
                                 <Clock size={12} className="text-slate-400 group-hover:text-emerald-500" />
-                                <span className="font-bold text-slate-500 text-[10px] uppercase tracking-wider group-hover:text-emerald-700">{new Date(submission.submitted_at).toLocaleString('en-GB')}</span>
+                                <span className="font-bold text-slate-500 text-[10px]  tracking-wider group-hover:text-emerald-700">{new Date(submission.submitted_at).toLocaleString('en-GB')}</span>
                              </div>
                           </td>
                           <td className="p-8 text-center">
-                            <span className={`px-6 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                            <span className={`px-6 py-2 rounded-full text-[9px] font-bold  tracking-widest border transition-all ${
                               submission.status === 'submitted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                               submission.status === 'graded' ? 'bg-purple-50 text-purple-600 border-purple-100' : 
                               'bg-amber-50 text-amber-600 border-amber-100'
@@ -291,8 +291,8 @@ const TeacherHomework: React.FC = () => {
                             </span>
                           </td>
                           <td className="p-8 text-right">
-                             <button className="relative bg-slate-900 text-white px-8 py-3 rounded-xl font-black text-[9px] uppercase tracking-[0.2em] shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group/btn italic  overflow-hidden">
-                                <span className="relative z-10 flex items-center gap-2 font-bold tracking-[0.2em]">Evaluate <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></span>
+                             <button className="relative bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-[9px]   shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group/btn  overflow-hidden">
+                                <span className="relative z-10 flex items-center gap-2 font-bold ">Evaluate <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></span>
                                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                              </button>
                           </td>
@@ -308,13 +308,13 @@ const TeacherHomework: React.FC = () => {
                       <div key={submission.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6 group hover:shadow-xl transition-all">
                          <div className="flex justify-between items-start">
                             <div className="flex items-center gap-4">
-                               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center font-black text-slate-300 text-lg  italic">{submission.student_name?.charAt(0)}</div>
+                               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center font-bold text-slate-300 text-lg ">{submission.student_name?.charAt(0)}</div>
                                <div>
-                                  <h3 className="font-black text-slate-900 uppercase text-sm leading-tight  italic">{submission.student_name}</h3>
-                                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">ID: {submission.student_id}</p>
+                                  <h3 className="font-bold text-slate-900  text-sm leading-tight ">{submission.student_name}</h3>
+                                  <p className="text-[8px] font-bold text-slate-400  tracking-widest mt-0.5">ID: {submission.student_id}</p>
                                </div>
                             </div>
-                            <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                            <span className={`px-4 py-1.5 rounded-full text-[8px] font-bold  tracking-widest border ${
                               submission.status === 'submitted' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                               submission.status === 'graded' ? 'bg-purple-50 text-purple-600 border-purple-100' : 
                               'bg-amber-50 text-amber-600 border-amber-100'
@@ -322,11 +322,11 @@ const TeacherHomework: React.FC = () => {
                               {submission.status}
                             </span>
                          </div>
-                         <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider italic bg-slate-50 px-4 py-2 rounded-xl">
+                         <div className="flex justify-between items-center text-[10px] font-bold text-slate-400  tracking-wider bg-slate-50 px-4 py-2 rounded-xl">
                             <div className="flex items-center gap-2"><Clock size={12}/> {new Date(submission.submitted_at).toLocaleDateString()}</div>
                             <span>{new Date(submission.submitted_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                          </div>
-                         <button className="w-full text-[10px] font-black uppercase tracking-[0.2em] bg-slate-900 text-white py-4 rounded-2xl hover:bg-emerald-600 transition-all  italic active:scale-95">
+                         <button className="w-full text-[10px] font-bold   bg-slate-900 text-white py-4 rounded-2xl hover:bg-emerald-600 transition-all  active:scale-95">
                             Evaluate Submission
                          </button>
                       </div>
@@ -342,8 +342,8 @@ const TeacherHomework: React.FC = () => {
           <div className="py-40 text-center space-y-10 group bg-white rounded-[5rem] shadow-sm border border-slate-100">
              <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center mx-auto mb-4 shadow-inner text-6xl group-hover:scale-110 transition-transform duration-1000 grayscale opacity-40">📊</div>
              <div className="space-y-4 px-10">
-                <h4 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic ">Fleet Awaiting Select</h4>
-                <p className="max-w-md mx-auto text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] leading-relaxed">
+                <h4 className="text-3xl font-bold text-slate-900   ">Fleet Awaiting Select</h4>
+                <p className="max-w-md mx-auto text-slate-400 font-bold text-[10px]   leading-relaxed">
                   Select an assignment fleet from the hub above to initiate institutional submission oversight and evaluation protocols.
                 </p>
              </div>

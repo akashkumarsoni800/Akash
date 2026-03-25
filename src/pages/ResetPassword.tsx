@@ -122,11 +122,11 @@ const ResetPassword = () => {
                  <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
                     <ShieldCheck size={36} className="text-blue-600" />
                  </div>
-                 <h2 className="text-4xl font-black text-slate-900 uppercase italic  italic tracking-tighter leading-none">
+                 <h2 className="text-4xl font-medium text-slate-900    leading-none">
                     Credential<br/>
                     <span className="text-blue-600">Restoration</span>
                  </h2>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Secure Synchronization Protocol</p>
+                 <p className="text-[10px] font-medium text-slate-400  ">Secure Synchronization Protocol</p>
               </div>
 
               <AnimatePresence mode="wait">
@@ -167,7 +167,7 @@ const ResetPassword = () => {
                           <button 
                             type="submit" 
                             disabled={loading}
-                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-medium   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                           >
                             {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldAlert size={20} /> Authorize Verification</>}
                           </button>
@@ -175,7 +175,7 @@ const ResetPassword = () => {
                           <button 
                             type="button"
                             onClick={() => navigate('/')}
-                            className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95  italic"
+                            className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-medium   text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
                           >
                              <ChevronLeft size={16} /> Revert to Terminal
                           </button>
@@ -215,7 +215,7 @@ const ResetPassword = () => {
                           <button 
                             type="submit" 
                             disabled={loading}
-                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-medium   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                           >
                             {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Zap size={20} /> Commit Credentials</>}
                           </button>
@@ -236,8 +236,8 @@ const ResetPassword = () => {
                        </div>
                        
                        <div className="space-y-4">
-                          <h3 className="text-2xl font-black text-slate-900 uppercase italic  italic tracking-tighter leading-none">Dispatched</h3>
-                          <p className="text-slate-500 font-bold text-[11px] leading-relaxed italic max-w-xs mx-auto">
+                          <h3 className="text-2xl font-medium text-slate-900    leading-none">Dispatched</h3>
+                          <p className="text-slate-500 font-medium text-[11px] leading-relaxed max-w-xs mx-auto">
                              An institutional restoration link has been transmitted to <span className="text-blue-600">{targetEmail}</span>. 
                              Access the mail node to initialize re-calibration.
                           </p>
@@ -245,7 +245,7 @@ const ResetPassword = () => {
 
                        <button 
                          onClick={() => navigate('/')}
-                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4  italic"
+                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-medium   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
                        >
                           Return to Terminal <ArrowRight size={18} />
                        </button>
@@ -260,7 +260,7 @@ const ResetPassword = () => {
               <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm border border-slate-100">
                  <Info size={24} />
               </div>
-              <p className="text-[10px] font-bold text-slate-400 leading-relaxed italic">
+              <p className="text-[10px] font-medium text-slate-400 leading-relaxed">
                  Security Notice: All restoration attempts are logged with institutional IP coordinates for security audits.
               </p>
            </div>
@@ -272,10 +272,10 @@ const ResetPassword = () => {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600 ">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  italic text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-medium text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
     </div>
   </div>
 );

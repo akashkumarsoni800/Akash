@@ -55,8 +55,8 @@ export default function StudentsManagement() {
       {/* --- TOP BAR & FILTERS --- */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
          <div className="space-y-1 text-left">
-            <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Personnel Registry</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none">Personnel Registry</h3>
+            <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
          </div>
  
          <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
@@ -67,7 +67,7 @@ export default function StudentsManagement() {
                  placeholder="Search registry index..."
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
-                 className="premium-input italic text-sm pl-16 py-4"
+                 className="premium-input text-sm pl-16 py-4"
                />
             </div>
             <div className="relative md:w-48">
@@ -75,7 +75,7 @@ export default function StudentsManagement() {
                <select 
                  value={classFilter}
                  onChange={(e) => setClassFilter(e.target.value)}
-                 className="premium-input italic text-[10px] pl-14 py-4 appearance-none text-slate-500"
+                 className="premium-input text-[10px] pl-14 py-4 appearance-none text-slate-500"
                >
                   {classes.map(c => <option key={c} value={c}>{c}</option>)}
                </select>
@@ -88,7 +88,7 @@ export default function StudentsManagement() {
          <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[800px]">
                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic">
+                  <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-medium text-slate-400  ">
                      <th className="px-10 py-6">Registry Position</th>
                      <th className="px-10 py-6">Scholar Identity</th>
                      <th className="px-10 py-6 text-center">Batch Logic</th>
@@ -107,8 +107,8 @@ export default function StudentsManagement() {
                      >
                         <td className="px-10 py-5">
                            <div className="flex items-center gap-4">
-                              <span className="text-[10px] font-black text-slate-300 group-hover:text-blue-200 transition-colors uppercase">UID-0{idx + 1}</span>
-                              <p className="text-sm font-black text-blue-600 italic tracking-tighter">#{s.roll_no}</p>
+                              <span className="text-[10px] font-medium text-slate-300 group-hover:text-blue-200 transition-colors ">UID-0{idx + 1}</span>
+                              <p className="text-sm font-medium text-blue-600 ">#{s.roll_no}</p>
                            </div>
                         </td>
                         <td className="px-10 py-5">
@@ -117,22 +117,22 @@ export default function StudentsManagement() {
                                  <img src={s.photo_url || `https://ui-avatars.com/api/?name=${s.full_name}&background=0f172a&color=fff`} className="w-full h-full object-cover" alt="" />
                               </div>
                               <div className="space-y-0.5">
-                                 <p className="text-sm font-black text-slate-900 uppercase italic tracking-tight leading-none truncate max-w-[150px]">{s.full_name}</p>
-                                 <p className="text-[10px] font-bold text-slate-400 italic lowercase tracking-tight">{s.email}</p>
+                                 <p className="text-sm font-medium text-slate-900  tracking-tight leading-none truncate max-w-[150px]">{s.full_name}</p>
+                                 <p className="text-[10px] font-medium text-slate-400 lowercase tracking-tight">{s.email}</p>
                               </div>
                            </div>
                         </td>
                         <td className="px-10 py-5 text-center">
-                           <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter border border-slate-50">Grade {s.class_name}</span>
+                           <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-medium   border border-slate-50">Grade {s.class_name}</span>
                         </td>
                         <td className="px-10 py-5">
                            <div className="flex items-center gap-3">
                               <UserCheck size={14} className="text-slate-200" />
-                              <p className="text-[11px] font-bold text-slate-400 uppercase italic tracking-tight truncate max-w-[120px]">{s.father_name}</p>
+                              <p className="text-[11px] font-medium text-slate-400  tracking-tight truncate max-w-[120px]">{s.father_name}</p>
                            </div>
                         </td>
                         <td className="px-10 py-5 text-right">
-                           <div className="flex items-center justify-end gap-2 text-emerald-600 font-black text-[9px] uppercase tracking-widest italic leading-none">
+                           <div className="flex items-center justify-end gap-2 text-emerald-600 font-medium text-[9px]  tracking-widest leading-none">
                               <CheckCircle2 size={16} /> Verified
                            </div>
                         </td>
@@ -147,8 +147,8 @@ export default function StudentsManagement() {
                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
                   <GraduationCap size={40} />
                </div>
-               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-2">No scholar records in this sector</p>
-               <p className="text-[9px] font-bold text-slate-200 uppercase tracking-widest italic leading-relaxed">Adjust filters or search parameters to expand query.</p>
+               <p className="text-[10px] font-medium text-slate-300   mb-2">No scholar records in this sector</p>
+               <p className="text-[9px] font-medium text-slate-200  tracking-widest leading-relaxed">Adjust filters or search parameters to expand query.</p>
             </div>
          )}
       </div>

@@ -159,7 +159,7 @@ const TeacherAnalytics: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-6xl md:text-7xl font-black uppercase tracking-[-0.05em] bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6">
+          <h1 className="text-6xl md:text-7xl font-bold   bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6">
             📊 Analytics Dashboard
           </h1>
           <p className="text-xl text-gray-600 font-semibold max-w-2xl mx-auto">
@@ -174,7 +174,7 @@ const TeacherAnalytics: React.FC = () => {
               <button
                 key={period}
                 onClick={() => setSelectedPeriod(period)}
-                className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all duration-300 ${
+                className={`px-8 py-4 rounded-2xl font-bold  tracking-widest text-sm transition-all duration-300 ${
                   selectedPeriod === period
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl shadow-purple-500/25 scale-105'
                     : 'bg-white text-gray-700 hover:bg-gray-50 shadow-lg hover:scale-105'
@@ -196,8 +196,8 @@ const TeacherAnalytics: React.FC = () => {
             whileHover={{ scale: 1.02 }}
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">👥</div>
-            <h3 className="text-4xl font-black text-gray-900 mb-2">{analytics.totalStudents.toLocaleString()}</h3>
-            <p className="text-sm text-gray-500 uppercase tracking-wide font-bold">Total Students</p>
+            <h3 className="text-4xl font-bold text-gray-900 mb-2">{analytics.totalStudents.toLocaleString()}</h3>
+            <p className="text-sm text-gray-500  tracking-wide font-bold">Total Students</p>
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full mt-2 inline-block font-bold">
               {Math.round(analytics.totalStudents * 0.95)} active
             </span>
@@ -211,8 +211,8 @@ const TeacherAnalytics: React.FC = () => {
             whileHover={{ scale: 1.02 }}
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📊</div>
-            <h3 className="text-4xl font-black text-green-600 mb-2">{analytics.attendanceRate}%</h3>
-            <p className="text-sm text-gray-500 uppercase tracking-wide font-bold">Avg Attendance</p>
+            <h3 className="text-4xl font-bold text-green-600 mb-2">{analytics.attendanceRate}%</h3>
+            <p className="text-sm text-gray-500  tracking-wide font-bold">Avg Attendance</p>
             <span className={`text-xs px-2 py-1 rounded-full mt-2 inline-block font-bold ${
               analytics.attendanceRate >= 90 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
             }`}>
@@ -228,8 +228,8 @@ const TeacherAnalytics: React.FC = () => {
             whileHover={{ scale: 1.02 }}
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">⭐</div>
-            <h3 className="text-4xl font-black text-purple-600 mb-2">{analytics.passPercentage}%</h3>
-            <p className="text-sm text-gray-500 uppercase tracking-wide font-bold">Pass Rate</p>
+            <h3 className="text-4xl font-bold text-purple-600 mb-2">{analytics.passPercentage}%</h3>
+            <p className="text-sm text-gray-500  tracking-wide font-bold">Pass Rate</p>
             <span className={`text-xs px-2 py-1 rounded-full mt-2 inline-block font-bold ${
               analytics.passPercentage >= 85 ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800'
             }`}>
@@ -247,7 +247,7 @@ const TeacherAnalytics: React.FC = () => {
             transition={{ delay: 0.4 }}
             className="bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50 group hover:shadow-3xl"
           >
-            <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-8 flex items-center gap-3">
+            <h3 className="text-2xl font-bold text-gray-900  tracking-tight mb-8 flex items-center gap-3">
               📈 Performance Distribution
               <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold">
                 {selectedPeriod.toUpperCase()}
@@ -304,11 +304,11 @@ const TeacherAnalytics: React.FC = () => {
             transition={{ delay: 0.5 }}
             className="bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50"
           >
-            <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-8">📅 Attendance Trend</h3>
+            <h3 className="text-2xl font-bold text-gray-900  tracking-tight mb-8">📅 Attendance Trend</h3>
             <div className="space-y-6">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, index) => (
                 <div key={day} className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-gray-500 uppercase tracking-wide">{day}</span>
+                  <span className="text-sm font-bold text-gray-500  tracking-wide">{day}</span>
                   <div className="w-32 bg-gray-200 rounded-full h-3">
                     <motion.div 
                       className="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full"
@@ -333,7 +333,7 @@ const TeacherAnalytics: React.FC = () => {
         >
           <motion.button 
             whileHover={{ scale: 1.05, y: -5 }}
-            className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-3xl font-black uppercase tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-3xl font-bold  tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
             onClick={() => navigate('/teacher/students')}
           >
             👥 View Students ({analytics.totalStudents})
@@ -341,21 +341,21 @@ const TeacherAnalytics: React.FC = () => {
           
           <motion.button 
             whileHover={{ scale: 1.05, y: -5 }}
-            className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-3xl font-black uppercase tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-3xl font-bold  tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             📈 Full Report
           </motion.button>
           
           <motion.button 
             whileHover={{ scale: 1.05, y: -5 }}
-            className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-3xl font-black uppercase tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-3xl font-bold  tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             🎯 Top Performers ({analytics.topPerformers})
           </motion.button>
           
           <motion.button 
             whileHover={{ scale: 1.05, y: -5 }}
-            className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-3xl font-black uppercase tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-3xl font-bold  tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             ⚠️ Alert Students ({analytics.lowAttendance})
           </motion.button>

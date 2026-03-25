@@ -212,11 +212,11 @@ const AddStudent = () => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-medium text-slate-900   leading-none">
                 Personnel<br/>
                 <span className="text-[var(--accent-admin)]">Onboarding</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+              <p className="text-slate-400 font-medium  text-[10px]  mt-4 flex items-center justify-center md:justify-start gap-2">
                 <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Induction Protocol v4.2
               </p>
            </motion.div>
@@ -226,8 +226,8 @@ const AddStudent = () => {
                 <Fingerprint size={24} />
              </div>
              <div>
-               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 leading-none">Biometric Status</p>
-               <p className="text-xs font-black text-slate-900 uppercase italic">Registry Link Active</p>
+               <p className="text-[9px] font-medium text-slate-400   mb-0.5 leading-none">Biometric Status</p>
+               <p className="text-xs font-medium text-slate-900 ">Registry Link Active</p>
              </div>
            </div>
         </div>
@@ -256,8 +256,8 @@ const AddStudent = () => {
                       <User size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Primary Identity</h2>
-                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Legal Candidate Details</p>
+                      <h2 className="text-3xl font-medium text-slate-900  ">Primary Identity</h2>
+                      <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Legal Candidate Details</p>
                    </div>
                 </div>
 
@@ -268,8 +268,8 @@ const AddStudent = () => {
                   <div className="grid grid-cols-2 gap-6">
                     <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
                     <div className="space-y-1 group">
-                      <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic group-focus-within:text-blue-500">Gender Selection</label>
-                      <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 uppercase text-[10px] italic pr-10" required>
+                      <label className="block text-[9px] font-medium text-slate-400   ml-2 group-focus-within:text-blue-500">Gender Selection</label>
+                      <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50  text-[10px] pr-10" required>
                         <option value="">Select Identity</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -281,13 +281,13 @@ const AddStudent = () => {
                 </div>
 
                 <div className="space-y-1 group">
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic group-focus-within:text-blue-500">Residential Coordinates</label>
+                  <label className="block text-[9px] font-medium text-slate-400   ml-2 group-focus-within:text-blue-500">Residential Coordinates</label>
                   <textarea
                     placeholder="Complete House Address & Zip Code..."
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-bold text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all italic text-sm"
+                    className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-medium text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
                     required
                   />
                 </div>
@@ -296,7 +296,7 @@ const AddStudent = () => {
                    <button 
                      type="button" 
                      onClick={() => setStep(2)} 
-                     className="premium-button-admin px-12 italic"
+                     className="premium-button-admin px-12"
                    >
                      Initialize Registry <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                    </button>
@@ -317,22 +317,22 @@ const AddStudent = () => {
                       <Layout size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Fleet Assignment</h2>
-                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Academic Node Allocation</p>
+                      <h2 className="text-3xl font-medium text-slate-900  ">Fleet Assignment</h2>
+                      <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Academic Node Allocation</p>
                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="bg-slate-900 p-8 rounded-[3rem] border border-slate-800 shadow-2xl flex flex-col justify-center relative group">
                     <div className="absolute top-4 right-4 text-white/5 group-hover:scale-110 transition-transform"><Star size={60} /></div>
-                    <label className="block text-[10px] font-black text-blue-300 uppercase tracking-[0.2em] mb-3 ml-2 italic leading-none">Assigned Cohort *</label>
-                    <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full bg-white/10 border border-white/10 p-5 rounded-2xl font-black text-2xl text-white outline-none focus:ring-4 focus:ring-blue-500/30 italic tracking-tighter" required />
+                    <label className="block text-[10px] font-medium text-blue-300   mb-3 ml-2 leading-none">Assigned Cohort *</label>
+                    <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full bg-white/10 border border-white/10 p-5 rounded-2xl font-medium text-2xl text-white outline-none focus:ring-4 focus:ring-blue-500/30 " required />
                   </div>
 
                   <div className="bg-blue-50 p-8 rounded-[3rem] border border-blue-100 shadow-sm flex flex-col justify-center group/roll">
-                    <label className="block text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-3 ml-2 italic leading-none">Sequential Roll Identifier *</label>
+                    <label className="block text-[10px] font-medium text-blue-400   mb-3 ml-2 leading-none">Sequential Roll Identifier *</label>
                     <div className="flex gap-4">
-                      <input type="number" name="roll" value={formData.roll} onChange={handleChange} className="w-full bg-white p-5 rounded-2xl font-black text-2xl text-slate-900 border-none outline-none shadow-inner" required />
+                      <input type="number" name="roll" value={formData.roll} onChange={handleChange} className="w-full bg-white p-5 rounded-2xl font-medium text-2xl text-slate-900 border-none outline-none shadow-inner" required />
                       <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-5 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
                         <RefreshCw size={24}/>
                       </button>
@@ -346,14 +346,14 @@ const AddStudent = () => {
                    <button 
                      type="button" 
                      onClick={() => setStep(1)} 
-                     className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3 italic"
+                     className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-medium   text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3"
                    >
                      <ChevronLeft size={18} /> Modify Identity
                    </button>
                    <button 
                      type="button" 
                      onClick={() => setStep(3)} 
-                     className="premium-button-admin px-12 italic"
+                     className="premium-button-admin px-12"
                    >
                      Bio-metric Synthesis <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                    </button>
@@ -374,8 +374,8 @@ const AddStudent = () => {
                       <Camera size={24} />
                    </div>
                    <div>
-                      <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Visual Registry</h2>
-                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Biometric Capture Terminal</p>
+                      <h2 className="text-3xl font-medium text-slate-900  ">Visual Registry</h2>
+                      <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Biometric Capture Terminal</p>
                    </div>
                 </div>
 
@@ -387,7 +387,7 @@ const AddStudent = () => {
                     ) : (
                       <div className="text-center space-y-4">
                          <User size={80} className="text-slate-200 mx-auto" />
-                         <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none">Awaiting Capture</p>
+                         <p className="text-[8px] font-medium text-slate-300  tracking-widest leading-none">Awaiting Capture</p>
                       </div>
                     )}
                     <label className="absolute inset-0 bg-blue-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[2px]">
@@ -397,10 +397,10 @@ const AddStudent = () => {
                   </div>
                   
                   <div className="mt-12 flex flex-wrap justify-center gap-4">
-                     <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-100 active:scale-95 transition-all group italic">
+                     <button type="button" onClick={() => setShowWebcam(true)} className="flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl text-[10px] font-medium   shadow-xl shadow-blue-100 active:scale-95 transition-all group">
                        <Camera size={18} className="group-hover:scale-110 transition-transform"/> Start Live Feed
                      </button>
-                     <label className="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl cursor-pointer active:scale-95 transition-all hover:bg-blue-600 italic">
+                     <label className="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-medium   shadow-xl cursor-pointer active:scale-95 transition-all hover:bg-blue-600">
                        <Upload size={18}/> Manual Upload
                        <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
                      </label>
@@ -411,14 +411,14 @@ const AddStudent = () => {
                    <button 
                      type="button" 
                      onClick={() => setStep(2)} 
-                     className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3 italic"
+                     className="px-10 py-5 bg-slate-50 text-slate-400 rounded-2xl font-medium   text-[10px] hover:text-slate-900 active:scale-95 transition-all flex items-center gap-3"
                    >
                      <ChevronLeft size={18} /> Modify Registry
                    </button>
                    <button
                      type="submit"
                      disabled={loading}
-                     className="premium-button-admin px-16 italic"
+                     className="premium-button-admin px-16"
                    >
                      {loading ? (
                         <RefreshCw className="animate-spin" size={20} />
@@ -458,14 +458,14 @@ const AddStudent = () => {
 
                  <div className="absolute bottom-8 left-0 w-full px-8 z-20">
                     <div className="bg-black/60 backdrop-blur-md p-4 rounded-3xl border border-white/10 text-center">
-                       <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest italic">Optical Alignment Sensor Active</p>
+                       <p className="text-[10px] font-medium text-blue-400  tracking-widest">Optical Alignment Sensor Active</p>
                     </div>
                  </div>
               </div>
               
               <div className="flex gap-6 mt-12">
-                <button type="button" onClick={capturePhoto} className="bg-blue-600 text-white px-12 py-6 rounded-3xl font-black uppercase tracking-[0.2em] shadow-2xl shadow-blue-500/20 active:scale-95 transition-all text-[10px] italic">Register Biometric</button>
-                <button type="button" onClick={() => setShowWebcam(false)} className="bg-white/5 text-white border border-white/10 px-10 py-6 rounded-3xl font-black uppercase tracking-[0.2em] active:scale-95 transition-all text-[10px] italic hover:bg-white/10 group">
+                <button type="button" onClick={capturePhoto} className="bg-blue-600 text-white px-12 py-6 rounded-3xl font-medium   shadow-2xl shadow-blue-500/20 active:scale-95 transition-all text-[10px]">Register Biometric</button>
+                <button type="button" onClick={() => setShowWebcam(false)} className="bg-white/5 text-white border border-white/10 px-10 py-6 rounded-3xl font-medium   active:scale-95 transition-all text-[10px] hover:bg-white/10 group">
                    <ChevronLeft size={16} className="inline mr-2 group-hover:-translate-x-1 transition-transform" /> Abort Capture
                 </button>
               </div>
@@ -479,21 +479,21 @@ const AddStudent = () => {
 
 const StepIndicator = ({ step, current, label }: { step: number; current: number; label: string }) => (
   <div className={`flex items-center gap-4 transition-all duration-700 ${current >= step ? 'opacity-100' : 'opacity-30'}`}>
-     <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-[12px] transition-all ${
+     <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-[12px] transition-all ${
         current === step ? 'bg-blue-600 text-white shadow-lg' : current > step ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
      }`}>
         {current > step ? <CheckCircle2 size={18} /> : step}
      </div>
-     <span className={`text-[10px] font-black uppercase tracking-widest hidden md:block ${current === step ? 'text-slate-900 italic' : 'text-slate-300'}`}>{label}</span>
+     <span className={`text-[10px] font-medium  tracking-widest hidden md:block ${current === step ? 'text-slate-900' : 'text-slate-300'}`}>{label}</span>
   </div>
 );
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-1 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-500">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
-      <input className="premium-input pl-16 italic" {...props} />
+      <input className="premium-input pl-16" {...props} />
     </div>
   </div>
 );

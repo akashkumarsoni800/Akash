@@ -105,12 +105,12 @@ export default function TeachersManagement() {
       {/* --- TOP BAR --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <div className="space-y-1">
-            <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Faculty Registry</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Academic Personnel Management v4.2</p>
+            <h3 className="text-2xl font-medium text-slate-900   leading-none">Faculty Registry</h3>
+            <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Academic Personnel Management v4.2</p>
          </div>
          <button 
            onClick={() => setIsModalOpen(true)}
-           className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 italic border-none shadow-xl"
+           className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 border-none shadow-xl"
          >
            <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Induct Faculty
          </button>
@@ -134,23 +134,23 @@ export default function TeachersManagement() {
                   </div>
 
                   <div className="space-y-6">
-                     <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-2xl font-black border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                     <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-2xl font-medium border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
                         {t.full_name?.[0]}
                      </div>
                      
                      <div className="space-y-1">
-                        <h4 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">{t.full_name}</h4>
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">{t.subject || 'Staff Member'}</p>
+                        <h4 className="text-xl font-medium text-slate-900   leading-none">{t.full_name}</h4>
+                        <p className="text-[10px] font-medium text-emerald-600  ">{t.subject || 'Staff Member'}</p>
                      </div>
 
-                     <div className="space-y-3 pt-4 border-t border-slate-50 italic">
+                     <div className="space-y-3 pt-4 border-t border-slate-50">
                         <div className="flex items-center gap-3 text-slate-400">
                            <Mail size={14} className="text-slate-200" />
-                           <p className="text-[10px] font-bold tracking-tight">{t.email}</p>
+                           <p className="text-[10px] font-medium tracking-tight">{t.email}</p>
                         </div>
                         <div className="flex items-center gap-3 text-slate-400">
                            <Phone size={14} className="text-slate-200" />
-                           <p className="text-[10px] font-bold tracking-tight">{t.phone || 'No Registry Contact'}</p>
+                           <p className="text-[10px] font-medium tracking-tight">{t.phone || 'No Registry Contact'}</p>
                         </div>
                      </div>
                   </div>
@@ -163,8 +163,8 @@ export default function TeachersManagement() {
                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
                   <GraduationCap size={40} />
                </div>
-               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-2">Zero faculty records indexed</p>
-               <p className="text-[9px] font-bold text-slate-200 uppercase tracking-widest italic leading-relaxed">Initialize faculty induction to begin indexing.</p>
+               <p className="text-[10px] font-medium text-slate-300   mb-2">Zero faculty records indexed</p>
+               <p className="text-[9px] font-medium text-slate-200  tracking-widest leading-relaxed">Initialize faculty induction to begin indexing.</p>
             </div>
          )}
       </div>
@@ -181,8 +181,8 @@ export default function TeachersManagement() {
                >
                   <div className="flex justify-between items-center mb-10">
                      <div className="space-y-1">
-                        <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Induct Faculty</h2>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Academic Personnel Initialization</p>
+                        <h2 className="text-3xl font-medium text-slate-900   leading-none">Induct Faculty</h2>
+                        <p className="text-[10px] font-medium text-slate-400  tracking-widest mt-1">Academic Personnel Initialization</p>
                      </div>
                      <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
                         <X size={20} />
@@ -232,10 +232,10 @@ export default function TeachersManagement() {
                      </div>
 
                      <div className="flex gap-4 pt-6">
-                        <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-emerald-600 italic border-none shadow-xl">
+                        <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-emerald-600 border-none shadow-xl">
                            {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Verify & Induct</>}
                         </button>
-                        <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black uppercase tracking-[0.1em] text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+                        <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-medium   text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
                      </div>
                   </form>
                </motion.div>
@@ -249,10 +249,10 @@ export default function TeachersManagement() {
 
 const InputField = ({ label, icon: Icon, ...props }: any) => (
   <div className="space-y-2 group">
-    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-emerald-600">{label}</label>
+    <label className="block text-[9px] font-medium text-slate-400   ml-2 transition-colors group-focus-within:text-emerald-600">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all italic text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-medium text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
     </div>
   </div>
 );

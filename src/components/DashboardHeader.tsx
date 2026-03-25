@@ -36,9 +36,9 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
           <input 
             type="text" 
             placeholder="Search records, assets, or bulletins..." 
-            className="bg-transparent border-none outline-none text-[13px] font-bold text-slate-800 w-full placeholder:text-slate-300 italic"
+            className="bg-transparent border-none outline-none text-[13px] font-medium text-slate-800 w-full placeholder:text-slate-300"
           />
-          <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+          <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-lg text-[10px] font-medium text-slate-400  ">
              ⌘ K
           </div>
         </div>
@@ -74,10 +74,10 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
               <div className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm ${userRole === 'admin' ? 'bg-blue-500' : userRole === 'teacher' ? 'bg-emerald-500' : 'bg-purple-500'}`}></div>
             </div>
             <div className="text-left hidden xs:block">
-              <p className="text-sm font-black text-slate-900  uppercase tracking-tight leading-none mb-1.5">{full_name || 'System User'}</p>
+              <p className="text-sm font-medium text-slate-900   tracking-tight leading-none mb-1.5">{full_name || 'System User'}</p>
               <div className="flex items-center gap-1.5">
                  <ShieldCheck size={10} className={roleColor} />
-                 <p className={`text-[9px] font-black uppercase tracking-[0.1em] ${roleColor}`}>{roleLabel}</p>
+                 <p className={`text-[9px] font-medium   ${roleColor}`}>{roleLabel}</p>
               </div>
             </div>
             <ChevronDown size={14} className={`text-slate-300 transition-transform duration-500 hidden sm:block ${isProfileOpen ? 'rotate-180' : ''}`} />
@@ -94,8 +94,8 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
                   className="absolute right-0 mt-4 w-72 bg-white rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-3 z-20"
                 >
                   <div className="px-5 py-4 border-b border-slate-50 mb-3 flex items-center justify-between">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Global Control</p>
-                    <div className={`${roleBg} ${roleColor} px-2 py-1 rounded text-[8px] font-black uppercase tracking-tighter`}>{userRole}</div>
+                    <p className="text-[10px] font-medium text-slate-300  tracking-widest leading-none">Global Control</p>
+                    <div className={`${roleBg} ${roleColor} px-2 py-1 rounded text-[8px] font-medium  `}>{userRole}</div>
                   </div>
                   
                   <div className="space-y-1">
@@ -131,7 +131,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 const HeaderMenuItem = ({ icon: Icon, label, onClick, variant = 'default' }: any) => (
   <button 
     onClick={onClick}
-    className={`flex w-full items-center gap-4 p-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all group  italic ${
+    className={`flex w-full items-center gap-4 p-4 rounded-xl text-[11px] font-medium  tracking-widest transition-all group  ${
       variant === 'danger' 
       ? 'text-rose-400 hover:bg-rose-50 hover:text-rose-600' 
       : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'

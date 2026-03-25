@@ -65,7 +65,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4" />
-        <p className="font-black uppercase tracking-widest text-gray-400 italic animate-pulse">Verifying Access...</p>
+        <p className="font-bold  tracking-widest text-gray-400 animate-pulse">Verifying Access...</p>
       </div>
     );
   }
