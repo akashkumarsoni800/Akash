@@ -1,110 +1,157 @@
-import { useState } from 'react';
-import { useGetAllApprovedStudents, useApproveStudent } from '../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Input } from '../ui/input';
-import { Search, CheckCircle, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../supabaseClient';
+import { 
+  Users, Search, GraduationCap, 
+  Trash2, Mail, Phone, 
+  MoreVertical, ChevronRight, 
+  RefreshCw, Filter, CheckCircle2,
+  Calendar, ShieldCheck, UserCheck
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { ApprovalStatus } from '../../backend';
-import { Alert, AlertDescription } from '../ui/alert';
-import { AlertCircle } from 'lucide-react';
 
 export default function StudentsManagement() {
-  const { data: students, isLoading } = useGetAllApprovedStudents();
-  const approveStudent = useApproveStudent();
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [classFilter, setClassFilter] = useState('All');
+  const [classes, setClasses] = useState<string[]>(['All']);
 
-  const filteredStudents = students?.filter((student: any) =>
-    student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.classAssignment.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
-  const handleApprove = async (studentId: bigint, status: ApprovalStatus) => {
+  const fetchStudents = async () => {
+    setLoading(true);
     try {
-      await approveStudent.mutateAsync({ studentId, status });
-      toast.success(`Student ${status === ApprovalStatus.approved ? 'approved' : 'rejected'} successfully`);
-    } catch (error) {
-      console.error('Approval error:', error);
-      toast.error('Failed to update student status');
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('is_approved', 'approved')
+        .order('roll_no', { ascending: true });
+
+      if (error) throw error;
+      setStudents(data || []);
+      
+      if (data) {
+        const uniqueClasses = ['All', ...new Set(data.map(s => s.class_name))];
+        setClasses(uniqueClasses);
+      }
+    } catch (err: any) {
+      toast.error("Sync Error: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formatDate = (timestamp: bigint) => {
-    return new Date(Number(timestamp) / 1000000).toLocaleDateString();
-  };
+  const filteredStudents = students.filter(s => 
+    (classFilter === 'All' || s.class_name === classFilter) &&
+    (s.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_no?.toString().includes(searchTerm))
+  );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Students Management</CardTitle>
-        <CardDescription>View and manage all student registrations</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name or class..."
-              value={searchTerm}
-              onChange={(e: any) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
+    <div className="space-y-8">
+      
+      {/* --- TOP BAR & FILTERS --- */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+         <div className="space-y-1 text-left">
+            <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Personnel Registry</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Active Scholar Index & Management v4.2</p>
+         </div>
+ 
+         <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
+            <div className="relative group/search flex-1 md:w-80">
+               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-blue-500 transition-colors" size={18} />
+               <input 
+                 type="text" 
+                 placeholder="Search registry index..."
+                 value={searchTerm}
+                 onChange={(e) => setSearchTerm(e.target.value)}
+                 className="premium-input italic text-sm pl-16 py-4"
+               />
+            </div>
+            <div className="relative md:w-48">
+               <Filter className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={16} />
+               <select 
+                 value={classFilter}
+                 onChange={(e) => setClassFilter(e.target.value)}
+                 className="premium-input italic text-[10px] pl-14 py-4 appearance-none text-slate-500"
+               >
+                  {classes.map(c => <option key={c} value={c}>{c}</option>)}
+               </select>
+            </div>
+         </div>
+      </div>
 
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Note: Only approved students are currently displayed. Pending registrations management is being developed.
-          </AlertDescription>
-        </Alert>
-
-        {isLoading ? (
-          <div className="text-center py-8">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="mt-2 text-sm text-muted-foreground">Loading students...</p>
-          </div>
-        ) : filteredStudents && filteredStudents.length > 0 ? (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Full Name</TableHead>
-                  <TableHead>Guardian</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Registered</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudents.map((student: any) => (
-                  <TableRow key={student.id.toString()}>
-                    <TableCell className="font-medium">{student.id.toString()}</TableCell>
-                    <TableCell>{student.fullName}</TableCell>
-                    <TableCell>{student.guardianName}</TableCell>
-                    <TableCell>{student.contactNumber}</TableCell>
-                    <TableCell>{student.classAssignment}</TableCell>
-                    <TableCell>
-                      <Badge variant={student.status === 'approved' ? 'default' : 'secondary'}>
-                        {student.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatDate(student.registrationTime)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No students found</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {/* --- STUDENT LIST --- */}
+      <div className="premium-card overflow-hidden shadow-sm">
+         <div className="overflow-x-auto">
+            <table className="w-full text-left min-w-[800px]">
+               <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic">
+                     <th className="px-10 py-6">Registry Position</th>
+                     <th className="px-10 py-6">Scholar Identity</th>
+                     <th className="px-10 py-6 text-center">Batch Logic</th>
+                     <th className="px-10 py-6">Parent Identity</th>
+                     <th className="px-10 py-6 text-right">Status</th>
+                  </tr>
+               </thead>
+               <tbody className="divide-y divide-slate-50">
+                  {filteredStudents.map((s, idx) => (
+                     <motion.tr 
+                       key={s.student_id}
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       transition={{ delay: idx * 0.02 }}
+                       className="hover:bg-slate-50/50 transition-all group"
+                     >
+                        <td className="px-10 py-5">
+                           <div className="flex items-center gap-4">
+                              <span className="text-[10px] font-black text-slate-300 group-hover:text-blue-200 transition-colors uppercase">UID-0{idx + 1}</span>
+                              <p className="text-sm font-black text-blue-600 italic tracking-tighter">#{s.roll_no}</p>
+                           </div>
+                        </td>
+                        <td className="px-10 py-5">
+                           <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-900 overflow-hidden border-2 border-white shadow-sm shrink-0">
+                                 <img src={s.photo_url || `https://ui-avatars.com/api/?name=${s.full_name}&background=0f172a&color=fff`} className="w-full h-full object-cover" alt="" />
+                              </div>
+                              <div className="space-y-0.5">
+                                 <p className="text-sm font-black text-slate-900 uppercase italic tracking-tight leading-none truncate max-w-[150px]">{s.full_name}</p>
+                                 <p className="text-[10px] font-bold text-slate-400 italic lowercase tracking-tight">{s.email}</p>
+                              </div>
+                           </div>
+                        </td>
+                        <td className="px-10 py-5 text-center">
+                           <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter border border-slate-50">Grade {s.class_name}</span>
+                        </td>
+                        <td className="px-10 py-5">
+                           <div className="flex items-center gap-3">
+                              <UserCheck size={14} className="text-slate-200" />
+                              <p className="text-[11px] font-bold text-slate-400 uppercase italic tracking-tight truncate max-w-[120px]">{s.father_name}</p>
+                           </div>
+                        </td>
+                        <td className="px-10 py-5 text-right">
+                           <div className="flex items-center justify-end gap-2 text-emerald-600 font-black text-[9px] uppercase tracking-widest italic leading-none">
+                              <CheckCircle2 size={16} /> Verified
+                           </div>
+                        </td>
+                     </motion.tr>
+                  ))}
+               </tbody>
+            </table>
+         </div>
+         
+         {filteredStudents.length === 0 && !loading && (
+            <div className="py-24 text-center">
+               <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                  <GraduationCap size={40} />
+               </div>
+               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-2">No scholar records in this sector</p>
+               <p className="text-[9px] font-bold text-slate-200 uppercase tracking-widest italic leading-relaxed">Adjust filters or search parameters to expand query.</p>
+            </div>
+         )}
+      </div>
+    </div>
   );
 }

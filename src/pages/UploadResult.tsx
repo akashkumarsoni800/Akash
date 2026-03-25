@@ -120,99 +120,226 @@ const UploadResult = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-6 pb-20 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="bg-indigo-900 p-3 rounded-2xl text-white shadow-lg"><FileUp size={24} /></div>
-          <div>
-            <h1 className="text-3xl font-black text-gray-900 uppercase italic">Publish Results</h1>
-            <p className="text-gray-400 font-bold text-xs uppercase tracking-widest italic">ASM v3.0 Intelligent Systems</p>
-          </div>
+    <div className="min-h-screen bg-[var(--bg-main)] py-8 px-4 md:px-10 pb-32">
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* --- DYNAMIC HEADER --- */}
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
+           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                Academic<br/>
+                <span className="text-emerald-600">Registry</span>
+              </h1>
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
+                <Target size={12} className="text-emerald-500" /> Scholastic Performance Ledger & Registry v4.2
+              </p>
+           </motion.div>
+           
+           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+             <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">🎓</div>
+             <div>
+               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Active Scholars</p>
+               <p className="text-3xl font-black text-slate-900 tracking-tighter italic">{students.length} Records</p>
+             </div>
+           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Candidate List */}
-          <div className="lg:col-span-4 bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 h-[700px] flex flex-col">
-            <div className="space-y-3 mb-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
-                <input type="text" placeholder="Search name..." className="w-full bg-gray-50 border-none rounded-2xl pl-10 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100" onChange={(e) => setSearchTerm(e.target.value)} />
+        <div className="grid lg:grid-cols-3 gap-10">
+          {/* --- SCHOLAR DISCOVERY PANEL --- */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            className="lg:col-span-1 premium-card p-8 flex flex-col h-[850px] group"
+          >
+            <div className="mb-10 space-y-8">
+              <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-3">
+                <Search size={22} className="text-emerald-600" /> Discovery Hub
+              </h2>
+              
+              <div className="space-y-4">
+                <div className="relative group/input">
+                  <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-emerald-500 transition-colors" size={18} />
+                  <input 
+                    type="text" 
+                    placeholder="Search scholar name..." 
+                    className="premium-input w-full pl-16 outline-none italic"
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                
+                <select 
+                  className="premium-input w-full appearance-none italic uppercase !text-[10px]"
+                  onChange={(e) => setClassFilter(e.target.value)}
+                >
+                  {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'Manifest: All Classes' : `Manifest: ${c}`}</option>)}
+                </select>
               </div>
-              <select className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-xs font-black text-indigo-900" value={classFilter} onChange={(e) => setClassFilter(e.target.value)}>
-                {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : `${c}`}</option>)}
-              </select>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-              {filteredStudents.map((s:any) => (
-                <div key={s.student_id} onClick={() => setSelectedStudent(s)} className={`p-4 rounded-2xl cursor-pointer transition-all border ${selectedStudent?.student_id === s.student_id ? 'bg-indigo-900 text-white shadow-lg scale-[1.02]' : 'bg-gray-50 hover:bg-white hover:border-indigo-100'}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`h-8 w-8 rounded-lg ${selectedStudent?.student_id === s.student_id ? 'bg-white/20' : 'bg-white text-indigo-900 shadow-sm'} flex items-center justify-center font-black text-xs`}>{s.full_name[0]}</div>
+
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+              {filteredStudents.map(s => (
+                <div 
+                  key={s.student_id} 
+                  onClick={() => setSelectedStudent(s)}
+                  className={`p-6 rounded-[2rem] border transition-all cursor-pointer group/item hover:shadow-xl ${
+                    selectedStudent?.student_id === s.student_id 
+                    ? 'bg-slate-900 border-slate-900 text-white shadow-2xl scale-[0.98]' 
+                    : 'bg-white border-slate-50 hover:border-emerald-200 hover:bg-emerald-50/10'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="font-bold text-sm">{s.full_name}</h4>
-                      <p className={`text-[10px] uppercase font-black ${selectedStudent?.student_id === s.student_id ? 'text-indigo-200' : 'text-gray-400'}`}>Current: {s.class_name}</p>
+                      <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${selectedStudent?.student_id === s.student_id ? 'text-emerald-400' : 'text-slate-400'}`}>Class {s.class_name}</p>
+                      <h4 className="font-black text-lg tracking-tighter uppercase italic leading-none ">{s.full_name}</h4>
                     </div>
+                    {selectedStudent?.student_id === s.student_id && <CheckCircle size={20} className="text-emerald-400" />}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Form Area */}
-          <div className="lg:col-span-8 bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div className={`p-5 rounded-[2rem] border-2 transition-all flex items-center justify-between ${isFinalExam ? 'bg-orange-50 border-orange-500' : 'bg-gray-50 border-transparent'}`}>
-                    <div className="flex items-center gap-3">
-                       <Zap size={20} className={isFinalExam ? 'text-orange-500' : 'text-gray-300'}/>
-                       <span className="text-xs font-black uppercase text-gray-700 text-left leading-tight">Yearly Exam<br/><span className="text-[9px] text-gray-400">Promotes if Passed</span></span>
-                    </div>
-                    <input type="checkbox" checked={isFinalExam} onChange={(e) => setIsFinalExam(e.target.checked)} className="w-6 h-6 accent-orange-600 cursor-pointer" />
+          {/* --- PERFORMANCE REGISTRY --- */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            className="lg:col-span-2 premium-card p-10 md:p-16 relative overflow-hidden group min-h-[850px]"
+          >
+            {selectedStudent ? (
+              <div className="space-y-12 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div>
+                    <h3 className="text-4xl font-black text-slate-800 tracking-tighter uppercase leading-none mb-3">Entry Session</h3>
+                    <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                      <User size={14} className="text-emerald-500" /> {selectedStudent.full_name} <span className="w-1 h-1 bg-slate-200 rounded-full"></span> #{selectedStudent.student_id}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100">
+                     <Award size={20} />
+                     <span className="text-xs font-black uppercase tracking-widest">Merit Authorized</span>
+                  </div>
                 </div>
 
-                <div className="p-5 rounded-[2rem] bg-indigo-50 border-2 border-indigo-100 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                       <Target size={20} className="text-indigo-600"/>
-                       <span className="text-xs font-black uppercase text-indigo-900">Passing %</span>
+                <form onSubmit={handleSubmit} className="space-y-10">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Protocol Selection</label>
+                       <select 
+                         required 
+                         className="premium-input w-full italic"
+                         onChange={(e) => handleExamSelect(e.target.value)}
+                         value={selectedExamId}
+                       >
+                         <option value="">Choose Exam Manifest</option>
+                         {exams.map((e:any) => <option key={e.id} value={e.id}>{e.exam_name || e.title} ({e.session_year || 'Current'})</option>)}
+                       </select>
                     </div>
-                    <input type="number" value={passMarkPercent} onChange={(e) => setPassMarkPercent(Number(e.target.value))} className="w-16 bg-white border-2 border-indigo-200 rounded-xl p-2 text-center font-black text-indigo-600 outline-none" />
-                </div>
-             </div>
 
-             <div className="space-y-6">
-                <select value={selectedExamId} onChange={(e) => handleExamSelect(e.target.value)} className="w-full bg-gray-50 border-none rounded-2xl p-5 font-black text-sm uppercase outline-none focus:ring-2 focus:ring-indigo-100 appearance-none">
-                  <option value="">-- Choose Exam Template --</option>
-                  {exams.map((ex:any) => <option key={ex.id} value={ex.id}>{ex.title}</option>)}
-                </select>
-
-                <div className="space-y-3 bg-gray-50/50 p-6 rounded-[2.5rem] border border-dashed border-gray-200">
-                  {results.map((res, index) => (
-                    <div key={index} className="flex gap-3 items-center bg-white p-3 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
-                      <input type="text" placeholder="Subject" value={res.subject} className="flex-1 bg-transparent border-none font-black text-sm uppercase outline-none" onChange={(e) => {
-                        const nr = [...results]; nr[index].subject = e.target.value; setResults(nr);
-                      }} />
-                      <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100">
-                        <input type="number" placeholder="00" value={res.marks} className="w-12 bg-transparent border-none text-sm font-black text-center text-indigo-900 outline-none" onChange={(e) => {
-                          const nr = [...results]; nr[index].marks = e.target.value; setResults(nr);
-                        }} />
-                        <span className="text-indigo-200 font-bold">/</span>
-                        <input type="number" value={res.max_marks} className="w-10 bg-transparent border-none text-[10px] font-bold text-gray-400 text-center outline-none" onChange={(e) => {
-                          const nr = [...results]; nr[index].max_marks = e.target.value; setResults(nr);
-                        }} />
-                      </div>
-                      <button type="button" onClick={() => setResults(results.filter((_, i) => i !== index))} className="p-2 text-gray-200 hover:text-red-500 transition-colors"><Trash2 size={18}/></button>
+                    <div className="space-y-4 flex flex-col justify-end">
+                       <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex items-center justify-between">
+                          <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic cursor-pointer flex items-center gap-3">
+                            <Zap size={16} className={isFinalExam ? "text-emerald-500" : "text-slate-300"} /> 
+                            Apply Scholarship Promotion?
+                          </label>
+                          <input 
+                            type="checkbox" 
+                            className="w-6 h-6 rounded-lg border-slate-300 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer"
+                            checked={isFinalExam}
+                            onChange={(e) => setIsFinalExam(e.target.checked)}
+                          />
+                       </div>
                     </div>
-                  ))}
-                  <button type="button" onClick={() => setResults([...results, { subject: '', marks: '', max_marks: '100' }])} className="w-full py-4 border-2 border-dotted border-gray-200 rounded-2xl text-gray-400 font-black text-[10px] uppercase hover:bg-white hover:text-indigo-600 transition-all">+ Add Subject Record</button>
+                  </div>
+
+                  <div className="space-y-8">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3 ml-1">
+                      <BookOpen size={16} className="text-emerald-600"/> Metrics Compilation
+                    </h3>
+                    
+                    <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-inner">
+                      <table className="w-full">
+                        <thead className="bg-slate-100/50 border-b border-slate-100">
+                          <tr>
+                            <th className="text-left px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Course Title</th>
+                            <th className="text-center px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Achieved</th>
+                            <th className="text-center px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Max Score</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {results.map((r, i) => (
+                            <tr key={i} className="group/row hover:bg-white transition-colors">
+                              <td className="px-8 py-6 font-black text-slate-800 text-sm uppercase tracking-tight italic group-hover/row:text-emerald-600 transition-colors">{r.subject}</td>
+                              <td className="px-8 py-6 text-center">
+                                <input 
+                                  type="number" 
+                                  required
+                                  value={r.marks}
+                                  onChange={(e) => {
+                                    const newRes = [...results];
+                                    newRes[i].marks = e.target.value;
+                                    setResults(newRes);
+                                  }}
+                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm mx-auto italic"
+                                  placeholder="0"
+                                />
+                              </td>
+                              <td className="px-8 py-6 text-center">
+                                <input 
+                                  type="number" 
+                                  required
+                                  value={r.max_marks}
+                                  onChange={(e) => {
+                                    const newRes = [...results];
+                                    newRes[i].max_marks = e.target.value;
+                                    setResults(newRes);
+                                  }}
+                                  className="w-24 bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 outline-none transition-all shadow-sm italic text-slate-400 mx-auto"
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <button 
+                      type="button" 
+                      onClick={() => setResults([...results, { subject: '', marks: '', max_marks: '100' }])}
+                      className="w-full py-5 border-2 border-dashed border-slate-100 rounded-2xl text-[10px] font-black uppercase text-slate-400 tracking-widest hover:bg-emerald-50/30 hover:text-emerald-600 transition-all active:scale-[0.98]"
+                    >
+                      + Append Subject Metric
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-6 pt-10 border-t border-slate-50">
+                    <button 
+                      type="submit" 
+                      disabled={loading}
+                      className="premium-button-admin flex-1 bg-emerald-600 hover:bg-emerald-700 italic border-none shadow-xl shadow-emerald-100"
+                    >
+                      {loading ? <CheckCircle className="animate-spin" size={18}/> : <FileUp size={18}/>}
+                      {loading ? 'Authenticating Registry...' : 'Authorize Result Entry'}
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setSelectedStudent(null)}
+                      className="px-10 py-6 bg-slate-50 text-slate-400 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[11px] hover:bg-slate-900 hover:text-white transition-all active:scale-[0.98] italic"
+                    >
+                      Reset Session
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-center py-40 opacity-20 group-hover:opacity-30 transition-opacity">
+                <div className="w-32 h-32 bg-slate-100 rounded-[3rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+                  <User size={60} className="text-slate-400" />
                 </div>
-                
-                <button onClick={handleSubmit} disabled={loading || !selectedStudent} className="w-full bg-indigo-900 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-black transition-all disabled:opacity-30 flex items-center justify-center gap-3 active:scale-95">
-                  {loading ? (
-                    <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    isFinalExam ? '🚀 Publish & Promote' : 'Upload Academic Result'
-                  )}
-                </button>
-             </div>
-          </div>
+                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4 italic">Manifest Locked</h3>
+                <p className="max-w-xs text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] leading-relaxed">Select a scholar from the Discovery Hub to initiate the scholastic registry protocol.</p>
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
     </div>

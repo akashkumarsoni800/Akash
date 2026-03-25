@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Package, Plus, Trash2, ShoppingCart, TrendingUp, Archive, Activity } from 'lucide-react';
+import { 
+  Package, Plus, Trash2, ShoppingCart, 
+  TrendingUp, Archive, Activity, ShieldCheck, 
+  Zap, Info, Star, ChevronRight, Layout, RefreshCw,
+  Box, Search, Filter, AlertTriangle
+} from 'lucide-react';
 
 const ManageInventory = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -56,171 +61,280 @@ const ManageInventory = () => {
     }
   };
 
+  if (loading && items.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+         <div className="relative">
+            <RefreshCw size={60} className="animate-spin text-amber-600/20"/>
+            <Box size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-amber-600" />
+         </div>
+         <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Initializing Logistics Manifest...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Header Section */}
+        
+        {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-black text-slate-800 tracking-tighter uppercase leading-none">
-                Global<br/>
-                <span className="text-amber-500">Inventory</span>
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none italic">
+                Logistics<br/>
+                <span className="text-amber-500">Command</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
-                <Activity size={12} className="text-amber-500" /> Logistics Hub & Asset Tracking Suite
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+                <ShieldCheck size={12} className="text-amber-500" /> Authorized Institutional Asset Tracking Suite v4.2
               </p>
            </motion.div>
            
-           <button 
-             onClick={() => setShowAddModal(true)}
-             className="bg-slate-900 shadow-xl shadow-slate-200 text-white px-10 py-5 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all active:scale-95"
-           >
-             <Plus size={18} /> Authorize New Acquisition
-           </button>
+           <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="bg-white px-8 py-5 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
+                 <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform shadow-inner">
+                    <Archive size={22} />
+                 </div>
+                 <div className="pr-2">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Stock Portfolio</p>
+                    <p className="text-xl font-black text-slate-900 uppercase italic leading-none">{items.length} Units</p>
+                 </div>
+              </div>
+              <button 
+                onClick={() => setShowAddModal(true)}
+                className="premium-button-admin !bg-slate-900 hover:!bg-amber-600 italic"
+              >
+                <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" /> Authorize Acquisition
+              </button>
+           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-20 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all mb-8">
-              <Archive size={24} />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Stock Portfolio</p>
-            <h2 className="text-4xl font-black text-slate-800 tracking-tighter">{items.length} Units</h2>
-          </motion.div>
+        {/* --- ANALYTICS TIERS --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card p-10 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 opacity-20 rounded-full -mr-20 -mt-20 transition-transform group-hover:scale-110"></div>
+              <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-10 italic">Institutional Valuation</p>
+              <div className="space-y-2">
+                 <p className="text-5xl font-black text-slate-900 tracking-tighter italic leading-none">₹ {items.reduce((sum, item) => sum + Number(item.total_value), 0).toLocaleString()}</p>
+                 <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Asset Capital Locked</p>
+                 </div>
+              </div>
+           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 opacity-20 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
-            <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 mb-8 font-black text-xl">₹</div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Asset Valuation</p>
-            <h2 className="text-4xl font-black text-amber-600 tracking-tighter">₹ {items.reduce((sum, item) => sum + Number(item.total_value), 0).toLocaleString()}</h2>
-          </motion.div>
+           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="premium-card !bg-amber-600 !border-amber-500 p-10 shadow-2xl shadow-amber-100 relative overflow-hidden group">
+              <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 blur-3xl rounded-full -mr-32 -mb-32 transition-transform group-hover:scale-110"></div>
+              <p className="text-[9px] font-black text-amber-200 uppercase tracking-[0.3em] mb-10 italic">Projected Yield</p>
+              <div className="space-y-2">
+                 <p className="text-5xl font-black text-white tracking-tighter italic leading-none">₹ {items.reduce((sum, item) => sum + (item.quantity * item.selling_price), 0).toLocaleString()}</p>
+                 <div className="flex items-center gap-2">
+                    <TrendingUp size={12} className="text-white/40" />
+                    <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">Market Value Potential</p>
+                 </div>
+              </div>
+           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500 opacity-10 blur-3xl"></div>
-            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-8">
-              <TrendingUp size={24} />
-            </div>
-            <p className="text-[10px] font-black text-white/50 uppercase tracking-widest mb-1">Yield Projection</p>
-            <h2 className="text-4xl font-black text-white tracking-tighter italic">₹ {items.reduce((sum, item) => sum + (item.quantity * item.selling_price), 0).toLocaleString()}</h2>
-          </motion.div>
+           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card p-10 flex flex-col justify-between group">
+              <div className="flex justify-between items-start">
+                 <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] italic">Critical Status</h3>
+                 <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 shadow-inner">
+                    <AlertTriangle size={20} />
+                 </div>
+              </div>
+              <div className="space-y-4">
+                 <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-slate-900 italic tracking-tighter">{items.filter(i => i.quantity < 5).length}</span>
+                    <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">SKUs At Risk</span>
+                 </div>
+                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                       className="bg-rose-500 h-full transition-all duration-1000" 
+                       style={{ width: `${(items.filter(i => i.quantity < 5).length / (items.length || 1)) * 100}%` }}
+                    />
+                 </div>
+              </div>
+           </motion.div>
         </div>
 
-        {/* Inventory Master List */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-slate-100 rounded-[3rem] p-0 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
-          <div className="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-            <h3 className="text-[12px] font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-4">
-              <Package size={20} className="text-amber-500" /> Logistics Master Manifest
-            </h3>
-            <div className="flex items-center gap-2">
-               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Real-time Cloud Sync</span>
-            </div>
-          </div>
+        {/* --- INVENTORY MASTER TABLE --- */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="premium-card overflow-hidden relative group"
+        >
+           <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 opacity-20" />
+           
+           <div className="p-10 md:p-14 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8 bg-slate-50/20">
+              <div className="space-y-3 text-center md:text-left">
+                 <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Asset<br/><span className="text-amber-600">Manifest</span></h2>
+                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Logistics Oversight Terminal</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-3">
+                 <div className="bg-white border border-slate-100 px-6 py-3 rounded-2xl flex items-center gap-3 shadow-inner">
+                    <Search size={16} className="text-slate-300" />
+                    <input type="text" placeholder="SKU Search..." className="bg-transparent border-none focus:ring-0 text-[10px] font-black text-slate-900 uppercase tracking-widest w-32 placeholder:text-slate-200" />
+                 </div>
+              </div>
+           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] bg-slate-50/50">
-                  <th className="px-10 py-6">Asset Nomenclature</th>
-                  <th className="px-10 py-6">Logistics Group</th>
-                  <th className="px-10 py-6">Available Stock</th>
-                  <th className="px-10 py-6">Market Valuation</th>
-                  <th className="px-10 py-6 text-right">System Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {items.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-all group">
-                    <td className="px-10 py-8 font-black text-slate-900 tracking-tighter uppercase text-lg group-hover:text-amber-600 transition-colors">{item.item_name}</td>
-                    <td className="px-10 py-8">
-                      <span className="bg-slate-50 text-slate-500 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-100 group-hover:bg-white transition-colors">
-                        {item.category}
-                      </span>
-                    </td>
-                    <td className="px-10 py-8">
-                       <div className="flex items-center gap-3">
-                         <span className={`text-xl font-black tracking-tighter ${item.quantity < 5 ? 'text-rose-600' : 'text-slate-900'}`}>{item.quantity} units</span>
-                         {item.quantity < 5 && <span className="bg-rose-50 text-rose-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest animate-pulse border border-rose-100">CRITICAL LOW</span>}
-                       </div>
-                    </td>
-                    <td className="px-10 py-8 font-black text-slate-800 tracking-tighter text-lg italic">₹{item.selling_price.toLocaleString()}</td>
-                    <td className="px-10 py-8 text-right">
-                       <button onClick={() => deleteItem(item.id)} className="w-12 h-12 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all hover:shadow-lg hover:shadow-rose-100">
-                         <Trash2 size={18} />
-                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {items.length === 0 && (
-            <div className="py-32 flex flex-col items-center justify-center opacity-20 bg-slate-50/20">
-              <Archive size={80} className="text-slate-400" />
-              <p className="mt-6 font-black uppercase text-[12px] tracking-[0.4em] text-slate-400 italic">Inventory Vault Empty</p>
-            </div>
-          )}
+           <div className="overflow-x-auto custom-scrollbar">
+             <table className="w-full text-left">
+               <thead>
+                 <tr className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] italic bg-slate-50/50">
+                   <th className="px-12 py-8">Nomenclature & Identity</th>
+                   <th className="px-12 py-8 text-center">Logistics Group</th>
+                   <th className="px-12 py-8 text-center">Available Volume</th>
+                   <th className="px-12 py-8 text-center">Unit Valuation</th>
+                   <th className="px-12 py-8 text-right">Directives</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-slate-100">
+                 {items.map((item, idx) => (
+                   <tr key={item.id} className="hover:bg-slate-50/80 transition-all group/row">
+                     <td className="px-12 py-8">
+                        <div className="flex items-center gap-5">
+                           <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/row:border-amber-200 group-hover/row:text-amber-600 text-xl italic transition-colors">
+                              {item.item_name ? item.item_name.charAt(0) : 'A'}
+                           </div>
+                           <div>
+                              <p className="font-black text-slate-900 uppercase text-sm  italic tracking-tight">{item.item_name}</p>
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">ASM SKU INDEX: 00{idx + 1}</p>
+                           </div>
+                        </div>
+                     </td>
+                     <td className="px-12 py-8 text-center">
+                       <span className="bg-white px-5 py-2 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest border border-slate-100 group-hover/row:border-amber-100 group-hover/row:text-amber-600 transition-all  italic">
+                         {item.category}
+                       </span>
+                     </td>
+                     <td className="px-12 py-8 text-center">
+                        <div className="space-y-2">
+                           <div className="flex items-center justify-center gap-3">
+                             <span className={`text-2xl font-black tracking-tighter italic  ${item.quantity < 5 ? 'text-rose-500' : 'text-slate-900 group-hover/row:text-amber-600'}`}>{item.quantity}</span>
+                             <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Units</span>
+                           </div>
+                           {item.quantity < 5 && (
+                              <div className="inline-flex items-center gap-2 bg-rose-50 px-3 py-1 rounded-full border border-rose-100 animate-pulse">
+                                 <div className="w-1 h-1 bg-rose-500 rounded-full" />
+                                 <p className="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em]">Depleting</p>
+                              </div>
+                           )}
+                        </div>
+                     </td>
+                     <td className="px-12 py-8 text-center">
+                        <div className="space-y-1">
+                           <p className="text-xl font-black text-slate-900  italic tracking-tighter">₹{item.selling_price.toLocaleString()}</p>
+                           <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic group-hover/row:text-amber-500 transition-colors">Market Rate</p>
+                        </div>
+                     </td>
+                     <td className="px-12 py-8 text-right">
+                        <button onClick={() => deleteItem(item.id)} className="inline-flex w-12 h-12 bg-slate-50 text-slate-200 rounded-2xl items-center justify-center hover:bg-rose-600 hover:text-white transition-all hover:shadow-2xl active:scale-95 group/btn">
+                          <Trash2 size={20} className="group-hover/btn:scale-110 transition-transform" />
+                        </button>
+                     </td>
+                   </tr>
+                 ))}
+               </tbody>
+             </table>
+           </div>
+           {items.length === 0 && (
+             <div className="py-40 flex flex-col items-center justify-center opacity-20 bg-slate-50 text-center space-y-8">
+               <Archive size={100} className="text-slate-300 mx-auto" />
+               <div className="space-y-2">
+                  <p className="font-black uppercase text-3xl tracking-tighter text-slate-900 italic leading-none">Vault Empty</p>
+                  <p className="font-black uppercase text-[10px] tracking-[0.4em] text-slate-400 italic">No assets detected on current frequency.</p>
+               </div>
+             </div>
+           )}
         </motion.div>
+
+        {/* --- FOOTER DECOR --- */}
+        <div className="pt-12 text-center">
+           <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50 transition-opacity hover:opacity-100 group cursor-default">
+              <ShieldCheck size={14} className="text-amber-500" />
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Institutional Standard ASM v3.0 Authorized Logistics</p>
+           </div>
+        </div>
+
       </div>
 
-      {/* Modern Add Item Modal */}
+      {/* --- ADD ITEM MODAL --- */}
       <AnimatePresence>
         {showAddModal && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-50 flex items-center justify-center p-6">
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-white border border-slate-100 w-full max-w-xl p-12 md:p-16 rounded-[3.5rem] relative shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 left-0 w-full h-2 bg-amber-500"></div>
-               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50 opacity-20 rounded-full -mr-32 -mt-32"></div>
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl z-[100] flex items-center justify-center p-6">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: 40 }} 
+               animate={{ opacity: 1, scale: 1, y: 0 }} 
+               exit={{ opacity: 0, scale: 0.9, y: 40 }} 
+               className="bg-white border border-slate-100 w-full max-w-xl p-12 md:p-16 rounded-[4rem] relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden"
+            >
+               <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-amber-500 to-orange-600"></div>
+               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50/50 blur-3xl rounded-full -mr-32 -mt-32 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                
-               <h2 className="text-4xl font-black text-slate-800 tracking-tighter uppercase leading-none mb-12 relative z-10">Asset Acquisition<br/><span className="text-amber-500">Protocol</span></h2>
+               <div className="flex items-center gap-6 mb-12 relative z-10 border-b border-slate-50 pb-8">
+                  <div className="w-14 h-14 bg-amber-50 rounded-[1.5rem] flex items-center justify-center text-amber-600 shadow-inner">
+                     <Plus size={30} />
+                  </div>
+                  <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none italic ">Asset<br/><span className="text-amber-600">Acquisition</span></h2>
+               </div>
                
                <form onSubmit={handleAddItem} className="space-y-10 relative z-10">
-                 <div className="space-y-4">
-                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Nomenclature</label>
-                   <input type="text" placeholder="Strategic Item ID..." required className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" 
-                     onChange={e => setNewItem({...newItem, item_name: e.target.value})} />
-                 </div>
+                 <InputField 
+                   label="Nomenclature & Strategic ID *" 
+                   placeholder="Ex: Advanced Calculus Textbook" 
+                   required 
+                   icon={Layout}
+                   onChange={(e: any) => setNewItem({...newItem, item_name: e.target.value})} 
+                 />
                  
-                 <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Logistics Class</label>
-                      <select className="premium-input w-full p-6 text-[10px] uppercase font-black bg-slate-50 border-slate-100" 
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                    <div className="space-y-2 group">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-amber-500">Logistics Classification</label>
+                      <select className="premium-input bg-slate-50 border-none rounded-2xl font-black uppercase text-[10px] outline-none focus:ring-4 focus:ring-amber-100 focus:bg-white transition-all italic appearance-none cursor-pointer" 
                         onChange={e => setNewItem({...newItem, category: e.target.value})}>
                         <option value="Books">Educational Assets</option>
                         <option value="Uniform">Apparel Units</option>
                         <option value="Stationery">Strategic Supplies</option>
+                        <option value="Others">General Utility</option>
                       </select>
                     </div>
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Volume Count</label>
-                      <input type="number" placeholder="Quantity..." required className="premium-input w-full p-6 text-sm font-black bg-slate-50 border-slate-100" 
-                        onChange={e => setNewItem({...newItem, quantity: Number(e.target.value)})} />
-                    </div>
+                    <InputField 
+                      label="Initial Volume *" 
+                      type="number" 
+                      placeholder="000" 
+                      required 
+                      icon={Box}
+                      onChange={(e: any) => setNewItem({...newItem, quantity: Number(e.target.value)})} 
+                    />
                  </div>
 
-                 <div className="grid grid-cols-2 gap-8">
-                   <div className="space-y-4">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Cost Valuation</label>
-                     <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs uppercase">INR</span>
-                        <input type="number" placeholder="Value..." required className="premium-input w-full p-6 pl-16 text-sm font-black bg-slate-50 border-slate-100" 
-                          onChange={e => setNewItem({...newItem, cost_price: Number(e.target.value)})} />
-                     </div>
-                   </div>
-                   <div className="space-y-4">
-                     <label className="text-[10px] font-black text-amber-600 uppercase tracking-widest ml-1 italic">Market Listing</label>
-                     <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-amber-300 font-bold text-xs uppercase">INR</span>
-                        <input type="number" placeholder="Rate..." required className="premium-input w-full p-6 pl-16 text-sm font-black bg-amber-50/30 border-amber-100 text-amber-600" 
-                          onChange={e => setNewItem({...newItem, selling_price: Number(e.target.value)})} />
-                     </div>
-                   </div>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                   <InputField 
+                     label="Acquisition Valuation *" 
+                     type="number" 
+                     placeholder="0.00" 
+                     required 
+                     icon={ShoppingCart}
+                     prefix="INR"
+                     onChange={(e: any) => setNewItem({...newItem, cost_price: Number(e.target.value)})} 
+                   />
+                   <InputField 
+                     label="Market Listing Rate *" 
+                     type="number" 
+                     placeholder="0.00" 
+                     required 
+                     icon={TrendingUp}
+                     prefix="INR"
+                     accent="amber"
+                     onChange={(e: any) => setNewItem({...newItem, selling_price: Number(e.target.value)})} 
+                   />
                  </div>
 
-                 <div className="flex gap-6 pt-8">
-                   <button type="submit" className="flex-1 bg-slate-900 text-white py-6 px-10 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-amber-600 transition-all shadow-xl active:scale-95">Authorize Entry</button>
-                   <button type="button" onClick={() => setShowAddModal(false)} className="px-10 py-6 border border-slate-200 rounded-2xl font-black uppercase tracking-widest text-[9px] text-slate-400 hover:bg-slate-50 transition-all">Abort</button>
+                 <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t border-slate-50">
+                   <button type="submit" disabled={loading} className="premium-button-admin flex-1 bg-slate-900 text-white hover:bg-amber-600 border-none shadow-2xl italic">
+                      {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldCheck size={20} className="group-hover:rotate-12 transition-transform" /> Authorize Entry</>}
+                   </button>
+                   <button type="button" onClick={() => setShowAddModal(false)} className="px-10 py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all italic">Abort Protocol</button>
                  </div>
                </form>
             </motion.div>
@@ -230,5 +344,16 @@ const ManageInventory = () => {
     </div>
   );
 };
+
+const InputField = ({ label, icon: Icon, prefix, accent, ...props }: any) => (
+  <div className="space-y-1 group">
+    <label className={`block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors ${accent === 'amber' ? 'group-focus-within:text-amber-500' : 'group-focus-within:text-slate-900'}`}>{label}</label>
+    <div className="relative">
+      {Icon && <Icon className={`absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 transition-colors ${accent === 'amber' ? 'group-focus-within/input:text-amber-400' : 'group-focus-within/input:text-slate-400'}`} size={18} />}
+      {prefix && <span className={`absolute ${Icon ? 'left-16' : 'left-8'} top-1/2 -translate-y-1/2 font-black text-[9px] uppercase tracking-widest ${accent === 'amber' ? 'text-amber-300' : 'text-slate-300'}`}>{prefix}</span>}
+      <input className="premium-input italic" style={{ paddingLeft: Icon ? (prefix ? '6rem' : '4rem') : (prefix ? '4rem' : '2rem') }} {...props} />
+    </div>
+  </div>
+);
 
 export default ManageInventory;

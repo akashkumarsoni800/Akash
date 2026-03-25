@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronLeft, GraduationCap, Award, 
   Percent, Layout, FileText, CheckCircle2,
   Printer, Download, ShieldCheck, RefreshCw,
-  Search
+  Search, Target, Zap, ArrowRight, Star
 } from 'lucide-react';
 
 const StudentResult = () => {
@@ -33,7 +34,7 @@ const StudentResult = () => {
         .maybeSingle();
 
       if (!student) {
-        toast.error("Student profile not found.");
+        toast.error("Scholar profile not found.");
         return;
       }
       setStudentData(student);
@@ -53,123 +54,187 @@ const StudentResult = () => {
   };
 
   if (loading) return (
-    <div className="h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
-       <RefreshCw size={40} className="animate-spin text-indigo-600 mb-4"/>
-       <p className="font-black uppercase tracking-widest text-gray-400 italic text-sm">Academic Records Syncing...</p>
+    <div className="h-screen flex flex-col items-center justify-center bg-slate-50">
+       <div className="relative">
+          <RefreshCw size={60} className="animate-spin text-emerald-600/20"/>
+          <GraduationCap size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-emerald-600" />
+       </div>
+       <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8">Syncing Scholastic Records...</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans pb-20">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl shadow-sm text-indigo-600 font-black text-[10px] uppercase mb-10 border border-gray-100 hover:shadow-md transition-all tracking-widest">
-        <ChevronLeft size={16}/> Back to Dashboard
-      </button>
-      
-      <div className="max-w-5xl mx-auto space-y-10">
-        {/* Header Section */}
-        <div className="text-center space-y-3">
-          <div className="inline-block bg-indigo-50 px-4 py-1.5 rounded-full text-[9px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2">Live Marksheets</div>
-          <h1 className="text-4xl md:text-6xl font-black text-gray-900 italic uppercase tracking-tighter leading-none">Academic Portfolio</h1>
-          <p className="text-gray-400 font-bold text-[10px] uppercase tracking-[0.4em]">Adarsh Shishu Mandir - Digital Record</p>
+    <div className="min-h-screen bg-slate-50 py-10 px-4 md:px-10 pb-32 font-inter">
+      <div className="max-w-6xl mx-auto space-y-12">
+        
+        {/* --- NAVIGATION & CONTEXT --- */}
+        <div className="flex justify-between items-center">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all active:scale-95"
+          >
+            <ChevronLeft size={18} className="text-emerald-600 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-black uppercase tracking-widest text-[10px] text-slate-600">Portal Exit</span>
+          </button>
+
+          <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+             <Star size={16} className="text-amber-400 fill-amber-400" />
+             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic ">Academic Distinction Protocol</span>
+          </div>
         </div>
 
+        {/* --- MAIN PORTFOLIO --- */}
         {studentData && results.length > 0 ? (
-          <div className="space-y-8">
-             {/* 🟢 TOP SUMMARY CARD */}
-             <div className="bg-indigo-900 rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-8 md:gap-10 border-b-[8px] md:border-b-[10px] border-indigo-500/30">
-                <div className="absolute -bottom-10 -left-10 opacity-10 pointer-events-none self-center"><GraduationCap size={240}/></div>
-                
-                <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-8 text-center md:text-left">
-                   <div className="w-20 h-20 md:w-32 md:h-32 bg-white/10 backdrop-blur-3xl rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center text-3xl md:text-4xl font-black border border-white/20 shadow-inner">
-                      {studentData.photo_url ? (
-                        <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[1.5rem] md:rounded-[2.5rem]" alt="Profile" />
-                      ) : studentData.full_name[0]}
-                   </div>
-                   <div>
-                      <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-                         <ShieldCheck className="text-emerald-400" size={16}/>
-                         <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-indigo-300">Official Report</span>
-                      </div>
-                      <h2 className="text-2xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight">{studentData.full_name}</h2>
-                      <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
-                         <span className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest">Class {studentData.class_name}</span>
-                         <span className="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest">Roll: {studentData.roll_no}</span>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="flex gap-4">
-                   <QuickStat label="Status" value={results[0].status} isPass={results[0].status === 'PASS'} />
-                   <QuickStat label="Aggregate" value={`${Math.round(results[0].percentage)}%`} isPass={results[0].status === 'PASS'} />
-                </div>
-             </div>
-
-             {/* 🔵 DETAILED MARKS BOARD */}
-             <div className="bg-white rounded-[4rem] p-8 md:p-14 shadow-2xl border border-gray-50 relative overflow-hidden">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-                   <div className="flex items-center gap-4">
-                      <div className="bg-gray-900 p-4 rounded-3xl text-white shadow-xl rotate-3"><FileText size={24}/></div>
-                      <div>
-                         <h3 className="font-black text-gray-900 uppercase text-lg italic">{results[0].exams?.title || 'Final Examination'}</h3>
-                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Batch 2024-2025</p>
-                      </div>
-                   </div>
-                   <button onClick={() => window.print()} className="bg-indigo-50 text-indigo-600 px-8 py-4 rounded-2xl font-black text-[10px] uppercase shadow-sm border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2">
-                      <Printer size={16}/> Print Marksheet
-                   </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   {results[0].marks_data?.map((m:any, i:number) => (
-                     <div key={i} className="flex justify-between items-center bg-gray-50/50 p-7 rounded-[2.5rem] border border-transparent hover:border-indigo-100 hover:bg-white transition-all group shadow-sm">
-                        <div>
-                           <span className="font-black text-gray-400 uppercase text-[10px] tracking-widest group-hover:text-indigo-600 transition-colors block mb-1">Subject</span>
-                           <span className="text-lg font-black text-gray-800 uppercase italic">{m.subject}</span>
+          <div className="space-y-12">
+            
+            {/* 🟢 PRESTIGE HEADER CARD */}
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }} 
+               animate={{ opacity: 1, y: 0 }}
+               className="bg-slate-900 rounded-[3.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden group border-b-[12px] border-emerald-500/20"
+            >
+               <div className="absolute -bottom-20 -right-20 opacity-5 group-hover:opacity-10 transition-opacity duration-1000 rotate-12 group-hover:rotate-0">
+                  <GraduationCap size={400}/>
+               </div>
+               
+               <div className="relative flex flex-col md:flex-row justify-between items-center gap-12">
+                  <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+                     <div className="w-24 h-24 md:w-40 md:h-40 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center text-4xl md:text-6xl font-black border border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-700 ">
+                        {studentData.photo_url ? (
+                          <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[2.5rem]" alt="Profile" />
+                        ) : studentData.full_name[0].toUpperCase()}
+                     </div>
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-center md:justify-start gap-3">
+                           <ShieldCheck className="text-emerald-400" size={18}/>
+                           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400/80 ">Verified Scholastic Identity</span>
                         </div>
-                        <div className="text-right">
-                           <span className="text-3xl font-black text-gray-900 italic">{m.marks}</span>
-                           <span className="text-[11px] font-bold text-gray-300 ml-1">/ {m.max_marks}</span>
+                        <h2 className="text-4xl md:text-7xl font-black uppercase italic tracking-tighter leading-none ">{studentData.full_name}</h2>
+                        <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
+                           <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-white/5 tracking-widest backdrop-blur-md">Manifest #{studentData.roll_no}</span>
                         </div>
                      </div>
-                   ))}
-                </div>
+                  </div>
 
-                <div className="mt-14 pt-10 border-t-2 border-dashed border-gray-100 flex flex-col md:flex-row justify-between items-center gap-10">
-                   <div className="text-center md:text-left">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mb-2 italic">Total Score Portfolio</p>
-                      <h4 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter italic">{results[0].total_marks} <span className="text-2xl text-gray-300 not-italic">Marks Obtained</span></h4>
-                   </div>
-                   <div className="flex flex-col gap-4 w-full md:w-auto">
-                      <button className="bg-gray-900 text-white px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl hover:bg-indigo-600 transition-all">
-                         <Download size={18}/> Download Digital Copy
-                      </button>
-                      <p className="text-[9px] text-gray-400 font-bold uppercase text-center italic">Digitally Verified by Controller of Exams</p>
-                   </div>
-                </div>
-             </div>
+                  <div className="flex flex-row md:flex-col gap-5 w-full md:w-auto">
+                     <PremiumQuickStat label="Academic Standing" value={results[0].status} accent="emerald" />
+                     <PremiumQuickStat label="Aggregate Performance" value={`${Math.round(results[0].percentage)}%`} accent="emerald" />
+                  </div>
+               </div>
+            </motion.div>
+
+            {/* 🔵 SCHOLASTIC METRICS BOARD */}
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.98 }} 
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.2 }}
+               className="bg-white rounded-[4rem] p-10 md:p-20 shadow-sm border border-slate-100 relative overflow-hidden group"
+            >
+               <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-10">
+                  <div className="flex items-center gap-6">
+                     <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-white shadow-xl rotate-[15deg] group-hover:rotate-0 transition-transform duration-500">
+                        <FileText size={28}/>
+                     </div>
+                     <div>
+                        <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic ">{results[0].exams?.title || 'Comprehensive Examination'}</h3>
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1">Registry Session: 2024-25</p>
+                     </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                     <button onClick={() => window.print()} className="bg-slate-50 text-slate-900 px-8 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-sm border border-slate-100 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-3 ">
+                        <Printer size={18}/> Print Registry
+                     </button>
+                  </div>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <AnimatePresence>
+                    {results[0].marks_data?.map((m:any, i:number) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * i }}
+                        key={i} 
+                        className="bg-slate-50/50 p-8 rounded-[3rem] border border-transparent hover:border-emerald-200 hover:bg-white transition-all duration-500 group/row shadow-sm hover:shadow-xl group-hover:border-slate-100"
+                      >
+                         <div className="flex justify-between items-end">
+                            <div className="space-y-3">
+                               <div className="flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200"></div>
+                                  <span className="font-black text-slate-400 uppercase text-[9px] tracking-[0.3em] group-hover/row:text-emerald-600 transition-colors">Course Metric</span>
+                               </div>
+                               <h4 className="text-2xl font-black text-slate-800 uppercase italic tracking-tighter ">{m.subject}</h4>
+                            </div>
+                            <div className="text-right">
+                               <span className="text-5xl font-black text-slate-900 tracking-tighter  italic">{m.marks}</span>
+                               <span className="text-sm font-black text-slate-300 ml-2 tracking-widest uppercase italic">/ {m.max_marks}</span>
+                            </div>
+                         </div>
+                         
+                         <div className="mt-6 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(m.marks/m.max_marks)*100}%` }}
+                              transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 + (i * 0.1) }}
+                              className="h-full bg-emerald-500 rounded-full"
+                            />
+                         </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+               </div>
+
+               <div className="mt-20 pt-16 border-t-2 border-dashed border-slate-100 flex flex-col lg:flex-row justify-between items-center gap-12">
+                  <div className="text-center lg:text-left space-y-2">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] italic">Cumulative Score Manifest</p>
+                     <h4 className="text-6xl md:text-9xl font-black text-slate-900 tracking-tighter italic  leading-none">
+                       {results[0].total_marks} 
+                       <span className="text-2xl md:text-3xl text-slate-300 not-italic ml-6 uppercase tracking-widest font-inter">Verified Units</span>
+                     </h4>
+                  </div>
+                  
+                  <div className="flex flex-col gap-6 w-full lg:w-96">
+                     <button className="bg-slate-900 text-white px-12 py-7 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-2xl hover:bg-emerald-600 transition-all active:scale-95 group/btn ">
+                        <Download size={22} className="group-hover/btn:translate-y-1 transition-transform" /> 
+                        Archive Digital Protocol
+                     </button>
+                     <p className="text-[9px] text-slate-400 font-bold uppercase text-center tracking-widest leading-loose">
+                       This scholastic report is an electronic reproduction <br/> 
+                       authorized by the Central Examination Registry.
+                     </p>
+                  </div>
+               </div>
+            </motion.div>
           </div>
         ) : (
-          <div className="py-20 text-center space-y-6 bg-white rounded-[4rem] border-4 border-dashed border-gray-100 shadow-inner">
-             <div className="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl">🎓</div>
-             <div>
-                <p className="text-gray-900 font-black uppercase tracking-tighter text-2xl italic">No Results Published Yet</p>
-                <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-2 px-10">Keep focused on your studies! Once teachers upload your marks, they will appear here instantly.</p>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="py-32 text-center space-y-10 bg-white rounded-[4rem] border-4 border-dashed border-slate-100 shadow-inner group"
+          >
+             <div className="bg-slate-50 w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-[360deg] transition-transform duration-1000 rotate-12">🎓</div>
+             <div className="space-y-4">
+                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic ">Manifest Unavailable</h3>
+                <p className="max-w-md mx-auto text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] leading-relaxed px-10">
+                  The academic registry for this session has not yet been authorized. Please maintain scholastic excellence while waiting for final publication.
+                </p>
              </div>
-             <button onClick={() => navigate('/student/dashboard')} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl">Back to Portal</button>
-          </div>
+             <button onClick={() => navigate('/student/dashboard')} className="premium-button-student mx-auto flex items-center gap-3">
+                <ArrowRight size={18} /> Return to Operations Center
+             </button>
+          </motion.div>
         )}
       </div>
     </div>
   );
 };
 
-const QuickStat = ({ label, value, isPass }: any) => (
-  <div className={`p-4 md:p-6 rounded-[1.5rem] md:rounded-[2.5rem] border-2 text-center min-w-[120px] md:min-w-[140px] shadow-lg backdrop-blur-md overflow-hidden relative ${isPass ? 'bg-white/10 border-white/20' : 'bg-rose-500/20 border-rose-500/30'}`}>
-     <div className="relative z-10">
-        <p className="text-[8px] md:text-[9px] font-black uppercase text-indigo-300 tracking-widest mb-1 italic opacity-60">{label}</p>
-        <p className="text-xl md:text-2xl font-black uppercase italic tracking-tight">{value}</p>
-     </div>
-     <div className={`absolute bottom-0 inset-x-0 h-1 md:h-1.5 ${isPass ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
+const PremiumQuickStat = ({ label, value, accent }: any) => (
+  <div className="bg-white/10 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] min-w-[180px] shadow-2xl group/stat hover:bg-white/15 transition-all">
+     <p className="text-[9px] font-black uppercase text-emerald-400 tracking-[0.2em] mb-2 italic ">{label}</p>
+     <p className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none  group-hover/stat:scale-110 transition-transform origin-left">{value}</p>
   </div>
 );
 

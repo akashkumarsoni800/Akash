@@ -3,10 +3,13 @@ import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  TrendingUp, Activity, CheckCircle, FileText 
+  TrendingUp, Activity, CheckCircle, FileText,
+  ShieldCheck, Zap, Info, Star, ChevronRight, Layout,
+  Wallet, ArrowUpRight, ArrowDownRight, RefreshCw,
+  Database, BarChart3, Receipt
 } from 'lucide-react';
 
-const ManageSalaries= () => {
+const ManageSalaries = () => {
   const [stats, setStats] = useState({
     totalRevenue: 0,
     totalExpense: 0,
@@ -30,25 +33,24 @@ const ManageSalaries= () => {
         supabase.from('inventory').select('total_value')
       ]);
 
-      // Calculate stats
       const collectedFees = feeData?.filter((f: any) => f.status === 'Paid')
         .reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0) || 0;
       
-      const totalSalaryExpense = salaryData?.reduce((sum: number, s: any) => 
-        sum + Number(s.net_salary || 0), 0) || 0;
+      const totalSalaryExpense = salaryData?.filter((s: any) => s.status === 'Paid')
+        .reduce((sum: number, s: any) => sum + Number(s.net_salary || 0), 0) || 0;
       
       const inventoryValue = inventoryData?.reduce((sum: number, i: any) => 
         sum + Number(i.total_value || 0), 0) || 0;
 
       setStats({
         totalRevenue: collectedFees,
-        totalExpense: totalSalaryExpense,
-        netProfit: collectedFees - totalSalaryExpense,
+        totalExpense: totalSalaryExpense + inventoryValue,
+        netProfit: collectedFees - (totalSalaryExpense + inventoryValue),
         collectionRate: feeData?.length ? Math.round((collectedFees / feeData.reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0)) * 100) : 0
       });
 
       setRecentTransactions([...(feeData || []), ...(salaryData || [])].sort((a: any, b: any) => 
-        new Date(b.updated_at || b.updated_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
+        new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
       ).slice(0, 10));
 
     } catch (error: any) {
@@ -58,136 +60,232 @@ const ManageSalaries= () => {
     }
   };
 
-  if (loading) {
+  if (loading && recentTransactions.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <div className="w-24 h-24 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-8"></div>
-          <div className="text-3xl font-bold text-indigo-900">Loading Dashboard...</div>
-        </div>
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+         <div className="relative">
+            <RefreshCw size={60} className="animate-spin text-indigo-600/20"/>
+            <Database size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600" />
+         </div>
+         <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Synchronizing Institutional Ledger...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Header Section */}
+        
+        {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
-           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                 Financial<br/>
                 <span className="text-indigo-600">Vault</span>
               </h1>
-              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
-                <Activity size={12} className="text-indigo-500" /> Economic Integrity & Asset Monitoring
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+                <ShieldCheck size={12} className="text-indigo-500" /> Authorized Institutional Economic Oversight v4.2
               </p>
            </motion.div>
            
-           <div className="flex gap-4">
-             <button onClick={fetchAccountingData} className="premium-button bg-white text-gray-900 px-6 py-4 flex items-center gap-2 text-[10px]">
-               <Activity size={14} /> Sync Ledger
-             </button>
-             <button className="premium-button bg-indigo-600 text-white px-6 py-4 flex items-center gap-2 text-[10px]">
-               <TrendingUp size={14} /> Export Audit
-             </button>
+           <div className="flex flex-wrap items-center justify-center gap-4">
+              <button 
+                onClick={fetchAccountingData}
+                className="premium-button-admin bg-white text-slate-900 hover:bg-slate-50 border-slate-100 shadow-sm italic"
+              >
+                <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-700" /> Sync Ledger
+              </button>
+              <button 
+                className="premium-button-admin bg-slate-900 text-white hover:bg-indigo-600 italic border-none shadow-2xl"
+              >
+                <FileText size={18} className="group-hover:translate-x-1 transition-transform" /> Export Audit
+              </button>
            </div>
         </div>
 
-        {/* KPI Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card p-8 bg-white border-transparent">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-6 font-black text-xl">₹</div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Gross Revenue</p>
-            <h2 className="text-3xl font-black text-emerald-600 tracking-tighter">₹ {stats.totalRevenue.toLocaleString()}</h2>
-            <div className="mt-4 h-1 w-full bg-emerald-50 rounded-full overflow-hidden">
-               <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${stats.collectionRate}%` }}></div>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="premium-card p-8 bg-white border-transparent">
-            <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 mb-6 font-black text-xl">₹</div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Operational Burn</p>
-            <h2 className="text-3xl font-black text-rose-600 tracking-tighter">₹ {stats.totalExpense.toLocaleString()}</h2>
-            <p className="text-[9px] font-bold text-gray-400 mt-2 flex items-center gap-1">
-              <Activity size={10} /> Salaries & Inventory
-            </p>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card p-8 bg-indigo-600 border-transparent text-white ring-8 ring-indigo-50">
-            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6">
-               <TrendingUp size={24} />
-            </div>
-            <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Net Reserve</p>
-            <h2 className="text-3xl font-black text-white tracking-tighter">₹ {stats.netProfit.toLocaleString()}</h2>
-            <p className="text-[9px] font-bold text-white/40 mt-2 uppercase tracking-widest">Liquid Capital Assets</p>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="premium-card p-8 bg-white border-transparent">
-            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-6 font-black text-xl">%</div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Efficient Yield</p>
-            <h2 className="text-3xl font-black text-indigo-900 tracking-tighter">{stats.collectionRate}%</h2>
-            <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-widest flex items-center gap-1">
-              <CheckCircle size={10} className="text-indigo-500" /> Collection Target
-            </p>
-          </motion.div>
+        {/* --- KPI TIERS --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+           <StatCard 
+             label="Gross Revenue" 
+             value={stats.totalRevenue} 
+             subText={`${stats.collectionRate}% Efficient`} 
+             icon={ArrowUpRight} 
+             color="emerald" 
+             delay={0.1} 
+           />
+           <StatCard 
+             label="Operational Burn" 
+             value={stats.totalExpense} 
+             subText="Salaries & Inventory" 
+             icon={ArrowDownRight} 
+             color="rose" 
+             delay={0.2} 
+           />
+           <StatCard 
+             label="Net Reserve" 
+             value={stats.netProfit} 
+             subText="Liquid Capital Assets" 
+             icon={Wallet} 
+             color="indigo" 
+             delay={0.3} 
+             main 
+           />
+           <StatCard 
+             label="Yield efficiency" 
+             value={stats.collectionRate} 
+             suffix="%" 
+             subText="Against Target" 
+             icon={BarChart3} 
+             color="blue" 
+             delay={0.4} 
+           />
         </div>
 
-        {/* Ledger */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-0 overflow-hidden border-transparent bg-white">
-          <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-3">
-              <FileText size={18} className="text-indigo-600" /> Transaction Ledger
-            </h3>
-            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase">Live Feed</span>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                 <tr className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] bg-gray-50/30">
-                   <th className="px-8 py-4">Transaction Entity</th>
-                   <th className="px-8 py-4">Timeline</th>
-                   <th className="px-8 py-4">Amount</th>
-                   <th className="px-8 py-4">Classification</th>
-                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {recentTransactions.map((tx, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50/50 transition-colors group">
-                    <td className="px-8 py-6">
-                       <p className="text-sm font-black text-gray-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tighter">
-                         {tx.teacher_name || 'System Fee Collection'}
-                       </p>
-                    </td>
-                    <td className="px-8 py-6">
-                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                         {tx.month || new Date(tx.created_at || tx.updated_at).toLocaleDateString('en-IN')}
-                       </p>
-                    </td>
-                    <td className="px-8 py-6">
-                       <p className={`text-sm font-black ${tx.teacher_name ? 'text-rose-600' : 'text-emerald-600'}`}>
-                         {tx.teacher_name ? '-' : '+'}₹{(tx.total_amount || tx.net_salary || 0).toLocaleString()}
-                       </p>
-                    </td>
-                    <td className="px-8 py-6">
-                       <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                         tx.teacher_name ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
-                       }`}>
-                         {tx.teacher_name ? 'Payroll' : 'Revenue'}
-                       </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+           {/* --- TRANSACTION LEDGER --- */}
+           <motion.div 
+             initial={{ opacity: 0, y: 30 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="lg:col-span-2 bg-white rounded-[4rem] border border-slate-100 shadow-sm overflow-hidden group"
+           >
+              <div className="p-10 md:p-14 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
+                 <div className="space-y-3">
+                    <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter  leading-none">Transaction<br/><span className="text-indigo-600">Ledger</span></h2>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Real-time Accounting Stream</p>
+                 </div>
+                 <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest  italic">Nodes Active</span>
+                 </div>
+              </div>
+
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] italic bg-slate-50/30">
+                      <th className="px-12 py-8">Entity Identity</th>
+                      <th className="px-12 py-8">Timeline</th>
+                      <th className="px-12 py-8 text-center">Payload</th>
+                      <th className="px-12 py-8 text-right">Classification</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {recentTransactions.map((tx, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-all group/row">
+                        <td className="px-12 py-8">
+                           <p className="font-black text-slate-900 uppercase text-sm  italic tracking-tight group-hover/row:text-indigo-600 transition-colors">
+                             {tx.teacher_name || 'System Fee Collection'}
+                           </p>
+                           <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">IV-TX-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                        </td>
+                        <td className="px-12 py-8">
+                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest  italic">
+                             {tx.month || new Date(tx.created_at || tx.updated_at).toLocaleDateString('en-IN')}
+                           </p>
+                        </td>
+                        <td className="px-12 py-8 text-center">
+                           <p className={`text-xl font-black  italic tracking-tighter ${tx.teacher_name ? 'text-rose-500' : 'text-emerald-500'}`}>
+                             {tx.teacher_name ? '-' : '+'}₹{(tx.total_amount || tx.net_salary || 0).toLocaleString()}
+                           </p>
+                        </td>
+                        <td className="px-12 py-8 text-right">
+                           <span className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border  italic ${
+                             tx.teacher_name ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                           }`}>
+                             {tx.teacher_name ? 'Disbursement' : 'Inward Fund'}
+                           </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {recentTransactions.length === 0 && (
+                <div className="py-40 flex flex-col items-center justify-center text-center opacity-20">
+                  <Receipt size={80} className="text-slate-300 mb-6" />
+                  <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[12px]">Awaiting Sequential Records...</p>
+                </div>
+              )}
+           </motion.div>
+
+           {/* --- SYSTEM STATS & HELP --- */}
+           <div className="space-y-10">
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500 opacity-20 blur-3xl rounded-full" />
+                 <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-12 relative z-10 italic">Vault Health</h3>
+                 <div className="space-y-10 relative z-10">
+                    <div className="flex justify-between items-end border-b border-white/5 pb-8">
+                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Node Reliability</p>
+                       <p className="text-3xl font-black italic tracking-tighter text-emerald-400">99.9%</p>
+                    </div>
+                    <div className="flex justify-between items-end border-b border-white/5 pb-8">
+                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Sync Frequency</p>
+                       <p className="text-xl font-black italic tracking-tighter uppercase">5 Min Interval</p>
+                    </div>
+                    <div className="flex justify-between items-end border-b border-white/5 pb-8">
+                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Authorization</p>
+                       <p className="text-xl font-black italic tracking-tighter uppercase text-indigo-400">Level 09 Root</p>
+                    </div>
+                 </div>
+              </motion.div>
+
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm space-y-8">
+                 <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 shadow-inner">
+                       <Info size={20} />
+                    </div>
+                    <h4 className="text-lg font-black text-slate-900 uppercase italic tracking-tighter">Audit direct</h4>
+                 </div>
+                 <ul className="space-y-6">
+                    <li className="flex items-start gap-5">
+                       <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-200" />
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">All outward disbursements require Level 07+ biometric authorization.</p>
+                    </li>
+                    <li className="flex items-start gap-5">
+                       <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-200" />
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Inward revenue is tracked via unique IV-TX identifier protocols.</p>
+                    </li>
+                    <li className="flex items-start gap-5">
+                       <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-200" />
+                       <p className="text-[11px] font-bold text-slate-500 leading-relaxed italic">Net reserve reflects calculated liquid capital post-inventory burn.</p>
+                    </li>
+                 </ul>
+              </motion.div>
+           </div>
+        </div>
+
       </div>
     </div>
   );
 };
 
+const StatCard = ({ label, value, prefix = '₹', suffix = '', subText, icon: Icon, color, delay, main }: any) => {
+  const colorClasses = {
+    emerald: 'text-emerald-500 bg-emerald-50',
+    rose: 'text-rose-500 bg-rose-50',
+    indigo: 'bg-indigo-600 text-white shadow-[0_25px_50px_-12px_rgba(79,70,229,0.3)]',
+    blue: 'text-blue-500 bg-blue-50'
+  };
 
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9 }} 
+      animate={{ opacity: 1, scale: 1 }} 
+      transition={{ delay }}
+      className={`rounded-[3.5rem] p-10 relative overflow-hidden group transition-all duration-500 hover:-translate-y-2 ${main ? colorClasses.indigo : 'bg-white border border-slate-100 shadow-sm'}`}
+    >
+      {!main && <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />}
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 relative z-10 shadow-sm ${main ? 'bg-white/20' : colorClasses[color as keyof typeof colorClasses]}`}>
+        <Icon size={24} />
+      </div>
+      <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 italic relative z-10 ${main ? 'text-white/40' : 'text-slate-300'}`}>{label}</p>
+      <h2 className={`text-4xl font-black tracking-tighter italic leading-none relative z-10 ${main ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'} transition-colors`}>{prefix}{value.toLocaleString()}{suffix}</h2>
+      <div className="mt-6 flex items-center gap-3 relative z-10">
+         <div className={`w-3 h-0.5 rounded-full ${main ? 'bg-white/20' : 'bg-slate-100'}`} />
+         <p className={`text-[9px] font-black uppercase tracking-widest italic ${main ? 'text-white/30' : 'text-slate-300'}`}>{subText}</p>
+      </div>
+    </motion.div>
+  );
+};
 
 export default ManageSalaries;

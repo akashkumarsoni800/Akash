@@ -5,7 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Wallet, UserPlus, Calendar, 
   Smartphone, CheckCircle, Activity, 
-  FileText
+  FileText, ShieldCheck, Zap,
+  Info, Star, ChevronRight, Layout,
+  RefreshCw, Download, ArrowUpRight, ArrowDownRight,
+  UserCheck, CreditCard, Receipt
 } from 'lucide-react';
 
 const TeacherSalary = () => {
@@ -52,7 +55,7 @@ const TeacherSalary = () => {
 
       if (sErr) {
         console.error("Salary Table Error:", sErr);
-        toast.error("Database connectivity issue. Please refresh or contact support.");
+        toast.error("Database connectivity issue. Please refresh.");
       }
       
       if (salaryData && salaryData.length > 0) {
@@ -65,7 +68,6 @@ const TeacherSalary = () => {
       setSalaries(salaryData || []);
       setTeachers(teacherData || []);
     } catch (error: any) {
-      console.error('Fetch error:', error);
       toast.error('Failed to load salary data');
     }
   };
@@ -109,10 +111,9 @@ const TeacherSalary = () => {
       }
 
       const { error } = await supabase.from('teacher_salaries').insert([finalPayload]);
-      
       if (error) throw error;
       
-      toast.success('✅ Salary record added successfully!');
+      toast.success('✅ Salary record authorized!');
       setNewSalary({
         teacher_id: '',
         teacher_name: '',
@@ -140,7 +141,7 @@ const TeacherSalary = () => {
         .eq('id', salaryId);
       
       if (error) throw error;
-      toast.success('✅ Salary marked as paid!');
+      toast.success('✅ Disbursement Released!');
       fetchData();
     } catch (error: any) {
       toast.error('Failed to update status');
@@ -151,197 +152,242 @@ const TeacherSalary = () => {
 
   const totalSalaryExpense = salaries.reduce((sum: number, s: any) => sum + (s.net_salary || 0), 0);
 
+  if (!salaries.length && !teachers.length && loading) {
+    return (
+       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+          <div className="relative">
+             <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
+             <CreditCard size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
+          </div>
+          <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Initializing Payroll Terminal...</p>
+       </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-8 px-4">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Header Section */}
+        
+        {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-black text-slate-800 tracking-tighter uppercase leading-none">
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                 Payroll<br/>
-                <span className="text-blue-600">Operations</span>
+                <span className="text-[var(--accent-admin)]">Operations</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
-                <Activity size={12} className="text-blue-500" /> Institutional Compensation & Payroll Vault
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Compensation Terminal v4.2
               </p>
            </motion.div>
            
-           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
-             <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">💰</div>
+           <div className="bg-white border border-slate-100 rounded-[3rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
+             <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
              <div>
-               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Cumulative Payload</p>
-               <p className="text-3xl font-black text-slate-900 tracking-tighter italic">₹{totalSalaryExpense.toLocaleString()}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-2 leading-none">Cumulative Payload</p>
+                <p className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
              </div>
            </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-          {/* Add New Salary Form */}
+          
+          {/* --- DISBURSEMENT ENTRY --- */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }} 
-            className="bg-white border border-slate-100 rounded-[3.5rem] p-10 md:p-16 shadow-sm relative overflow-hidden group"
+            className="premium-card p-10 md:p-14 relative overflow-hidden group"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 opacity-20 rounded-full -mr-32 -mt-32 transition-transform duration-[3s] group-hover:scale-110"></div>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110"></div>
             
-            <h2 className="text-3xl font-black text-slate-800 mb-12 uppercase tracking-tight flex items-center gap-4 relative z-10">
-              <UserPlus size={28} className="text-blue-600" /> Disbursement Entry
-            </h2>
+            <div className="flex items-center gap-6 mb-14 relative z-10 border-b border-slate-50 pb-10">
+               <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
+                  <Receipt size={30} />
+               </div>
+               <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none italic">Disbursement<br/><span className="text-[var(--accent-admin)]">Entry</span></h2>
+            </div>
             
             <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2 italic">
-                  Faculty Selection
-                </label>
-                <select 
-                  value={newSalary.teacher_id}
-                  onChange={(e) => {
-                    const teacher = teachers.find(t => t.id === e.target.value);
-                    setNewSalary({
-                      ...newSalary,
-                      teacher_id: e.target.value,
-                      teacher_name: teacher?.full_name || '',
-                      designation: teacher?.role || ''
-                    });
-                  }}
-                  className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all"
-                  required
-                >
-                  <option value="">Identify Recipient</option>
-                  {teachers.map(t => (
-                    <option key={t.id} value={t.id}>{t.full_name} — {t.role}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2 italic">
-                  Payroll Cycle
-                </label>
-                <input 
-                  type="month" 
-                  value={newSalary.month}
-                  onChange={(e) => setNewSalary({...newSalary, month: e.target.value})}
-                  className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all"
-                  required
-                />
-              </div>
-
-              {(dbColumns.includes('basic_salary') || dbColumns.length === 0) && (
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Base Compensation</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                 <div className="space-y-3 group">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic group-focus-within:text-blue-600 transition-colors">Faculty Identity</label>
                     <div className="relative">
-                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-xs uppercase">INR</span>
-                      <input 
-                        type="number" 
-                        value={newSalary.basic_salary || ''}
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setNewSalary({
-                            ...newSalary, 
-                            basic_salary: val,
-                            hra: Math.round(val * 0.24)
-                          });
-                        }}
-                        className="premium-input w-full p-6 pl-16 text-sm font-black bg-slate-50 border-slate-100"
-                        placeholder="0"
-                      />
+                       <UserCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+                       <select 
+                         value={newSalary.teacher_id}
+                         onChange={(e) => {
+                           const teacher = teachers.find(t => t.id === e.target.value);
+                           setNewSalary({
+                             ...newSalary,
+                             teacher_id: e.target.value,
+                             teacher_name: teacher?.full_name || '',
+                             designation: teacher?.role || ''
+                           });
+                         }}
+                         className="premium-input pl-16 appearance-none italic"
+                         required
+                       >
+                         <option value="">Identify Recipient</option>
+                         {teachers.map(t => (
+                           <option key={t.id} value={t.id}>{t.full_name} — {t.role}</option>
+                         ))}
+                       </select>
                     </div>
-                  </div>
-                  {dbColumns.includes('hra') && (
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">HRA Index (24%)</label>
-                      <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-blue-300 font-bold text-xs uppercase">INR</span>
-                        <input 
-                          type="number" 
-                          value={newSalary.hra}
-                          readOnly
-                          className="premium-input w-full p-6 pl-16 text-sm font-black bg-blue-50/30 text-blue-600 border-blue-100 italic"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                 </div>
 
-              <div className="grid grid-cols-2 gap-8">
-                {dbColumns.includes('allowances') && (
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic">Auxiliary Benefits</label>
-                    <input 
-                      type="number" 
-                      value={newSalary.allowances || ''}
-                      onChange={(e) => setNewSalary({...newSalary, allowances: Number(e.target.value)})}
-                      className="premium-input w-full p-6 text-sm font-black bg-slate-50 border-slate-100"
-                      placeholder="0"
-                    />
-                  </div>
-                )}
-                {dbColumns.includes('deductions') && (
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-1 italic">Fiscal Reductions</label>
-                    <input 
-                      type="number" 
-                      value={newSalary.deductions || ''}
-                      onChange={(e) => setNewSalary({...newSalary, deductions: Number(e.target.value)})}
-                      className="premium-input w-full p-6 text-sm font-black border-rose-100 focus:ring-rose-200 bg-rose-50/10 text-rose-600"
-                      placeholder="0"
-                    />
-                  </div>
-                )}
+                 <div className="space-y-3 group">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic group-focus-within:text-blue-600 transition-colors">Payroll frequency</label>
+                    <div className="relative">
+                       <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+                       <input 
+                         type="month" 
+                         value={newSalary.month}
+                         onChange={(e) => setNewSalary({...newSalary, month: e.target.value})}
+                         className="premium-input pl-16 italic"
+                         required
+                       />
+                    </div>
+                 </div>
               </div>
 
-              <div className="bg-slate-900 p-10 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-20 blur-3xl"></div>
-                <p className="text-[9px] font-black uppercase text-blue-400 tracking-[0.3em] mb-2 relative z-10">Net Institutional Payload</p>
-                <h2 className="text-4xl font-black tracking-tighter italic relative z-10">₹ {calculateNetSalary().toLocaleString()}</h2>
+              <div className="bg-slate-50 border border-slate-100 p-10 rounded-[3rem] relative overflow-hidden space-y-10">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
+                 
+                 <div className="flex items-center gap-4 relative z-10 border-b border-slate-100 pb-6">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Structure Parameters</p>
+                 </div>
+
+                 {(dbColumns.includes('basic_salary') || dbColumns.length === 0) && (
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                     <InputField 
+                       label="Base Compensation" 
+                       type="number" 
+                       value={newSalary.basic_salary || ''}
+                       prefix="INR"
+                       icon={CreditCard}
+                       onChange={(e: any) => {
+                         const val = Number(e.target.value);
+                         setNewSalary({
+                           ...newSalary, 
+                           basic_salary: val,
+                           hra: Math.round(val * 0.24)
+                         });
+                       }}
+                       placeholder="0"
+                     />
+                     {dbColumns.includes('hra') && (
+                       <InputField 
+                         label="HRA Index (24%)" 
+                         type="number" 
+                         value={newSalary.hra}
+                         prefix="INR"
+                         accent="blue"
+                         readOnly
+                         icon={ShieldCheck}
+                       />
+                     )}
+                   </div>
+                 )}
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                   {dbColumns.includes('allowances') && (
+                     <InputField 
+                       label="Auxiliary Benefits" 
+                       type="number" 
+                       value={newSalary.allowances || ''}
+                       prefix="INR"
+                       icon={ArrowUpRight}
+                       onChange={(e: any) => setNewSalary({...newSalary, allowances: Number(e.target.value)})}
+                       placeholder="0"
+                     />
+                   )}
+                   {dbColumns.includes('deductions') && (
+                     <InputField 
+                       label="Fiscal Reductions" 
+                       type="number" 
+                       value={newSalary.deductions || ''}
+                       prefix="INR"
+                       icon={ArrowDownRight}
+                       accent="rose"
+                       onChange={(e: any) => setNewSalary({...newSalary, deductions: Number(e.target.value)})}
+                       placeholder="0"
+                     />
+                   )}
+                 </div>
               </div>
 
-              <button 
-                type="submit" 
-                disabled={loading}
-                className="bg-slate-900 text-white w-full py-6 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
-              >
-                {loading ? <Activity size={18} className="animate-spin" /> : <CheckCircle size={18} />}
-                {loading ? 'Authenticating...' : 'Authorize Disbursement'}
-              </button>
+              <div className="bg-slate-900 p-12 rounded-[4rem] text-white shadow-2xl relative overflow-hidden group/total">
+                 <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
+                 <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div className="text-center md:text-left">
+                       <p className="text-[10px] font-black uppercase text-blue-400 tracking-[0.4em] mb-2 italic leading-none">Net Institutional Payload</p>
+                       <h2 className="text-5xl md:text-6xl font-black tracking-tighter italic leading-none">₹ {calculateNetSalary().toLocaleString()}</h2>
+                    </div>
+                    <button 
+                      type="submit" 
+                      disabled={loading}
+                      className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl italic"
+                    >
+                      {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
+                      {loading ? 'Authenticating...' : 'Authorize Disbursement'}
+                    </button>
+                 </div>
+              </div>
             </form>
           </motion.div>
 
-          {/* Salary Records List */}
+          {/* --- ARCHIVE MANIFEST --- */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }} 
             animate={{ opacity: 1, x: 0 }} 
-            className="bg-white border border-slate-100 rounded-[3.5rem] p-10 md:p-16 shadow-sm flex flex-col h-[900px] overflow-hidden group"
+            className="premium-card p-10 md:p-14 flex flex-col h-[1000px] overflow-hidden group"
           >
-            <h2 className="text-3xl font-black text-slate-800 mb-12 uppercase tracking-tight flex items-center justify-between relative z-10">
-              <span className="flex items-center gap-4"><FileText size={28} className="text-blue-600" /> Archive Manifest</span>
-              <span className="bg-blue-50 text-blue-600 px-5 py-2 rounded-2xl text-[10px] font-black border border-blue-100 italic">{salaries.length} Slips</span>
-            </h2>
+            <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
+               <div className="space-y-3">
+                  <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Archive<br/><span className="text-[var(--accent-admin)]">Manifest</span></h2>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Historical Disbursement Registry</p>
+               </div>
+               <div className="flex flex-col items-end gap-2">
+                  <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-2xl text-[10px] font-black border border-blue-100 italic shadow-sm">
+                    {salaries.length} Slips Indexed
+                  </div>
+                  <div className="flex items-center gap-2">
+                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                     <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest italic">Live Accounting Sync</p>
+                  </div>
+               </div>
+            </div>
             
             <div className="space-y-8 overflow-y-auto pr-2 custom-scrollbar relative z-10">
               {salaries.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-32">
-                  <Wallet size={80} className="mb-8 text-slate-400" />
-                  <p className="text-[12px] font-black uppercase tracking-[0.4em] text-slate-400 italic">No Disbursement Records</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-48">
+                  <Wallet size={100} className="mb-10 text-slate-200" />
+                  <p className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-400 italic">Manifest Clean</p>
                 </div>
               ) : (
-                salaries.map((salary: any) => (
+                salaries.map((salary: any, idx: number) => (
                   <motion.div 
                     key={salary.id}
-                    className="bg-white rounded-[2.5rem] border border-slate-100 p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 group/item relative overflow-hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * idx }}
+                    className="bg-white rounded-[3.5rem] border border-slate-50 p-8 hover:border-blue-200 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 group/item relative overflow-hidden"
                   >
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 opacity-10 blur-3xl group-hover/item:opacity-30 transition-opacity"></div>
+                    
                     <div className="relative z-10">
-                      <div className="flex justify-between items-start mb-10">
-                        <div>
-                           <h3 className="font-black text-2xl text-slate-800 uppercase tracking-tighter group-hover/item:text-blue-600 transition-colors leading-none mb-3 italic">{salary.teacher_name}</h3>
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                             {salary.designation} <span className="w-1 h-1 bg-slate-200 rounded-full"></span> <span className="text-blue-500 font-black">{salary.month}</span>
-                           </p>
+                      <div className="flex justify-between items-start gap-6 mb-12">
+                        <div className="flex items-center gap-5">
+                           <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl italic transition-colors">
+                              {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
+                           </div>
+                           <div>
+                              <h3 className="font-black text-2xl text-slate-900 uppercase tracking-tighter group-hover/item:text-blue-600 transition-colors leading-none mb-3 italic">{salary.teacher_name}</h3>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3 italic">
+                                {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-black">{salary.month}</span>
+                              </p>
+                           </div>
                         </div>
-                        <span className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
+                        <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border italic transition-all ${
                           salary.status === 'Paid' 
                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
                             : 'bg-rose-50 text-rose-600 border-rose-100 animate-pulse'
@@ -350,36 +396,36 @@ const TeacherSalary = () => {
                         </span>
                       </div>
                       
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 p-8 bg-slate-50/50 rounded-[2.5rem] mb-10 border border-slate-50">
-                         <div className="text-center md:text-left">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Base</p>
-                            <p className="text-md font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 bg-slate-50/50 rounded-[3rem] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
+                         <div className="text-center md:text-left space-y-2">
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Base</p>
+                            <p className="text-lg font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
                          </div>
-                         <div className="text-center md:text-left">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Benefits</p>
-                            <p className="text-md font-black text-emerald-600 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
+                         <div className="text-center md:text-left space-y-2">
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none">Benefits</p>
+                            <p className="text-lg font-black text-emerald-500 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
                          </div>
-                         <div className="text-center md:text-left">
-                            <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-2">Reductions</p>
-                            <p className="text-md font-black text-rose-600 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
+                         <div className="text-center md:text-left space-y-2">
+                            <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest italic leading-none">Reductions</p>
+                            <p className="text-lg font-black text-rose-500 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
                          </div>
-                         <div className="text-center md:text-left">
-                            <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">Net Pay</p>
-                            <p className="text-xl font-black text-slate-900 tracking-tighter leading-none italic">₹{(salary.net_salary || 0).toLocaleString()}</p>
+                         <div className="text-center md:text-left space-y-2">
+                            <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest italic leading-none">Net Pay</p>
+                            <p className="text-2xl font-black text-slate-900 tracking-tighter leading-none italic">₹{(salary.net_salary || 0).toLocaleString()}</p>
                          </div>
                       </div>
                       
-                      <div className="flex gap-4">
+                      <div className="flex flex-col sm:flex-row gap-4">
                         <button 
                           onClick={() => markSalaryPaid(salary.id)}
                           disabled={salaryLoading[salary.id] || salary.status === 'Paid'}
-                          className="flex-1 py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-slate-200"
+                          className="flex-1 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 italic group/release"
                         >
-                          {salaryLoading[salary.id] ? <Activity size={18} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={18} /> : '🚀 Release Payment'}
-                          {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Paid Secure' : 'Authorize Release'}
+                          {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
+                          {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
                         </button>
-                        <button className="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all group-hover/item:text-blue-500">
-                          <Smartphone size={20} />
+                        <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[1.5rem] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-xl group-hover/item:text-blue-500 active:scale-95">
+                          <Download size={24} />
                         </button>
                       </div>
                     </div>
@@ -387,6 +433,10 @@ const TeacherSalary = () => {
                 ))
               )}
             </div>
+            
+            <button className="mt-10 py-5 bg-slate-50 rounded-[2rem] text-[10px] font-black uppercase text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all italic active:scale-95 shadow-inner">
+               Open Audit Vault →
+            </button>
           </motion.div>
         </div>
       </div>
@@ -394,5 +444,15 @@ const TeacherSalary = () => {
   );
 };
 
-export default TeacherSalary;
+const InputField = ({ label, icon: Icon, prefix, accent, ...props }: any) => (
+  <div className="space-y-1 group">
+    <label className={`block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors ${accent === 'blue' ? 'group-focus-within:text-blue-500' : accent === 'rose' ? 'group-focus-within:text-rose-500' : 'group-focus-within:text-slate-900'}`}>{label}</label>
+    <div className="relative">
+      {Icon && <Icon className={`absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 transition-colors ${accent === 'blue' ? 'group-focus-within/input:text-blue-400' : accent === 'rose' ? 'group-focus-within/input:text-rose-400' : 'group-focus-within/input:text-slate-400'}`} size={18} />}
+      {prefix && <span className={`absolute ${Icon ? 'left-16' : 'left-8'} top-1/2 -translate-y-1/2 font-black text-[9px] uppercase tracking-widest ${accent === 'blue' ? 'text-blue-300' : accent === 'rose' ? 'text-rose-300' : 'text-slate-200'}`}>{prefix}</span>}
+      <input className="premium-input italic" style={{ paddingLeft: Icon ? (prefix ? '6rem' : '4rem') : (prefix ? '4rem' : '2rem') }} {...props} />
+    </div>
+  </div>
+);
 
+export default TeacherSalary;

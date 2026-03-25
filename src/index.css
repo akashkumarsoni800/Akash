@@ -3,21 +3,31 @@
 @tailwind utilities;
 
 :root {
-  --primary-slate: #1e293b;
-  --bg-main: #f9fafb;
+  --primary-slate: #0f172a;
+  --bg-main: #f8fafc;
   
-  /* Role Accents from Figma */
+  /* Role Accents from Figma v4.0 */
   --accent-admin: #2563eb;
-  --accent-teacher: #16a34a;
-  --accent-student: #9333ea;
+  --accent-teacher: #10b981;
+  --accent-student: #8b5cf6;
   
-  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+  --: 'Outfit', system-ui, sans-serif;
+  --font-inter: 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-[var(--bg-main)] text-slate-900 antialiased;
-    font-family: var(--font-inter);
+    @apply bg-[var(--bg-main)] text-slate-900 antialiased selection:bg-blue-600 selection:text-white;
+    font-family: var(--);
+    font-weight: 450; /* Slightly more defined than normal */
+  }
+  
+  h1, h2, h3 {
+    @apply tracking-tighter font-black uppercase text-slate-900;
+  }
+
+  h4, h5, h6 {
+    @apply tracking-tight font-bold text-slate-800;
   }
 }
 
@@ -46,7 +56,7 @@
   }
 
   .premium-card {
-    @apply bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden transition-all duration-300;
+    @apply bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-xl hover:border-slate-200;
   }
 
   .premium-stat-card {
@@ -62,17 +72,17 @@
   }
 
   .premium-input {
-    @apply w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all;
+    @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 placeholder:text-slate-400;
   }
 
   .premium-button {
-    @apply px-6 py-3 rounded-lg font-bold text-sm transition-all duration-200 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2;
+    @apply px-8 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 active:scale-[0.95] disabled:opacity-50 flex items-center justify-center gap-3 shadow-sm;
   }
 
-  .premium-button-admin { @apply premium-button bg-[var(--accent-admin)] text-white hover:bg-blue-700; }
-  .premium-button-teacher { @apply premium-button bg-[var(--accent-teacher)] text-white hover:bg-green-700; }
-  .premium-button-student { @apply premium-button bg-[var(--accent-student)] text-white hover:bg-purple-700; }
-  .premium-button-slate { @apply premium-button bg-slate-800 text-white hover:bg-slate-900; }
+  .premium-button-admin { @apply premium-button bg-slate-900 text-white hover:bg-blue-600 hover:shadow-blue-100; }
+  .premium-button-teacher { @apply premium-button bg-slate-900 text-white hover:bg-emerald-600 hover:shadow-emerald-100; }
+  .premium-button-student { @apply premium-button bg-slate-900 text-white hover:bg-purple-600 hover:shadow-purple-100; }
+  .premium-button-slate { @apply premium-button bg-slate-900 text-white hover:bg-slate-800; }
 
   /* Role Selection Cards */
   .role-card {
@@ -91,6 +101,9 @@
   .custom-scrollbar::-webkit-scrollbar { @apply w-1.5 h-1.5; }
   .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
+
+  . { font-family: var(--); }
+  .font-inter { font-family: var(--font-inter); }
 }
 
 @keyframes float {

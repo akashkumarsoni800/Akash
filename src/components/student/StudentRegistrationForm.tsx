@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../supabaseClient'; // ✅ पाथ चेक कर लें
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import { supabase } from '../../supabaseClient'; 
+import { 
+  UserPlus, User, ShieldCheck, 
+  Mail, Lock, Smartphone, 
+  GraduationCap, ChevronRight, 
+  ArrowRight, Info, RefreshCw,
+  CheckCircle2, Compass
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 export default function StudentRegistrationForm() {
@@ -24,13 +28,12 @@ export default function StudentRegistrationForm() {
     setLoading(true);
 
     try {
-      // Helper for formatting
       const toTitleCase = (str: string) => str.replace(/\b\w/g, (char) => char.toUpperCase());
       const formattedName = toTitleCase(formData.fullName.trim());
       const formattedFather = toTitleCase(formData.guardianName.trim());
       const formattedClass = formData.classAssignment.trim().toUpperCase();
 
-      // 1. Supabase Auth में यूजर रजिस्टर करें (with metadata)
+      // 1. Register User in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -45,7 +48,7 @@ export default function StudentRegistrationForm() {
 
       if (authError) throw authError;
 
-      // 2. Students टेबल में डेटा डालें (Status: pending)
+      // 2. Insert into Students Table (Status: pending)
       const { error: dbError } = await supabase
         .from('students')
         .insert([{
@@ -61,63 +64,175 @@ export default function StudentRegistrationForm() {
 
       if (dbError) throw dbError;
 
-      toast.success('Registration submitted! Please wait for admin approval.');
-      navigate('/'); // वापस लॉगिन पेज पर भेजें
+      toast.success('Protocol Initiated: Registration Submitted 🛰️');
+      navigate('/'); 
 
     } catch (error: any) {
-      console.error('Error:', error.message);
-      toast.error(error.message || 'Registration failed');
+      toast.error(error.message || 'Transmission failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-20">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-blue-900">Student Registration</CardTitle>
-          <CardDescription>ASM - Admission Form</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Full Name *</Label>
-                <Input placeholder="Student Name" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, fullName: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Guardian Name *</Label>
-                <Input placeholder="Father/Mother Name" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, guardianName: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Email Address *</Label>
-                <Input type="email" placeholder="email@example.com" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Create Password *</Label>
-                <Input type="password" placeholder="Min. 6 chars" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Contact Number *</Label>
-                <Input placeholder="10 digit number" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, contactNumber: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Class *</Label>
-                <Input placeholder="e.g., 10th A" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, classAssignment: e.target.value })} required />
-              </div>
-            </div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-inter selection:bg-blue-100 selection:text-blue-900">
+      
+      {/* --- MESH DECORATION --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-200/20 blur-[120px] rounded-full animate-pulse"></div>
+         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-200/20 blur-[120px] rounded-full animate-pulse decoration-700"></div>
+      </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-blue-900 hover:bg-blue-800">
-              {loading ? 'Processing...' : 'Submit Registration'}
-            </Button>
-            
-            <button type="button" onClick={() => navigate('/')} className="w-full text-sm text-gray-500 hover:underline">
-              Already have an account? Login
-            </button>
-          </form>
-        </CardContent>
-      </Card>
+      <motion.div 
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-4xl relative z-10"
+      >
+        <div className="bg-white rounded-[4rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
+           <div className="flex flex-col lg:flex-row">
+              
+              {/* Left Side: Illustration / Info */}
+              <div className="lg:w-1/3 bg-slate-950 p-12 flex flex-col justify-between relative overflow-hidden">
+                 <div className="absolute inset-0 opacity-20 pointer-events-none">
+                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#1e40af_0%,transparent_70%)]"></div>
+                 </div>
+                 
+                 <div className="relative z-10 space-y-8">
+                    <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-blue-400 border border-white/10">
+                       <Compass size={32} />
+                    </div>
+                    <div>
+                       <h2 className="text-3xl font-black text-white uppercase italic  tracking-tighter leading-none">
+                          Scholar<br/>Induction
+                       </h2>
+                       <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] italic mt-4">Protocol Version 4.0</p>
+                    </div>
+                 </div>
+
+                 <div className="relative z-10 space-y-6">
+                    <div className="flex items-start gap-4">
+                       <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
+                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Verified Identity Vault</p>
+                    </div>
+                    <div className="flex items-start gap-4">
+                       <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
+                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Encrypted Secure Credentialing</p>
+                    </div>
+                    <div className="flex items-start gap-4">
+                       <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
+                       <p className="text-[11px] font-bold text-slate-400 leading-relaxed italic">Immediate Admin Sync</p>
+                    </div>
+                 </div>
+
+                 <div className="relative z-10 pt-10 border-t border-white/5">
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
+                       Adarsh Shishu Mandir<br/>
+                       Digital Admission Terminal
+                    </p>
+                 </div>
+              </div>
+
+              {/* Right Side: Form */}
+              <div className="flex-1 p-10 md:p-14 space-y-10">
+                 <div className="flex items-center justify-between">
+                    <div>
+                       <h3 className="text-2xl font-black text-slate-900 uppercase italic  tracking-tighter">Registration</h3>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Personnel Entry Matrix</p>
+                    </div>
+                    <div className="text-right hidden sm:block">
+                       <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Authority Check</p>
+                       <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Scholastic Registry</p>
+                    </div>
+                 </div>
+
+                 <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <InputField 
+                         label="Scholar Nomenclature" 
+                         icon={User} 
+                         placeholder="Legal Full Name..."
+                         onChange={(e: any) => setFormData({ ...formData, fullName: e.target.value })}
+                         required
+                       />
+                       <InputField 
+                         label="Identity Anchor (Father/Guardian)" 
+                         icon={ShieldCheck} 
+                         placeholder="Guardian Name..."
+                         onChange={(e: any) => setFormData({ ...formData, guardianName: e.target.value })}
+                         required
+                       />
+                       <InputField 
+                         label="Primary Node (Email)" 
+                         type="email" 
+                         icon={Mail} 
+                         placeholder="email@institution.com"
+                         onChange={(e: any) => setFormData({ ...formData, email: e.target.value })}
+                         required
+                       />
+                       <InputField 
+                         label="Secure Matrix (Password)" 
+                         type="password" 
+                         icon={Lock} 
+                         placeholder="Min. 6 characters"
+                         onChange={(e: any) => setFormData({ ...formData, password: e.target.value })}
+                         required
+                       />
+                       <InputField 
+                         label="Comms Frequency (Mobile)" 
+                         icon={Smartphone} 
+                         placeholder="10 digit identifier..."
+                         onChange={(e: any) => setFormData({ ...formData, contactNumber: e.target.value })}
+                         required
+                       />
+                       <InputField 
+                         label="Assigned Batch (Class)" 
+                         icon={GraduationCap} 
+                         placeholder="e.g., 10th A"
+                         onChange={(e: any) => setFormData({ ...formData, classAssignment: e.target.value })}
+                         required
+                       />
+                    </div>
+
+                    <div className="pt-6 space-y-6">
+                       <button 
+                         type="submit" 
+                         disabled={loading}
+                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                       >
+                         {loading ? <RefreshCw className="animate-spin" size={20} /> : <><UserPlus size={20} /> Submit Registration</>}
+                       </button>
+                       
+                       <button 
+                         type="button"
+                         onClick={() => navigate('/')}
+                         className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95  italic"
+                       >
+                          Already have an account? Login <ArrowRight size={14} />
+                       </button>
+                    </div>
+                 </form>
+
+                 <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-start gap-4">
+                    <Info size={18} className="text-blue-500 mt-1" />
+                    <p className="text-[10px] font-bold text-slate-400 leading-relaxed italic">
+                       Administrative Protocol: All submissions are filtered through central security audits. 
+                       Approval may take up to 24 institutional hours.
+                    </p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
+
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <div className="space-y-2 group">
+    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600 ">{label}</label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />}
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  italic text-sm placeholder:text-slate-200`} {...props} />
+    </div>
+  </div>
+);

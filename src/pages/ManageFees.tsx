@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
   Plus, Search, Users, Calendar, ArrowRight,
-  Wallet, Send, RefreshCw, Trash2, CheckCircle 
+  Wallet, Send, RefreshCw, Trash2, CheckCircle,
+  ShieldCheck, Zap, Info, Star, ChevronRight, Layout
 } from 'lucide-react';
 
 const ManageFees = () => {
@@ -26,14 +27,12 @@ const ManageFees = () => {
     fetchInitialData();
   }, []);
 
-  // ✅ Total Amount Calculation (Component Level पर रखा है ताकि ReferenceError न आए)
   const totalAmountValue = Object.values(feeValues).reduce((sum: number, val: any) => 
     sum + Number(val || 0), 0);
 
   const fetchInitialData = async () => {
     setLoading(true);
     try {
-      // Fetch each independently to prevent one table error from breaking others
       const fetchStudents = supabase.from('students').select('*').order('full_name');
       const fetchHeads = supabase.from('fee_heads').select('*').order('id');
       const fetchStats = supabase.from('fees').select('status, total_amount');
@@ -82,7 +81,6 @@ const ManageFees = () => {
 
       if (paymentsRes.status === 'fulfilled') setRecentPayments(paymentsRes.value.data || []);
 
-      // Individual error reporting for debugging
       if (statsRes.status === 'rejected' || paymentsRes.status === 'rejected') {
         console.error("Fee table Error:", (statsRes as any).reason || (paymentsRes as any).reason);
         toast.error("Accounting data partially unavailable");
@@ -97,8 +95,6 @@ const ManageFees = () => {
 
   const handleAssignFee = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validation
     if (!bulkMode && !selectedStudent) return toast.error("Please select a student");
     if (bulkMode && !selectedClass) return toast.error("Please select a class");
     if (!month) return toast.error("Please select a month");
@@ -113,10 +109,10 @@ const ManageFees = () => {
         if (classStudents.length === 0) throw new Error("No students found in this class");
 
         const feesToInsert = classStudents.map(student => ({
-          student_id: student.student_id, // ✅ DB Column: student_id
+          student_id: student.student_id,
           month,
-          fee_structure: feeValues,      // ✅ DB Column: fee_structure
-          total_amount: totalAmountValue, // ✅ DB Column: total_amount
+          fee_structure: feeValues,
+          total_amount: totalAmountValue,
           status: 'Pending'
         }));
         
@@ -137,7 +133,6 @@ const ManageFees = () => {
       toast.success("✅ Fee Assigned Successfully!");
       fetchInitialData();
       
-      // Form Reset
       setSelectedStudent('');
       setMonth('');
       setFeeValues(Object.fromEntries(feeHeads.map(h => [h.id, 0])));
@@ -152,87 +147,116 @@ const ManageFees = () => {
     setFeeValues({ ...feeValues, [headId]: value });
   };
 
+  if (loading && students.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+         <div className="relative">
+            <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
+            <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
+         </div>
+         <p className="font-black uppercase tracking-[0.4em] text-slate-400 italic text-[10px] mt-8 text-center px-10">Initializing Fiscal Manifest...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
       <div className="max-w-7xl mx-auto space-y-12">
         
-         {/* Header Section */}
+        {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter uppercase leading-none">
-                Fee<br/>
-                <span className="text-indigo-600">Management</span>
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none italic">
+                Financial<br/>
+                <span className="text-[var(--accent-admin)]">Oversight</span>
               </h1>
-              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-2">
-                <Wallet size={12} className="text-indigo-500" /> Institutional Billing Suite v3.0
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center md:justify-start gap-2">
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Institutional Billing Suite v4.2
               </p>
            </motion.div>
-           <div className="flex bg-white p-2 rounded-3xl border border-gray-100 shadow-sm">
+
+           <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm relative z-20">
              <button 
                onClick={() => setBulkMode(false)} 
-               className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${!bulkMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-400 hover:text-indigo-600'}`}>
-               Single Entry
+               className={`px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl italic' : 'text-slate-400 hover:text-blue-600'}`}>
+               Single Registry
              </button>
              <button 
                onClick={() => setBulkMode(true)} 
-               className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${bulkMode ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-400 hover:text-indigo-600'}`}>
+               className={`px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl italic' : 'text-slate-400 hover:text-blue-600'}`}>
                Bulk Distribution
              </button>
            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
+          
+          {/* --- LEFT: MAIN CONFIG --- */}
           <div className="lg:col-span-2 space-y-10">
-             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 opacity-20 rounded-full -mr-32 -mt-32 transition-transform duration-[3s] group-hover:scale-110"></div>
+             <motion.div 
+               initial={{ opacity: 0, y: 30 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="premium-card p-10 md:p-14 relative overflow-hidden group"
+             >
+                <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-3xl rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110"></div>
                 
                 <form onSubmit={handleAssignFee} className="space-y-12 relative z-10">
-                   <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-3xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-4">
-                        <Wallet size={28} className="text-emerald-500" /> Fiscal Assignment
-                      </h2>
-                      <div className="px-5 py-2 bg-emerald-50 rounded-xl text-[9px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-100">
+                   <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b border-slate-50">
+                      <div className="space-y-4 text-center md:text-left">
+                        <h2 className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
+                          Fiscal<br/>
+                          <span className="text-[var(--accent-admin)]">Assignment</span>
+                        </h2>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Manual Account Distribution Terminal</p>
+                      </div>
+                      <div className="px-6 py-2.5 bg-blue-50 rounded-2xl text-[10px] font-black text-blue-600 uppercase tracking-widest border border-blue-100 italic shadow-sm">
                         Registry Active
                       </div>
                    </div>
 
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-4">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                           Target Scope
-                         </label>
-                         {bulkMode ? (
-                           <select className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={selectedClass} onChange={(e)=>setSelectedClass(e.target.value)}>
-                              <option value="">Select Target Class</option>
-                              {[...new Set(students.map(s => s.class_name))].map(c => <option key={c} value={c}>Class {c} Division</option>)}
-                           </select>
-                         ) : (
-                           <select className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={selectedStudent} onChange={(e)=>setSelectedStudent(e.target.value)}>
-                              <option value="">Identify Candidate</option>
-                              {students.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} — Roll #{s.roll_no}</option>)}
-                           </select>
-                         )}
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic">Target Cohort/Candidate</label>
+                         <div className="relative group/input">
+                            <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+                            {bulkMode ? (
+                              <select className="premium-input pl-16 appearance-none" value={selectedClass} onChange={(e)=>setSelectedClass(e.target.value)}>
+                                 <option value="">Select Target Class</option>
+                                 {[...new Set(students.map(s => s.class_name))].map(c => <option key={c} value={c}>Class {c} Division</option>)}
+                              </select>
+                            ) : (
+                              <select className="premium-input pl-16 appearance-none" value={selectedStudent} onChange={(e)=>setSelectedStudent(e.target.value)}>
+                                 <option value="">Identify Candidate</option>
+                                 {students.map(s => <option key={s.student_id} value={s.student_id}>{s.full_name} — Roll #{s.roll_no}</option>)}
+                              </select>
+                            )}
+                            <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                         </div>
                       </div>
-                      <div className="space-y-4">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                           Billing Period
-                         </label>
-                         <input type="month" className="premium-input w-full p-6 text-sm bg-slate-50 border-slate-100 focus:bg-white transition-all" value={month} onChange={(e)=>setMonth(e.target.value)} required />
+                      <div className="space-y-3">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic">Billing Period</label>
+                         <div className="relative group/input">
+                            <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+                            <input type="month" className="premium-input pl-16" value={month} onChange={(e)=>setMonth(e.target.value)} required />
+                         </div>
                       </div>
                    </div>
 
-                   <div className="bg-slate-50/50 p-10 rounded-[2rem] border border-slate-100 relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100 opacity-20 blur-3xl"></div>
-                      <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-8 flex items-center gap-2">
-                        <Plus size={14} className="text-emerald-500" /> Fee Structure Breakdown
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
+                   <div className="bg-slate-50/50 p-10 rounded-[3rem] border border-slate-100 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
+                      <div className="flex items-center gap-4 mb-10 border-b border-slate-100 pb-6 relative z-10">
+                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
+                            <Plus size={20} />
+                         </div>
+                         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic leading-none">Structure Breakdown</h3>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                          {feeHeads.map(head => (
-                           <div key={head.id} className="bg-white p-5 rounded-2xl flex justify-between items-center border border-slate-100 hover:border-emerald-200 transition-all hover:shadow-md group">
-                              <span className="font-black text-[10px] text-slate-500 uppercase tracking-widest group-hover:text-emerald-600 transition-colors">{head.name}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-slate-300 font-bold text-xs uppercase">INR</span>
-                                <input type="number" placeholder="0" className="w-24 text-right font-black text-slate-900 border-none focus:ring-0 text-lg bg-transparent" 
+                           <div key={head.id} className="bg-white p-6 rounded-2xl flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 group/item">
+                              <span className="font-black text-[10px] text-slate-400 uppercase tracking-widest group-hover/item:text-blue-600 transition-colors italic">{head.name}</span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-slate-200 font-black text-[9px] uppercase">INR</span>
+                                <input type="number" placeholder="0" className="w-24 text-right font-black text-slate-900 border-none focus:ring-0 text-xl bg-transparent italic" 
                                  value={feeValues[head.id] || ''}
                                  onChange={(e) => handleFeeValueChange(head.id, e.target.value)} />
                               </div>
@@ -241,69 +265,93 @@ const ManageFees = () => {
                       </div>
                    </div>
 
-                   <div className="flex flex-col md:flex-row items-center justify-between bg-white border-2 border-slate-900 p-8 rounded-[2.5rem] shadow-xl group">
-                      <div className="text-center md:text-left mb-8 md:mb-0">
-                         <p className="text-[9px] font-black uppercase text-slate-400 tracking-[0.3em] mb-1">Authenticated Total</p>
-                         <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">₹ {totalAmountValue.toLocaleString()}</h2>
+                   <div className="bg-slate-900 p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
+                      <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
+                      <div className="text-center md:text-left mb-0 relative z-10">
+                         <p className="text-[10px] font-black uppercase text-blue-400 tracking-[0.4em] mb-2 italic">Authenticated Total</p>
+                         <h2 className="text-5xl md:text-6xl font-black text-white tracking-tighter italic leading-none">₹ {totalAmountValue.toLocaleString()}</h2>
                       </div>
-                      <button disabled={loading} className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200">
-                         {loading ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                      <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl relative z-10 px-12 italic">
+                         {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
                          {loading ? 'Processing...' : 'Authorize Transaction'}
                       </button>
                    </div>
                 </form>
-             </div>
+             </motion.div>
           </div>
 
+          {/* --- RIGHT: INSIGHTS & FEED --- */}
           <div className="space-y-10">
-             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm overflow-hidden relative group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-50"></div>
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10 relative z-10 italic">
+             <motion.div 
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               transition={{ delay: 0.2 }}
+               className="premium-card p-12 relative overflow-hidden group"
+             >
+                <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
+                <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] mb-12 relative z-10 italic">
                   Fiscal Index
                 </h3>
-                <div className="space-y-6 relative z-10">
-                   <div className="p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden group-hover:scale-[1.02] transition-transform">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-20 blur-2xl"></div>
-                      <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-2">Fund Allocation</p>
-                      <p className="text-3xl font-black text-white tracking-tighter italic">₹{feeStats.totalCollected.toLocaleString()}</p>
+                <div className="space-y-8 relative z-10">
+                   <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
+                      <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400 uppercase tracking-widest mb-3 italic">Fund Allocation</p>
+                      <p className="text-4xl font-black text-slate-900 group-hover/card:text-white tracking-tighter italic">₹{feeStats.totalCollected.toLocaleString()}</p>
                    </div>
-                   <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Pending Invoices</p>
-                      <p className="text-3xl font-black text-slate-900 tracking-tighter">{feeStats.totalPending}</p>
+                   <div className="grid grid-cols-2 gap-6">
+                      <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Pending Units</p>
+                         <p className="text-2xl font-black text-slate-900 tracking-tighter">{feeStats.totalPending}</p>
+                      </div>
+                      <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Overdue Alert</p>
+                         <p className="text-2xl font-black text-rose-500 tracking-tighter">{feeStats.overdue}</p>
+                      </div>
                    </div>
                 </div>
-             </div>
+             </motion.div>
 
-             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm flex flex-col h-[600px] overflow-hidden group">
-                <div className="flex items-center justify-between mb-10">
-                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">Transaction Feed</h3>
-                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+             <motion.div 
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               transition={{ delay: 0.3 }}
+               className="premium-card p-12 flex flex-col min-h-[500px] relative group"
+             >
+                <div className="flex items-center justify-between mb-12">
+                   <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic">Transaction Feed</h3>
+                   <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
                 </div>
-                <div className="space-y-5 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-                   {recentPayments.length > 0 ? recentPayments.map(p => (
-                     <div key={p.id} className="p-5 bg-slate-50/50 rounded-2xl border border-slate-50 flex justify-between items-center group-hover:bg-white group-hover:shadow-md group-hover:border-emerald-100 transition-all cursor-pointer">
-                        <div className="flex items-center gap-4">
-                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${p.status === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
-                             {p.status === 'Paid' ? <CheckCircle size={18}/> : <RefreshCw size={18}/>}
+                <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+                   {recentPayments.length > 0 ? recentPayments.map((p, idx) => (
+                     <motion.div 
+                       key={p.id} 
+                       initial={{ opacity: 0, x: 10 }}
+                       animate={{ opacity: 1, x: 0 }}
+                       transition={{ delay: 0.4 + idx * 0.1 }}
+                       className="p-6 bg-slate-50/50 rounded-3xl border border-slate-50 flex justify-between items-center group/item hover:bg-white hover:shadow-2xl hover:border-blue-100 transition-all cursor-pointer relative overflow-hidden"
+                     >
+                        <div className="flex items-center gap-5 relative z-10">
+                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
+                             {p.status === 'Paid' ? <CheckCircle size={20}/> : <RefreshCw size={20} className="animate-spin" />}
                            </div>
                            <div>
-                              <p className="font-black text-[11px] text-slate-800 uppercase tracking-tighter leading-tight">{p.students?.full_name}</p>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹{p.total_amount} • {p.month}</p>
+                              <p className="font-black text-[12px] text-slate-800 uppercase tracking-tighter leading-tight italic">{p.students?.full_name}</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 italic">₹{p.total_amount} • {p.month}</p>
                            </div>
                         </div>
-                        <ArrowRight size={14} className="text-slate-200 group-hover:text-emerald-500 transition-transform group-hover:translate-x-1" />
-                     </div>
+                        <ArrowRight size={16} className="text-slate-200 group-hover/item:text-blue-500 transition-transform group-hover/item:translate-x-1 relative z-10" />
+                     </motion.div>
                    )) : (
-                     <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20">
-                        <RefreshCw size={40} className="mb-4 animate-spin-slow" />
+                     <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-20">
+                        <RefreshCw size={60} className="mb-6 animate-spin text-slate-300" />
                         <p className="text-[10px] font-black uppercase tracking-widest italic">Awaiting Records...</p>
                      </div>
                    )}
                 </div>
-                <button className="mt-8 py-4 bg-slate-50 rounded-2xl text-[9px] font-black uppercase text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all">
-                  Open Audit Logs
+                <button className="mt-10 py-5 bg-slate-50 rounded-2xl text-[10px] font-black uppercase text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all italic shadow-inner border border-slate-100">
+                   Audit Sequential Logs →
                 </button>
-             </div>
+             </motion.div>
           </div>
         </div>
       </div>

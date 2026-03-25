@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'sonner';
+import { 
+  UserPlus, GraduationCap, Mail, 
+  Phone, ShieldCheck, Zap, 
+  ChevronRight, Layout, Info, Star, ChevronLeft, RefreshCw
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AddTeacher = () => {
   const navigate = useNavigate();
@@ -51,7 +57,7 @@ const AddTeacher = () => {
           email: formData.email,
           phone: formData.phone,
           auth_id: data.user.id,
-          role: 'teacher' // 👈 Explicitly set role
+          role: 'teacher'
         }]);
         
         if (dbError) throw dbError;
@@ -68,88 +74,140 @@ const AddTeacher = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 notranslate pb-24">
-      <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[32px] shadow-sm border border-gray-100 w-full max-w-md">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32 flex items-center justify-center">
+      <div className="max-w-2xl w-full">
         
-        {/* Header Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
-            Add Teacher
-          </h2>
-          <p className="text-sm font-bold text-gray-400 mt-1">Register new staff member</p>
+        {/* --- HEADER --- */}
+        <div className="mb-12 text-center space-y-4">
+           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                Faculty<br/>
+                <span className="text-[var(--accent-admin)]">Induction</span>
+              </h1>
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center justify-center gap-2">
+                <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Authorized Academic Staff Registry Terminal v4.2
+              </p>
+           </motion.div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Full Name</label>
-            <input 
-              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
-              placeholder="Ex: Rajesh Kumar" 
-              value={formData.name}
-              onChange={e => setFormData({...formData, name: e.target.value})} 
-              required 
-            />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="premium-card p-10 md:p-14 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600" />
+          
+          <div className="flex items-center gap-6 border-b border-slate-50 pb-8 mb-10">
+             <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+                <UserPlus size={24} />
+             </div>
+             <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Credential Entry</h2>
+                <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">ASM REGISTRY INDEX: STAFF_NEW</p>
+             </div>
           </div>
 
-          <div>
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Subject / Role</label>
-            <input 
-              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
-              placeholder="Ex: Mathematics" 
-              value={formData.subject}
-              onChange={e => setFormData({...formData, subject: e.target.value})} 
-              required 
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 gap-8">
+               <InputField 
+                 label="Official Full Name *" 
+                 name="name" 
+                 placeholder="Ex: Rajesh Kumar" 
+                 value={formData.name}
+                 onChange={(e: any) => setFormData({...formData, name: e.target.value})} 
+                 required 
+                 icon={GraduationCap}
+               />
 
-          <div>
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Email Address</label>
-            <input 
-              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
-              placeholder="teacher@school.com" 
-              type="email" 
-              value={formData.email}
-              onChange={e => setFormData({...formData, email: e.target.value})} 
-              required 
-            />
-          </div>
+               <InputField 
+                 label="Primary Discipline / Role *" 
+                 name="subject" 
+                 placeholder="Ex: Advanced Mathematics" 
+                 value={formData.subject}
+                 onChange={(e: any) => setFormData({...formData, subject: e.target.value})} 
+                 required 
+                 icon={Layout}
+               />
 
-          <div>
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Phone Number</label>
-            <input 
-              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-blue-100 transition-all" 
-              placeholder="91XXXXXXXX" 
-              value={formData.phone}
-              onChange={e => setFormData({...formData, phone: e.target.value})} 
-              required 
-            />
-          </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <InputField 
+                    label="Authorized Email Node *" 
+                    name="email" 
+                    type="email" 
+                    placeholder="teacher@asm-portal.com" 
+                    value={formData.email}
+                    onChange={(e: any) => setFormData({...formData, email: e.target.value})} 
+                    required 
+                    icon={Mail}
+                  />
 
-          <div className="pt-4 flex flex-col gap-3">
-            <button 
-              type="submit"
-              disabled={isPending} 
-              className="w-full bg-blue-900 hover:bg-black text-white p-4 md:p-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg transition transform active:scale-95 disabled:opacity-50"
-            >
-              {isPending ? "🚀 Processing..." : "💾 Create Teacher Account"}
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => navigate('/admin/dashboard')}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 p-4 rounded-2xl font-black uppercase tracking-widest text-xs transition"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+                  <InputField 
+                    label="Uplink Mobile Node *" 
+                    name="phone" 
+                    placeholder="+91 XXXX-XXXXXX" 
+                    value={formData.phone}
+                    onChange={(e: any) => setFormData({...formData, phone: e.target.value})} 
+                    required 
+                    icon={Phone}
+                  />
+               </div>
+            </div>
 
-        <p className="mt-6 text-[10px] text-center font-bold text-gray-400 uppercase tracking-tighter">
-          Default Password will be: <span className="text-blue-600">Teacher@123</span>
-        </p>
+            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-2xl rounded-full" />
+               <div className="flex items-center gap-3 relative z-10">
+                  <Info size={16} className="text-blue-500" />
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Security Protocol Note</p>
+               </div>
+               <p className="text-[11px] font-bold text-slate-500 italic leading-relaxed relative z-10">
+                  Upon synchronization, a secure authentication node will be established. The default access token will be initialized as: <span className="text-blue-600 font-black notranslate">Teacher@123</span>. Instruct member to update credentials post-induction.
+               </p>
+            </div>
+
+            <div className="pt-6 flex flex-col sm:flex-row gap-4">
+               <button 
+                 type="submit"
+                 disabled={isPending}
+                 className="premium-button-admin flex-1 italic"
+               >
+                 {isPending ? (
+                    <RefreshCw className="animate-spin" size={20} />
+                 ) : (
+                    <><Zap size={20} className="group-hover:translate-y-[-2px] transition-transform" /> Synchronize Staff Registry</>
+                 )}
+               </button>
+               
+               <button 
+                 type="button"
+                 onClick={() => navigate('/admin/dashboard')}
+                 className="px-10 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all italic"
+               >
+                 Abort Induction
+               </button>
+            </div>
+          </form>
+        </motion.div>
+
+        {/* --- FOOTER DECOR --- */}
+        <div className="mt-12 text-center group cursor-default">
+           <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm transition-all group-hover:scale-105">
+              <Star size={14} className="text-amber-400 fill-amber-400" />
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Institutional Standard ASM v4.2 Authorized</p>
+           </div>
+        </div>
       </div>
     </div>
   );
 };
+
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <div className="space-y-1 group">
+    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-500">{label}</label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
+      <input className="premium-input pl-16 italic" {...props} />
+    </div>
+  </div>
+);
 
 export default AddTeacher;

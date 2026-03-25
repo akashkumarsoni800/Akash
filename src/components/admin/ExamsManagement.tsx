@@ -1,111 +1,240 @@
-import { useState } from 'react';
-import { useAddExam } from '../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../supabaseClient';
+import { 
+  Plus, FileText, Calendar, 
+  Trash2, ShieldCheck, Zap, 
+  ChevronRight, Info, RefreshCw,
+  Search, BookOpen, Clock,
+  MoreVertical, CheckCircle2
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { Alert, AlertDescription } from '../ui/alert';
-import { AlertCircle } from 'lucide-react';
 
 export default function ExamsManagement() {
-  const addExam = useAddExam();
-  const [open, setOpen] = useState(false);
+  const [exams, setExams] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    subject: '',
+    title: '',
     examDate: '',
+    subjects: ''
   });
+
+  useEffect(() => {
+    fetchExams();
+  }, []);
+
+  const fetchExams = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .select('*')
+        .order('exam_date', { ascending: false });
+
+      if (error) throw error;
+      setExams(data || []);
+    } catch (err: any) {
+      toast.error("Sync Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.title || !formData.subjects) return toast.error("All parameters required.");
 
-    if (!formData.subject || !formData.examDate) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    const examDateTimestamp = BigInt(new Date(formData.examDate).getTime() * 1000000);
-
+    setLoading(true);
     try {
-      await addExam.mutateAsync({
-        subject: formData.subject,
-        examDate: examDateTimestamp,
-      });
-      toast.success('Exam scheduled successfully');
-      setOpen(false);
-      setFormData({ subject: '', examDate: '' });
-    } catch (error) {
-      console.error('Exam creation error:', error);
-      toast.error('Failed to schedule exam');
+      const subjectsArray = formData.subjects.split(',').map(s => s.trim()).filter(s => s);
+      const { error } = await supabase
+        .from('exams')
+        .insert([{
+          title: formData.title,
+          exam_date: formData.examDate,
+          subjects: subjectsArray
+        }]);
+
+      if (error) throw error;
+      
+      toast.success("Identity Locked: Exam Scheduled 🎯");
+      setIsModalOpen(false);
+      setFormData({ title: '', examDate: '', subjects: '' });
+      fetchExams();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteExam = async (id: string) => {
+    if (!window.confirm("Confirm deletion of this assessment node?")) return;
+    try {
+      const { error } = await supabase.from('exams').delete().eq('id', id);
+      if (error) throw error;
+      toast.success("Assessment Purged");
+      fetchExams();
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Exams Management</CardTitle>
-            <CardDescription>Schedule and manage examinations</CardDescription>
-          </div>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Schedule Exam
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Schedule New Exam</DialogTitle>
-                <DialogDescription>Create a new examination</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject *</Label>
-                  <Input
-                    id="subject"
-                    value={formData.subject}
-                    onChange={(e: any) => setFormData({ ...formData, subject: e.target.value })}
-                    placeholder="Enter subject name"
-                    required
-                  />
-                </div>
+    <div className="space-y-8">
+      
+      {/* --- TOP BAR --- */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+         <div className="space-y-1">
+            <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Scholastic Assessments</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Digital Examination Registry Hub v4.2</p>
+         </div>
+         <button 
+           onClick={() => setIsModalOpen(true)}
+           className="premium-button-admin bg-slate-950 text-white hover:bg-blue-600 italic border-none shadow-xl"
+         >
+           <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Initialize Exam
+         </button>
+      </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="examDate">Exam Date *</Label>
-                  <Input
-                    id="examDate"
-                    type="date"
-                    value={formData.examDate}
-                    onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
-                    required
-                  />
-                </div>
+      {/* --- STATS MINI --- */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <div className="premium-card p-6 shadow-sm">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Active Exams</p>
+            <p className="text-2xl font-black text-slate-900 italic tracking-tighter leading-none">{exams.length}</p>
+         </div>
+         <div className="premium-card p-6 shadow-sm">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Sync Status</p>
+            <div className="flex items-center gap-2">
+               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-tighter italic leading-none">Live Protocol Active</p>
+            </div>
+         </div>
+      </div>
 
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={addExam.isPending}>
-                    {addExam.isPending ? 'Scheduling...' : 'Schedule Exam'}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Exam listing and marks entry features are being developed. Exams can be scheduled but additional management features are not yet available.
-          </AlertDescription>
-        </Alert>
-      </CardContent>
-    </Card>
+      {/* --- EXAM GRID --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+         <AnimatePresence mode="popLayout">
+            {exams.map((exam, idx) => (
+               <motion.div 
+                 key={exam.id}
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ delay: idx * 0.05 }}
+                 className="premium-card p-8 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
+               >
+                  <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button onClick={() => deleteExam(exam.id)} className="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+                        <Trash2 size={16} />
+                     </button>
+                  </div>
+ 
+                  <div className="space-y-6">
+                     <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                        <FileText size={24} />
+                     </div>
+                     <div>
+                        <h4 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter leading-none mb-2">{exam.title}</h4>
+                        <div className="flex items-center gap-2">
+                           <Calendar size={12} className="text-slate-300" />
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide italic">{exam.exam_date || 'TBD'}</p>
+                        </div>
+                     </div>
+
+                     <div className="flex flex-wrap gap-2">
+                        {exam.subjects?.map((sub: string) => (
+                           <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter border border-slate-100 italic">{sub}</span>
+                        ))}
+                     </div>
+                  </div>
+               </motion.div>
+            ))}
+         </AnimatePresence>
+
+         {exams.length === 0 && !loading && (
+            <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[3rem]">
+               <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                  <Search size={40} />
+               </div>
+               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-2">No active assessment nodes found</p>
+               <p className="text-[9px] font-bold text-slate-200 uppercase tracking-widest italic leading-relaxed">Initialize a new exam to begin scheduling.</p>
+            </div>
+         )}
+      </div>
+
+      {/* --- ADD MODAL --- */}
+      <AnimatePresence>
+         {isModalOpen && (
+            <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
+               <motion.div 
+                 initial={{ scale: 0.95, opacity: 0 }}
+                 animate={{ scale: 1, opacity: 1 }}
+                 exit={{ scale: 0.95, opacity: 0 }}
+                 className="bg-white w-full max-w-lg rounded-[3.5rem] p-10 md:p-14 shadow-2xl border border-slate-100"
+               >
+                  <div className="flex justify-between items-center mb-10">
+                     <div className="space-y-1">
+                        <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Schedule Exam</h2>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Institutional Assessment Config</p>
+                     </div>
+                     <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
+                        <Plus size={20} className="rotate-45" />
+                     </button>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                     <div className="space-y-8">
+                        <InputField 
+                          label="Assessment Nomenclature" 
+                          icon={Zap} 
+                          placeholder="e.g., Annual Exam 2026..."
+                          value={formData.title}
+                          onChange={(e: any) => setFormData({ ...formData, title: e.target.value })}
+                        />
+                        <InputField 
+                          label="Calibration Date" 
+                          type="date"
+                          icon={Calendar} 
+                          value={formData.examDate}
+                          onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
+                        />
+                        <div className="space-y-2 group">
+                          <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600">Included Subject Nodes</label>
+                          <div className="relative">
+                            <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
+                            <textarea 
+                              className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all italic text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
+                              placeholder="Mathematics, Physics, Chemistry... (comma separated)"
+                              value={formData.subjects}
+                              onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                     </div>
+
+                     <div className="flex gap-4 pt-6">
+                        <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-blue-600 italic border-none shadow-xl">
+                           {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Lock Protocol</>}
+                        </button>
+                        <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black uppercase tracking-[0.1em] text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+                     </div>
+                  </form>
+               </motion.div>
+            </div>
+         )}
+      </AnimatePresence>
+
+    </div>
   );
 }
+
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <div className="space-y-2 group/input">
+    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within/input:text-blue-600">{label}</label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
+      <input className={`premium-input italic text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-5`} {...props} />
+    </div>
+  </div>
+);

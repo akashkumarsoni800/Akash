@@ -2,11 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { 
+  ShieldCheck, Lock, Mail, 
+  ChevronLeft, ChevronRight, Activity, 
+  Zap, RefreshCw, Key, Info,
+  ShieldAlert, UserCheck, Smartphone,
+  User, Layout, ArrowRight
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // 1: Verify / Choose, 2: New Password
+  const [step, setStep] = useState(1); // 1: Verify, 2: New Password, 3: Success
 
   // Verification States (For logged-out users)
   const [fullName, setFullName] = useState('');
@@ -26,7 +34,7 @@ const ResetPassword = () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         setIsLoggedIn(true);
-        setStep(2); // Agar login hai to seedha password change par bhejo
+        setStep(2);
       }
     };
     checkUser();
@@ -52,20 +60,19 @@ const ResetPassword = () => {
         if (student.email) {
           setTargetEmail(student.email);
           
-          // ✅ Security: Send reset link to email
           const { error: resetError } = await supabase.auth.resetPasswordForEmail(student.email, {
             redirectTo: `${window.location.origin}/reset-password`,
           });
 
           if (resetError) throw resetError;
 
-          toast.success(`Identity Verified! Reset link sent to ${student.email} ✅`);
-          setStep(3); // Show success message
+          toast.success(`Identity Verified: Calibration Link Dispatched 📡`);
+          setStep(3);
         } else {
-          toast.error("Email not found for this student. Contact Admin.");
+          toast.error("Node error: Email not indexed. Contact Admin.");
         }
       } else {
-        toast.error("No student found with these details.");
+        toast.error("Identity mismatch: No records found.");
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -77,7 +84,7 @@ const ResetPassword = () => {
   // 2. Direct Password Update (For Logged-in Users)
   const handleDirectUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) return toast.error("Passwords match nahi ho rahe!");
+    if (newPassword !== confirmPassword) return toast.error("Credential mismatch: Passwords do not align.");
 
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -85,76 +92,192 @@ const ResetPassword = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Password successfully updated! ✅");
-      navigate((isLoggedIn ? -1 : '/') as any); // Login hai to piche jayein, warna login par
+      toast.success("Identity Secured: Credential Refined ✅");
+      navigate((isLoggedIn ? -1 : '/') as any);
     }
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-t-4 border-blue-900">
-        <h2 className="text-2xl font-bold text-blue-900 mb-2 text-center">
-          {isLoggedIn ? "Change Password" : "Reset Password"}
-        </h2>
-        
-        {/* STEP 1: VERIFICATION (Only for logged-out users) */}
-        {!isLoggedIn && step === 1 && (
-          <form onSubmit={handleVerifyIdentity} className="space-y-4">
-            <p className="text-sm text-gray-500 mb-4 text-center">Verify your details to get a reset link</p>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase">Student Name</label>
-              <input type="text" className="w-full p-3 border rounded mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={fullName} onChange={e => setFullName(e.target.value)} required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase">Father's Name</label>
-              <input type="text" className="w-full p-3 border rounded mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={fatherName} onChange={e => setFatherName(e.target.value)} required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase">Mobile Number</label>
-              <input type="tel" className="w-full p-3 border rounded mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={contactNumber} onChange={e => setContactNumber(e.target.value)} required />
-            </div>
-            <button disabled={loading} className="w-full bg-blue-900 text-white py-3 rounded font-bold hover:bg-blue-800 transition">
-              {loading ? "Verifying..." : "Verify & Send Link"}
-            </button>
-          </form>
-        )}
-
-        {/* STEP 2: NEW PASSWORD FORM (For logged-in users or via email link) */}
-        {step === 2 && (
-          <form onSubmit={handleDirectUpdate} className="space-y-4">
-            <p className="text-sm text-gray-500 mb-4">Set a new strong password.</p>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase">New Password</label>
-              <input type="password" placeholder="Min 6 characters" className="w-full p-3 border rounded mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase">Confirm Password</label>
-              <input type="password" placeholder="Repeat password" className="w-full p-3 border rounded mt-1 outline-none focus:ring-2 focus:ring-blue-500" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
-            </div>
-            <button disabled={loading} className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition">
-              {loading ? "Updating..." : "Update Password Now"}
-            </button>
-          </form>
-        )}
-
-        {/* STEP 3: SUCCESS MESSAGE (After sending link) */}
-        {step === 3 && (
-          <div className="text-center space-y-4">
-            <div className="bg-green-50 p-4 rounded-lg text-green-800 text-sm border border-green-200">
-              <b>Success!</b><br/>
-              Reset link sent to your registered email <b>{targetEmail}</b>.
-            </div>
-            <button onClick={() => navigate('/')} className="w-full bg-blue-900 text-white py-3 rounded font-bold">Back to Login</button>
-          </div>
-        )}
-
-        <div className="mt-6 text-center">
-          <button onClick={() => navigate('/')} className="text-sm text-gray-400 hover:text-blue-900 transition">Cancel / Back</button>
-        </div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-inter selection:bg-blue-100 selection:text-blue-900">
+      
+      {/* --- MESH DECORATION --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-200/20 blur-[120px] rounded-full animate-pulse"></div>
+         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-200/20 blur-[120px] rounded-full animate-pulse decoration-700"></div>
       </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg relative z-10"
+      >
+        <div className="bg-white rounded-[4rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
+           <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600" />
+           
+           <div className="p-10 md:p-14 space-y-12">
+              
+              {/* Header */}
+              <div className="text-center space-y-4">
+                 <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
+                    <ShieldCheck size={36} className="text-blue-600" />
+                 </div>
+                 <h2 className="text-4xl font-black text-slate-900 uppercase italic  italic tracking-tighter leading-none">
+                    Credential<br/>
+                    <span className="text-blue-600">Restoration</span>
+                 </h2>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Secure Synchronization Protocol</p>
+              </div>
+
+              <AnimatePresence mode="wait">
+                 {step === 1 && (
+                    <motion.form 
+                      key="step1"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      onSubmit={handleVerifyIdentity} 
+                      className="space-y-8"
+                    >
+                       <div className="grid gap-8">
+                          <InputField 
+                            label="Scholar Full Nomenclature" 
+                            value={fullName} 
+                            onChange={(e: any) => setFullName(e.target.value)} 
+                            icon={User}
+                            placeholder="Enter legal name..."
+                          />
+                          <InputField 
+                            label="Guardian Name (Identity Anchor)" 
+                            value={fatherName} 
+                            onChange={(e: any) => setFatherName(e.target.value)} 
+                            icon={UserCheck}
+                            placeholder="Father/Guardian name..."
+                          />
+                          <InputField 
+                            label="Contact Registry (Mobile)" 
+                            value={contactNumber} 
+                            onChange={(e: any) => setContactNumber(e.target.value)} 
+                            icon={Smartphone}
+                            placeholder="Registered mobile number..."
+                          />
+                       </div>
+
+                       <div className="pt-6 space-y-6">
+                          <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                          >
+                            {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldAlert size={20} /> Authorize Verification</>}
+                          </button>
+                          
+                          <button 
+                            type="button"
+                            onClick={() => navigate('/')}
+                            className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95  italic"
+                          >
+                             <ChevronLeft size={16} /> Revert to Terminal
+                          </button>
+                       </div>
+                    </motion.form>
+                 )}
+
+                 {step === 2 && (
+                    <motion.form 
+                      key="step2"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      onSubmit={handleDirectUpdate} 
+                      className="space-y-8"
+                    >
+                       <div className="grid gap-8">
+                          <InputField 
+                            label="New Cryptographic Key" 
+                            type="password"
+                            value={newPassword} 
+                            onChange={(e: any) => setNewPassword(e.target.value)} 
+                            icon={Lock}
+                            placeholder="••••••••"
+                          />
+                          <InputField 
+                            label="Confirm Security Matrix" 
+                            type="password"
+                            value={confirmPassword} 
+                            onChange={(e: any) => setConfirmPassword(e.target.value)} 
+                            icon={Key}
+                            placeholder="••••••••"
+                          />
+                       </div>
+
+                       <div className="pt-6">
+                          <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  italic group/btn"
+                          >
+                            {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Zap size={20} /> Commit Credentials</>}
+                          </button>
+                       </div>
+                    </motion.form>
+                 )}
+
+                 {step === 3 && (
+                    <motion.div 
+                      key="step3"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center space-y-10 py-10"
+                    >
+                       <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto shadow-inner relative">
+                          <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping" />
+                          <Mail size={40} className="text-emerald-600 relative z-10" />
+                       </div>
+                       
+                       <div className="space-y-4">
+                          <h3 className="text-2xl font-black text-slate-900 uppercase italic  italic tracking-tighter leading-none">Dispatched</h3>
+                          <p className="text-slate-500 font-bold text-[11px] leading-relaxed italic max-w-xs mx-auto">
+                             An institutional restoration link has been transmitted to <span className="text-blue-600">{targetEmail}</span>. 
+                             Access the mail node to initialize re-calibration.
+                          </p>
+                       </div>
+
+                       <button 
+                         onClick={() => navigate('/')}
+                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4  italic"
+                       >
+                          Return to Terminal <ArrowRight size={18} />
+                       </button>
+                    </motion.div>
+                 )}
+              </AnimatePresence>
+
+           </div>
+
+           {/* Footer Alert */}
+           <div className="bg-slate-50 p-10 border-t border-slate-100 flex items-center gap-6">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm border border-slate-100">
+                 <Info size={24} />
+              </div>
+              <p className="text-[10px] font-bold text-slate-400 leading-relaxed italic">
+                 Security Notice: All restoration attempts are logged with institutional IP coordinates for security audits.
+              </p>
+           </div>
+        </div>
+      </motion.div>
     </div>
   );
 };
+
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <div className="space-y-1 group">
+    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 italic transition-colors group-focus-within:text-blue-600 ">{label}</label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  italic text-sm placeholder:text-slate-200`} {...props} />
+    </div>
+  </div>
+);
 
 export default ResetPassword;
