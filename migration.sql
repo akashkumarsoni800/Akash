@@ -107,6 +107,35 @@ RETURNS UUID AS $$
   SELECT id FROM schools WHERE school_code = UPPER(code) LIMIT 1;
 $$ LANGUAGE sql SECURITY DEFINER;
 
--- 6. Insert default school (Optional, for existing data)
--- INSERT INTO public.schools (name, school_code) VALUES ('Default School', 'DEFAULT');
--- UPDATE public.students SET school_id = (SELECT id FROM public.schools WHERE school_code = 'DEFAULT') WHERE school_id IS NULL;
+-- 6. Associate existing data with the default school (ASM01)
+DO $$ 
+DECLARE 
+    default_school_id UUID;
+BEGIN 
+    -- 1. Get the ID for ASM01
+    SELECT id INTO default_school_id FROM schools WHERE school_code = 'ASM01' LIMIT 1;
+    
+    -- 2. If it doesn't exist (unlikely), create it
+    IF default_school_id IS NULL THEN
+        INSERT INTO schools (name, school_code) VALUES ('Adarsh Shishu Mandir', 'ASM01') RETURNING id INTO default_school_id;
+    END IF;
+
+    -- 3. Update Students
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'students') THEN
+        UPDATE public.students SET school_id = default_school_id WHERE school_id IS NULL;
+    END IF;
+
+    -- 4. Update Teachers
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'teachers') THEN
+        UPDATE public.teachers SET school_id = default_school_id WHERE school_id IS NULL;
+    END IF;
+
+    -- 5. Update other tables if they exist
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'exams') THEN
+        UPDATE public.exams SET school_id = default_school_id WHERE school_id IS NULL;
+    END IF;
+    
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'results') THEN
+        UPDATE public.results SET school_id = default_school_id WHERE school_id IS NULL;
+    END IF;
+END $$;
