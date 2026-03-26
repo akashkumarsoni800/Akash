@@ -106,17 +106,25 @@ INSERT INTO schools (name, school_code, logo_url) VALUES
 ('Global International', 'GLOBAL02', NULL)
 ON CONFLICT (school_code) DO NOTHING;
 
--- 7. Ensure Storage Bucket for Logos exists
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('logos', 'logos', true)
+-- 7. Ensure Storage Buckets exist (logos, student-photos, avatars)
+INSERT INTO storage.buckets (id, name, public) VALUES 
+('logos', 'logos', true),
+('student-photos', 'student-photos', true),
+('avatars', 'avatars', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Set up RLS for the bucket (Drop existing policies first to allow re-run)
+-- Set up RLS for all buckets
+-- 1. Public Access (Read)
 DROP POLICY IF EXISTS "Public Access" ON storage.objects;
-DROP POLICY IF EXISTS "Admin Upload" ON storage.objects;
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (true);
 
-CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'logos');
-CREATE POLICY "Admin Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'logos');
+-- 2. Authenticated Upload (Admin/Staff/User)
+DROP POLICY IF EXISTS "Authenticated Upload" ON storage.objects;
+CREATE POLICY "Authenticated Upload" ON storage.objects FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- 3. Authenticated Update/Delete
+DROP POLICY IF EXISTS "Authenticated Update" ON storage.objects;
+CREATE POLICY "Authenticated Update" ON storage.objects FOR UPDATE WITH CHECK (auth.role() = 'authenticated');
 
 -- 6. Helper Function to get school_id from school_code (Optional for RPC)
 CREATE OR REPLACE FUNCTION get_school_by_code(code TEXT)
