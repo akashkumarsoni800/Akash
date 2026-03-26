@@ -166,3 +166,38 @@ BEGIN
         UPDATE public.results SET school_id = default_school_id WHERE school_id IS NULL;
     END IF;
 END $$;
+
+-- 8. Profile Update Logic (RPC)
+CREATE OR REPLACE FUNCTION force_update_user(
+  target_id TEXT, -- Can be UUID or Int as String
+  new_email TEXT,
+  new_name TEXT,
+  new_phone TEXT,
+  new_subject TEXT,
+  new_address TEXT,
+  new_parent TEXT,
+  new_avatar TEXT,
+  table_type TEXT
+) RETURNS VOID AS $$
+BEGIN
+  IF table_type = 'teacher' THEN
+    UPDATE public.teachers SET
+      full_name = new_name,
+      email = new_email,
+      phone = new_phone,
+      subject = new_subject,
+      address = new_address,
+      avatar_url = new_avatar
+    WHERE id::text = target_id;
+  ELSE
+    UPDATE public.students SET
+      full_name = new_name,
+      email = new_email,
+      contact_number = new_phone,
+      address = new_address,
+      father_name = new_parent,
+      photo_url = new_avatar
+    WHERE student_id::text = target_id;
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

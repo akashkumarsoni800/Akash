@@ -90,8 +90,8 @@ const ProfileSetupPage = () => {
        email: profile.email || '',
        phone: profile.phone || profile.contact_number || '',
        address: profile.address || '',
-       avatar_url: profile.avatar_url || '',
-       parent_name: profile.parent_name || '',
+       avatar_url: (table_type === 'students' ? profile.photo_url : profile.avatar_url) || '',
+       parent_name: profile.parent_name || profile.father_name || '',
        subject: profile.subject || ''
       });
      }
@@ -123,7 +123,7 @@ const ProfileSetupPage = () => {
 
   try {
    const { error } = await supabase.rpc('force_update_user', {
-    target_id: profileId,
+    target_id: String(profileId),
     new_email: formData.email,
     new_name: formData.full_name,
     new_phone: formData.phone,
