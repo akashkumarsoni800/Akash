@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 
 const Home = () => {
  const navigate = useNavigate();
@@ -19,17 +20,17 @@ const Home = () => {
       ADARSH <span className="text-blue-600">SHISHU</span> <span className="hidden xs:inline">MANDIR</span>
      </span>
     </div>
-    <div className="hidden md:flex space-x-10 font-black text-slate-600">
-     <a href="#" className="hover:text-blue-600 transition-colors">Curriculum</a>
-     <a href="#" className="hover:text-blue-600 transition-colors">Admissions</a>
-     <a href="#" className="hover:text-blue-600 transition-colors">Portal</a>
-    </div>
-    <button 
-     onClick={() => navigate('/login')}
-     className="px-4 md:px-6 py-1.5 md:py-2 border-2 border-slate-800 rounded-full font-bold text-sm md:text-base hover:bg-slate-800 hover:text-white transition-all active:scale-95"
-    >
-     Login
-    </button>
+     <div className="hidden md:flex space-x-10 font-black text-slate-600 text-[10px] uppercase tracking-widest">
+      <a href="#" className="hover:text-blue-600 transition-colors">Our Vision</a>
+      <a href="#" className="hover:text-blue-600 transition-colors cursor-pointer" onClick={() => navigate('/register-school')}>Register School</a>
+      <a href="#" className="hover:text-blue-600 transition-colors">Support</a>
+     </div>
+     <button 
+      onClick={() => navigate('/login')}
+      className="px-8 py-3 bg-slate-950 text-white rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 shadow-xl"
+     >
+      Login
+     </button>
    </nav>
 
    {/* 🟢 Hero Section */}
@@ -45,21 +46,19 @@ const Home = () => {
       Experience a modern management system designed to bring teachers, parents, and students together in one seamless white-label environment.
      </p>
 
-     <div className="flex flex-col sm:flex-row gap-4">
+     <div className="flex flex-col sm:flex-row gap-5">
       <button 
        onClick={() => navigate('/login')}
-       className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:scale-105 transition-transform relative overflow-hidden group text-center"
+       className="w-full sm:w-auto px-10 py-5 bg-slate-950 text-white font-black rounded-[2rem] shadow-2xl hover:bg-blue-600 transition-all active:scale-95 text-xs uppercase tracking-widest"
       >
-       <span className="relative z-10">Explore Dashboard</span>
-       <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white/30 to-transparent rotate-45 transition-all duration-500 group-hover:left-[100%]"></div>
+       Enter Portal
       </button>
-      
+
       <button 
-       onClick={() => navigate('/login')}
-       className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+       onClick={() => navigate('/register-school')}
+       className="w-full sm:w-auto px-10 py-5 bg-white text-blue-600 font-black rounded-[2rem] border-2 border-blue-600 shadow-xl hover:bg-blue-50 transition-all active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3"
       >
-       <span className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></span>
-       Student Portal
+       <Sparkles size={18} /> Register School
       </button>
      </div>
     </div>

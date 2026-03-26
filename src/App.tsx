@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import LoginPage from './pages/auth/LoginPage';
 import ResetPassword from './pages/auth/ResetPassword';
 import ProfileSetupPage from './pages/auth/ProfileSetupPage';
+import SchoolRegistrationPage from './pages/auth/SchoolRegistrationPage'; // ✅ NEW
 
 // --- DASHBOARDS ---
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -60,6 +61,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/register-school" element={<SchoolRegistrationPage />} />
 
            
 
