@@ -5,8 +5,82 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, LogOut, User, ChevronDown, Bell, Search, Globe, ShieldCheck, Settings } from 'lucide-react';
 
 const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) => {
- const navigate = useNavigate();
- const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const navigate = useNavigate();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Define searchable modules based on roles
+  const modules = [
+    { label: 'Command Center', path: '/admin/dashboard', icon: 'LayoutDashboard', role: 'admin' },
+    { label: 'Financial Hub', path: '/admin/manage-fees', icon: 'CreditCard', role: 'admin' },
+    { label: 'Enrollment', path: '/admin/add-student', icon: 'UserPlus', role: 'admin' },
+    { label: 'Payroll', path: '/admin/teacher-salary', icon: 'Wallet', role: 'admin' },
+    { label: 'Accounting', path: '/admin/manage-salaries', icon: 'PieChart', role: 'admin' },
+    { label: 'Assessments', path: '/admin/upload-result', icon: 'ClipboardList', role: 'admin' },
+    { label: 'Document Hub', path: '/admin/documents', icon: 'FileText', role: 'admin' },
+    { label: 'Bulletins', path: '/admin/add-event', icon: 'Bell', role: 'admin' },
+    { label: 'Student Dashboard', path: '/student/dashboard', icon: 'LayoutDashboard', role: 'student' },
+    { label: 'Academic Plan', path: '/student/homework', icon: 'BookOpen', role: 'student' },
+    { label: 'Report Card', path: '/student/result', icon: 'ClipboardList', role: 'student' },
+    { label: 'Profile Settings', path: '/profile-setup', icon: 'User', role: 'any' },
+  ].filter(m => m.role === 'any' || m.role === userRole);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      setIsSearchOpen(false);
+      return;
+    }
+
+    const filteredModules = modules.filter(m => 
+      m.label.toLowerCase().includes(query.toLowerCase())
+    ).map(m => ({ ...m, type: 'Module' }));
+
+    let dbResults: any[] = [];
+    if (query.length > 2) {
+      const schoolId = localStorage.getItem('current_school_id');
+      
+      // Search Students
+      const { data: students } = await supabase
+        .from('students')
+        .select('full_name, student_id, class_name')
+        .eq('school_id', schoolId)
+        .ilike('full_name', `%${query}%`)
+        .limit(3);
+
+      if (students) {
+        dbResults = [...dbResults, ...students.map(s => ({
+          label: s.full_name,
+          path: `/admin/documents?search=${s.student_id}`,
+          type: 'Student',
+          sub: `Class ${s.class_name}`
+        }))];
+      }
+
+      // Search Teachers
+      const { data: teachers } = await supabase
+        .from('teachers')
+        .select('full_name, id')
+        .eq('school_id', schoolId)
+        .ilike('full_name', `%${query}%`)
+        .limit(2);
+
+      if (teachers) {
+        dbResults = [...dbResults, ...teachers.map(t => ({
+          label: t.full_name,
+          path: `/edit-teacher/${t.id}`,
+          type: 'Staff',
+          sub: 'Faculty Member'
+        }))];
+      }
+    }
+
+    setSearchResults([...filteredModules, ...dbResults]);
+    setIsSearchOpen(true);
+  };
 
  const handleLogoClick = () => {
   if (userRole === 'admin') navigate('/admin/dashboard');
@@ -30,18 +104,71 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
      <Menu size={24} className="text-slate-600" />
     </button>
 
-    {/* Global Search Bar (Figma Style) */}
-    <div className="hidden md:flex items-center gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl px-5 py-3 w-full max-w-lg group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
-     <Search size={18} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
-     <input 
-      type="text" 
-      placeholder="Search records, assets, or bulletins..." 
-      className="bg-transparent border-none outline-none text-[13px] font-black text-slate-800 w-full placeholder:text-slate-300"
-     />
-     <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-lg text-[10px] font-black text-slate-400 ">
-       ⌘ K
+     {/* Global Search Bar (Figma Style) */}
+     <div className="relative hidden md:block w-full max-w-lg">
+       <div className="flex items-center gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl px-5 py-3 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
+        <Search size={18} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+        <input 
+         type="text" 
+         placeholder="Search records, assets, or bulletins..." 
+         className="bg-transparent border-none outline-none text-[13px] font-black text-slate-800 w-full placeholder:text-slate-300"
+         value={searchQuery}
+         onChange={(e) => handleSearch(e.target.value)}
+         onFocus={() => searchQuery && setIsSearchOpen(true)}
+        />
+        <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-lg text-[10px] font-black text-slate-400 ">
+          ⌘ K
+        </div>
+       </div>
+
+       {/* Search Results Dropdown */}
+       <AnimatePresence>
+        {isSearchOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsSearchOpen(false)}></div>
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50 p-2"
+            >
+              {searchResults.length > 0 ? (
+                <div className="max-h-[400px] overflow-y-auto asm-hide-scrollbar">
+                  {searchResults.map((result, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        navigate(result.path);
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                      }}
+                      className="w-full flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group text-left"
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                        result.type === 'Module' ? 'bg-blue-50 text-blue-500' : 'bg-purple-50 text-purple-500'
+                      }`}>
+                        {result.type === 'Module' ? <Settings size={18} /> : <User size={18} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] font-black text-slate-900 truncate">{result.label}</p>
+                        <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase mt-0.5">
+                          {result.type} {result.sub ? `• ${result.sub}` : ''}
+                        </p>
+                      </div>
+                      <ChevronDown size={14} className="text-slate-200 -rotate-90" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No Intelligence Matches</p>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+       </AnimatePresence>
      </div>
-    </div>
    </div>
 
    <div className="flex items-center gap-4 md:gap-8">
