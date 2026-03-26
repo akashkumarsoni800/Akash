@@ -7,7 +7,7 @@ import {
  ChevronLeft, ChevronRight, Activity, 
  Zap, RefreshCw, Key, Info,
  ShieldAlert, UserCheck, Smartphone,
- User, Layout, ArrowRight
+ User, Layout, ArrowRight, Fingerprint
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
