@@ -33,7 +33,7 @@ const LoginPage = () => {
    // 1. Resolve School Code to School ID
    const { data: school, error: schoolError } = await supabase
     .from('schools')
-    .select('id, name, logo_url')
+    .select('id, name, logo_url, school_code')
     .ilike('school_code', loginData.school_code.trim())
     .maybeSingle();
 
@@ -76,6 +76,7 @@ const LoginPage = () => {
     // Store school context
     localStorage.setItem('current_school_id', school.id);
     localStorage.setItem('current_school_name', school.name);
+    localStorage.setItem('current_school_code', school.school_code);
     if (school.logo_url) localStorage.setItem('current_school_logo', school.logo_url);
 
     setShowWelcome(true);

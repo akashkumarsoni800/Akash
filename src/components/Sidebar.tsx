@@ -19,6 +19,7 @@ const Sidebar = () => {
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const schoolName = localStorage.getItem('current_school_name') || 'ASMD';
   const schoolLogo = localStorage.getItem('current_school_logo');
+  const schoolCode = localStorage.getItem('current_school_code');
 
  useEffect(() => {
   let isMounted = true;
@@ -120,8 +121,12 @@ const Sidebar = () => {
       }`}>
        {schoolLogo ? (
          <img src={schoolLogo} className="w-full h-full object-cover" alt="logo" />
-       ) : (
+       ) : schoolCode === 'ASM01' ? (
          <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
+       ) : (
+         <div className="w-full h-full flex items-center justify-center bg-white/20 text-white font-black text-xl">
+           {schoolName.charAt(0).toUpperCase()}
+         </div>
        )}
       </div>
       <div>
