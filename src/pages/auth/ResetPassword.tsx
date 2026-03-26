@@ -33,15 +33,26 @@ const ResetPassword = () => {
  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-     setIsLoggedIn(true);
-     setStep(2);
-    }
-   };
-   checkUser();
-  }, []);
+    // Immediate check
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsLoggedIn(true);
+        setStep(2);
+      }
+    };
+    checkUser();
+
+    // Listen for auth changes (useful if the session is still initializing)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setStep(2);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
  // 1. Verify Identity (For Students who forgot password)
  const handleVerifyIdentity = async (e: React.FormEvent) => {
