@@ -17,9 +17,17 @@ const Sidebar = () => {
  const [isMobileOpen, setIsMobileOpen] = useState(false); 
  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
+  const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
   const schoolName = localStorage.getItem('current_school_name') || 'ASMD';
-  const schoolLogo = localStorage.getItem('current_school_logo');
   const schoolCode = localStorage.getItem('current_school_code');
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setSchoolLogo(localStorage.getItem('current_school_logo'));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
  useEffect(() => {
   let isMounted = true;
