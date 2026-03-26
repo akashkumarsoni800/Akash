@@ -7,7 +7,8 @@ import {
  ChevronLeft, Camera, ShieldCheck, 
  Zap, Info, RefreshCw, Save, 
  BookOpen, Fingerprint, Layout,
- Smartphone, UserCheck, ShieldAlert
+ Smartphone, UserCheck, ShieldAlert,
+ Lock as LucideLock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -332,7 +333,7 @@ const ProfileSetupPage = () => {
 
          <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
           <p className="text-[9px] font-black text-white/30  leading-relaxed">
-            Notice: Identity calibration requires absolute nomenclature accuracy for institutional indexing.
+           Notice: Identity calibration requires absolute nomenclature accuracy for institutional indexing.
           </p>
          </div>
        </motion.div>
@@ -363,7 +364,17 @@ const ProfileSetupPage = () => {
             <p className="text-[11px] font-black text-slate-500 leading-relaxed">Mail node updates will require a terminal sign-out for re-authentication.</p>
           </li>
          </ul>
-       </motion.div>
+         
+         <div className="pt-6 border-t border-slate-50">
+           <button 
+            type="button"
+            onClick={() => navigate('/reset-password')}
+            className="w-full flex items-center justify-center gap-3 py-4 bg-slate-50 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 border border-slate-100 shadow-sm"
+           >
+            <LucideLock size={16} /> Change Password Protocol
+           </button>
+         </div>
+        </motion.div>
       </div>
     </div>
 

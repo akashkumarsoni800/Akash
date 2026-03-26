@@ -21,6 +21,9 @@ const ResetPassword = () => {
  const [fatherName, setFatherName] = useState('');
  const [contactNumber, setContactNumber] = useState('');
  const [targetEmail, setTargetEmail] = useState('');
+ const [className, setClassName] = useState('');
+ const [rollNo, setRollNo] = useState('');
+ const [resetRole, setResetRole] = useState<'student' | 'staff'>('student');
 
  // Update States
  const [newPassword, setNewPassword] = useState('');
@@ -29,16 +32,16 @@ const ResetPassword = () => {
  // ✅ Check if user is already logged in
  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
- useEffect(() => {
-  const checkUser = async () => {
-   const { data } = await supabase.auth.getSession();
-   if (data.session) {
-    setIsLoggedIn(true);
-    setStep(2);
-   }
-  };
-  checkUser();
- }, []);
+  useEffect(() => {
+   const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+     setIsLoggedIn(true);
+     setStep(2);
+    }
+   };
+   checkUser();
+  }, []);
 
  // 1. Verify Identity (For Students who forgot password)
  const handleVerifyIdentity = async (e: React.FormEvent) => {
@@ -46,33 +49,46 @@ const ResetPassword = () => {
   setLoading(true);
 
   try {
-   const { data: studentList, error } = await supabase
-    .from('students')
-    .select('email, full_name')
-    .ilike('full_name', fullName.trim())
-    .ilike('father_name', fatherName.trim()) 
-    .eq('contact_number', contactNumber.trim());
-
-   if (error) throw error;
-
-   if (studentList && studentList.length > 0) {
-    const student = studentList[0];
-    if (student.email) {
-     setTargetEmail(student.email);
+   let searchResult;
+   if (resetRole === 'student') {
+    const { data, error } = await supabase
+     .from('students')
+     .select('email, full_name')
+     .ilike('full_name', fullName.trim())
+     .ilike('father_name', fatherName.trim()) 
+     .ilike('class_name', className.trim())
+     .eq('roll_no', rollNo.trim());
+    if (error) throw error;
+    searchResult = data;
+   } else {
+    // Staff lookup (Teachers/Admins)
+    const { data, error } = await supabase
+     .from('teachers')
+     .select('email, full_name')
+     .ilike('full_name', fullName.trim())
+     .eq('phone', contactNumber.trim()); // Teachers use 'phone' column
+    if (error) throw error;
+    searchResult = data;
+   }
+ 
+   if (searchResult && searchResult.length > 0) {
+    const person = searchResult[0];
+    if (person.email) {
+     setTargetEmail(person.email);
      
-     const { error: resetError } = await supabase.auth.resetPasswordForEmail(student.email, {
+     const { error: resetError } = await supabase.auth.resetPasswordForEmail(person.email, {
       redirectTo: `${window.location.origin}/reset-password`,
      });
-
+ 
      if (resetError) throw resetError;
-
-     toast.success(`Identity Verified: Calibration Link Dispatched 📡`);
+ 
+     toast.success(`${resetRole.toUpperCase()} Verified: Calibration Link Dispatched 📡`);
      setStep(3);
     } else {
      toast.error("Node error: Email not indexed. Contact Admin.");
     }
    } else {
-    toast.error("Identity mismatch: No records found.");
+    toast.error("Identity mismatch: No records found check Name/Phone.");
    }
   } catch (err: any) {
    toast.error(err.message);
@@ -139,28 +155,64 @@ const ResetPassword = () => {
            onSubmit={handleVerifyIdentity} 
            className="space-y-8"
           >
+            <div className="flex bg-slate-50 p-2 rounded-2xl gap-2">
+             {(['student', 'staff'] as const).map(r => (
+              <button 
+               key={r}
+               type="button"
+               onClick={() => setResetRole(r)}
+               className={`flex-1 py-3 rounded-xl font-black text-[10px] tracking-widest uppercase transition-all ${
+                resetRole === r ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'
+               }`}
+              >
+               {r}
+              </button>
+             ))}
+            </div>
+
             <div className="grid gap-8">
              <InputField 
-              label="Scholar Full Nomenclature" 
+              label={`${resetRole === 'student' ? 'Scholar' : 'Faculty'} Full Nomenclature`} 
               value={fullName} 
               onChange={(e: any) => setFullName(e.target.value)} 
               icon={User}
               placeholder="Enter legal name..."
              />
-             <InputField 
-              label="Guardian Name (Identity Anchor)" 
-              value={fatherName} 
-              onChange={(e: any) => setFatherName(e.target.value)} 
-              icon={UserCheck}
-              placeholder="Father/Guardian name..."
-             />
-             <InputField 
-              label="Contact (Mobile)" 
-              value={contactNumber} 
-              onChange={(e: any) => setContactNumber(e.target.value)} 
-              icon={Smartphone}
-              placeholder="Registered mobile number..."
-             />
+             {resetRole === 'student' ? (
+              <>
+               <InputField 
+                label="Guardian Name (Identity Anchor)" 
+                value={fatherName} 
+                onChange={(e: any) => setFatherName(e.target.value)} 
+                icon={UserCheck}
+                placeholder="Father/Guardian name..."
+               />
+               <div className="grid grid-cols-2 gap-8">
+                <InputField 
+                 label="Scholastic Batch (Class)" 
+                 value={className} 
+                 onChange={(e: any) => setClassName(e.target.value)} 
+                 icon={Layout}
+                 placeholder="Ex: 10A"
+                />
+                <InputField 
+                 label="Scholastic Index (Roll No)" 
+                 value={rollNo} 
+                 onChange={(e: any) => setRollNo(e.target.value)} 
+                 icon={Fingerprint}
+                 placeholder="Ex: 24"
+                />
+               </div>
+              </>
+             ) : (
+              <InputField 
+               label="Registered Comms (Phone)" 
+               value={contactNumber} 
+               onChange={(e: any) => setContactNumber(e.target.value)} 
+               icon={Smartphone}
+               placeholder="10-digit number..."
+              />
+             )}
             </div>
 
             <div className="pt-6 space-y-6">

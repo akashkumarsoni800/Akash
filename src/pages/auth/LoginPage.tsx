@@ -238,6 +238,15 @@ const LoginPage = () => {
              <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12" 
               onChange={e => setLoginData({...loginData, password: e.target.value})} />
             </div>
+            <div className="flex justify-end pr-2">
+             <button 
+              type="button" 
+              onClick={() => navigate('/reset-password')}
+              className="text-[9px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
+             >
+              Forgot Password?
+             </button>
+            </div>
            </div>
            <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white  font-black shadow-lg hover:shadow-xl mt-4 ${
             selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'

@@ -24,6 +24,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
      return;
     }
 
+    // 0. Primary Source: Auth Metadata (Most reliable for session persistence)
+    const metaRole = currentSession.user.user_metadata?.role;
+    if (metaRole === 'admin' || metaRole === 'teacher' || metaRole === 'student') {
+     setUserRole(metaRole);
+     setLoading(false);
+     return;
+    }
+
     const userEmail = currentSession.user.email;
 
     // 1. Check Student Table (Approved students only)
@@ -40,7 +48,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
      return;
     }
 
-    // 2. Check Teacher/Admin Table
+    // 2. Check Teacher/Admin Table (Backup)
     const { data: staff } = await supabase
      .from('teachers')
      .select('role')
@@ -49,7 +57,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
      .maybeSingle();
 
     if (staff) {
-     setUserRole(staff.role || 'teacher'); // 'teacher' or 'admin' (fallback to teacher)
+     setUserRole(staff.role);
     }
    } catch (error) {
     console.error('Auth check error:', error);

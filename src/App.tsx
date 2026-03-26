@@ -60,12 +60,13 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-           <Route path="/profile-setup" element={<ProfileSetupPage />} />
+
            
 
 
           {/* 🔵 PROTECTED ROUTES WITH SIDEBAR */}
           <Route element={<Sidebar />}>
+            <Route path="/profile-setup" element={<ProtectedRoute allowedRole="any"><ProfileSetupPage /></ProtectedRoute>} />
             {/* 👨‍🏫 TEACHER SECTION */}
             <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRole="teacher"><TeacherDashboard /></ProtectedRoute>} />
             <Route path="/teacher/attendance" element={<ProtectedRoute allowedRole="teacher"><TeacherAttendance /></ProtectedRoute>} />

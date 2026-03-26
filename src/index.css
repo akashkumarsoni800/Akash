@@ -15,95 +15,202 @@
   --font-outfit: 'Outfit', system-ui, sans-serif;
 }
 
-@layer base {
-  body {
-    @apply bg-[var(--bg-main)] text-slate-900 antialiased;
-    font-family: var(--font-primary);
-  }
-  
-  h1, h2, h3 {
-    @apply font-black uppercase text-slate-900 tracking-tight;
-    font-family: var(--font-outfit);
-  }
-
-  h4, h5, h6 {
-    @apply font-bold text-slate-800 tracking-tight;
-  }
+body {
+  background-color: var(--bg-main);
+  color: #0f172a; /* text-slate-900 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-primary);
 }
 
-@layer components {
-  /* Premium Design System components */
-  
-  .premium-sidebar {
-    @apply bg-[var(--primary-slate)] text-slate-300 w-64 h-screen fixed left-0 top-0 border-r border-slate-700/50 shadow-2xl z-40;
-  }
-
-  .premium-nav-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-slate-700/50 hover:text-white mb-1;
-  }
-
-  /* Role specific active states */
-  .premium-nav-item.active-admin {
-    @apply bg-[var(--accent-admin)] text-white shadow-lg shadow-blue-500/20;
-  }
-
-  .premium-nav-item.active-teacher {
-    @apply bg-[var(--accent-teacher)] text-white shadow-lg shadow-green-500/20;
-  }
-
-  .premium-nav-item.active-student {
-    @apply bg-[var(--accent-student)] text-white shadow-lg shadow-purple-500/20;
-  }
-
-  .premium-card {
-    @apply bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-xl hover:border-slate-200;
-  }
-
-  .premium-stat-card {
-    @apply premium-card p-6 flex items-center gap-6 hover:shadow-lg;
-  }
-
-  .premium-stat-icon {
-    @apply w-12 h-12 rounded-lg flex items-center justify-center text-white text-xl font-bold;
-  }
-
-  .premium-table-header {
-    @apply bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 px-6 py-4;
-  }
-
-  .premium-input {
-    @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 outline-none transition-all duration-300 placeholder:text-slate-400;
-  }
-
-  .premium-button {
-    @apply px-8 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 active:scale-[0.95] disabled:opacity-50 flex items-center justify-center gap-3 shadow-sm;
-  }
-
-  .premium-button-admin { @apply premium-button bg-slate-900 text-white hover:bg-blue-600 hover:shadow-blue-100; }
-  .premium-button-teacher { @apply premium-button bg-slate-900 text-white hover:bg-emerald-600 hover:shadow-emerald-100; }
-  .premium-button-student { @apply premium-button bg-slate-900 text-white hover:bg-purple-600 hover:shadow-purple-100; }
-  .premium-button-slate { @apply premium-button bg-slate-900 text-white hover:bg-slate-800; }
-
-  /* Role Selection Cards */
-  .role-card {
-    @apply premium-card p-10 flex flex-col items-center justify-center gap-6 text-center hover:scale-[1.05] transition-transform duration-500 cursor-pointer border-2 border-transparent;
-  }
-
-  .role-card-admin { @apply hover:border-[var(--accent-admin)] hover:shadow-blue-100/50; }
-  .role-card-teacher { @apply hover:border-[var(--accent-teacher)] hover:shadow-green-100/50; }
-  .role-card-student { @apply hover:border-[var(--accent-student)] hover:shadow-purple-100/50; }
+h1, h2, h3 {
+  font-weight: 900; /* font-black */
+  text-transform: uppercase;
+  color: #0f172a;
+  letter-spacing: -0.025em; /* tracking-tight */
+  font-family: var(--font-outfit);
 }
 
-@layer utilities {
-  .asm-hide-scrollbar::-webkit-scrollbar { display: none; }
-  .asm-hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-  .custom-scrollbar::-webkit-scrollbar { @apply w-1.5 h-1.5; }
-  .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
-
-  /* Font utilities removed for simplicity */
+h4, h5, h6 {
+  font-weight: 700; /* font-bold */
+  color: #1e293b; /* text-slate-800 */
+  letter-spacing: -0.025em;
 }
+
+/* Premium Design System components */
+.premium-sidebar {
+  background-color: var(--primary-slate);
+  color: #cbd5e1; /* text-slate-300 */
+  width: 16rem; /* w-64 */
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid rgba(51, 65, 85, 0.5); /* border-slate-700/50 */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  z-index: 40;
+}
+
+.premium-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
+}
+
+.premium-nav-item:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+  color: white;
+}
+
+/* Role specific active states */
+.premium-nav-item.active-admin {
+  background-color: var(--accent-admin);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+}
+
+.premium-nav-item.active-teacher {
+  background-color: var(--accent-teacher);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+}
+
+.premium-nav-item.active-student {
+  background-color: var(--accent-student);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.2);
+}
+
+.premium-card {
+  background-color: white;
+  border-radius: 2rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9; /* border-slate-100 */
+  overflow: hidden;
+  transition: all 0.5s;
+}
+
+.premium-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #e2e8f0;
+}
+
+.premium-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.premium-stat-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.premium-table-header {
+  background-color: #f8fafc;
+  font-size: 10px;
+  font-weight: 900;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1rem 1.5rem;
+}
+
+.premium-input {
+  width: 100%;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3rem;
+}
+
+.premium-input:focus {
+  background-color: white;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(219, 234, 254, 0.5);
+}
+
+.premium-button {
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.premium-button:active {
+  transform: scale(0.95);
+}
+
+.premium-button:disabled {
+  opacity: 0.5;
+}
+
+.premium-button-admin { background-color: #0f172a; color: white; }
+.premium-button-admin:hover { background-color: #2563eb; }
+
+.premium-button-teacher { background-color: #0f172a; color: white; }
+.premium-button-teacher:hover { background-color: #059669; }
+
+.premium-button-student { background-color: #0f172a; color: white; }
+.premium-button-student:hover { background-color: #7c3aed; }
+
+.premium-button-slate { background-color: #0f172a; color: white; }
+.premium-button-slate:hover { background-color: #1e293b; }
+
+.role-card {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.5s;
+}
+
+.role-card:hover {
+  transform: translateY(-10px);
+}
+
+.role-card-admin:hover { border-color: var(--accent-admin); }
+.role-card-teacher:hover { border-color: var(--accent-teacher); }
+.role-card-student:hover { border-color: var(--accent-student); }
+
+.asm-hide-scrollbar::-webkit-scrollbar { display: none; }
+.asm-hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
