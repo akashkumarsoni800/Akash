@@ -17,11 +17,13 @@ BEGIN
     -- Students
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'students') THEN
         ALTER TABLE public.students ADD COLUMN IF NOT EXISTS school_id UUID REFERENCES public.schools(id);
+        ALTER TABLE public.students ADD COLUMN IF NOT EXISTS photo_url TEXT;
     END IF;
 
     -- Teachers
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'teachers') THEN
         ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS school_id UUID REFERENCES public.schools(id);
+        ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS avatar_url TEXT;
     END IF;
 
     -- Exams
