@@ -18,12 +18,18 @@ BEGIN
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'students') THEN
         ALTER TABLE public.students ADD COLUMN IF NOT EXISTS school_id UUID REFERENCES public.schools(id);
         ALTER TABLE public.students ADD COLUMN IF NOT EXISTS photo_url TEXT;
+        ALTER TABLE public.students ADD COLUMN IF NOT EXISTS address TEXT;
+        ALTER TABLE public.students ADD COLUMN IF NOT EXISTS contact_number TEXT;
+        ALTER TABLE public.students ADD COLUMN IF NOT EXISTS father_name TEXT;
     END IF;
 
     -- Teachers
     IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'teachers') THEN
         ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS school_id UUID REFERENCES public.schools(id);
         ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+        ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS address TEXT;
+        ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS phone TEXT;
+        ALTER TABLE public.teachers ADD COLUMN IF NOT EXISTS subject TEXT;
     END IF;
 
     -- Exams
@@ -188,7 +194,7 @@ BEGIN
       subject = new_subject,
       address = new_address,
       avatar_url = new_avatar
-    WHERE id::text = target_id;
+    WHERE id::text = target_id OR email = new_email;
   ELSE
     UPDATE public.students SET
       full_name = new_name,
@@ -197,7 +203,7 @@ BEGIN
       address = new_address,
       father_name = new_parent,
       photo_url = new_avatar
-    WHERE student_id::text = target_id;
+    WHERE student_id::text = target_id OR email = new_email;
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
