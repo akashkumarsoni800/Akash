@@ -6,7 +6,7 @@ import {
   Building2, User, Mail, 
   Lock, Smartphone, ShieldCheck, 
   ArrowRight, RefreshCw, Sparkles,
-  Info, Eye, EyeOff
+  Info, Eye, EyeOff, Image
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,6 +24,16 @@ export default function SchoolRegistrationPage() {
     adminPhone: '',
     password: ''
   });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,12 +51,33 @@ export default function SchoolRegistrationPage() {
         throw new Error("School Code already exists! Please choose another (Ex: SCHOOL02).");
       }
 
+      // 1.5 Upload Logo if present
+      let logoUrl = null;
+      if (logoFile) {
+        const fileExt = logoFile.name.split('.').pop();
+        const fileName = `${formData.schoolCode}-${Math.random()}.${fileExt}`;
+        const filePath = `school-logos/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('logos')
+          .upload(filePath, logoFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('logos')
+          .getPublicUrl(filePath);
+        
+        logoUrl = publicUrl;
+      }
+
       // 2. Register School
       const { data: school, error: schoolError } = await supabase
         .from('schools')
         .insert([{
           name: formData.schoolName,
-          school_code: formData.schoolCode.toUpperCase().trim()
+          school_code: formData.schoolCode.toUpperCase().trim(),
+          logo_url: logoUrl
         }])
         .select()
         .single();
@@ -206,6 +237,35 @@ export default function SchoolRegistrationPage() {
                       value={formData.schoolCode}
                       onChange={(e: any) => setFormData({...formData, schoolCode: e.target.value.toUpperCase()})}
                     />
+                    {/* Logo Upload Section */}
+                    <div className="space-y-4">
+                      <label className="block text-[9px] font-black text-slate-400 ml-2 uppercase tracking-widest">School Identity (Logo)</label>
+                      <div className="flex items-center gap-6">
+                        <div className="w-24 h-24 rounded-[1.5rem] bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden group hover:border-blue-400 transition-all">
+                          {logoPreview ? (
+                            <img src={logoPreview} className="w-full h-full object-cover" alt="Preview" />
+                          ) : (
+                            <Image size={24} className="text-slate-300 group-hover:scale-110 transition-transform" />
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <input 
+                            type="file" 
+                            id="logo-upload" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={handleLogoChange}
+                          />
+                          <label 
+                            htmlFor="logo-upload" 
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all cursor-pointer"
+                          >
+                            Choose Image
+                          </label>
+                          <p className="text-[8px] font-black text-slate-300 uppercase">Recommended: Square PNG with transparent background</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="md:col-span-2 pt-6 border-t border-slate-50">

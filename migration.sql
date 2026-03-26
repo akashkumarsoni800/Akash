@@ -103,6 +103,15 @@ INSERT INTO schools (name, school_code, logo_url) VALUES
 ('Global International', 'GLOBAL02', NULL)
 ON CONFLICT (school_code) DO NOTHING;
 
+-- 7. Ensure Storage Bucket for Logos exists
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('logos', 'logos', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Set up RLS for the bucket (Allow public read, authenticated upload)
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'logos');
+CREATE POLICY "Admin Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'logos');
+
 -- 6. Helper Function to get school_id from school_code (Optional for RPC)
 CREATE OR REPLACE FUNCTION get_school_by_code(code TEXT)
 RETURNS UUID AS $$
