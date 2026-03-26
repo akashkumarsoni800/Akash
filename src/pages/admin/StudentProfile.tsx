@@ -184,7 +184,7 @@ const StudentProfile = () => {
         {uploading ? (
          <RefreshCw className="animate-spin text-white" size={40} />
         ) : student.photo_url ? (
-         <img src={student.photo_url} alt={student.full_name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+         <img src={student.photo_url} alt={student.full_name} className="w-full h-full object-cover transition-all duration-700" />
         ) : (
          <User size={80} className="text-white/10" />
         )}
