@@ -33,7 +33,7 @@ const LoginPage = () => {
    // 1. Resolve School Code to School ID
    const { data: school, error: schoolError } = await supabase
     .from('schools')
-    .select('id, name')
+    .select('id, name, logo_url')
     .ilike('school_code', loginData.school_code.trim())
     .maybeSingle();
 

@@ -16,7 +16,9 @@ const Sidebar = () => {
  const navigate = useNavigate();
  const [isMobileOpen, setIsMobileOpen] = useState(false); 
  const [loading, setLoading] = useState(true);
- const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
+  const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
+  const schoolName = localStorage.getItem('current_school_name') || 'ASMD';
+  const schoolLogo = localStorage.getItem('current_school_logo');
 
  useEffect(() => {
   let isMounted = true;
@@ -113,13 +115,17 @@ const Sidebar = () => {
    <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 z-[100]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float ${
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
        profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
       }`}>
-       <Shield size={22} />
+       {schoolLogo ? (
+         <img src={schoolLogo} className="w-full h-full object-cover" alt="logo" />
+       ) : (
+         <Shield size={22} />
+       )}
       </div>
       <div>
-       <h2 className="text-sm font-black text-white  leading-none uppercase">ASMD</h2>
+       <h2 className="text-sm font-black text-white  leading-none uppercase">{schoolName}</h2>
        <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v4.0</p>
       </div>
      </div>

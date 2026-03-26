@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.schools (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     school_code TEXT UNIQUE NOT NULL,
+    logo_url TEXT,
     created_at TIMESTAMPTZ DEFAULT now(),
     settings JSONB DEFAULT '{}'::jsonb
 );
