@@ -121,7 +121,7 @@ const Sidebar = () => {
        {schoolLogo ? (
          <img src={schoolLogo} className="w-full h-full object-cover" alt="logo" />
        ) : (
-         <Shield size={22} />
+         <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
        )}
       </div>
       <div>
