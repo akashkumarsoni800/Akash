@@ -225,3 +225,13 @@ GRANT ALL ON TABLE public.students TO authenticated;
 GRANT ALL ON TABLE public.teachers TO authenticated;
 GRANT ALL ON TABLE public.students TO service_role;
 GRANT ALL ON TABLE public.teachers TO service_role;
+
+-- Enable RLS and add policies
+ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.teachers ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Authenticated Manage Students" ON public.students;
+CREATE POLICY "Authenticated Manage Students" ON public.students FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated Manage Teachers" ON public.teachers;
+CREATE POLICY "Authenticated Manage Teachers" ON public.teachers FOR ALL TO authenticated USING (true) WITH CHECK (true);

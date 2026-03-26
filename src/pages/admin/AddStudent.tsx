@@ -215,9 +215,13 @@ const AddStudent = () => {
      address: formData.address || null,
      contact_number: formData.phone || null,
      email: formData.email || null,
-     photo_url: photoUrl,
-     school_id: schoolId // ✅ Associated with school
+     photo_url: photoUrl
     };
+
+    // Only set school_id on new records
+    if (!isEdit) {
+     studentPayload.school_id = schoolId;
+    }
 
    if (!isEdit) {
     studentPayload.registration_no = regNo;
