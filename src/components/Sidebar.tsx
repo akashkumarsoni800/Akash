@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import DashboardHeader from './DashboardHeader';
-import GallerySlider from './GallerySlider';
+import GlobalGallerySlider from './shared/GlobalGallerySlider';
 import { 
  X, LayoutDashboard, CreditCard, UserPlus, Users, 
  ShieldCheck, ClipboardList, Calendar, FileText,
@@ -205,8 +205,8 @@ const Sidebar = () => {
    <main className={`transition-all duration-500 pt-20 min-h-screen lg:ml-64`}>
     <div className="px-1 md:px-2 pb-10 w-full max-w-full mx-auto">
      <Outlet />
-     <div className="mt-16 no-print opacity-80 hover:opacity-100 transition-opacity">
-      <GallerySlider />
+     <div className="mt-16 no-print opacity-80 hover:opacity-100 transition-opacity px-4 md:px-8">
+      <GlobalGallerySlider />
      </div>
     </div>
    </main>

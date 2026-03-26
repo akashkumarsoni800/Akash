@@ -14,6 +14,7 @@ import StudentsManagement from '../../components/admin/StudentsManagement';
 import TeachersManagement from '../../components/admin/TeachersManagement';
 import ExamsManagement from '../../components/admin/ExamsManagement';
 import ApprovalsManagement from '../../components/admin/ApprovalsManagement';
+import GalleryManagement from '../../components/admin/GalleryManagement';
 
 // --- ANIMATION VARIANTS ---
 const containerVar = {
@@ -175,6 +176,7 @@ const AdminDashboard = () => {
        <ActionCard icon={ShieldAlert} label="Security" color="red" onClick={() => navigate('/admin/create-admin')} />
        <ActionCard icon={UserPlus} label="Enrollment" color="indigo" onClick={() => navigate('/admin/add-student')} />
        <ActionCard icon={Plus} label="Faculty" color="emerald" onClick={() => navigate('/admin/add-teacher')} />
+       <ActionCard icon={ImageIcon} label="Gallery" color="purple" onClick={() => setActiveTab('gallery')} />
      </div>
     </motion.div>
 
@@ -188,7 +190,7 @@ const AdminDashboard = () => {
     {/* --- TABLES SECTION --- */}
     <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm mt-10">
      <div className="flex flex-wrap border-b border-slate-100 p-2 gap-2 bg-slate-50/50">
-      {['overview', 'students', 'teachers', 'admins', 'exams', 'approvals'].map(tab => (
+      {['overview', 'students', 'teachers', 'admins', 'exams', 'approvals', 'gallery'].map(tab => (
        <button 
         key={tab} 
         onClick={() => setActiveTab(tab)} 
@@ -250,6 +252,12 @@ const AdminDashboard = () => {
        {activeTab === 'approvals' && (
         <motion.div key="app" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
          <ApprovalsManagement />
+        </motion.div>
+       )}
+
+       {activeTab === 'gallery' && (
+        <motion.div key="gal" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+         <GalleryManagement />
         </motion.div>
        )}
       </AnimatePresence>
