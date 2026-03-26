@@ -99,7 +99,8 @@ END $$;
 -- 5. Insert Sample Schools for Testing
 INSERT INTO schools (name, school_code) VALUES 
 ('Adarsh Shishu Mandir', 'ASM01'),
-('Global International', 'GLOBAL02');
+('Global International', 'GLOBAL02')
+ON CONFLICT (school_code) DO NOTHING;
 
 -- 6. Helper Function to get school_id from school_code (Optional for RPC)
 CREATE OR REPLACE FUNCTION get_school_by_code(code TEXT)
