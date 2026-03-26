@@ -354,11 +354,11 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
 
     <div className="flex justify-between items-center border-b-[2px] border-slate-900 pb-4 mb-6">
       <div className="w-[80px] h-[80px] flex items-center justify-center bg-slate-50 rounded-2xl shadow-inner">
-       <img src="/logo.png" alt="logo" className="w-full h-full object-contain p-2" />
+       <img src={localStorage.getItem('current_school_logo') || "/logo.png"} alt="logo" className="w-full h-full object-contain p-2" />
       </div>
       
       <div className="text-center flex-1 mx-4">
-       <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Adarsh Shishu Mandir</h2>
+       <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">{localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}</h2>
        <p className="text-[8px] font-black text-slate-400 mt-1  leading-none">Basantpatti, Purnahiya (Sheohar) Bihar</p>
        <div className="inline-block bg-slate-900 text-white px-8 py-1.5 rounded-full text-[10px] font-black  mt-3">Annual Examination Admit 2026</div>
       </div>
@@ -423,7 +423,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
       <div className="text-center space-y-2">
        <p className="text-[8px] font-black text-slate-300 tracking-widest leading-none">Seal </p>
        <div className="w-24 h-12 border-2 border-dashed border-slate-100 rounded-[1.5rem] flex items-center justify-center bg-slate-50/30">
-         <img src="/logo.png" alt="" className="w-8 h-8 opacity-20 grayscale" />
+         <img src={localStorage.getItem('current_school_logo') || "/logo.png"} alt="" className="w-8 h-8 opacity-20 grayscale" />
        </div>
       </div>
       <div className="text-center pb-2">
@@ -453,13 +453,13 @@ const TCTemplate = ({ student }: any) => (
   <div className="absolute inset-0 bg-slate-50/30 -z-10" />
   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-50/50 -rotate-12 select-none pointer-events-none">
     <div className="w-[500px] h-[500px] border-[20px] border-slate-100 rounded-full flex items-center justify-center">
-     <img src="/logo.png" className="w-64 h-64 grayscale opacity-20" alt="" />
+     <img src={localStorage.getItem('current_school_logo') || "/logo.png"} className="w-64 h-64 grayscale opacity-20" alt="" />
     </div>
   </div>
 
   <div>
    <div className="text-center border-b-4 border-slate-900 pb-8 mb-16 space-y-3">
-    <h1 className="text-6xl font-black  text-slate-900 leading-none uppercase">Adarsh Shishu Mandir</h1>
+    <h1 className="text-6xl font-black  text-slate-900 leading-none uppercase">{localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}</h1>
     <p className="text-xs font-black  text-slate-400">School Transfer Protocol • UDise: 10032201107</p>
    </div>
    
@@ -497,7 +497,7 @@ const DOBTemplate = ({ student }: any) => (
   <div>
    <div className="flex justify-between items-start mb-24">
      <div className="w-24 h-24 bg-slate-50 flex items-center justify-center rounded-[2rem] shadow-inner">
-      <img src="/logo.png" className="w-16 h-16 grayscale" alt="" />
+      <img src={localStorage.getItem('current_school_logo') || "/logo.png"} className="w-16 h-16 grayscale" alt="" />
      </div>
      <div className="text-right space-y-1">
       <p className="font-black text-xs text-slate-300 tracking-widest">Internal ID: {student.student_id}</p>
@@ -525,7 +525,7 @@ const DOBTemplate = ({ student }: any) => (
      
      <p className="text-slate-400 font-black text-lg leading-relaxed max-w-2xl">
       This document serves as the official institutional record for the aforementioned candidate's birth coordinates, 
-      as registered within the Adarsh Shishu Mandir primary archives.
+      as registered within the {localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'} primary archives.
      </p>
    </div>
   </div>

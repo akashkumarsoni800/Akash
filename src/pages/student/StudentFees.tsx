@@ -44,7 +44,7 @@ const StudentFees = () => {
    .map(([key, val]) => `• ${key.toUpperCase()}: ₹${val}`)
    .join('%0A');
 
-  const message = `*📄 FEE RECEIPT - Adarsh Shishu Mandir*%0A%0A*Student:* ${studentData.full_name}%0A*Month:* ${fee.month}%0A%0A*BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAID:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Thank you for choosing ASM!_`;
+  const message = `*📄 FEE RECEIPT - ${localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}*%0A%0A*Student:* ${studentData.full_name}%0A*Month:* ${fee.month}%0A%0A*BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAID:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Thank you for choosing ASM!_`;
   window.open(`https://wa.me/91${studentData.contact_number}?text=${message}`, '_blank');
   toast.success("Receipt shared on WhatsApp!");
  };

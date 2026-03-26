@@ -227,7 +227,7 @@ const ManageFees = () => {
     })
    .join('%0A');
 
-  const message = `*📄 FEE REMINDER - Adarsh Shishu Mandir*%0A%0A*Student:* ${student.full_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month._%0A_Thank you, ASM Management_`;
+  const message = `*📄 FEE REMINDER - ${localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}*%0A%0A*Student:* ${student.full_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month._%0A_Thank you, ASM Management_`;
   
   window.open(`https://wa.me/91${student.contact_number}?text=${message}`, '_blank');
  };
