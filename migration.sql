@@ -1,4 +1,4 @@
--- 1. Create Schools Table
+-- 1. Create/Update Schools Table
 CREATE TABLE IF NOT EXISTS public.schools (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS public.schools (
     created_at TIMESTAMPTZ DEFAULT now(),
     settings JSONB DEFAULT '{}'::jsonb
 );
+
+-- Ensure logo_url exists if table was created earlier
+ALTER TABLE public.schools ADD COLUMN IF NOT EXISTS logo_url TEXT;
 
 -- 2. Add school_id to existing tables (with safety checks)
 DO $$ 
