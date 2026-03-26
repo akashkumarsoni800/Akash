@@ -15,6 +15,7 @@ export default function StudentRegistrationForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    school_code: '', // ✅ New field
     fullName: '',
     guardianName: '',
     contactNumber: '',
@@ -28,6 +29,17 @@ export default function StudentRegistrationForm() {
     setLoading(true);
 
     try {
+      // 0. Resolve School Code
+      const { data: school, error: schoolError } = await supabase
+        .from('schools')
+        .select('id')
+        .ilike('school_code', formData.school_code.trim())
+        .maybeSingle();
+
+      if (schoolError || !school) {
+        throw new Error("Invalid School Code! Please contact your administrator.");
+      }
+
       const toTitleCase = (str: string) => str.replace(/\b\w/g, (char) => char.toUpperCase());
       const formattedName = toTitleCase(formData.fullName.trim());
       const formattedFather = toTitleCase(formData.guardianName.trim());
@@ -59,7 +71,8 @@ export default function StudentRegistrationForm() {
           email: formData.email,
           is_approved: 'pending',
           roll_no: '0', 
-          registration_no: `TEMP-${Date.now()}`
+          registration_no: `TEMP-${Date.now()}`,
+          school_id: school.id // ✅ Associated with school
         }]);
 
       if (dbError) throw dbError;
@@ -146,6 +159,18 @@ export default function StudentRegistrationForm() {
                  </div>
 
                  <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* ✅ School Identifier Node */}
+                    <div className="bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100/50">
+                        <InputField 
+                          label="Institutional Identifier (School Code)" 
+                          icon={ShieldCheck} 
+                          placeholder="Ex: ASM01"
+                          required
+                          value={formData.school_code}
+                          onChange={(e: any) => setFormData({ ...formData, school_code: e.target.value.toUpperCase() })}
+                        />
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                        <InputField 
                          label="Scholar Nomenclature" 

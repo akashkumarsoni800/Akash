@@ -44,6 +44,9 @@ export const useInternetIdentity = () => {
   return { identity, isInitializing: false, login, logout };
 };
 
+// --- HELPER: GET CURRENT SCHOOL ID ---
+export const getCurrentSchoolId = () => localStorage.getItem('current_school_id');
+
 // --- 2. PROFILE & ROLES ---
 export const useGetCallerUserProfile = () => {
   return { 
@@ -81,16 +84,19 @@ export const useSaveCallerUserProfile = (): any => {
 
 // Fetch Pending Students
 export const useListApprovals = (): any => {
+  const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['approvals'],
+    queryKey: ['approvals', schoolId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('students')
         .select('*')
-        .eq('approval_status', 'pending');
+        .eq('approval_status', 'pending')
+        .eq('school_id', schoolId); // ✅ School Isolation
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !!schoolId
   });
 };
 
@@ -132,13 +138,18 @@ export const useGetAllApprovedStudents = (): any => {
 
 // Fetch All Teachers
 export const useGetAllTeachers = (): any => {
+  const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['teachers'],
+    queryKey: ['teachers', schoolId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('teachers').select('*');
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('school_id', schoolId); // ✅ School Isolation
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !!schoolId
   });
 };
 
@@ -166,9 +177,13 @@ export const useRegisterTeacher = (): any => {
 
 export const useAddExam = (): any => {
   const queryClient = useQueryClient();
+  const schoolId = getCurrentSchoolId();
   return useMutation({
     mutationFn: async (examData: any) => {
-      const { error } = await supabase.from('exams').insert([examData]);
+      const { error } = await supabase.from('exams').insert([{
+        ...examData,
+        school_id: schoolId // ✅ Attached to school
+      }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -180,6 +195,7 @@ export const useAddExam = (): any => {
 
 // --- 6. PUBLIC REGISTRATION ---
 export const useRegisterStudent = (): any => {
+  const schoolId = getCurrentSchoolId();
   return useMutation({
     mutationFn: async (studentData: any) => {
       const { error } = await supabase.from('students').insert([{
@@ -188,7 +204,8 @@ export const useRegisterStudent = (): any => {
         section: studentData.section,
         parent_name: studentData.parentName,
         contact_number: studentData.contact,
-        approval_status: 'pending'
+        approval_status: 'pending',
+        school_id: schoolId // ✅ Associated with school
       }]);
       if (error) throw error;
     },
@@ -223,21 +240,20 @@ export const useSetApproval = () => {
 
 // --- EXAMS MODULE (Exams ki list laane ke liye) ---
 export const useGetAllExams = (): any => {
+  const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['exams'],
+    queryKey: ['exams', schoolId],
     queryFn: async () => {
-      // Supabase se exams table ka data mango
       const { data, error } = await supabase
         .from('exams')
         .select('*')
-        .order('exam_date', { ascending: true }); // Date ke hisab se sort karega
+        .eq('school_id', schoolId) // ✅ School Isolation
+        .order('exam_date', { ascending: true });
         
-      if (error) {
-        console.error("Error fetching exams:", error);
-        throw error;
-      }
+      if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !!schoolId
   });
 };
 
@@ -247,6 +263,7 @@ export const useAddResult = (): any => {
 
   return useMutation({
     mutationFn: async (resultData: any) => {
+      const schoolId = getCurrentSchoolId();
       console.log("Uploading Result:", resultData);
       
       const { error } = await supabase
@@ -255,7 +272,8 @@ export const useAddResult = (): any => {
           student_id: resultData.studentId,
           exam_id: resultData.examId,
           marks_obtained: resultData.marks,
-          remarks: resultData.remarks
+          remarks: resultData.remarks,
+          school_id: schoolId // ✅ Associated with school
         }]);
 
       if (error) throw error;
@@ -273,8 +291,9 @@ export const useAddResult = (): any => {
 // --- STUDENT RESULT MODULE ---
 // Bracket ke andar "studentId: any" hona zaroori hai 👇
 export const useGetStudentResults = (studentId: any): any => {
+  const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['results', studentId],
+    queryKey: ['results', studentId, schoolId],
     queryFn: async () => {
       // Agar ID nahi hai to khali array wapis karo
       if (!studentId) return [];
@@ -289,12 +308,13 @@ export const useGetStudentResults = (studentId: any): any => {
             total_marks
           )
         `)
-        .eq('student_id', studentId);
+        .eq('student_id', studentId)
+        .eq('school_id', schoolId); // ✅ School Isolation
 
       if (error) throw error;
       return data || [];
     },
     // Ye query tabhi chalegi jab ID milegi
-    enabled: !!studentId 
+    enabled: !!studentId && !!schoolId
   });
 };

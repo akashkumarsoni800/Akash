@@ -53,10 +53,12 @@ const AddStudent = () => {
   const fetchStudent = async (studentId: string) => {
    try {
     setLoading(true);
+    const schoolId = localStorage.getItem('current_school_id');
     const { data, error } = await supabase
      .from("students")
      .select("*")
      .eq("student_id", studentId)
+     .eq("school_id", schoolId) // ✅ School isolation
      .maybeSingle();
 
     if (error) throw error;
@@ -90,10 +92,12 @@ const AddStudent = () => {
  const fetchNextRoll = async (className: string) => {
   if (!className) return;
   try {
+   const schoolId = localStorage.getItem('current_school_id'); // ✅ School context
    const { data, error } = await supabase
     .from("students")
     .select("roll_no")
     .eq("class_name", className)
+    .eq("school_id", schoolId) // ✅ Filter by school
     .order("roll_no", { ascending: false })
     .limit(1);
 
@@ -200,18 +204,20 @@ const AddStudent = () => {
    const year = new Date().getFullYear();
    const regNo = isEdit ? undefined : `REG/${year}/${formData.class}/${formData.roll.padStart(3, "0")}`;
 
-   const studentPayload: any = {
-    full_name: formData.name,
-    class_name: formData.class,
-    roll_no: formData.roll,
-    father_name: formData.father,
-    date_of_birth: formData.dob || null,
-    gender: formData.gender,
-    address: formData.address || null,
-    contact_number: formData.phone || null,
-    email: formData.email || null,
-    photo_url: photoUrl,
-   };
+    const schoolId = localStorage.getItem('current_school_id'); // ✅ Get from admin context
+    const studentPayload: any = {
+     full_name: formData.name,
+     class_name: formData.class,
+     roll_no: formData.roll,
+     father_name: formData.father,
+     date_of_birth: formData.dob || null,
+     gender: formData.gender,
+     address: formData.address || null,
+     contact_number: formData.phone || null,
+     email: formData.email || null,
+     photo_url: photoUrl,
+     school_id: schoolId // ✅ Associated with school
+    };
 
    if (!isEdit) {
     studentPayload.registration_no = regNo;

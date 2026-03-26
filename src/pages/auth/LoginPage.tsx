@@ -17,6 +17,7 @@ const LoginPage = () => {
  const [showPassword, setShowPassword] = useState(false);
  
  const [loginData, setLoginData] = useState({
+  school_code: '', // ✅ New field
   full_name: '',
   father_name: '',
   class_name: '',
@@ -29,10 +30,22 @@ const LoginPage = () => {
   setLoading(true);
 
   try {
+   // 1. Resolve School Code to School ID
+   const { data: school, error: schoolError } = await supabase
+    .from('schools')
+    .select('id, name')
+    .ilike('school_code', loginData.school_code.trim())
+    .maybeSingle();
+
+   if (schoolError || !school) {
+    throw new Error("Invalid School Code! Please contact your administrator.");
+   }
+
    if (selectedRole === 'student') {
     const { data: studentRecord, error: dbError } = await supabase
      .from('students')
      .select('student_id, full_name, father_name, class_name, email, is_approved')
+     .eq('school_id', school.id) // ✅ Filter by school
      .ilike('full_name', `%${loginData.full_name.trim()}%`)
      .ilike('father_name', `%${loginData.father_name.trim()}%`)
      .ilike('class_name', `%${loginData.class_name.trim()}%`)
@@ -41,7 +54,7 @@ const LoginPage = () => {
 
     if (dbError) throw dbError;
     if (!studentRecord) {
-     toast.error("Record not found! Please verify credentials.");
+     toast.error("Student record not found in this school!");
      setLoading(false);
      return;
     }
@@ -60,6 +73,10 @@ const LoginPage = () => {
     
     if (authError) throw authError;
 
+    // Store school context
+    localStorage.setItem('current_school_id', school.id);
+    localStorage.setItem('current_school_name', school.name);
+
     setShowWelcome(true);
     setTimeout(() => navigate('/student/dashboard'), 2000);
    } 
@@ -73,7 +90,7 @@ const LoginPage = () => {
 
     const { data: staffRecord } = await supabase
      .from('teachers')
-     .select('role')
+     .select('role, school_id')
      .eq('email', loginData.email.trim())
      .limit(1)
      .maybeSingle();
@@ -82,6 +99,15 @@ const LoginPage = () => {
      await supabase.auth.signOut();
      throw new Error(`Unauthorized: Role mismatch.`);
     }
+
+    if (staffRecord.school_id !== school.id) {
+     await supabase.auth.signOut();
+     throw new Error(`Unauthorized: You are not registered with ${school.name}.`);
+    }
+
+    // Store school context
+    localStorage.setItem('current_school_id', school.id);
+    localStorage.setItem('current_school_name', school.name);
 
     setShowWelcome(true);
     setTimeout(() => navigate(`/${selectedRole === 'admin' ? 'admin' : 'teacher'}/dashboard`), 2000);
@@ -196,6 +222,19 @@ const LoginPage = () => {
         <p className="text-[10px] font-black text-slate-400  mb-10">Verification required to proceed</p>
 
         <form onSubmit={handleLogin} className="space-y-6">
+         {/* ✅ School Identifier Node */}
+         <div className="space-y-1.5">
+           <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Institutional Identifier</label>
+           <input 
+            type="text" 
+            placeholder="School Code (Ex: ASM01)" 
+            required 
+            className="premium-input uppercase" 
+            value={loginData.school_code}
+            onChange={e => setLoginData({...loginData, school_code: e.target.value.toUpperCase()})} 
+           />
+         </div>
+
          {selectedRole === 'student' ? (
           <>
            <div className="space-y-1.5">

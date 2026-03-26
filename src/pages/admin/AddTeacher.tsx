@@ -51,12 +51,14 @@ const AddTeacher = () => {
 
    // 2. Insert into Teachers Table
    if (data.user) {
+    const schoolId = localStorage.getItem('current_school_id'); // ✅ Get from admin context
     const { error: dbError } = await supabase.from('teachers').insert([{
      full_name: formData.name,
      subject: formData.subject,
      email: formData.email,
      phone: formData.phone,
-     role: 'teacher'
+     role: 'teacher',
+     school_id: schoolId // ✅ Associated with school
     }]);
     
     if (dbError) throw dbError;

@@ -37,13 +37,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
     // 1. Check Student Table (Approved students only)
     const { data: student } = await supabase
      .from('students')
-     .select('is_approved')
+     .select('is_approved, school_id')
      .eq('email', userEmail)
      .limit(1)
      .maybeSingle();
 
     if (student && student.is_approved === 'approved') {
      setUserRole('student');
+     localStorage.setItem('current_school_id', student.school_id);
      setLoading(false);
      return;
     }
@@ -51,13 +52,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
     // 2. Check Teacher/Admin Table (Backup)
     const { data: staff } = await supabase
      .from('teachers')
-     .select('role')
+     .select('role, school_id')
      .eq('email', userEmail)
      .limit(1)
      .maybeSingle();
 
     if (staff) {
      setUserRole(staff.role);
+     localStorage.setItem('current_school_id', staff.school_id);
     }
    } catch (error) {
     console.error('Auth check error:', error);

@@ -23,6 +23,7 @@ const ResetPassword = () => {
  const [targetEmail, setTargetEmail] = useState('');
  const [className, setClassName] = useState('');
  const [rollNo, setRollNo] = useState('');
+  const [schoolCode, setSchoolCode] = useState(''); // ✅ New field
  const [resetRole, setResetRole] = useState<'student' | 'staff'>('student');
 
  // Update States
@@ -60,11 +61,23 @@ const ResetPassword = () => {
   setLoading(true);
 
   try {
+   // 0. Resolve School Code
+   const { data: school, error: schoolError } = await supabase
+    .from('schools')
+    .select('id')
+    .ilike('school_code', schoolCode.trim())
+    .maybeSingle();
+
+   if (schoolError || !school) {
+    throw new Error("Invalid School Code! Please contact your administrator.");
+   }
+
    let searchResult;
    if (resetRole === 'student') {
     const { data, error } = await supabase
      .from('students')
      .select('email, full_name')
+     .eq('school_id', school.id) // ✅ Filter by school
      .ilike('full_name', fullName.trim())
      .ilike('father_name', fatherName.trim()) 
      .ilike('class_name', className.trim())
@@ -76,6 +89,7 @@ const ResetPassword = () => {
     const { data, error } = await supabase
      .from('teachers')
      .select('email, full_name')
+     .eq('school_id', school.id) // ✅ Filter by school
      .ilike('full_name', fullName.trim())
      .eq('phone', contactNumber.trim()); // Teachers use 'phone' column
     if (error) throw error;
@@ -180,6 +194,15 @@ const ResetPassword = () => {
               </button>
              ))}
             </div>
+
+            <InputField 
+             label="Institutional Identifier (School Code)" 
+             value={schoolCode} 
+             onChange={(e: any) => setSchoolCode(e.target.value.toUpperCase())} 
+             icon={ShieldCheck}
+             placeholder="Ex: ASM01"
+             required
+            />
 
             <div className="grid gap-8">
              <InputField 
