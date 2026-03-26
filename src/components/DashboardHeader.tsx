@@ -10,6 +10,25 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isGlobeOpen, setIsGlobeOpen] = useState(false);
+  const [notices, setNotices] = useState<any[]>([]);
+
+  // Fetch notices for the Bell icon
+  const fetchNotices = async () => {
+    const schoolId = localStorage.getItem('current_school_id');
+    const { data } = await supabase
+      .from('notices')
+      .select('id, title, created_at, category')
+      .eq('school_id', schoolId)
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (data) setNotices(data);
+  };
+
+  React.useEffect(() => {
+    fetchNotices();
+  }, []);
 
   // Define searchable modules based on roles
   const modules = [
@@ -171,17 +190,104 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
      </div>
    </div>
 
-   <div className="flex items-center gap-4 md:gap-8">
-    {/* Action Icons */}
-    <div className="hidden sm:flex items-center gap-3">
-      <button className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all relative group">
-       <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-       <span className="absolute top-4 right-4 w-2 h-2 bg-rose-500 rounded-full border-2 border-white shadow-sm"></span>
-      </button>
-      <button className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all">
-       <Globe size={20} />
-      </button>
-    </div>
+    <div className="flex items-center gap-4 md:gap-8">
+     {/* Action Icons */}
+     <div className="hidden sm:flex items-center gap-3">
+       {/* Notification UI */}
+       <div className="relative">
+         <button 
+           onClick={() => { setIsNotifOpen(!isNotifOpen); setIsGlobeOpen(false); setIsProfileOpen(false); }}
+           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all relative group"
+         >
+          <Bell size={20} className={notices.length > 0 ? 'text-blue-500' : ''} />
+          {notices.length > 0 && (
+            <span className="absolute top-4 right-4 w-2 h-2 bg-rose-500 rounded-full border-2 border-white shadow-sm animate-pulse"></span>
+          )}
+         </button>
+
+         <AnimatePresence>
+           {isNotifOpen && (
+             <>
+               <div className="fixed inset-0 z-40" onClick={() => setIsNotifOpen(false)}></div>
+               <motion.div 
+                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                 animate={{ opacity: 1, y: 0, scale: 1 }}
+                 exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                 className="absolute right-0 mt-4 w-80 bg-white rounded-[2.5rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-6 z-50"
+               >
+                 <div className="flex items-center justify-between mb-6">
+                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">School Bulletins</p>
+                   <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-[8px] font-black uppercase">Recent</span>
+                 </div>
+                 <div className="space-y-4">
+                   {notices.length > 0 ? notices.map((n) => (
+                     <div key={n.id} className="group cursor-pointer">
+                       <p className="text-[11px] font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">{n.title}</p>
+                       <p className="text-[8px] font-black text-slate-400 uppercase mt-1">
+                         {n.category || 'General'} • {new Date(n.created_at).toLocaleDateString()}
+                       </p>
+                     </div>
+                   )) : (
+                     <p className="text-[10px] text-slate-400 py-4 italic text-center uppercase tracking-widest">No active bulletins</p>
+                   )}
+                 </div>
+                 <button 
+                  onClick={() => { navigate(userRole === 'admin' ? '/admin/add-event' : '/student/dashboard'); setIsNotifOpen(false); }}
+                  className="w-full mt-6 py-3 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all"
+                 >
+                   View All Notices
+                 </button>
+               </motion.div>
+             </>
+           )}
+         </AnimatePresence>
+       </div>
+
+       {/* Global/Globe UI */}
+       <div className="relative">
+         <button 
+           onClick={() => { setIsGlobeOpen(!isGlobeOpen); setIsNotifOpen(false); setIsProfileOpen(false); }}
+           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
+         >
+          <Globe size={20} />
+         </button>
+
+         <AnimatePresence>
+           {isGlobeOpen && (
+             <>
+               <div className="fixed inset-0 z-40" onClick={() => setIsGlobeOpen(false)}></div>
+               <motion.div 
+                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                 animate={{ opacity: 1, y: 0, scale: 1 }}
+                 exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                 className="absolute right-0 mt-4 w-64 bg-white rounded-[2rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-4 z-50"
+               >
+                 <div className="px-2 py-2 mb-2 border-b border-slate-50">
+                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">Environment Config</p>
+                 </div>
+                 <div className="space-y-1">
+                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-all group">
+                     <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">System Language</span>
+                     <span className="bg-slate-900 text-white text-[8px] font-black px-2 py-1 rounded uppercase tracking-widest">Hindi</span>
+                   </button>
+                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-all group text-left">
+                     <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">Current Region</span>
+                     <span className="text-[10px] font-black text-slate-400 uppercase">Bihar, IN</span>
+                   </button>
+                   <button 
+                    onClick={() => { window.open('https://wa.me/917323891040', '_blank'); setIsGlobeOpen(false); }}
+                    className="w-full flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl transition-all group"
+                   >
+                     <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">Tech Support</span>
+                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
+                   </button>
+                 </div>
+               </motion.div>
+             </>
+           )}
+         </AnimatePresence>
+       </div>
+     </div>
 
     {/* Vertical Divider */}
     <div className="h-10 w-px bg-slate-100 hidden sm:block"></div>
