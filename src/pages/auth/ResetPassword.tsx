@@ -7,7 +7,8 @@ import {
  ChevronLeft, ChevronRight, Activity, 
  Zap, RefreshCw, Key, Info,
  ShieldAlert, UserCheck, Smartphone,
- User, Layout, ArrowRight, Fingerprint
+ User, Layout, ArrowRight, Fingerprint,
+ Eye, EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,6 +30,7 @@ const ResetPassword = () => {
  // Update States
  const [newPassword, setNewPassword] = useState('');
  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
  // ✅ Check if user is already logged in
  const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -281,19 +283,25 @@ const ResetPassword = () => {
             <div className="grid gap-8">
              <InputField 
               label="New Cryptographic Key" 
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={newPassword} 
               onChange={(e: any) => setNewPassword(e.target.value)} 
               icon={Lock}
               placeholder="••••••••"
+              isPassword
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
              />
              <InputField 
               label="Confirm Security Table" 
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={confirmPassword} 
               onChange={(e: any) => setConfirmPassword(e.target.value)} 
               icon={Key}
               placeholder="••••••••"
+              isPassword
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
              />
             </div>
 
@@ -356,12 +364,21 @@ const ResetPassword = () => {
  );
 };
 
-const InputField = ({ label, icon: Icon, ...props }: any) => (
+const InputField = ({ label, icon: Icon, isPassword, showPassword, setShowPassword, ...props }: any) => (
  <div className="space-y-1 group">
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   {isPassword && (
+    <button 
+     type="button"
+     onClick={() => setShowPassword(!showPassword)}
+     className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+    >
+     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+   )}
   </div>
  </div>
 );

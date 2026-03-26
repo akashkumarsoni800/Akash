@@ -6,7 +6,7 @@ import {
   Mail, Lock, Smartphone, 
   GraduationCap, ChevronRight, 
   ArrowRight, Info, RefreshCw,
-  CheckCircle2, Compass
+  CheckCircle2, Compass, Eye, EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 export default function StudentRegistrationForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     school_code: '', // ✅ New field
     fullName: '',
@@ -196,11 +197,14 @@ export default function StudentRegistrationForm() {
                        />
                        <InputField 
                          label="Secure Matrix (Password)" 
-                         type="password" 
+                         type={showPassword ? "text" : "password"} 
                          icon={Lock} 
                          placeholder="Min. 6 characters"
                          onChange={(e: any) => setFormData({ ...formData, password: e.target.value })}
                          required
+                         isPassword
+                         showPassword={showPassword}
+                         setShowPassword={setShowPassword}
                        />
                        <InputField 
                          label="Comms Frequency (Mobile)" 
@@ -252,12 +256,21 @@ export default function StudentRegistrationForm() {
   );
 }
 
-const InputField = ({ label, icon: Icon, ...props }: any) => (
+const InputField = ({ label, icon: Icon, isPassword, showPassword, setShowPassword, ...props }: any) => (
   <div className="space-y-2 group">
     <label className="block text-[9px] font-black text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
+      {isPassword && (
+        <button 
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      )}
     </div>
   </div>
 );

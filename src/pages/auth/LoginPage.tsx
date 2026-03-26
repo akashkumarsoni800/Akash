@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
  ShieldCheck, UserCircle, GraduationCap, 
  ArrowRight, Lock, Mail, Globe, 
- Briefcase, CheckCircle2
+ Briefcase, CheckCircle2, Eye, EyeOff
 } from 'lucide-react';
 
 const LoginPage = () => {
@@ -274,8 +274,15 @@ const LoginPage = () => {
             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Access Cipher</label>
             <div className="relative">
              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-             <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12" 
+             <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12 pr-12" 
               onChange={e => setLoginData({...loginData, password: e.target.value})} />
+             <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+             >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+             </button>
             </div>
             <div className="flex justify-end pr-2">
              <button 
