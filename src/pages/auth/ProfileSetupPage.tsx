@@ -90,7 +90,7 @@ const ProfileSetupPage = () => {
        email: profile.email || '',
        phone: profile.phone || profile.contact_number || '',
        address: profile.address || '',
-       avatar_url: (table_type === 'students' ? profile.photo_url : profile.avatar_url) || '',
+       avatar_url: (tableToFetch === 'students' ? profile.photo_url : profile.avatar_url) || '',
        parent_name: profile.parent_name || profile.father_name || '',
        subject: profile.subject || ''
       });
