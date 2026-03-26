@@ -235,3 +235,30 @@ CREATE POLICY "Authenticated Manage Students" ON public.students FOR ALL TO auth
 
 DROP POLICY IF EXISTS "Authenticated Manage Teachers" ON public.teachers;
 CREATE POLICY "Authenticated Manage Teachers" ON public.teachers FOR ALL TO authenticated USING (true) WITH CHECK (true);
+-- 9. Event Gallery
+CREATE TABLE IF NOT EXISTS public.school_gallery (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    image_url TEXT NOT NULL,
+    caption TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.school_gallery ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Gallery Access" ON public.school_gallery;
+CREATE POLICY "Public Gallery Access" ON public.school_gallery FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Admin Manage Gallery" ON public.school_gallery;
+CREATE POLICY "Admin Manage Gallery" ON public.school_gallery FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Add gallery bucket
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('gallery', 'gallery', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public Gallery Read" ON storage.objects;
+CREATE POLICY "Public Gallery Read" ON storage.objects FOR SELECT USING (bucket_id = 'gallery');
+
+DROP POLICY IF EXISTS "Admin Gallery Write" ON storage.objects;
+CREATE POLICY "Admin Gallery Write" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'gallery');
