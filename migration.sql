@@ -1,4 +1,7 @@
--- 1. Create/Update Schools Table
+-- 0. Extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 1. Organizations (Schools) Table
 CREATE TABLE IF NOT EXISTS public.schools (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
