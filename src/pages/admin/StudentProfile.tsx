@@ -101,10 +101,10 @@ const StudentProfile = () => {
    const { data } = supabase.storage.from("student-photos").getPublicUrl(filePath);
    const newPhotoUrl = data.publicUrl;
 
-   const { error: updateError } = await supabase
-    .from("students")
-    .update({ photo_url: newPhotoUrl })
-    .eq("student_id", Number(id));
+    const { error: updateError } = await supabase.rpc('update_student_profile_photo', {
+      target_student_id: Number(id),
+      new_photo_url: newPhotoUrl
+    });
     
    if (updateError) throw updateError;
    

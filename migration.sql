@@ -207,3 +207,21 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Dedicated Photo Update (Aggressive)
+CREATE OR REPLACE FUNCTION update_student_profile_photo(
+  target_student_id INT,
+  new_photo_url TEXT
+) RETURNS VOID AS $$
+BEGIN
+  UPDATE public.students 
+  SET photo_url = new_photo_url 
+  WHERE student_id = target_student_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant Permissions
+GRANT ALL ON TABLE public.students TO authenticated;
+GRANT ALL ON TABLE public.teachers TO authenticated;
+GRANT ALL ON TABLE public.students TO service_role;
+GRANT ALL ON TABLE public.teachers TO service_role;
