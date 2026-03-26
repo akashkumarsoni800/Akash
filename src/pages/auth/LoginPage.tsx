@@ -76,6 +76,7 @@ const LoginPage = () => {
     // Store school context
     localStorage.setItem('current_school_id', school.id);
     localStorage.setItem('current_school_name', school.name);
+    if (school.logo_url) localStorage.setItem('current_school_logo', school.logo_url);
 
     setShowWelcome(true);
     setTimeout(() => navigate('/student/dashboard'), 2000);

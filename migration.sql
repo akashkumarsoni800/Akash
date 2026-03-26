@@ -98,9 +98,9 @@ BEGIN
 END $$;
 
 -- 5. Insert Sample Schools for Testing
-INSERT INTO schools (name, school_code) VALUES 
-('Adarsh Shishu Mandir', 'ASM01'),
-('Global International', 'GLOBAL02')
+INSERT INTO schools (name, school_code, logo_url) VALUES 
+('Adarsh Shishu Mandir', 'ASM01', 'https://mbuoelfmgpcexjyednui.supabase.co/storage/v1/object/public/logos/asm_logo.png'),
+('Global International', 'GLOBAL02', NULL)
 ON CONFLICT (school_code) DO NOTHING;
 
 -- 6. Helper Function to get school_id from school_code (Optional for RPC)
