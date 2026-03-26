@@ -342,6 +342,7 @@ const TeacherAnalytics: React.FC = () => {
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
       className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      onClick={() => window.print()}
      >
       📈 Full Report
      </motion.button>
@@ -349,6 +350,10 @@ const TeacherAnalytics: React.FC = () => {
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
       className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      onClick={() => {
+       const top = analytics.recentResults.sort((a,b) => b.marks - a.marks)[0];
+       import('sonner').then(({ toast }) => toast.info(`Top Performer: ${top?.student_name || 'Calculating...'} (${top?.marks || 0}%)`));
+      }}
      >
       🎯 Top Performers ({analytics.topPerformers})
      </motion.button>
@@ -356,6 +361,9 @@ const TeacherAnalytics: React.FC = () => {
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
       className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      onClick={() => {
+       import('sonner').then(({ toast }) => toast.warning(`Critical Protocol: ${analytics.lowAttendance} students identified with sub-optimal attendance.`));
+      }}
      >
       ⚠️ Alert Students ({analytics.lowAttendance})
      </motion.button>

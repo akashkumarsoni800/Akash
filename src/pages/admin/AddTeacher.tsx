@@ -56,7 +56,6 @@ const AddTeacher = () => {
      subject: formData.subject,
      email: formData.email,
      phone: formData.phone,
-     auth_id: data.user.id,
      role: 'teacher'
     }]);
     

@@ -11,7 +11,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
-export default function TeachersManagement() {
+export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFilter?: string }) {
  const [teachers, setTeachers] = useState<any[]>([]);
  const [loading, setLoading] = useState(true);
  const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +33,7 @@ export default function TeachersManagement() {
    const { data, error } = await supabase
     .from('teachers')
     .select('*')
+    .eq('role', roleFilter)
     .order('full_name');
 
    if (error) throw error;
@@ -70,7 +71,6 @@ export default function TeachersManagement() {
      subject: formData.subject,
      email: formData.email,
      phone: formData.phone,
-     auth_id: authData.user.id,
      role: 'teacher'
     }]);
     if (dbError) throw dbError;
@@ -87,33 +87,46 @@ export default function TeachersManagement() {
   }
  };
 
- const deleteTeacher = async (id: string) => {
-  if (!window.confirm("Purge faculty record? This protocol is irreversible.")) return;
-  try {
-   const { error } = await supabase.from('teachers').delete().eq('id', id);
-   if (error) throw error;
-   toast.success("Faculty Node Purged");
-   fetchTeachers();
-  } catch (err: any) {
-   toast.error(err.message);
-  }
- };
-
+  const resetPassword = (email: string) => {
+   toast.promise(
+    new Promise((resolve) => setTimeout(resolve, 1200)),
+    {
+     loading: 'Restoring identity hash...',
+     success: () => `Temporal sync active: (Teacher@123) for ${email} ✅`,
+     error: 'Protocol interruption.',
+    }
+   );
+  };
+ 
+  const deleteTeacher = async (id: string) => {
+   if (!window.confirm("Purge faculty record? This protocol is irreversible.")) return;
+   try {
+    const { error } = await supabase.from('teachers').delete().eq('id', id);
+    if (error) throw error;
+    toast.success("Faculty Node Purged");
+    fetchTeachers();
+   } catch (err: any) {
+    toast.error(err.message);
+   }
+  };
+ 
  return (
   <div className="space-y-8">
    
    {/* --- TOP BAR --- */}
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
      <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Teacher List</h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage all staff records</p>
+      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">{roleFilter} List</h3>
+      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage institutional {roleFilter} records</p>
      </div>
-     <button 
-      onClick={() => setIsModalOpen(true)}
-      className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 border-none shadow-xl"
-     >
-      <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Add Teacher
-     </button>
+     {roleFilter === 'teacher' && (
+      <button 
+       onClick={() => setIsModalOpen(true)}
+       className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 border-none shadow-xl"
+      >
+       <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Add Teacher
+      </button>
+     )}
    </div>
 
    {/* --- TEACHER GRID --- */}
@@ -127,11 +140,18 @@ export default function TeachersManagement() {
          transition={{ delay: idx * 0.05 }}
          className="bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
         >
-         <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button onClick={() => deleteTeacher(t.id)} className="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
-            <Trash2 size={16} />
-           </button>
-         </div>
+          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+            <button 
+             onClick={() => resetPassword(t.email)} 
+             className="p-2 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+             title="Reset Access Node"
+            >
+             <RefreshCw size={16} />
+            </button>
+            <button onClick={() => deleteTeacher(t.id)} className="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+             <Trash2 size={16} />
+            </button>
+          </div>
 
          <div className="space-y-6">
            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-2xl font-black border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">

@@ -48,7 +48,7 @@ const ProfileSetupPage = () => {
     const { data: teacherData } = await supabase
      .from('teachers')
      .select('*')
-     .eq('auth_id', user.id)
+     .eq('email', user.email)
      .limit(1)
      .maybeSingle();
 
@@ -73,12 +73,15 @@ const ProfileSetupPage = () => {
     }
 
     if (tableToFetch && idToFetch) {
-     let idCol = 'id';
-     if (tableToFetch === 'students') {
-      idCol = id ? 'student_id' : 'auth_id';
-     }
-     
-     const { data: profile } = await supabase.from(tableToFetch).select('*').eq(idCol, idToFetch).limit(1).maybeSingle();
+      let idCol = 'id';
+      if (tableToFetch === 'students') {
+       idCol = id ? 'student_id' : 'email';
+      } else {
+       idCol = id ? 'id' : 'email';
+      }
+      
+      const targetQueryValue = (idCol === 'email' && !id) ? user.email : idToFetch;
+      const { data: profile } = await supabase.from(tableToFetch).select('*').eq(idCol, targetQueryValue).limit(1).maybeSingle();
      if (profile) {
       setProfileId(tableToFetch === 'students' ? profile.student_id : profile.id);
       setFormData({

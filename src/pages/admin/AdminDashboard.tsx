@@ -91,7 +91,7 @@ const AdminDashboard = () => {
 
  const [activeTab, setActiveTab] = useState(initialTab);
  const [loading, setLoading] = useState(true);
- const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0 });
+  const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0, admins: 0 });
  const [pendingStudents, setPendingStudents] = useState<any[]>([]);
  const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -109,12 +109,13 @@ const AdminDashboard = () => {
  const fetchInitialData = async () => {
   try {
    setLoading(true);
-   const [stdRes, tchRes, penRes] = await Promise.all([
-    supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved'),
-    supabase.from('teachers').select('*', { count: 'exact', head: true }),
-    supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending')
-   ]);
-   setCounts({ students: stdRes.count || 0, teachers: tchRes.count || 0, pending: penRes.count || 0 });
+    const [stdRes, tchRes, penRes, admRes] = await Promise.all([
+     supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved'),
+     supabase.from('teachers').select('*', { count: 'exact', head: true }).eq('role', 'teacher'),
+     supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending'),
+     supabase.from('teachers').select('*', { count: 'exact', head: true }).eq('role', 'admin')
+    ]);
+    setCounts({ students: stdRes.count || 0, teachers: tchRes.count || 0, pending: penRes.count || 0, admins: admRes.count || 0 });
    
    const { data: pending } = await supabase.from('students').select('*').eq('is_approved', 'pending').limit(10);
    setPendingStudents(pending || []);
@@ -187,7 +188,7 @@ const AdminDashboard = () => {
     {/* --- TABLES SECTION --- */}
     <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm mt-10">
      <div className="flex flex-wrap border-b border-slate-100 p-2 gap-2 bg-slate-50/50">
-      {['overview', 'students', 'teachers', 'exams', 'approvals'].map(tab => (
+      {['overview', 'students', 'teachers', 'admins', 'exams', 'approvals'].map(tab => (
        <button 
         key={tab} 
         onClick={() => setActiveTab(tab)} 
@@ -228,11 +229,17 @@ const AdminDashboard = () => {
         </motion.div>
        )}
 
-       {activeTab === 'teachers' && (
-        <motion.div key="tch" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-         <TeachersManagement />
-        </motion.div>
-       )}
+        {activeTab === 'teachers' && (
+         <motion.div key="tch" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <TeachersManagement roleFilter="teacher" />
+         </motion.div>
+        )}
+ 
+        {activeTab === 'admins' && (
+         <motion.div key="adm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <TeachersManagement roleFilter="admin" />
+         </motion.div>
+        )}
 
        {activeTab === 'exams' && (
         <motion.div key="exm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">

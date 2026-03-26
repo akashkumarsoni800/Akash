@@ -8,6 +8,7 @@ import {
  UserPlus, ShieldAlert, Fingerprint
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TeachersManagement from '../../components/admin/TeachersManagement';
 
 const CreateAdmin = () => {
  const [loading, setLoading] = useState(false);
@@ -218,8 +219,18 @@ const CreateAdmin = () => {
       </div>
 
     </div>
-
-    {/* --- FOOTER DECOR --- */}
+ 
+     {/* --- ADMIN LIST SECTION --- */}
+     <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4 }}
+      className="bg-white border border-slate-100 rounded-[3.5rem] p-10 md:p-14 shadow-sm"
+     >
+      <TeachersManagement roleFilter="admin" />
+     </motion.div>
+ 
+     {/* --- FOOTER DECOR --- */}
     <div className="pt-12 text-center">
       <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50 transition-opacity hover:opacity-100 group cursor-default">
        <Zap size={14} className="text-blue-500" />

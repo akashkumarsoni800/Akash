@@ -23,42 +23,61 @@ const ManageSalaries = () => {
   fetchAccountingData();
  }, []);
 
- const fetchAccountingData = async () => {
-  try {
-   setLoading(true);
-   
-   const [{ data: feeData }, { data: salaryData }, { data: inventoryData }] = await Promise.all([
-    supabase.from('fees').select('total_amount, status, updated_at'),
-    supabase.from('teacher_salaries').select('net_salary, status'),
-    supabase.from('inventory').select('total_value')
-   ]);
+  const fetchAccountingData = async () => {
+   try {
+    setLoading(true);
+    
+    // Fetch live fees with student names
+    const { data: feeData } = await supabase
+      .from('fees')
+      .select('*, students(full_name)')
+      .order('updated_at', { ascending: false });
 
-   const collectedFees = feeData?.filter((f: any) => f.status === 'Paid')
-    .reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0) || 0;
-   
-   const totalSalaryExpense = salaryData?.filter((s: any) => s.status === 'Paid')
-    .reduce((sum: number, s: any) => sum + Number(s.net_salary || 0), 0) || 0;
-   
-   const inventoryValue = inventoryData?.reduce((sum: number, i: any) => 
-    sum + Number(i.total_value || 0), 0) || 0;
+    // Fetch live salaries with teacher names
+    const { data: salaryData } = await supabase
+      .from('teacher_salaries')
+      .select('*, teachers(full_name)')
+      .order('updated_at', { ascending: false });
 
-   setStats({
-    totalRevenue: collectedFees,
-    totalExpense: totalSalaryExpense + inventoryValue,
-    netProfit: collectedFees - (totalSalaryExpense + inventoryValue),
-    collectionRate: feeData?.length ? Math.round((collectedFees / feeData.reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0)) * 100) : 0
-   });
+    // Fetch inventory for expense calculation
+    const { data: inventoryData } = await supabase
+      .from('inventory')
+      .select('total_value');
 
-   setRecentTransactions([...(feeData || []), ...(salaryData || [])].sort((a: any, b: any) => 
-    new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
-   ).slice(0, 10));
+    const collectedFees = feeData?.filter((f: any) => f.status === 'Paid')
+     .reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0) || 0;
+    
+    const totalSalaryExpense = salaryData?.filter((s: any) => s.status === 'Paid')
+     .reduce((sum: number, s: any) => sum + Number(s.net_salary || 0), 0) || 0;
+    
+    const inventoryValue = inventoryData?.reduce((sum: number, i: any) => 
+     sum + Number(i.total_value || 0), 0) || 0;
 
-  } catch (error: any) {
-   toast.error('Failed to load accounting data');
-  } finally {
-   setLoading(false);
-  }
- };
+    const totalRevenuePotential = feeData?.reduce((sum: number, f: any) => sum + Number(f.total_amount || 0), 0) || 1;
+
+    setStats({
+     totalRevenue: collectedFees,
+     totalExpense: totalSalaryExpense + inventoryValue,
+     netProfit: collectedFees - (totalSalaryExpense + inventoryValue),
+     collectionRate: Math.round((collectedFees / totalRevenuePotential) * 100)
+    });
+
+    // Merge and sort for live ledger
+    const ledger = [
+      ...(feeData || []).map(f => ({ ...f, type: 'fee', name: f.students?.full_name || 'Anonymous Fee' })),
+      ...(salaryData || []).map(s => ({ ...s, type: 'salary', name: s.teachers?.full_name || s.teacher_name || 'Staff Payment' }))
+    ].sort((a: any, b: any) => 
+     new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
+    ).slice(0, 20);
+
+    setRecentTransactions(ledger);
+
+   } catch (error: any) {
+    toast.error('Failed to load live accounting data');
+   } finally {
+    setLoading(false);
+   }
+  };
 
  if (loading && recentTransactions.length === 0) {
   return (
@@ -174,25 +193,27 @@ const ManageSalaries = () => {
            <tr key={idx} className="hover:bg-slate-50/80 transition-all group/row">
             <td className="px-12 py-8">
               <p className="font-black text-slate-900 text-sm tracking-tight group-hover/row:text-indigo-600 transition-colors">
-               {tx.teacher_name || ' Fee Collection'}
+               {tx.name}
               </p>
-              <p className="text-[8px] font-black text-slate-400 tracking-widest mt-1">IV-TX-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+              <p className="text-[8px] font-black text-slate-400 tracking-widest mt-1">
+               Ref: {tx.type === 'fee' ? 'FEE' : 'PAY'}-{String(tx.id).slice(-6).toUpperCase()}
+              </p>
             </td>
             <td className="px-12 py-8">
               <p className="text-[10px] font-black text-slate-400 tracking-widest ">
-               {tx.month || new Date(tx.created_at || tx.updated_at).toLocaleDateString('en-IN')}
+               {tx.month || new Date(tx.updated_at || tx.created_at).toLocaleDateString('en-GB')}
               </p>
             </td>
             <td className="px-12 py-8 text-center">
-              <p className={`text-xl font-black  ${tx.teacher_name ? 'text-rose-500' : 'text-emerald-500'}`}>
-               {tx.teacher_name ? '-' : '+'}₹{(tx.total_amount || tx.net_salary || 0).toLocaleString()}
+              <p className={`text-xl font-black  ${tx.type === 'salary' ? 'text-rose-500' : 'text-emerald-500'}`}>
+               {tx.type === 'salary' ? '-' : '+'}₹{(tx.total_amount || tx.net_salary || 0).toLocaleString()}
               </p>
             </td>
             <td className="px-12 py-8 text-right">
               <span className={`px-5 py-2 rounded-xl text-[9px] font-black tracking-widest border ${
-               tx.teacher_name ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+               tx.type === 'salary' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
               }`}>
-               {tx.teacher_name ? 'Payment' : 'Inward Fund'}
+               {tx.type === 'salary' ? 'Staff Payroll' : 'Fee Inward'}
               </span>
             </td>
            </tr>
