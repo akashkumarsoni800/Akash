@@ -111,7 +111,10 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('logos', 'logos', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Set up RLS for the bucket (Allow public read, authenticated upload)
+-- Set up RLS for the bucket (Drop existing policies first to allow re-run)
+DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Upload" ON storage.objects;
+
 CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'logos');
 CREATE POLICY "Admin Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'logos');
 
