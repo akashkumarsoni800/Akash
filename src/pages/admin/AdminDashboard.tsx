@@ -8,7 +8,8 @@ import {
  Trash2, Edit2, CheckCircle, CreditCard,
  Wallet, PieChart, Package, ShieldAlert, UserPlus,
  Printer, LayoutDashboard, Zap, Activity, FileStack, Settings,
- Upload, Camera, FlipHorizontal, X, ChevronDown, Calendar
+ Upload, Camera, FlipHorizontal, X, ChevronDown, Calendar,
+ Image as ImageIcon
 } from 'lucide-react';
 import StudentsManagement from '../../components/admin/StudentsManagement';
 import TeachersManagement from '../../components/admin/TeachersManagement';
