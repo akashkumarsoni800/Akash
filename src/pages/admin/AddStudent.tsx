@@ -263,7 +263,7 @@ const AddStudent = () => {
 
   return (
    <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-    <div className="max-w-4xl mx-auto space-y-12">
+    <div className="max-w-[1400px] mx-auto space-y-12 animate__animated animate__fadeIn">
      
      {/* --- HEADER --- */}
      <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
