@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { supabase } from '../../supabaseClient';
 
 const DynamicBranding = () => {
   useEffect(() => {
@@ -66,7 +67,36 @@ const DynamicBranding = () => {
         if (appleIconLink) appleIconLink.setAttribute('href', iconUrl);
       };
 
+      // 4. Silent Synchronization with Database
+      const fetchLatestBranding = async () => {
+        const schoolId = localStorage.getItem('current_school_id');
+        if (!schoolId) return;
+
+        try {
+          const { data, error } = await supabase
+            .from('schools')
+            .select('name, logo_url')
+            .eq('id', schoolId)
+            .maybeSingle();
+
+          if (data && !error) {
+            const cachedLogo = localStorage.getItem('current_school_logo');
+            const cachedName = localStorage.getItem('current_school_name');
+
+            if (data.logo_url !== cachedLogo || data.name !== cachedName) {
+              if (data.logo_url) localStorage.setItem('current_school_logo', data.logo_url);
+              if (data.name) localStorage.setItem('current_school_name', data.name);
+              // Update state or trigger local refresh
+              updateBranding();
+            }
+          }
+        } catch (err) {
+          console.error("Branding sync failed:", err);
+        }
+      };
+
       generateManifest();
+      fetchLatestBranding();
     };
 
     // Run on mount

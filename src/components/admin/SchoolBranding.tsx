@@ -73,7 +73,11 @@ const SchoolBranding = () => {
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Logo</label>
             <div className="w-56 h-56 rounded-[5px] bg-slate-50 border-4 border-white shadow-inner flex items-center justify-center overflow-hidden relative group">
               {logo ? (
-                <img src={logo} className="w-full h-full object-contain p-8 transition-transform group-hover:scale-110" alt="logo" />
+                <img 
+                  src={`${logo}${logo.includes('?') ? '&' : '?'}v=${Date.now()}`} 
+                  className="w-full h-full object-contain p-8 transition-transform group-hover:scale-110" 
+                  alt="logo" 
+                />
               ) : (
                 <ImageIcon size={48} className="text-slate-200" />
               )}

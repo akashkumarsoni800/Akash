@@ -126,7 +126,7 @@ const Sidebar = () => {
        <div className="w-14 h-14 rounded-[5px] flex items-center justify-center bg-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden border border-slate-100 relative">
         {schoolLogo && !logoLoadError ? (
           <img 
-            src={schoolLogo} 
+            src={`${schoolLogo}${schoolLogo.includes('?') ? '&' : '?'}v=${Date.now()}`} 
             className="w-full h-full object-contain p-1" 
             alt="logo" 
             crossOrigin="anonymous"
