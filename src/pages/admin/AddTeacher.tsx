@@ -87,7 +87,12 @@ const AddTeacher = () => {
      school_id: schoolId
     }]);
     
-    if (dbError) throw dbError;
+    if (dbError) {
+     if (dbError.code === '23505') {
+      throw new Error(`This email node (${formData.email}) is already globally synchronized. Faculty may belong to only one institution.`);
+     }
+     throw dbError;
+    }
    }
 
    toast.success("Teacher Created Successfully!");

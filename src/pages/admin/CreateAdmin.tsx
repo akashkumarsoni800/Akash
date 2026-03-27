@@ -69,7 +69,12 @@ const CreateAdmin = () => {
      subject: 'Administration'
     }]);
 
-    if (dbError) throw dbError;
+    if (dbError) {
+     if (dbError.code === '23505') {
+       throw new Error(`Conflict: This administrative node (${formData.email}) already exists in the global federation.`);
+     }
+     throw dbError;
+    }
    }
 
    toast.success(`New Admin Paid: ${formData.full_name}`);

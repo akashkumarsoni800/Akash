@@ -89,7 +89,13 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
      role: 'teacher',
      school_id: schoolId
     }]);
-    if (dbError) throw dbError;
+    
+    if (dbError) {
+     if (dbError.code === '23505') {
+      throw new Error(`Protocol Failed: This identity (${formData.email}) is already indexed in another institutional node.`);
+     }
+     throw dbError;
+    }
    }
 
    toast.success("Identity Secured: Faculty Node Initialized 💎");
