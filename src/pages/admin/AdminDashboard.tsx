@@ -216,7 +216,7 @@ const AdminDashboard = () => {
            <div key={s.student_id} className="p-6 rounded-[5px] border border-slate-100 bg-slate-50/30 flex flex-col justify-between h-48 group hover:border-blue-200 transition-all">
             <div>
              <h4 className="font-black text-slate-800 text-lg leading-tight tracking-tight">{s.full_name}</h4>
-             <span className="inline-block mt-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-black tracking-wider">Class {s.class_name}</span>
+             <span className="inline-block mt-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-[5px] text-[9px] font-black tracking-wider">Class {s.class_name}</span>
             </div>
             <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
               <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-blue-600 text-white py-3 rounded-[5px] text-[9px] font-black tracking-widest hover:bg-blue-700 shadow-md transition-all">Approve</button>

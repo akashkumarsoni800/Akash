@@ -362,7 +362,7 @@ const ManageFees = () => {
                   value={newHeadName}
                   onChange={(e) => setNewHeadName(e.target.value)}
                 />
-                <button type="button" onClick={handleAddFeeHead} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-slate-900 transition-colors">
+                <button type="button" onClick={handleAddFeeHead} className="p-2 bg-blue-600 text-white rounded-[5px] hover:bg-slate-900 transition-colors">
                   <Plus size={14} />
                 </button>
               </div>

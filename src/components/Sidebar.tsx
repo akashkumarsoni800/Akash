@@ -198,7 +198,7 @@ const Sidebar = () => {
        </div>
        <button 
         onClick={handleLogout}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black tracking-widest border border-transparent hover:border-rose-500/20"
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[5px] bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black tracking-widest border border-transparent hover:border-rose-500/20"
        >
         <LogOut size={12} /> Terminate session
        </button>

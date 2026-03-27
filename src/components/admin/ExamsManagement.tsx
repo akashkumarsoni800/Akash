@@ -144,7 +144,7 @@ export default function ExamsManagement() {
 
            <div className="flex flex-wrap gap-2">
             {exam.subjects?.map((sub: string) => (
-              <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[9px] font-black  border border-slate-100">{sub}</span>
+              <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-[5px] text-[9px] font-black  border border-slate-100">{sub}</span>
             ))}
            </div>
          </div>

@@ -134,7 +134,7 @@ const GalleryPage = () => {
               <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent">
                 <div className="flex flex-col md:flex-row justify-between items-end gap-6">
                   <div className="space-y-3">
-                    <span className="px-4 py-1 bg-blue-600 text-white text-[8px] font-black rounded-lg uppercase tracking-[0.2em]">{schoolName}</span>
+                    <span className="px-4 py-1 bg-blue-600 text-white text-[8px] font-black rounded-[5px] uppercase tracking-[0.2em]">{schoolName}</span>
                     <h2 className="text-3xl md:text-4xl font-black text-white leading-none uppercase">{selectedImage.caption}</h2>
                     <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Archived on {new Date(selectedImage.created_at).toLocaleDateString()}</p>
                   </div>

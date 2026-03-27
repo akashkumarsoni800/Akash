@@ -305,7 +305,7 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 md:col-span-1 space-y-8 text-left">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-indigo-900 rounded-lg flex items-center justify-center text-white font-black text-sm uppercase">A</div>
+                <div className="w-8 h-8 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white font-black text-sm uppercase">A</div>
                 <span className="text-sm font-black text-indigo-950 uppercase">Academic Luminary</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Redefining institutional management through precision engineering and editorial design.</p>

@@ -46,7 +46,7 @@ const GlobalGallerySlider = () => {
     <div className="mt-12 mb-8 px-4 md:px-0">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+          <div className="w-8 h-8 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-lg">
             <Image size={18} />
           </div>
           <div>

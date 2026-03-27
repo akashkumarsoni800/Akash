@@ -138,7 +138,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
          onChange={(e) => handleSearch(e.target.value)}
          onFocus={() => searchQuery && setIsSearchOpen(true)}
         />
-        <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-lg text-[10px] font-black text-slate-400 ">
+        <div className="flex items-center gap-1 bg-slate-200/50 px-2 py-1 rounded-[5px] text-[10px] font-black text-slate-400 ">
           ⌘ K
         </div>
        </div>
@@ -373,7 +373,7 @@ const HeaderMenuItem = ({ icon: Icon, label, onClick, variant = 'default' }: any
    : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'
   }`}
  >
-   <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+   <div className={`w-9 h-9 rounded-[5px] flex items-center justify-center transition-all ${
     variant === 'danger'
     ? 'bg-rose-50 text-rose-400 group-hover:bg-white'
     : 'bg-slate-50 text-slate-400 group-hover:bg-white group-hover:shadow-sm'

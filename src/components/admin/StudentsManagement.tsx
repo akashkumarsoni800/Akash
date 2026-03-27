@@ -148,7 +148,7 @@ export default function StudentsManagement() {
                     </div>
                   </td>
                   <td className="px-10 py-5 text-center">
-                    <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-black  border border-slate-50">{s.class_name}</span>
+                    <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-[5px] text-[10px] font-black  border border-slate-50">{s.class_name}</span>
                   </td>
                   <td className="px-10 py-5">
                     <div className="flex items-center gap-3">

@@ -397,10 +397,10 @@ export default function TeacherDashboard() {
         {teacher?.full_name || 'Faculty Member'}
        </h3>
        <div className="flex flex-wrap items-center gap-2">
-        <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black tracking-widest border border-slate-100">
+        <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-[5px] text-[9px] font-black tracking-widest border border-slate-100">
          📚 {teacher?.subject || 'Education'}
         </span>
-        <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black tracking-widest border border-slate-100">
+        <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-[5px] text-[9px] font-black tracking-widest border border-slate-100">
          👥 {stats.totalStudents} Pupils
         </span>
        </div>
