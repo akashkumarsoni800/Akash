@@ -1,6 +1,6 @@
-const CACHE_NAME = 'tekool-v3';
+const CACHE_NAME = 'tekool-v4';
 
-self.addEventListener('install', () => {
+self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
@@ -19,10 +19,21 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Satisfies "Fetch handler found" requirement for PWA
+  // Strategy: Network-First, Falling back to Cache
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    fetch(event.request)
+      .then((response) => {
+        // Cache successful responses
+        if (response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });

@@ -35,11 +35,7 @@ const GlobalGallerySlider = () => {
   if (loading) return null;
   
   if (images.length === 0) {
-    const userRole = profile?.role; // Wait, profile is not defined here yet.
-    // Let's get role from local storage if available
-    const isAdmin = localStorage.getItem('supabase.auth.token')?.includes('"admin"'); // Rough check or similar
-    
-    return null; // Keep it hidden for now, but I'll add logging.
+    return null; 
   }
 
   return (

@@ -80,7 +80,29 @@ export const useSaveCallerUserProfile = (): any => {
   });
 };
 
-// --- 3. ADMIN MODULES (Supabase) ---
+// --- 3. DASHBOARD STATISTICS ---
+export const useGetDashboardStats = (): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['dash-stats', schoolId],
+    queryFn: async () => {
+      const [stdRes, tchRes, penRes] = await Promise.all([
+        supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved').eq('school_id', schoolId),
+        supabase.from('teachers').select('*', { count: 'exact', head: true }).eq('school_id', schoolId),
+        supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending').eq('school_id', schoolId),
+      ]);
+      
+      return {
+        students: stdRes.count || 0,
+        teachers: tchRes.count || 0,
+        pending: penRes.count || 0,
+      };
+    },
+    enabled: !!schoolId
+  });
+};
+
+// --- 4. ADMIN MODULES (Supabase) ---
 
 // Fetch Pending Students
 export const useListApprovals = (): any => {
@@ -91,7 +113,7 @@ export const useListApprovals = (): any => {
       const { data, error } = await supabase
         .from('students')
         .select('*')
-        .eq('approval_status', 'pending')
+        .eq('is_approved', 'pending')
         .eq('school_id', schoolId); // ✅ School Isolation
       if (error) throw error;
       return data || [];
@@ -100,52 +122,81 @@ export const useListApprovals = (): any => {
   });
 };
 
-// Approve Student
-export const useApproveStudent = (): any => {
+// Set Approval Status (Approve/Reject)
+export const useSetApprovalStatus = (): any => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async ({ id, status }: { id: any; status: 'approved' | 'rejected' }) => {
       const { error } = await supabase
         .from('students')
-        .update({ approval_status: 'approved' })
+        .update({ is_approved: status })
         .eq('student_id', id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['approvals'] });
       queryClient.invalidateQueries({ queryKey: ['students'] });
-      toast.success("Student Approved Successfully!");
+      queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
+      toast.success("Status Updated Successfully!");
+    }
+  });
+};
+
+// Delete Student
+export const useDeleteStudent = (): any => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from('students')
+        .delete()
+        .eq('student_id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
+      toast.success("Student records purged successfully.");
     }
   });
 };
 
 // Fetch All Approved Students
 export const useGetAllApprovedStudents = (): any => {
+  const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['students'],
+    queryKey: ['students', schoolId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('students')
         .select('*')
-        .eq('approval_status', 'approved');
+        .eq('is_approved', 'approved')
+        .eq('school_id', schoolId);
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !!schoolId
   });
 };
 
 // --- 4. TEACHER MANAGEMENT MODULES ---
 
 // Fetch All Teachers
-export const useGetAllTeachers = (): any => {
+export const useGetAllTeachers = (role?: string): any => {
   const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['teachers', schoolId],
+    queryKey: ['teachers', schoolId, role],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('teachers')
         .select('*')
         .eq('school_id', schoolId); // ✅ School Isolation
+      
+      if (role) {
+        query = query.eq('role', role);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
@@ -156,19 +207,41 @@ export const useGetAllTeachers = (): any => {
 // Register New Teacher
 export const useRegisterTeacher = (): any => {
   const queryClient = useQueryClient();
+  const schoolId = getCurrentSchoolId();
   return useMutation({
     mutationFn: async (formData: any) => {
       const { error } = await supabase.from('teachers').insert([{
         full_name: formData.name,
         subject: formData.subject,
         email: formData.email,
-        phone: formData.phone
+        phone: formData.phone,
+        school_id: schoolId
       }]);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] });
+      queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
       toast.success("Teacher Registered!");
+    }
+  });
+};
+
+// Delete Teacher
+export const useDeleteTeacher = (): any => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: any) => {
+      const { error } = await supabase
+        .from('teachers')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teachers'] });
+      queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
+      toast.success("Teacher records purged successfully.");
     }
   });
 };
@@ -257,6 +330,24 @@ export const useGetAllExams = (): any => {
   });
 };
 
+// Delete Exam
+export const useDeleteExam = (): any => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: any) => {
+      const { error } = await supabase
+        .from('exams')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exams'] });
+      toast.success("Exam record deleted.");
+    }
+  });
+};
+
 // --- RESULTS MODULE (Marks upload karne ke liye) ---
 export const useAddResult = (): any => {
   const queryClient = useQueryClient();
@@ -288,6 +379,145 @@ export const useAddResult = (): any => {
     }
   });
 };
+// --- 8. STUDENT DASHBOARD MODULE ---
+
+export const useGetStudentProfile = (email: string): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['student-profile', email, schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('email', email)
+        .eq('school_id', schoolId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!email && !!schoolId
+  });
+};
+
+export const useGetAttendancePct = (studentId: any): any => {
+  return useQuery({
+    queryKey: ['attendance-pct', studentId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('attendance')
+        .select('status')
+        .eq('student_id', studentId);
+      if (error) throw error;
+      const att = data || [];
+      const presentCount = att.filter((a: any) => a.status === 'Present').length;
+      return att.length > 0 ? Math.round((presentCount / att.length) * 100) : 0;
+    },
+    enabled: !!studentId
+  });
+};
+
+export const useGetPendingFeesTotal = (studentId: any): any => {
+  return useQuery({
+    queryKey: ['fees-pending', studentId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fees')
+        .select('total_amount')
+        .eq('student_id', studentId)
+        .eq('status', 'Pending');
+      if (error) throw error;
+      return (data || []).reduce((sum, f) => sum + Number(f.total_amount), 0);
+    },
+    enabled: !!studentId
+  });
+};
+
+export const useGetActiveHomeworkCount = (className: string): any => {
+  return useQuery({
+    queryKey: ['homework-count', className],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('homework')
+        .select('*', { count: 'exact', head: true })
+        .eq('class_name', className);
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!className
+  });
+};
+
+// --- 9. EVENT/NOTICE MODULE ---
+export const useGetLatestEvents = (limit: number = 10): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['latest-events', schoolId, limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('school_id', schoolId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!schoolId
+  });
+};
+
+export const useGetDetailedAttendance = (studentId: any): any => {
+  return useQuery({
+    queryKey: ['attendance-detailed', studentId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('attendance')
+        .select('*')
+        .eq('student_id', studentId)
+        .order('date', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!studentId
+  });
+};
+
+export const useGetStudentHomework = (className: string): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['homework-detailed', className, schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('homework')
+        .select(`
+          *,
+          homework_submissions!left(*)
+        `)
+        .eq('class_name', className)
+        .eq('school_id', schoolId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!className && !!schoolId
+  });
+};
+
+export const useGetStudentFees = (studentId: any): any => {
+  return useQuery({
+    queryKey: ['fees-detailed', studentId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fees')
+        .select('*, fee_receipts(*)')
+        .eq('student_id', studentId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!studentId
+  });
+};
 // --- STUDENT RESULT MODULE ---
 // Bracket ke andar "studentId: any" hona zaroori hai 👇
 export const useGetStudentResults = (studentId: any): any => {
@@ -316,5 +546,169 @@ export const useGetStudentResults = (studentId: any): any => {
     },
     // Ye query tabhi chalegi jab ID milegi
     enabled: !!studentId && !!schoolId
+  });
+};
+// --- 10. FEE MANAGEMENT MODULE (ADMIN) ---
+
+export const useGetFeeHeads = (): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['fee-heads', schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fee_heads')
+        .select('*')
+        .eq('school_id', schoolId)
+        .order('id');
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!schoolId
+  });
+};
+
+export const useGetFeeStats = (): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['fee-stats', schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fees')
+        .select('status, total_amount')
+        .eq('school_id', schoolId);
+      if (error) throw error;
+      
+      const feeArray = data || [];
+      const pendingCount = feeArray.filter((f: any) => f.status === 'Pending').length;
+      const collectedAmount = feeArray.reduce((sum: number, f: any) => 
+        f.status === 'Paid' ? sum + (Number(f.total_amount) || 0) : sum, 0);
+      const totalAmount = feeArray.reduce((sum: number, f: any) => sum + (Number(f.total_amount) || 0), 0);
+      
+      return {
+        totalPending: pendingCount,
+        totalCollected: collectedAmount,
+        overdue: feeArray.filter((f: any) => f.status === 'Overdue').length,
+        collectionRate: totalAmount > 0 ? Math.round((collectedAmount / totalAmount) * 100) : 0
+      };
+    },
+    enabled: !!schoolId
+  });
+};
+
+export const useGetRecentPayments = (limit: number = 5): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['recent-payments', schoolId, limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fees')
+        .select(`*, students(full_name, class_name, contact_number)`)
+        .eq('school_id', schoolId)
+        .order('updated_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!schoolId
+  });
+};
+
+export const useGetFeeReminders = (month: string): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['fee-reminders', month, schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fees')
+        .select(`*, students(full_name, contact_number, class_name)`)
+        .eq('month', month)
+        .eq('status', 'Pending')
+        .eq('school_id', schoolId);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!month && !!schoolId
+  });
+};
+
+// Mutations
+export const useAddFeeHead = (): any => {
+  const queryClient = useQueryClient();
+  const schoolId = getCurrentSchoolId();
+  return useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await supabase.from('fee_heads').insert([{ name, school_id: schoolId }]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fee-heads'] });
+      toast.success("Fee Head Added");
+    }
+  });
+};
+
+export const useDeleteFeeHead = (): any => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: any) => {
+      const { error } = await supabase.from('fee_heads').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fee-heads'] });
+      toast.success("Fee Head Deleted");
+    }
+  });
+};
+
+export const useAssignFees = (): any => {
+  const queryClient = useQueryClient();
+  const schoolId = getCurrentSchoolId();
+  return useMutation({
+    mutationFn: async (fees: any[]) => {
+      const feesWithSchool = fees.map(f => ({ ...f, school_id: schoolId }));
+      const { error } = await supabase.from('fees').insert(feesWithSchool);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fee-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['recent-payments'] });
+      queryClient.invalidateQueries({ queryKey: ['fee-reminders'] });
+      toast.success("✅ Fees Assigned Successfully!");
+    }
+  });
+};
+
+export const useGetAllStudents = (): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['students-all', schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('school_id', schoolId)
+        .order('full_name');
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!schoolId
+  });
+};
+
+export const useGetNotices = (): any => {
+  const schoolId = getCurrentSchoolId();
+  return useQuery({
+    queryKey: ['notices', schoolId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('notices')
+        .select('*')
+        .eq('school_id', schoolId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!schoolId
   });
 };

@@ -1,18 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { 
  Plus, FileText, Calendar, 
  Trash2, ShieldCheck, Zap, 
  ChevronRight, Info, RefreshCw,
  Search, BookOpen, Clock,
- MoreVertical, CheckCircle2
+ MoreVertical, CheckCircle2,
+ X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { useGetAllExams, useDeleteExam, useAddExam } from '../../hooks/useQueries';
 
 export default function ExamsManagement() {
- const [exams, setExams] = useState<any[]>([]);
- const [loading, setLoading] = useState(true);
+ // ✅ React Query Hooks for Persistence & Offline Support
+ const { data: exams = [], isLoading } = useGetAllExams();
+ const { mutate: deleteExam } = useDeleteExam();
+ const { mutate: addExam, isPending: isAdding } = useAddExam();
+
  const [isModalOpen, setIsModalOpen] = useState(false);
  const [formData, setFormData] = useState({
   title: '',
@@ -20,221 +25,180 @@ export default function ExamsManagement() {
   subjects: ''
  });
 
- useEffect(() => {
-  fetchExams();
- }, []);
-
- const fetchExams = async () => {
-  setLoading(true);
-  try {
-   const { data, error } = await supabase
-    .from('exams')
-    .select('*')
-    .order('exam_date', { ascending: false });
-
-   if (error) throw error;
-   setExams(data || []);
-  } catch (err: any) {
-   toast.error("Sync Error: " + err.message);
-  } finally {
-   setLoading(false);
-  }
+ const handleDelete = async (id: any) => {
+  if (!window.confirm("Purge exam schedule? This protocol is irreversible.")) return;
+  deleteExam(id);
  };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!formData.title || !formData.subjects) return toast.error("All parameters required.");
 
-  setLoading(true);
-  try {
-   const subjectsArray = formData.subjects.split(',').map(s => s.trim()).filter(s => s);
-   const { error } = await supabase
-    .from('exams')
-    .insert([{
-     title: formData.title,
-     exam_date: formData.examDate,
-     subjects: subjectsArray
-    }]);
-
-   if (error) throw error;
-   
-   toast.success("Identity Locked: Exam Scheduled 🎯");
-   setIsModalOpen(false);
-   setFormData({ title: '', examDate: '', subjects: '' });
-   fetchExams();
-  } catch (err: any) {
-   toast.error(err.message);
-  } finally {
-   setLoading(false);
-  }
+  const subjectsArray = formData.subjects.split(',').map(s => s.trim()).filter(s => s);
+  
+  addExam({
+   title: formData.title,
+   exam_date: formData.examDate,
+   subjects: subjectsArray
+  }, {
+   onSuccess: () => {
+    setIsModalOpen(false);
+    setFormData({ title: '', examDate: '', subjects: '' });
+   }
+  });
  };
 
- const deleteExam = async (id: string) => {
-  if (!window.confirm("Confirm deletion of this assessment node?")) return;
-  try {
-   const { error } = await supabase.from('exams').delete().eq('id', id);
-   if (error) throw error;
-   toast.success("Assessment Purged");
-   fetchExams();
-  } catch (err: any) {
-   toast.error(err.message);
-  }
- };
+ if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Synchronizing Schedules...</div>;
 
  return (
   <div className="space-y-8">
-   
-   {/* --- TOP BAR --- */}
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-     <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">Exam List</h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage school examinations</p>
-     </div>
-     <button 
-      onClick={() => setIsModalOpen(true)}
-      className="premium-button-admin bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 tracking-widest"
-     >
-      <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Add Exam
-     </button>
+    <div className="space-y-1">
+     <h3 className="text-2xl font-black text-slate-900 leading-none uppercase tracking-tighter">Exam Schedules</h3>
+     <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mt-1">Academic Timelines Active</p>
+    </div>
+    <button 
+     onClick={() => setIsModalOpen(true)}
+     className="premium-button-admin flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-emerald-600 border-none shadow-2xl active:scale-95 transition-all"
+    >
+     <Plus size={16} /> New Schedule
+    </button>
    </div>
 
-   {/* --- STATS MINI --- */}
-   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-     <div className="premium-card p-6 shadow-sm">
-      <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2">Active Exams</p>
-      <p className="text-2xl font-black text-slate-900 leading-none">{exams.length}</p>
-     </div>
-     <div className="premium-card p-6 shadow-sm">
-      <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2">Sync Status</p>
-      <div className="flex items-center gap-2">
-        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-        <p className="text-[10px] font-black text-emerald-600  leading-none">System Online</p>
-      </div>
-     </div>
-   </div>
-
-   {/* --- EXAM GRID --- */}
    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-     <AnimatePresence mode="popLayout">
-      {exams.map((exam, idx) => (
-        <motion.div 
-         key={exam.id}
-         initial={{ opacity: 0, y: 20 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ delay: idx * 0.05 }}
-         className="premium-card p-8 hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 transition-all group relative overflow-hidden"
+    <AnimatePresence mode="popLayout">
+     {exams.map((exam: any, idx: number) => (
+      <motion.div 
+       key={exam.id}
+       initial={{ opacity: 0, y: 20 }}
+       animate={{ opacity: 1, y: 0 }}
+       transition={{ delay: idx * 0.05 }}
+       className="premium-card p-8 bg-white border border-slate-100 shadow-sm hover:shadow-2xl active:scale-95 transition-all group relative overflow-hidden"
+      >
+       <div className="absolute top-0 right-0 p-4">
+        <button 
+         onClick={() => handleDelete(exam.id)}
+         className="p-2 text-slate-200 hover:text-rose-500 transition-colors"
         >
-         <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button onClick={() => deleteExam(exam.id)} className="p-2 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all">
-            <Trash2 size={16} />
-           </button>
-         </div>
- 
-         <div className="space-y-6">
-           <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-            <FileText size={24} />
-           </div>
-           <div>
-            <h4 className="text-xl font-black text-slate-900  leading-none mb-2">{exam.title}</h4>
-            <div className="flex items-center gap-2">
-              <Calendar size={12} className="text-slate-300" />
-              <p className="text-[10px] font-black text-slate-400 tracking-wide">{exam.exam_date || 'TBD'}</p>
-            </div>
-           </div>
+         <Trash2 size={16} />
+        </button>
+       </div>
 
-           <div className="flex flex-wrap gap-2">
-            {exam.subjects?.map((sub: string) => (
-              <span key={sub} className="bg-slate-50 text-slate-500 px-3 py-1 rounded-[5px] text-[9px] font-black  border border-slate-100">{sub}</span>
-            ))}
-           </div>
-         </div>
-        </motion.div>
-      ))}
-     </AnimatePresence>
-
-     {exams.length === 0 && !loading && (
-      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[5px]">
-        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-         <Search size={40} />
+       <div className="flex items-center gap-4 mb-6">
+        <div className="w-12 h-12 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600">
+         <FileText size={24} />
         </div>
-        <p className="text-[10px] font-black text-slate-300  mb-2">No exams scheduled yet</p>
-        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Add a new exam to see it here.</p>
-      </div>
-     )}
+        <div>
+         <h4 className="text-lg font-black text-slate-900 leading-tight uppercase truncate max-w-[180px]">{exam.title}</h4>
+         <div className="flex items-center gap-2 text-slate-400 mt-1">
+          <Calendar size={12} />
+          <span className="text-[9px] font-black tracking-widest uppercase">{new Date(exam.exam_date).toLocaleDateString()}</span>
+         </div>
+        </div>
+       </div>
+
+       <div className="space-y-3">
+        <div className="flex items-center justify-between text-[10px] font-black text-slate-400 tracking-widest uppercase mb-2">
+         <span>Curriculum</span>
+         <BookOpen size={12} />
+        </div>
+        <div className="flex flex-wrap gap-2">
+         {exam.subjects?.map((sub: string, i: number) => (
+          <span key={i} className="px-3 py-1.5 bg-slate-50 text-slate-600 rounded-[5px] text-[9px] font-black tracking-wider uppercase border border-slate-100">
+           {sub}
+          </span>
+         ))}
+        </div>
+       </div>
+
+       <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-2 uppercase">
+         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+         <span className="text-[9px] font-black text-slate-400 tracking-widest">Active Schedule</span>
+        </div>
+        <CheckCircle2 size={14} className="text-slate-100 group-hover:text-emerald-200" />
+       </div>
+      </motion.div>
+     ))}
+    </AnimatePresence>
    </div>
 
-   {/* --- ADD MODAL --- */}
+   {/* --- NEW EXAM MODAL --- */}
    <AnimatePresence>
-     {isModalOpen && (
-      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
-        <motion.div 
-         initial={{ scale: 0.95, opacity: 0 }}
-         animate={{ scale: 1, opacity: 1 }}
-         exit={{ scale: 0.95, opacity: 0 }}
-         className="bg-white w-full max-w-lg rounded-[5px] p-10 md:p-14 shadow-2xl border border-slate-100"
-        >
-         <div className="flex justify-between items-center mb-10">
-           <div className="space-y-1">
-            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Exam</h2>
-            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Create a new exam schedule</p>
-           </div>
-           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-100 transition-all">
-            <Plus size={20} className="rotate-45" />
-           </button>
+    {isModalOpen && (
+     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <motion.div 
+       initial={{ opacity: 0 }}
+       animate={{ opacity: 1 }}
+       exit={{ opacity: 0 }}
+       onClick={() => setIsModalOpen(false)}
+       className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+      />
+      <motion.div 
+       initial={{ scale: 0.9, opacity: 0, y: 20 }}
+       animate={{ scale: 1, opacity: 1, y: 0 }}
+       exit={{ scale: 0.9, opacity: 0, y: 20 }}
+       className="relative w-full max-w-lg bg-white rounded-[5px] shadow-2xl overflow-hidden"
+      >
+       <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+        <div className="space-y-1">
+         <h3 className="text-xl font-black text-slate-900 uppercase">New Exam Cycle</h3>
+         <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Initialize Academic Timeline</p>
+        </div>
+        <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-full transition-colors">
+         <X size={20} className="text-slate-400" />
+        </button>
+       </div>
+
+       <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <div className="space-y-6">
+         <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Exam Title</label>
+          <input 
+           required
+           value={formData.title}
+           onChange={e => setFormData({...formData, title: e.target.value})}
+           className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-emerald-500 transition-all outline-none"
+           placeholder="E.G. FIRST TERMINAL 2024"
+          />
          </div>
 
-         <form onSubmit={handleSubmit} className="space-y-8">
-           <div className="space-y-8">
-            <InputField 
-             label="Exam Name" 
-             icon={Zap} 
-             placeholder="e.g., Annual Exam 2026..."
-             value={formData.title}
-             onChange={(e: any) => setFormData({ ...formData, title: e.target.value })}
-            />
-            <InputField 
-             label="Exam Date" 
-             type="date"
-             icon={Calendar} 
-             value={formData.examDate}
-             onChange={(e: any) => setFormData({ ...formData, examDate: e.target.value })}
-            />
-            <div className="space-y-2 group">
-             <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600">Subjects</label>
-             <div className="relative">
-              <BookOpen className="absolute left-8 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
-              <textarea 
-               className="w-full pl-16 pr-8 py-3 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
-               placeholder="Mathematics, Physics, Chemistry... (comma separated)"
-               value={formData.subjects}
-               onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
-              />
-             </div>
-            </div>
-           </div>
+         <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Commencement Date</label>
+          <input 
+           required
+           type="date"
+           value={formData.examDate}
+           onChange={e => setFormData({...formData, examDate: e.target.value})}
+           className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-emerald-500 transition-all outline-none"
+          />
+         </div>
 
-           <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-900 text-white py-3 hover:bg-blue-600 border-none shadow-2xl active:scale-95 tracking-widest">
-              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Save Exam</>}
-            </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
-           </div>
-         </form>
-        </motion.div>
-      </div>
-     )}
+         <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subjects (Comma separated)</label>
+          <textarea 
+           required
+           rows={3}
+           value={formData.subjects}
+           onChange={e => setFormData({...formData, subjects: e.target.value})}
+           className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-emerald-500 transition-all outline-none"
+           placeholder="Math, English, Science, Hindi..."
+          />
+         </div>
+        </div>
+
+        <button 
+         type="submit"
+         disabled={isAdding}
+         className="w-full py-5 bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-[5px] shadow-2xl hover:bg-emerald-600 active:scale-95 transition-all disabled:opacity-50"
+        >
+         {isAdding ? 'INITIALIZING...' : 'LOCK TIMELINE'}
+        </button>
+       </form>
+      </motion.div>
+     </div>
+    )}
    </AnimatePresence>
-
   </div>
  );
 }
-
-const InputField = ({ label, icon: Icon, ...props }: any) => (
- <div className="space-y-2 group/input">
-  <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within/input:text-blue-600">{label}</label>
-  <div className="relative">
-   {Icon && <Icon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
-   <input className={`premium-input text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-3`} {...props} />
-  </div>
- </div>
-);

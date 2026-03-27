@@ -10,48 +10,21 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
+import { useListApprovals, useSetApprovalStatus } from '../../hooks/useQueries';
+
 export default function ApprovalsManagement() {
- const [approvals, setApprovals] = useState<any[]>([]);
- const [loading, setLoading] = useState(true);
-
- useEffect(() => {
-  fetchApprovals();
- }, []);
-
- const fetchApprovals = async () => {
-  setLoading(true);
-  try {
-   const { data, error } = await supabase
-    .from('students')
-    .select('*')
-    .eq('is_approved', 'pending')
-    .order('created_at', { ascending: false });
-
-   if (error) throw error;
-   setApprovals(data || []);
-  } catch (err: any) {
-   toast.error("Sync Error: " + err.message);
-  } finally {
-   setLoading(false);
-  }
- };
+ // ✅ React Query Hooks for Persistence & Offline Support
+ const { data: approvals = [], isLoading } = useListApprovals();
+ const { mutate: setStatus } = useSetApprovalStatus();
 
  const handleAction = async (id: string, action: 'approved' | 'rejected') => {
-  try {
-   if (action === 'rejected' && !window.confirm("Delete this registration request?")) return;
-   
-   const { error } = await supabase
-    .from('students')
-    .update({ is_approved: action })
-    .eq('student_id', id);
-
-   if (error) throw error;
-   
-   toast.success(action === 'approved' ? "Approved ✅" : "Rejected ❌");
-   fetchApprovals();
-  } catch (err: any) {
-   toast.error(err.message);
-  }
+  if (action === 'rejected' && !window.confirm("Delete this registration request?")) return;
+  
+  setStatus({ id, status: action }, {
+    onSuccess: () => {
+      // Invalidation is handled in the hook
+    }
+  });
  };
 
  return (
@@ -69,7 +42,7 @@ export default function ApprovalsManagement() {
  
    <div className="grid grid-cols-1 gap-6">
      <AnimatePresence mode="popLayout">
-      {approvals.map((req, idx) => (
+      {approvals.map((req: any, idx: number) => (
         <motion.div 
          key={req.student_id}
          initial={{ opacity: 0, x: -20 }}
@@ -116,7 +89,7 @@ export default function ApprovalsManagement() {
       ))}
      </AnimatePresence>
 
-     {approvals.length === 0 && !loading && (
+      {approvals.length === 0 && !isLoading && (
       <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[5px] bg-slate-50/30">
         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200 shadow-inner">
          <ShieldCheck size={48} />

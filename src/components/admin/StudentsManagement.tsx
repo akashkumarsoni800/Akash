@@ -11,27 +11,21 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
+import { useGetAllApprovedStudents, useDeleteStudent } from '../../hooks/useQueries';
+
 export default function StudentsManagement() {
   const navigate = useNavigate();
-  const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [classFilter, setClassFilter] = useState('All');
   const [classes, setClasses] = useState<string[]>(['All']);
 
+  // ✅ React Query Hooks for Persistence & Offline Support
+  const { data: studentsData = [], isLoading } = useGetAllApprovedStudents();
+  const { mutate: deleteStudent } = useDeleteStudent();
+
   const handleDelete = async (studentId: string) => {
     if (!window.confirm("Are you sure you want to delete this student? This action cannot be undone.")) return;
-    try {
-      setLoading(true);
-      const { error } = await supabase.from('students').delete().eq('student_id', studentId);
-      if (error) throw error;
-      toast.success("Student records purged successfully.");
-      fetchStudents();
-    } catch (err: any) {
-      toast.error("Cleanup Error: " + err.message);
-    } finally {
-      setLoading(false);
-    }
+    deleteStudent(studentId as any);
   };
 
   const handleEdit = (studentId: string) => {
@@ -42,41 +36,24 @@ export default function StudentsManagement() {
     navigate(`/admin/student/${studentId}`);
   };
 
+  // Extract unique classes for filter
   useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const fetchStudents = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('students')
-        .select('*')
-        .eq('is_approved', 'approved')
-        .order('roll_no', { ascending: true });
-
-      if (error) throw error;
-      setStudents(data || []);
-      
-      if (data) {
-        const uniqueClasses = ['All', ...new Set(data.map(s => s.class_name))];
-        setClasses(uniqueClasses);
-      }
-    } catch (err: any) {
-      toast.error("Sync Error: " + err.message);
-    } finally {
-      setLoading(false);
+    if (studentsData.length > 0) {
+      const uniqueClasses = ['All', ...new Set(studentsData.map((s: any) => s.class_name))];
+      setClasses(uniqueClasses as string[]);
     }
-  };
+  }, [studentsData]);
 
-  const filteredStudents = students.filter(s => 
-    (classFilter === 'All' || s.class_name === classFilter) &&
-    (s.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_no?.toString().includes(searchTerm))
-  );
+  const filteredStudents = studentsData.filter((s: any) => {
+    const matchesSearch = s.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         s.roll_no?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesClass = classFilter === 'All' || s.class_name === classFilter;
+    return matchesSearch && matchesClass;
+  });
 
   return (
     <div className="space-y-8">
-      
+
       {/* --- TOP BAR & FILTERS --- */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="space-y-1 text-left">
@@ -122,7 +99,7 @@ export default function StudentsManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filteredStudents.map((s, idx) => (
+              {filteredStudents.map((s: any, idx: number) => (
                 <motion.tr 
                   key={s.student_id}
                   initial={{ opacity: 0, y: 10 }}
@@ -190,7 +167,7 @@ export default function StudentsManagement() {
           </table>
         </div>
         
-        {filteredStudents.length === 0 && !loading && (
+        {filteredStudents.length === 0 && !isLoading && (
           <div className="py-24 text-center">
             <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
               <GraduationCap size={40} />

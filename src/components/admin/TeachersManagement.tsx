@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { 
  UserPlus, Plus, Search, 
@@ -10,11 +10,18 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
+import { useGetAllTeachers, useDeleteTeacher } from '../../hooks/useQueries';
 
 export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFilter?: string }) {
- const [teachers, setTeachers] = useState<any[]>([]);
- const [loading, setLoading] = useState(true);
+ const queryClient = useQueryClient();
+ 
+ // ✅ React Query Hooks for Persistence & Offline Support
+ const { data: teachers = [], isLoading } = useGetAllTeachers(roleFilter);
+ const { mutate: deleteTeacher } = useDeleteTeacher();
+
  const [isModalOpen, setIsModalOpen] = useState(false);
+ const [isSubmitting, setIsSubmitting] = useState(false);
  const [formData, setFormData] = useState({
   fullName: '',
   email: '',
@@ -23,33 +30,16 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
   password: 'Teacher@123'
  });
 
- useEffect(() => {
-  fetchTeachers();
- }, []);
-
- const fetchTeachers = async () => {
-  setLoading(true);
-  try {
-   const { data, error } = await supabase
-    .from('teachers')
-    .select('*')
-    .eq('role', roleFilter)
-    .order('full_name');
-
-   if (error) throw error;
-   setTeachers(data || []);
-  } catch (err: any) {
-   toast.error("Sync Error: " + err.message);
-  } finally {
-   setLoading(false);
-  }
+ const handleDelete = async (id: any) => {
+  if (!window.confirm("Purge faculty record? This protocol is irreversible.")) return;
+  deleteTeacher(id);
  };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!formData.fullName || !formData.email) return toast.error("Essential parameters missing.");
 
-  setLoading(true);
+  setIsSubmitting(true);
   try {
    // 1. Initial Identity Check
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
@@ -66,12 +56,14 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
 
    // 3. Database Indexing
    if (authData.user) {
+    const schoolId = localStorage.getItem('current_school_id');
     const { error: dbError } = await supabase.from('teachers').insert([{
      full_name: formData.fullName,
      subject: formData.subject,
      email: formData.email,
      phone: formData.phone,
-     role: 'teacher'
+     role: 'teacher',
+     school_id: schoolId
     }]);
     if (dbError) throw dbError;
    }
@@ -79,200 +71,207 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    toast.success("Identity Secured: Faculty Node Initialized 💎");
    setIsModalOpen(false);
    setFormData({ fullName: '', email: '', phone: '', subject: '', password: 'Teacher@123' });
-   fetchTeachers();
+   queryClient.invalidateQueries({ queryKey: ['teachers'] });
+   queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
   } catch (err: any) {
    toast.error(err.message);
   } finally {
-   setLoading(false);
+   setIsSubmitting(false);
   }
  };
 
-  const resetPassword = (email: string) => {
-   toast.promise(
-    new Promise((resolve) => setTimeout(resolve, 1200)),
-    {
-     loading: 'Restoring identity hash...',
-     success: () => `Temporal sync active: (Teacher@123) for ${email} ✅`,
-     error: 'Protocol interruption.',
-    }
-   );
-  };
- 
-  const deleteTeacher = async (id: string) => {
-   if (!window.confirm("Purge faculty record? This protocol is irreversible.")) return;
-   try {
-    const { error } = await supabase.from('teachers').delete().eq('id', id);
-    if (error) throw error;
-    toast.success("Faculty Node Purged");
-    fetchTeachers();
-   } catch (err: any) {
-    toast.error(err.message);
+ const resetPassword = (email: string) => {
+  toast.promise(
+   new Promise((resolve) => setTimeout(resolve, 1200)),
+   {
+    loading: 'Restoring identity hash...',
+    success: () => `Temporal sync active: (Teacher@123) for ${email} ✅`,
+    error: 'Protocol interruption.',
    }
-  };
- 
+  );
+ };
+
+ if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Synchronizing Node...</div>;
+
  return (
   <div className="space-y-8">
-   
-   {/* --- TOP BAR --- */}
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-     <div className="space-y-1">
-      <h3 className="text-2xl font-black text-slate-900  leading-none uppercase">{roleFilter} List</h3>
-      <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Manage institutional {roleFilter} records</p>
-     </div>
-     {roleFilter === 'teacher' && (
-      <button 
-       onClick={() => setIsModalOpen(true)}
-       className="premium-button-admin bg-slate-900 text-white hover:bg-emerald-600 border-none shadow-2xl active:scale-95 tracking-widest"
-      >
-       <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Add Teacher
-      </button>
-     )}
+    <div className="space-y-1">
+     <h3 className="text-2xl font-black text-slate-900 leading-none uppercase tracking-tighter">
+      Faculty Management
+     </h3>
+     <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mt-1">
+      {roleFilter} protocol active
+     </p>
+    </div>
+    <div className="flex gap-3 w-full md:w-auto">
+     <button 
+      onClick={() => setIsModalOpen(true)}
+      className="premium-button-admin flex-1 md:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 transition-all"
+     >
+      <UserPlus size={16} /> Deploy Faculty
+     </button>
+    </div>
    </div>
 
-   {/* --- TEACHER GRID --- */}
    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-     <AnimatePresence mode="popLayout">
-      {teachers.map((t, idx) => (
-        <motion.div 
-         key={t.id}
-         initial={{ opacity: 0, scale: 0.95 }}
-         animate={{ opacity: 1, scale: 1 }}
-         transition={{ delay: idx * 0.05 }}
-         className="bg-white border border-slate-100 p-8 rounded-[5px] shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group relative overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-            <button 
-             onClick={() => resetPassword(t.email)} 
-             className="p-2 bg-blue-50 text-blue-500 rounded-[5px] hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-             title="Reset Access Node"
-            >
-             <RefreshCw size={16} />
-            </button>
-            <button onClick={() => deleteTeacher(t.id)} className="p-2 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all">
-             <Trash2 size={16} />
-            </button>
-          </div>
-
-         <div className="space-y-6">
-           <div className="w-16 h-16 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600 text-2xl font-black border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
-            {t.full_name?.[0]}
-           </div>
-           
-           <div className="space-y-1">
-            <h4 className="text-xl font-black text-slate-900  leading-none">{t.full_name}</h4>
-            <p className="text-[10px] font-black text-emerald-600 ">{t.subject || 'Staff Member'}</p>
-           </div>
-
-           <div className="space-y-3 pt-4 border-t border-slate-50">
-            <div className="flex items-center gap-3 text-slate-400">
-              <Mail size={14} className="text-slate-200" />
-              <p className="text-[10px] font-black tracking-tight">{t.email}</p>
-            </div>
-            <div className="flex items-center gap-3 text-slate-400">
-              <Phone size={14} className="text-slate-200" />
-              <p className="text-[10px] font-black tracking-tight">{t.phone || 'No Contact'}</p>
-            </div>
-           </div>
-         </div>
-        </motion.div>
-      ))}
-     </AnimatePresence>
-
-     {teachers.length === 0 && !loading && (
-      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[5px]">
-        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-         <GraduationCap size={40} />
+    <AnimatePresence mode="popLayout">
+     {teachers.map((t: any, idx: number) => (
+      <motion.div 
+       key={t.id}
+       initial={{ opacity: 0, y: 20 }}
+       animate={{ opacity: 1, y: 0 }}
+       transition={{ delay: idx * 0.05 }}
+       className="premium-card p-8 bg-white border border-slate-100 shadow-sm hover:shadow-2xl active:scale-95 transition-all group relative overflow-hidden"
+      >
+       <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
+       
+       <div className="flex justify-between items-start mb-6">
+        <div className="w-14 h-14 bg-slate-50 rounded-[5px] flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+         <GraduationCap size={28} />
         </div>
-        <p className="text-[10px] font-black text-slate-300  mb-2">No teacher records found</p>
-        <p className="text-[9px] font-black text-slate-200 tracking-widest leading-relaxed">Add a new teacher to see them here.</p>
-      </div>
-     )}
+        <div className="flex gap-2">
+         <button 
+          onClick={() => resetPassword(t.email)}
+          className="p-2 text-slate-300 hover:text-amber-500 transition-colors"
+          title="Reset Access"
+         >
+          <Lock size={16} />
+         </button>
+         <button 
+          onClick={() => handleDelete(t.id)}
+          className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
+          title="Purge Node"
+         >
+          <Trash2 size={16} />
+         </button>
+        </div>
+       </div>
+
+       <div className="space-y-4">
+        <div>
+         <h4 className="text-lg font-black text-slate-900 leading-tight uppercase truncate">{t.full_name}</h4>
+         <p className="text-[10px] font-black text-blue-500 tracking-widest mt-1 uppercase italic">{t.subject || 'Core Faculty'}</p>
+        </div>
+
+        <div className="space-y-3 pt-4 border-t border-slate-50">
+         <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-600 transition-colors">
+          <Mail size={14} />
+          <span className="text-[10px] font-black tracking-tight truncate">{t.email}</span>
+         </div>
+         <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-600 transition-colors">
+          <Phone size={14} />
+          <span className="text-[10px] font-black tracking-tight">{t.phone || 'N/A'}</span>
+         </div>
+        </div>
+       </div>
+
+       <div className="mt-8 pt-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+         <span className="text-[9px] font-black text-slate-400 tracking-widest uppercase">Verified Active</span>
+        </div>
+        <CheckCircle2 size={14} className="text-slate-100 group-hover:text-blue-200 transition-colors" />
+       </div>
+      </motion.div>
+     ))}
+    </AnimatePresence>
    </div>
 
-   {/* --- ADD MODAL --- */}
+   {/* --- DEPLOYMENT MODAL --- */}
    <AnimatePresence>
-     {isModalOpen && (
-      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
-        <motion.div 
-         initial={{ scale: 0.95, y: 20 }}
-         animate={{ scale: 1, y: 0 }}
-         exit={{ scale: 0.95, y: 20 }}
-         className="bg-white w-full max-w-2xl rounded-[5px] p-10 md:p-14 shadow-2xl border border-slate-100"
-        >
-         <div className="flex justify-between items-center mb-10">
-           <div className="space-y-1">
-            <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Teacher</h2>
-            <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Fill in details to add staff</p>
-           </div>
-           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-100 transition-all">
-            <X size={20} />
-           </button>
+    {isModalOpen && (
+     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <motion.div 
+       initial={{ opacity: 0 }}
+       animate={{ opacity: 1 }}
+       exit={{ opacity: 0 }}
+       onClick={() => setIsModalOpen(false)}
+       className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+      />
+      <motion.div 
+       initial={{ scale: 0.9, opacity: 0, y: 20 }}
+       animate={{ scale: 1, opacity: 1, y: 0 }}
+       exit={{ scale: 0.9, opacity: 0, y: 20 }}
+       className="relative w-full max-w-lg bg-white rounded-[5px] shadow-2xl overflow-hidden"
+      >
+       <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+        <div className="space-y-1">
+         <h3 className="text-xl font-black text-slate-900 uppercase">Deploy Faculty</h3>
+         <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Protocol: Secure Identity Initialization</p>
+        </div>
+        <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-full transition-colors">
+         <X size={20} className="text-slate-400" />
+        </button>
+       </div>
+
+       <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <div className="grid grid-cols-1 gap-6">
+         <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Name</label>
+          <input 
+           required
+           value={formData.fullName}
+           onChange={e => setFormData({...formData, fullName: e.target.value})}
+           className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+           placeholder="ENTER IDENTITY NAME"
+          />
          </div>
 
-         <form onSubmit={handleSubmit} className="space-y-8">
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <InputField 
-             label="Full Name" 
-             icon={UserPlus} 
-             placeholder="Full Name..."
-             value={formData.fullName}
-             onChange={(e: any) => setFormData({ ...formData, fullName: e.target.value })}
-            />
-            <InputField 
-             label="Subject" 
-             icon={GraduationCap} 
-             placeholder="Primary Subject..."
-             value={formData.subject}
-             onChange={(e: any) => setFormData({ ...formData, subject: e.target.value })}
-            />
-            <InputField 
-             label="Email Address" 
-             type="email"
-             icon={Mail} 
-             placeholder="faculty@institution.com"
-             value={formData.email}
-             onChange={(e: any) => setFormData({ ...formData, email: e.target.value })}
-            />
-            <InputField 
-             label="Phone Number" 
-             icon={Phone} 
-             placeholder="Contact identifier..."
-             value={formData.phone}
-             onChange={(e: any) => setFormData({ ...formData, phone: e.target.value })}
-            />
-            <div className="md:col-span-2">
-              <InputField 
-               label="Password" 
-               type="password"
-               icon={Lock} 
-               value={formData.password}
-               onChange={(e: any) => setFormData({ ...formData, password: e.target.value })}
-              />
-            </div>
-           </div>
+         <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</label>
+           <input 
+            value={formData.subject}
+            onChange={e => setFormData({...formData, subject: e.target.value})}
+            className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+            placeholder="DEPARTMENT"
+           />
+          </div>
+          <div className="space-y-2">
+           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone</label>
+           <input 
+            value={formData.phone}
+            onChange={e => setFormData({...formData, phone: e.target.value})}
+            className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+            placeholder="CONTACT PROTOCOL"
+           />
+          </div>
+         </div>
 
-           <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-900 text-white py-3 hover:bg-emerald-600 border-none shadow-2xl active:scale-95 tracking-widest">
-              {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Save Teacher</>}
-            </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
-           </div>
-         </form>
-        </motion.div>
-      </div>
-     )}
+         <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</label>
+          <input 
+           required
+           type="email"
+           value={formData.email}
+           onChange={e => setFormData({...formData, email: e.target.value})}
+           className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+           placeholder="ENCRYPTED EMAIL"
+          />
+         </div>
+
+         <div className="p-4 bg-blue-50/50 rounded-[5px] border border-blue-100 flex gap-4">
+          <ShieldCheck className="text-blue-600 shrink-0" size={20} />
+          <div>
+           <p className="text-[9px] font-black text-blue-900 uppercase leading-relaxed">Default Access Key Assigned</p>
+           <p className="text-[9px] font-black text-blue-400 tracking-tighter mt-0.5 italic">"Teacher@123"</p>
+          </div>
+         </div>
+        </div>
+
+        <button 
+         type="submit"
+         disabled={isSubmitting}
+         className="w-full py-5 bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-[5px] shadow-2xl hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-50"
+        >
+         {isSubmitting ? 'SYNCING IDENTITY...' : 'EXECUTE DEPLOYMENT'}
+        </button>
+       </form>
+      </motion.div>
+     </div>
+    )}
    </AnimatePresence>
-
   </div>
  );
 }
-
-const InputField = ({ label, icon: Icon, ...props }: any) => (
- <div className="space-y-2 group">
-  <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-emerald-600">{label}</label>
-  <div className="relative">
-   {Icon && <Icon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-400 transition-colors" size={18} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-3 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
-  </div>
- </div>
-);

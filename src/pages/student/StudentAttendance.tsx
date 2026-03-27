@@ -8,67 +8,51 @@ import {
  XCircle, Clock, RefreshCw, Filter,
  TrendingUp, BarChart3, ShieldCheck, Activity, Zap, Search
 } from 'lucide-react';
+import { useGetStudentProfile, useGetDetailedAttendance } from '../../hooks/useQueries';
 
 const StudentAttendance = () => {
  const navigate = useNavigate();
- const [loading, setLoading] = useState(true);
- const [records, set] = useState<any[]>([]);
- const [stats, setStats] = useState({ present: 0, absent: 0, total: 0, percentage: 0 });
+ const [userEmail, setUserEmail] = useState<string | null>(null);
 
+ // 1. Identify User
  useEffect(() => {
-  fetchAttendance();
- }, []);
-
- const fetchAttendance = async () => {
-  try {
-   setLoading(true);
+  const checkUser = async () => {
    const { data: { user } } = await supabase.auth.getUser();
-   if (!user) return navigate('/');
-
-   const { data: student } = await supabase.from('students')
-    .select('student_id')
-    .eq('email', user.email)
-    .limit(1)
-    .maybeSingle();
-
-   if (!student) {
-    toast.error("Profile not found");
-    return;
+   if (user?.email) {
+    setUserEmail(user.email);
+   } else {
+    navigate('/');
    }
+  };
+  checkUser();
+ }, [navigate]);
 
-   const { data } = await supabase.from('attendance')
-    .select('*')
-    .eq('student_id', student.student_id)
-    .order('date', { ascending: false });
+ // 2. ✅ Persistent Hooks for Offline Support
+ const { data: student, isLoading: profileLoading } = useGetStudentProfile(userEmail || '');
+ const studentId = student?.student_id || student?.id;
+ 
+ const { data: records = [], isLoading: attLoading } = useGetDetailedAttendance(studentId);
 
-   const att = data || [];
-   set(att);
+ const isLoading = profileLoading || attLoading;
 
-   const present = att.filter(r => r.status === 'P' || r.status === 'Present').length;
-   const total = att.length;
-   const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
-
-   setStats({
-    present,
-    absent: total - present,
-    total,
-    percentage
-   });
-
-  } catch (error: any) {
-   toast.error(error.message);
-  } finally {
-   setLoading(false);
-  }
+ // 3. Compute Stats from Records
+ const present = records.filter((r: any) => r.status === 'P' || r.status === 'Present').length;
+ const total = records.length;
+ const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+ const stats = {
+  present,
+  absent: total - present,
+  total,
+  percentage
  };
 
- if (loading) return (
+ if (isLoading && !studentId) return (
   <div className="h-screen flex flex-col items-center justify-center bg-slate-50">
     <div className="relative">
      <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
      <Activity size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8">Syncing Presence List...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 uppercase">Syncing Presence List...</p>
   </div>
  );
 
@@ -83,12 +67,12 @@ const StudentAttendance = () => {
       className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
-      <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
+      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Portal Exit</span>
      </button>
 
      <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-       <span className="text-[10px] font-black  text-blue-400 ">Real-Time Sync Active</span>
+       <span className="text-[10px] font-black  text-blue-400 uppercase">Real-Time Sync Active</span>
      </div>
     </div>
 
@@ -99,7 +83,7 @@ const StudentAttendance = () => {
         Presence<br/>
         <span className="text-blue-600">Analytics</span>
        </h1>
-       <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2">
+       <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2 uppercase">
         <ShieldCheck size={12} className="text-blue-500" /> School Presence & Activity Audit
        </p>
       </motion.div>
@@ -107,8 +91,8 @@ const StudentAttendance = () => {
       <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📅</div>
        <div>
-        <p className="text-[9px] font-black text-slate-400  mb-1">Audit Score</p>
-        <p className="text-3xl font-black text-slate-900 ">{stats.percentage}% Consistent</p>
+        <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Audit Score</p>
+        <p className="text-3xl font-black text-slate-900 uppercase">{stats.percentage}% Consistent</p>
        </div>
       </div>
     </div>
@@ -135,7 +119,7 @@ const StudentAttendance = () => {
        <div className="flex items-center gap-4">
          <div className="relative group/filter">
           <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/filter:text-blue-500 transition-colors" size={14}/>
-          <select className="bg-white border border-slate-100 rounded-[5px] pl-10 pr-6 py-2 text-[9px] font-black tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
+          <select className="bg-white border border-slate-100 rounded-[5px] pl-10 pr-6 py-2 text-[9px] font-black tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none uppercase">
             <option>Full List</option>
             <option>Last 30 Cycles</option>
             <option>Flagged Only</option>
@@ -147,39 +131,39 @@ const StudentAttendance = () => {
       <div className="p-6 md:p-12">
        {records.length > 0 ? (
         <div className="grid gap-6">
-          {records.map((record, idx) => (
+          {records.map((record: any, idx: number) => (
            <motion.div 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.05 * idx }}
             key={idx} 
             className={`bg-white rounded-[5px] p-8 border transition-all duration-500 flex flex-col md:flex-row items-center justify-between group/row shadow-sm hover:shadow-2xl active:scale-95 tracking-widest ${
-              record.status === 'P' ? 'hover:border-blue-100 border-slate-50' : 'hover:border-rose-100 border-rose-50 shadow-rose-500/5 bg-rose-50/10'
+              record.status === 'P' || record.status === 'Present' ? 'hover:border-blue-100 border-slate-50' : 'hover:border-rose-100 border-rose-50 shadow-rose-500/5 bg-rose-50/10'
             }`}
            >
             <div className="flex items-center gap-8 w-full md:w-auto">
               <div className={`w-16 h-16 rounded-[5px] flex items-center justify-center transition-colors shadow-sm ${
-               record.status === 'P' ? 'bg-blue-50 text-blue-600 group-hover/row:bg-blue-600 group-hover/row:text-white' : 'bg-rose-50 text-rose-600 group-hover/row:bg-rose-600 group-hover/row:text-white'
+               record.status === 'P' || record.status === 'Present' ? 'bg-blue-50 text-blue-600 group-hover/row:bg-blue-600 group-hover/row:text-white' : 'bg-rose-50 text-rose-600 group-hover/row:bg-rose-600 group-hover/row:text-white'
               }`}>
                <Calendar size={24}/>
               </div>
               <div className="space-y-1">
-               <p className="font-black text-slate-900 text-xl  ">
+               <p className="font-black text-slate-900 text-xl uppercase">
                  {new Date(record.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                </p>
-               <p className="text-[9px] font-black text-slate-400  flex items-center gap-2">
+               <p className="text-[9px] font-black text-slate-400  flex items-center gap-2 uppercase">
                  <Zap size={10} className="text-blue-500"/> {new Date(record.date).toLocaleDateString('en-GB', { weekday: 'long' })} Protocol
                </p>
               </div>
             </div>
 
             <div className="mt-6 md:mt-0 flex items-center gap-6 w-full md:w-auto">
-              <div className={`px-10 py-4 rounded-[1.5rem] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest transition-all duration-500 ${
-               record.status === 'P' 
+              <div className={`px-10 py-4 rounded-[1.5rem] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest transition-all duration-500 uppercase ${
+               record.status === 'P' || record.status === 'Present'
                ? 'bg-slate-900 text-white shadow-slate-200 group-hover/row:bg-blue-600' 
                : 'bg-rose-600 text-white shadow-rose-200 animate-pulse'
               }`}>
-               {record.status === 'P' ? 'Session Authenticated' : 'Presence Flagged'}
+               {record.status === 'P' || record.status === 'Present' ? 'Session Authenticated' : 'Presence Flagged'}
               </div>
             </div>
            </motion.div>
@@ -189,8 +173,8 @@ const StudentAttendance = () => {
         <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[5px] border border-dashed border-slate-200 opacity-30 group">
           <div className="w-24 h-24 bg-white rounded-[5px] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
           <div className="space-y-2">
-           <h4 className="text-xl font-black text-slate-900  "> Nullified</h4>
-           <p className="text-[9px] font-black text-slate-400 ">No presence records found in the current session cycle.</p>
+           <h4 className="text-xl font-black text-slate-900 uppercase">Records Nullified</h4>
+           <p className="text-[9px] font-black text-slate-400 uppercase">No presence records found in the current session cycle.</p>
           </div>
         </div>
        )}
@@ -214,8 +198,8 @@ const PremiumStatBox = ({ label, value, icon: Icon, accent }: any) => {
      <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mx-auto mb-6 transition-all group-hover:scale-110 group-hover:rotate-3 ${colors[accent]}`}>
       <Icon size={24}/>
      </div>
-     <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2 ">{label}</p>
-     <p className="text-3xl font-black text-slate-900 ">{value}</p>
+     <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2 uppercase">{label}</p>
+     <p className="text-3xl font-black text-slate-900 uppercase">{value}</p>
      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
       <Icon size={40} />
      </div>

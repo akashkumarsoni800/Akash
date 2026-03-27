@@ -18,15 +18,17 @@ import ApprovalsManagement from '../../components/admin/ApprovalsManagement';
 import GalleryManagement from '../../components/admin/GalleryManagement';
 import SchoolBranding from '../../components/admin/SchoolBranding';
 
+import { useGetDashboardStats, useListApprovals } from '../../hooks/useQueries';
+
 // --- ANIMATION VARIANTS ---
 const containerVar = {
- hidden: { opacity: 0 },
- visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+ visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+ hidden: { opacity: 0 }
 };
 
 const itemVar = {
- hidden: { y: 20, opacity: 0 },
- visible: { y: 0, opacity: 1 }
+ visible: { y: 0, opacity: 1 },
+ hidden: { y: 20, opacity: 0 }
 };
 
 // --- HELPER COMPONENTS ---
@@ -93,13 +95,13 @@ const AdminDashboard = () => {
  const initialTab = queryParams.get('tab') || 'overview';
 
  const [activeTab, setActiveTab] = useState(initialTab);
- const [loading, setLoading] = useState(true);
-  const [counts, setCounts] = useState({ students: 0, teachers: 0, pending: 0, admins: 0 });
- const [pendingStudents, setPendingStudents] = useState<any[]>([]);
  const [currentTime, setCurrentTime] = useState(new Date());
 
+ // ✅ React Query Hooks for Persistence & Offline Support
+ const { data: stats, isLoading: statsLoading } = useGetDashboardStats();
+ const { data: pendingStudents, isLoading: pendingLoading } = useListApprovals();
+
  useEffect(() => { 
-  fetchInitialData();
   const timer = setInterval(() => setCurrentTime(new Date()), 1000);
   return () => clearInterval(timer);
  }, []);
@@ -109,37 +111,25 @@ const AdminDashboard = () => {
   if (tab) setActiveTab(tab);
  }, [location.search]);
 
- const fetchInitialData = async () => {
-  try {
-   setLoading(true);
-    const [stdRes, tchRes, penRes, admRes] = await Promise.all([
-     supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'approved'),
-     supabase.from('teachers').select('*', { count: 'exact', head: true }).eq('role', 'teacher'),
-     supabase.from('students').select('*', { count: 'exact', head: true }).eq('is_approved', 'pending'),
-     supabase.from('teachers').select('*', { count: 'exact', head: true }).eq('role', 'admin')
-    ]);
-    setCounts({ students: stdRes.count || 0, teachers: tchRes.count || 0, pending: penRes.count || 0, admins: admRes.count || 0 });
-   
-   const { data: pending } = await supabase.from('students').select('*').eq('is_approved', 'pending').limit(10);
-   setPendingStudents(pending || []);
-  } catch (e) { toast.error("Database Error"); } 
-  finally { setLoading(false); }
- };
-
  const handleAction = async (action: string, table: string, idValue: any) => {
   if (action === 'delete' && !window.confirm("Confirm deletion?")) return;
-  setLoading(true);
   let err;
   const pkColumn = table === 'students' ? 'student_id' : 'id';
   
   if (action === 'delete') ({ error: err } = await supabase.from(table).delete().eq(pkColumn, idValue));
   if (action === 'approve') ({ error: err } = await supabase.from('students').update({ is_approved: 'approved' }).eq('student_id', idValue));
   
-  if (!err) { toast.success("Done!"); fetchInitialData(); } 
-  else { toast.error(err.message); setLoading(false); }
+  if (!err) { 
+    toast.success("Done!"); 
+    // Data will auto-invalidate if we use mutations, but for now manual refetch
+    window.location.reload(); 
+  } 
+  else { toast.error(err.message); }
  };
 
- if (loading && !counts.students) return <div className="h-screen flex items-center justify-center font-black text-slate-400  text-xs">ASM SYNCING...</div>;
+ if (statsLoading || pendingLoading) return <div className="h-screen flex items-center justify-center font-black text-slate-400  text-xs uppercase tracking-widest">ASM SYNCING...</div>;
+
+ const counts = stats || { students: 0, teachers: 0, pending: 0, admins: 0 };
 
  return (
   <motion.div initial="hidden" animate="visible" variants={containerVar} className="min-h-screen bg-[#F8FAFC] p-1 md:p-2 pb-32">
@@ -212,7 +202,7 @@ const AdminDashboard = () => {
       <AnimatePresence mode="wait">
        {activeTab === 'overview' && (
         <motion.div key="ov" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {pendingStudents.map(s => (
+          {pendingStudents.map((s: any) => (
            <div key={s.student_id} className="p-6 rounded-[5px] border border-slate-100 bg-slate-50/30 flex flex-col justify-between h-48 group hover:border-blue-200 transition-all">
             <div>
              <h4 className="font-black text-slate-800 text-lg leading-tight tracking-tight">{s.full_name}</h4>
