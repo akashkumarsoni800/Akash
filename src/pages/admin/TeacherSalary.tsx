@@ -166,12 +166,12 @@ const TeacherSalary = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-7xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-       <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
+       <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-none uppercase">
         Teacher<br/>
         <span className="text-[var(--accent-admin)]">Salaries</span>
        </h1>
@@ -180,11 +180,11 @@ const TeacherSalary = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[3rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
-       <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
+       <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
+       <div className="w-12 h-12 bg-slate-900 rounded-[1.2rem] flex items-center justify-center text-xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
        <div>
-        <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Total Amount</p>
-        <p className="text-4xl font-black text-slate-900  leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
+        <p className="text-[9px] font-black text-slate-400 mb-1 leading-none">Total Amount</p>
+        <p className="text-2xl font-black text-slate-900 leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
        </div>
       </div>
     </div>
@@ -408,24 +408,24 @@ const TeacherSalary = () => {
             </span>
            </div>
            
-           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 bg-slate-50/50 rounded-[3rem] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
-             <div className="text-center md:text-left space-y-2">
-              <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Base</p>
-              <p className="text-lg font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
+            <div className="grid grid-cols-4 gap-4 p-6 bg-slate-50/50 rounded-[2rem] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
+             <div className="text-left space-y-1">
+              <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Base</p>
+              <p className="text-sm font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
              </div>
-             <div className="text-center md:text-left space-y-2">
-              <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Benefits</p>
-              <p className="text-lg font-black text-emerald-500 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
+             <div className="text-left space-y-1">
+              <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Benefits</p>
+              <p className="text-sm font-black text-emerald-500 tracking-tight">+₹{( (salary.hra || 0) + (salary.allowances || 0) ).toLocaleString()}</p>
              </div>
-             <div className="text-center md:text-left space-y-2">
-              <p className="text-[9px] font-black text-rose-400 tracking-widest leading-none">Reductions</p>
-              <p className="text-lg font-black text-rose-500 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
+             <div className="text-left space-y-1">
+              <p className="text-[8px] font-black text-rose-400 tracking-widest leading-none">Reductions</p>
+              <p className="text-sm font-black text-rose-500 tracking-tight">-₹{(salary.deductions || 0).toLocaleString()}</p>
              </div>
-             <div className="text-center md:text-left space-y-2">
-              <p className="text-[9px] font-black text-blue-500 tracking-widest leading-none">Net Pay</p>
-              <p className="text-2xl font-black text-slate-900 leading-none">₹{(salary.net_salary || 0).toLocaleString()}</p>
+             <div className="text-left space-y-1">
+              <p className="text-[8px] font-black text-blue-500 tracking-widest leading-none">Net Pay</p>
+              <p className="text-lg font-black text-slate-900 leading-none">₹{(salary.net_salary || 0).toLocaleString()}</p>
              </div>
-           </div>
+            </div>
            
            <div className="flex flex-col sm:flex-row gap-4">
             <button 
