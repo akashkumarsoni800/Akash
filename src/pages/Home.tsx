@@ -13,11 +13,19 @@ const Home = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [isInstalled, setIsInstalled] = useState(false);
+
   useEffect(() => {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
+
+    // Check if already in standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      setIsInstalled(true);
+    }
+
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
@@ -28,6 +36,7 @@ const Home = () => {
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
+      setIsInstalled(true);
     }
   };
 
@@ -86,15 +95,20 @@ const Home = () => {
                   onClick={() => navigate('/register-school')}
                   className="px-12 py-5 bg-indigo-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-200 hover:bg-indigo-900 transition-all active:scale-95 flex items-center justify-center gap-3"
                 >
-                  Start Free Trial <ArrowRight size={18} />
+                  Register School <ArrowRight size={18} />
                 </button>
-                {deferredPrompt && (
+                {deferredPrompt && !isInstalled && (
                   <button 
                     onClick={handleInstallClick}
-                    className="px-12 py-5 bg-emerald-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-emerald-100 hover:bg-emerald-700 transition-all animate-pulse flex items-center justify-center gap-3"
+                    className="px-12 py-5 bg-emerald-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-emerald-100 hover:bg-emerald-700 transition-all animate-bounce flex items-center justify-center gap-3"
                   >
-                    <Download size={18} /> Install App
+                    <Download size={18} /> Install Application
                   </button>
+                )}
+                {isInstalled && (
+                  <div className="px-12 py-5 bg-slate-100 text-slate-500 rounded-[2rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 border border-slate-200">
+                    <CheckCircle2 size={18} className="text-emerald-500" /> App Installed
+                  </div>
                 )}
                 <button className="px-12 py-5 bg-white text-indigo-900 border-2 border-indigo-100 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-all">Book a Demo</button>
               </div>
@@ -274,7 +288,7 @@ const Home = () => {
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to unify <br/> your institution?</h2>
                 <p className="text-lg text-indigo-300 max-w-xl mx-auto">Join the hundreds of forward-thinking schools that have simplified their operations and elevated experience.</p>
                 <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[2rem] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-xl">Start 14-Day Free Trial</button>
+                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[2rem] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-xl">Complete Registration</button>
                    <button className="px-12 py-5 bg-indigo-900/50 border border-indigo-700 text-white font-black rounded-[2rem] text-xs uppercase tracking-widest hover:bg-indigo-800 transition-all">Schedule a Call</button>
                 </div>
               </div>
