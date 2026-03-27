@@ -1,9 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Download } from 'lucide-react';
 
 const Home = () => {
  const navigate = useNavigate();
+ const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+ useEffect(() => {
+  const handler = (e: any) => {
+   e.preventDefault();
+   setDeferredPrompt(e);
+  };
+  window.addEventListener('beforeinstallprompt', handler);
+  return () => window.removeEventListener('beforeinstallprompt', handler);
+ }, []);
+
+ const handleInstallClick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+   setDeferredPrompt(null);
+  }
+ };
 
  return (
   <div className="min-h-screen bg-[#ffffff] text-[#1a202c] overflow-x-hidden relative" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -60,6 +79,15 @@ const Home = () => {
       >
        <Sparkles size={18} /> Register School
       </button>
+
+      {deferredPrompt && (
+       <button 
+        onClick={handleInstallClick}
+        className="w-full sm:w-auto px-10 py-5 bg-emerald-600 text-white font-black rounded-[2rem] shadow-2xl hover:bg-emerald-700 transition-all active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3 animate-pulse"
+       >
+        <Download size={18} /> Install App
+       </button>
+      )}
      </div>
     </div>
 
