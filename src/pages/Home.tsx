@@ -26,8 +26,18 @@ const Home = () => {
       setIsInstalled(true);
     }
 
+    const appInstalledHandler = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+    };
+
     window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', appInstalledHandler);
+    
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', appInstalledHandler);
+    };
   }, []);
 
   const handleInstallClick = async () => {
@@ -104,11 +114,6 @@ const Home = () => {
                   >
                     <Download size={18} /> Install Application
                   </button>
-                )}
-                {isInstalled && (
-                  <div className="px-12 py-5 bg-slate-100 text-slate-500 rounded-[5px] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 border border-slate-200">
-                    <CheckCircle2 size={18} className="text-emerald-500" /> App Installed
-                  </div>
                 )}
                 <button className="px-12 py-5 bg-white text-indigo-900 border-2 border-indigo-100 rounded-[5px] font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-all">Book a Demo</button>
               </div>
