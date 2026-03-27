@@ -19,13 +19,43 @@ const Sidebar = () => {
   const [logoLoadError, setLogoLoadError] = useState(false);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
-  let schoolName = localStorage.getItem('current_school_name') || 'Tekool';
-  if (schoolName === 'ASMD' || schoolName === 'Academic Luminary') schoolName = 'Tekool';
+  const [schoolName, setSchoolName] = useState(localStorage.getItem('current_school_name') || 'Tekool');
   const schoolCode = localStorage.getItem('current_school_code');
 
   useEffect(() => {
+    const fetchBranding = async () => {
+      const schoolId = localStorage.getItem('current_school_id');
+      if (!schoolId) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('schools')
+          .select('name, logo_url')
+          .eq('id', schoolId)
+          .maybeSingle();
+
+        if (data && !error) {
+          if (data.logo_url) {
+            setSchoolLogo(data.logo_url);
+            localStorage.setItem('current_school_logo', data.logo_url);
+          }
+          if (data.name) {
+            let finalName = data.name;
+            if (finalName === 'ASMD' || finalName === 'Academic Luminary') finalName = 'Tekool';
+            setSchoolName(finalName);
+            localStorage.setItem('current_school_name', finalName);
+          }
+        }
+      } catch (err) {
+        console.error("Sidebar branding fetch failed:", err);
+      }
+    };
+
+    fetchBranding();
+
     const handleStorageChange = () => {
       setSchoolLogo(localStorage.getItem('current_school_logo'));
+      setSchoolName(localStorage.getItem('current_school_name') || 'Tekool');
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
