@@ -9,6 +9,7 @@ import {
   Info, Eye, EyeOff, Image
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MetaData from '../../components/shared/MetaData';
 
 export default function SchoolRegistrationPage() {
   const navigate = useNavigate();
@@ -125,6 +126,7 @@ export default function SchoolRegistrationPage() {
   if (successData) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-white font-inter">
+        <MetaData title="Success! School Registered" />
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -169,6 +171,7 @@ export default function SchoolRegistrationPage() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-inter selection:bg-blue-100">
+      <MetaData title="Register Your School" description="Join Tekool and digitize your institution. Manage fees, attendance, and students in one unified free platform." />
       
       {/* Background Decor */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none opacity-50">

@@ -7,6 +7,7 @@ import {
   Quote, ChevronRight, Menu, X, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MetaData from '../components/shared/MetaData';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -52,6 +53,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d] font-sans selection:bg-indigo-100 italic-none">
+      <MetaData 
+        title="Tekool - Free School Management System India | Digital Campus"
+        description="Tekool is India's leading free School Management System. Automate fees, attendance, and examinations with our premium ERP solution."
+        keywords="Free School ERP, India, School Management Software, Tekool, Digital School"
+      />
       
       {/* --- PREMIUM NAVIGATION --- */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">

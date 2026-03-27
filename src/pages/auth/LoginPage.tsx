@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
+import MetaData from '../../components/shared/MetaData';
 import { 
  ShieldCheck, UserCircle, GraduationCap, 
  ArrowRight, Lock, Mail, Globe, 
@@ -209,10 +210,11 @@ const LoginPage = () => {
     </div>
   );
 
- return (
-  <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 relative overflow-hidden font-inter">
-   {/* Background Subtle Grid */}
-   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] pointer-events-none"></div>
+  return (
+   <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 relative overflow-hidden font-inter">
+    <MetaData title="Login to Tekool" description="Access your school dashboard, manage students, fees, and more." />
+    {/* Background Subtle Grid */}
+    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] pointer-events-none"></div>
 
    <AnimatePresence mode="wait">
     {showWelcome ? (
