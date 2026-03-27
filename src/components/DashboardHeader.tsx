@@ -28,8 +28,8 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
         .limit(5);
 
       if (error) {
-        if (error.code === 'PGRST116') {
-          console.warn("Notices table exists but query failed. Table might be empty or RLS restricted.");
+        if (error.code === 'PGRST116' || error.message?.includes('not found')) {
+          console.warn("Notices table not found in Supabase. Please run the notices migration script.");
         } else {
           console.error("Notice fetch error:", error);
         }
@@ -126,10 +126,10 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
  const roleColor = userRole === 'admin' ? 'text-blue-600' : userRole === 'teacher' ? 'text-emerald-600' : 'text-purple-600';
  const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
 
- return (
-  <header className="fixed top-0 right-0 left-0 lg:left-84 bg-white/80 backdrop-blur-3xl z-20 px-2 md:px-4 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
+  return (
+  <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-[100] px-4 md:px-8 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
    
-   <div className="flex items-center gap-6 flex-1">
+   <div className="flex items-center gap-10 flex-1">
     {/* Mobile Toggle */}
     <button 
      onClick={() => {
@@ -143,8 +143,8 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 
      {/* Global Search Bar (Figma Style) */}
      <div className="relative hidden md:block w-full max-w-lg">
-       <div className="flex items-center gap-4 bg-slate-50/50 border border-slate-200/50 rounded-[5px] px-5 py-3 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
-        <Search size={18} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+       <div className="flex items-center gap-6 bg-slate-50/50 border border-slate-200/50 rounded-[5px] px-6 py-3.5 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
+        <Search size={22} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
         <input 
          type="text" 
          placeholder="Search records, assets, or bulletins..." 
