@@ -81,7 +81,10 @@ const Sidebar = () => {
   return (
    <Link 
     to={to} 
-    onClick={() => setIsMobileOpen(false)}
+    onClick={() => {
+      console.log("Navigating to", to);
+      setIsMobileOpen(false);
+    }}
     className={`premium-nav-item ${isActive ? activeClass : ''}`}
    >
     <span className={`${isActive ? 'scale-110' : ''} transition-transform`}>{icon}</span>
@@ -102,19 +105,26 @@ const Sidebar = () => {
 
  return (
   <div className="min-h-screen bg-[#F8FAFC]">
+   <DashboardHeader 
+    full_name={profile.name} 
+    userRole={profile.role} 
+    avatarUrl={profile.avatar}
+    onMenuClick={() => setIsMobileOpen(true)} 
+   />
+
    <AnimatePresence>
     {isMobileOpen && (
      <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-slate-900/40 z-[10001] lg:hidden" 
+      className="fixed inset-0 bg-slate-900/60 z-[60] lg:hidden backdrop-blur-sm" 
       onClick={() => setIsMobileOpen(false)}
      />
     )}
    </AnimatePresence>
 
-   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 z-[10002]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
+   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
@@ -135,8 +145,8 @@ const Sidebar = () => {
        <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v4.0</p>
       </div>
      </div>
-     <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors">
-      <X size={20}/>
+     <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors p-2">
+      <X size={24}/>
      </button>
     </div>
 
@@ -211,13 +221,6 @@ const Sidebar = () => {
      </div>
     </div>
    </main>
-
-   <DashboardHeader 
-    full_name={profile.name} 
-    userRole={profile.role} 
-    avatarUrl={profile.avatar}
-    onMenuClick={() => setIsMobileOpen(true)} 
-   />
   </div>
  );
 };

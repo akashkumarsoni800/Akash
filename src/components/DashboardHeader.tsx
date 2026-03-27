@@ -112,7 +112,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
  const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
 
  return (
-  <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-[1000] px-2 md:px-4 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
+  <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-40 px-2 md:px-4 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
    
    <div className="flex items-center gap-6 flex-1">
     {/* Mobile Toggle */}
