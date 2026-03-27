@@ -235,14 +235,14 @@ const LoginPage = () => {
      >
       <div className="text-center mb-16">
        <div className="w-24 h-24 bg-white shadow-2xl active:scale-95 tracking-widest rounded-[5px] p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
-        <ShieldCheck className="text-blue-600" size={48} />
+        <img src="/logo.png" className="w-full h-full object-contain" alt="Tekool" />
        </div>
        <h1 className="text-6xl md:text-7xl font-black text-slate-900  leading-[0.9] mb-4 uppercase">
-        School Management<br/>
-        <span className="text-slate-400"></span>
+        TEKOOL DIGITAL<br/>
+        <span className="text-slate-400">ECOSYSTEM</span>
        </h1>
        <p className="text-slate-500 font-black  text-[10px] flex items-center justify-center gap-2">
-        <Globe size={14} className="text-blue-500" /> Adarsh Shishu Mandir Digital Ecosystem
+        <Globe size={14} className="text-blue-500" /> Advanced Institutional Intelligence Platform
        </p>
       </div>
 

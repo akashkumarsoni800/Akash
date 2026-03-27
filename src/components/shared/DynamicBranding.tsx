@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 const DynamicBranding = () => {
   useEffect(() => {
     const updateBranding = () => {
-      const schoolName = localStorage.getItem('current_school_name') || 'Tekool';
+      let schoolName = localStorage.getItem('current_school_name') || 'Tekool';
+      if (schoolName === 'Academic Luminary') schoolName = 'Tekool';
       const schoolLogo = localStorage.getItem('current_school_logo');
       const schoolCode = localStorage.getItem('current_school_code');
 
