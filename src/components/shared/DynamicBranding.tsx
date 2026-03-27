@@ -61,7 +61,7 @@ const DynamicBranding = () => {
           "name": schoolName,
           "short_name": schoolName,
           "description": `${schoolName} - Powered by Tekool`,
-          "start_url": "/",
+          "start_url": window.location.origin + "/",
           "display": "standalone",
           "background_color": "#ffffff",
           "theme_color": "#ffffff",
