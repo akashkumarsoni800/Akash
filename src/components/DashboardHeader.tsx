@@ -360,7 +360,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
      </AnimatePresence>
     </div>
    </div>
-  </div>
+  </header>
  );
 };
 

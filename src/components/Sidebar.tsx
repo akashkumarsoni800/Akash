@@ -101,7 +101,7 @@ const Sidebar = () => {
  );
 
  return (
-  <div className="min-h-screen bg-[#F8FAFC]">
+  <div className="min-h-screen bg-[#F8FAFC] relative">
    <DashboardHeader 
     full_name={profile.name} 
     userRole={profile.role} 
