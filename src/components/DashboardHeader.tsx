@@ -13,6 +13,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isGlobeOpen, setIsGlobeOpen] = useState(false);
   const [notices, setNotices] = useState<any[]>([]);
+  const [isReallyDesktop, setIsReallyDesktop] = useState(true);
 
   // Fetch notices for the Bell icon
   const fetchNotices = async () => {
@@ -43,6 +44,14 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 
   React.useEffect(() => {
     fetchNotices();
+    const checkDevice = () => {
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const wideEnough = window.innerWidth >= 1024;
+      setIsReallyDesktop(wideEnough && !isMobileUA);
+    };
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
   // Define searchable modules based on roles
@@ -127,7 +136,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
  const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
 
   return (
-  <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-[100] px-4 md:px-8 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
+  <header className={`fixed top-0 right-0 left-0 ${isReallyDesktop ? 'left-64' : 'left-0'} bg-white/80 backdrop-blur-3xl z-[100] px-4 md:px-8 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter`}>
    
    <div className="flex items-center gap-10 flex-1">
     {/* Mobile Toggle */}
@@ -136,7 +145,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
        console.log("Menu clicked");
        onMenuClick();
      }} 
-     className="p-4 hover:bg-slate-100 rounded-[5px] lg:hidden transition-all active:scale-95 relative z-[10000] pointer-events-auto"
+     className={`p-4 hover:bg-slate-100 rounded-[5px] ${isReallyDesktop ? 'hidden' : 'block'} transition-all active:scale-95 relative z-[10000] pointer-events-auto`}
     >
      <Menu size={24} className="text-slate-600" />
     </button>

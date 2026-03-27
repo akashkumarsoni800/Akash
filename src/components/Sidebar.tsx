@@ -14,8 +14,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Sidebar = () => {
  const location = useLocation();
  const navigate = useNavigate();
- const [isMobileOpen, setIsMobileOpen] = useState(false); 
- const [loading, setLoading] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false); 
+  const [loading, setLoading] = useState(true);
+  const [isReallyDesktop, setIsReallyDesktop] = useState(true);
   const [logoLoadError, setLogoLoadError] = useState(false);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
@@ -51,7 +52,16 @@ const Sidebar = () => {
       }
     };
 
+    const checkDevice = () => {
+      // Force mobile view if UserAgent contains mobile indicators
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const wideEnough = window.innerWidth >= 1024;
+      setIsReallyDesktop(wideEnough && !isMobileUA);
+    };
+
     fetchBranding();
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
 
     const handleStorageChange = () => {
       setSchoolLogo(localStorage.getItem('current_school_logo'));
@@ -150,7 +160,7 @@ const Sidebar = () => {
     )}
    </AnimatePresence>
 
-   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
+   <aside className={`premium-sidebar ${isReallyDesktop ? 'translate-x-0' : '-translate-x-full'} ${isMobileOpen ? 'translate-x-0 !z-[1000]' : ''} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl ${isReallyDesktop ? 'shadow-none' : ''}`}>
     <div className="px-8 mb-10 flex items-center justify-between">
       <div className="flex items-center gap-4">
        <div className="w-14 h-14 rounded-[5px] flex items-center justify-center bg-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden border border-slate-100 relative">
@@ -176,9 +186,9 @@ const Sidebar = () => {
         <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v5.0</p>
        </div>
       </div>
-     <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors p-2">
-      <X size={24}/>
-     </button>
+      <button onClick={() => setIsMobileOpen(false)} className={`${isReallyDesktop ? 'hidden' : 'block'} text-slate-500 hover:text-white transition-colors p-2`}>
+       <X size={24}/>
+      </button>
     </div>
 
     <nav className="flex-1 px-4 space-y-1 overflow-y-auto asm-hide-scrollbar">
@@ -256,7 +266,7 @@ const Sidebar = () => {
     </div>
    </aside>
 
-   <main className={`transition-all duration-500 pt-20 min-h-screen lg:ml-64`}>
+   <main className={`transition-all duration-500 pt-20 min-h-screen ${isReallyDesktop ? 'ml-64' : 'ml-0'}`}>
     <div className="pb-10 w-full animate__animated animate__fadeIn">
      <Outlet />
      <div className="mt-20 no-print opacity-80 hover:opacity-100 transition-opacity px-4 md:px-0">
