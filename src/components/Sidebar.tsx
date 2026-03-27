@@ -101,14 +101,7 @@ const Sidebar = () => {
  );
 
  return (
-  <div className="min-h-screen bg-[#F8FAFC] relative">
-   <DashboardHeader 
-    full_name={profile.name} 
-    userRole={profile.role} 
-    avatarUrl={profile.avatar}
-    onMenuClick={() => setIsMobileOpen(true)} 
-   />
-
+  <div className="min-h-screen bg-[#F8FAFC]">
    <AnimatePresence>
     {isMobileOpen && (
      <motion.div 
@@ -218,6 +211,13 @@ const Sidebar = () => {
      </div>
     </div>
    </main>
+
+   <DashboardHeader 
+    full_name={profile.name} 
+    userRole={profile.role} 
+    avatarUrl={profile.avatar}
+    onMenuClick={() => setIsMobileOpen(true)} 
+   />
   </div>
  );
 };

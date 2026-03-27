@@ -121,7 +121,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
        console.log("Menu clicked");
        onMenuClick();
      }} 
-     className="p-3 hover:bg-slate-100 rounded-2xl lg:hidden transition-all active:scale-95 relative z-[60]"
+     className="p-4 hover:bg-slate-100 rounded-2xl lg:hidden transition-all active:scale-95 relative z-[10000] pointer-events-auto"
     >
      <Menu size={24} className="text-slate-600" />
     </button>
