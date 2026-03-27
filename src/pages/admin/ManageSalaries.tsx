@@ -110,7 +110,7 @@ const ManageSalaries = () => {
       <div className="flex flex-wrap items-center justify-center gap-4">
        <button 
         onClick={fetchAccountingData}
-        className="premium-button-admin bg-white text-slate-900 duration-300 hover:bg-slate-50 border-slate-100 shadow-xl py-3 rounded-[5px] active:scale-95 group/sync"
+        className="premium-button-admin bg-slate-900 text-white hover:bg-indigo-600 border-none shadow-2xl active:scale-95 group/sync"
        >
         <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-700" /> 
         <span className="tracking-widest">Sync Ledger</span>
