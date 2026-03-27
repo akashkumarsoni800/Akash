@@ -81,10 +81,7 @@ const Sidebar = () => {
   return (
    <Link 
     to={to} 
-    onClick={() => {
-      console.log("Navigating to", to);
-      setIsMobileOpen(false);
-    }}
+    onClick={() => setIsMobileOpen(false)}
     className={`premium-nav-item ${isActive ? activeClass : ''}`}
    >
     <span className={`${isActive ? 'scale-110' : ''} transition-transform`}>{icon}</span>
@@ -104,7 +101,7 @@ const Sidebar = () => {
  );
 
  return (
-  <div className="min-h-screen bg-[#F8FAFC]">
+  <div className="min-h-screen bg-[#F8FAFC] relative">
    <DashboardHeader 
     full_name={profile.name} 
     userRole={profile.role} 
@@ -114,17 +111,14 @@ const Sidebar = () => {
 
    <AnimatePresence>
     {isMobileOpen && (
-     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-slate-900/60 z-[60] lg:hidden backdrop-blur-sm" 
+     <div 
+      className="fixed inset-0 bg-black/40 z-[999] lg:hidden" 
       onClick={() => setIsMobileOpen(false)}
      />
     )}
    </AnimatePresence>
 
-   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
+   <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
