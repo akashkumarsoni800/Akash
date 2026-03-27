@@ -203,7 +203,7 @@ const TeacherSalary = () => {
         <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
          <Receipt size={30} />
         </div>
-        <h2 className="text-4xl font-black text-slate-900  leading-none uppercase">Add<br/><span className="text-[var(--accent-admin)] uppercase">Salary</span></h2>
+        <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Add<br/><span className="text-[var(--accent-admin)] uppercase">Salary</span></h2>
       </div>
       
       <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
