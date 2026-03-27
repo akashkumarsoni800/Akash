@@ -112,13 +112,16 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
  const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
 
  return (
-  <div className="fixed top-0 right-0 left-0 lg:left-64 bg-white/70 backdrop-blur-3xl z-30 px-2 md:px-4 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
+  <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-50 px-2 md:px-4 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
    
    <div className="flex items-center gap-6 flex-1">
     {/* Mobile Toggle */}
     <button 
-     onClick={onMenuClick} 
-     className="p-3 hover:bg-slate-100 rounded-2xl lg:hidden transition-all active:scale-90"
+     onClick={() => {
+       console.log("Menu clicked");
+       onMenuClick();
+     }} 
+     className="p-3 hover:bg-slate-100 rounded-2xl lg:hidden transition-all active:scale-95 relative z-[60]"
     >
      <Menu size={24} className="text-slate-600" />
     </button>
