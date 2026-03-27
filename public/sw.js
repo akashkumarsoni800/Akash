@@ -1,24 +1,18 @@
-const CACHE_NAME = 'asmd-cache-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/logo.png'
-];
+const CACHE_NAME = 'asmd-v2';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-  );
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', (event) => {
+  // Satisfies "Fetch handler found" requirement for PWA
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) return response;
-        return fetch(event.request);
-      })
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
   );
 });
