@@ -45,9 +45,10 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   React.useEffect(() => {
     fetchNotices();
     const checkDevice = () => {
+      const isSmallScreen = window.screen.width < 1024;
       const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const wideEnough = window.innerWidth >= 1024;
-      setIsReallyDesktop(wideEnough && !isMobileUA);
+      setIsReallyDesktop(wideEnough && !isSmallScreen && !isMobileUA);
     };
     checkDevice();
     window.addEventListener('resize', checkDevice);

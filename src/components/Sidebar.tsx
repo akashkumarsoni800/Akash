@@ -53,10 +53,14 @@ const Sidebar = () => {
     };
 
     const checkDevice = () => {
-      // Force mobile view if UserAgent contains mobile indicators
+      // Physical screen width check - phones stay small even in desktop mode
+      const isSmallScreen = window.screen.width < 1024;
       const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      
       const wideEnough = window.innerWidth >= 1024;
-      setIsReallyDesktop(wideEnough && !isMobileUA);
+      // It's only REALLY a desktop if it's a wide viewport AND NOT a small physical screen
+      setIsReallyDesktop(wideEnough && !isSmallScreen && !isMobileUA);
     };
 
     fetchBranding();
