@@ -180,8 +180,8 @@ const TeacherSalary = () => {
        </p>
       </motion.div>
       
-       <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
-       <div className="w-12 h-12 bg-slate-900 rounded-[1.2rem] flex items-center justify-center text-xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
+       <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
+       <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
        <div>
         <p className="text-[9px] font-black text-slate-400 mb-1 leading-none">Total Amount</p>
         <p className="text-2xl font-black text-slate-900 leading-none">₹{totalSalaryExpense.toLocaleString()}</p>
@@ -200,7 +200,7 @@ const TeacherSalary = () => {
       <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110"></div>
       
       <div className="flex items-center gap-6 mb-14 relative z-10 border-b border-slate-50 pb-10">
-        <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner">
+        <div className="w-14 h-14 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-inner">
          <Receipt size={30} />
         </div>
         <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Add<br/><span className="text-[var(--accent-admin)] uppercase">Salary</span></h2>
@@ -249,7 +249,7 @@ const TeacherSalary = () => {
          </div>
        </div>
 
-       <div className="bg-slate-50 border border-slate-100 p-10 rounded-[3rem] relative overflow-hidden space-y-10">
+       <div className="bg-slate-50 border border-slate-100 p-10 rounded-[5px] relative overflow-hidden space-y-10">
          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
          
          <div className="flex items-center gap-4 relative z-10 border-b border-slate-100 pb-6">
@@ -327,7 +327,7 @@ const TeacherSalary = () => {
          </div>
        </div>
 
-       <div className="bg-slate-900 p-12 rounded-[4rem] text-white shadow-2xl relative overflow-hidden group/total">
+       <div className="bg-slate-900 p-12 rounded-[5px] text-white shadow-2xl relative overflow-hidden group/total">
          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="text-center md:text-left">
@@ -408,7 +408,7 @@ const TeacherSalary = () => {
             </span>
            </div>
            
-            <div className="grid grid-cols-4 gap-4 p-6 bg-slate-50/50 rounded-[2rem] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
+            <div className="grid grid-cols-4 gap-4 p-6 bg-slate-50/50 rounded-[5px] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
              <div className="text-left space-y-1">
               <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Base</p>
               <p className="text-sm font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
@@ -431,12 +431,12 @@ const TeacherSalary = () => {
             <button 
              onClick={() => markSalaryPaid(salary.id)}
              disabled={salaryLoading[salary.id] || salary.status === 'Paid'}
-             className="flex-1 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
+             className="flex-1 py-5 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
             >
              {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
              {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
             </button>
-            <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[1.5rem] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-xl group-hover/item:text-blue-500 active:scale-95">
+            <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[5px] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-xl group-hover/item:text-blue-500 active:scale-95">
              <Download size={24} />
             </button>
            </div>
@@ -446,7 +446,7 @@ const TeacherSalary = () => {
        )}
       </div>
       
-      <button className="mt-10 py-5 bg-slate-50 rounded-[2rem] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
+      <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
         Open Audit Vault →
       </button>
      </motion.div>

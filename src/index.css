@@ -93,7 +93,7 @@ h4, h5, h6 {
 
 .premium-card {
   background-color: white;
-  border-radius: 2.5rem; /* Larger radius for premium feel */
+  border-radius: 5px; /* sharp corners as requested */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(226, 232, 240, 0.6);
   overflow: hidden;
