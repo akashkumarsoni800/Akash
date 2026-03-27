@@ -35,34 +35,22 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as a student (${existingStudent.full_name}).`);
    }
 
-   // 1. Create Auth User
-   const { data, error: authError } = await supabase.auth.signUp({
-    email: formData.email,
-    password: 'Teacher@123',
-    options: {
-     data: {
-      full_name: formData.name,
-      role: 'teacher',
-     },
-    },
+   // 1. Create Auth User & Database Record via Edge Function
+   const schoolId = localStorage.getItem('current_school_id');
+   const { data, error } = await supabase.functions.invoke('create-user', {
+    body: {
+     full_name: formData.name,
+     email: formData.email,
+     password: 'Teacher@123',
+     role: 'teacher',
+     subject: formData.subject,
+     phone: formData.phone,
+     school_id: schoolId
+    }
    });
 
-   if (authError) throw authError;
-
-   // 2. Insert into Teachers Table
-   if (data.user) {
-    const schoolId = localStorage.getItem('current_school_id'); // ✅ Get from admin context
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     full_name: formData.name,
-     subject: formData.subject,
-     email: formData.email,
-     phone: formData.phone,
-     role: 'teacher',
-     school_id: schoolId // ✅ Associated with school
-    }]);
-    
-    if (dbError) throw dbError;
-   }
+   if (error) throw new Error(error.message || "Failed to connect to server.");
+   if (data && data.error) throw new Error(data.error);
 
    toast.success("Teacher Created Successfully!");
    navigate('/admin/dashboard');

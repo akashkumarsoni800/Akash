@@ -45,28 +45,22 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Identity conflict: Email registered to scholar (${existing.full_name})`);
 
-   // 2. Auth Protocol Initialization
-   const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: formData.email,
-    password: formData.password,
-    options: { data: { full_name: formData.fullName, role: 'teacher' } }
+   // 2. Auth Protocol & Database Indexing via Edge Function
+   const schoolId = localStorage.getItem('current_school_id');
+   const { data, error } = await supabase.functions.invoke('create-user', {
+    body: {
+     full_name: formData.fullName,
+     email: formData.email,
+     password: formData.password,
+     role: 'teacher',
+     subject: formData.subject,
+     phone: formData.phone,
+     school_id: schoolId
+    }
    });
 
-   if (authError) throw authError;
-
-   // 3. Database Indexing
-   if (authData.user) {
-    const schoolId = localStorage.getItem('current_school_id');
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     full_name: formData.fullName,
-     subject: formData.subject,
-     email: formData.email,
-     phone: formData.phone,
-     role: 'teacher',
-     school_id: schoolId
-    }]);
-    if (dbError) throw dbError;
-   }
+   if (error) throw new Error(error.message || "Failed to connect to server.");
+   if (data && data.error) throw new Error(data.error);
 
    toast.success("Identity Secured: Faculty Node Initialized 💎");
    setIsModalOpen(false);
@@ -104,14 +98,16 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
       {roleFilter} protocol active
      </p>
     </div>
-    <div className="flex gap-3 w-full md:w-auto">
-     <button 
-      onClick={() => setIsModalOpen(true)}
-      className="premium-button-admin flex-1 md:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 transition-all"
-     >
-      <UserPlus size={16} /> Deploy Faculty
-     </button>
-    </div>
+    {roleFilter !== 'admin' && (
+     <div className="flex gap-3 w-full md:w-auto">
+      <button 
+       onClick={() => setIsModalOpen(true)}
+       className="premium-button-admin flex-1 md:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 transition-all"
+      >
+       <UserPlus size={16} /> Deploy Faculty
+      </button>
+     </div>
+    )}
    </div>
 
    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

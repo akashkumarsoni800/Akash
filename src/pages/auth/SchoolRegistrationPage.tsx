@@ -102,6 +102,7 @@ export default function SchoolRegistrationPage() {
       // 4. Insert into Teachers/Staff Table
       if (authData.user) {
         const { error: dbError } = await supabase.from('teachers').insert([{
+          id: authData.user.id,
           full_name: formData.adminName,
           email: formData.adminEmail,
           phone: formData.adminPhone,
