@@ -52,7 +52,9 @@ const LoginPage = () => {
             localStorage.setItem('current_school_id', staffData.school_id);
             localStorage.setItem('current_school_name', school.name);
             localStorage.setItem('current_school_code', school.school_code);
-            if (school.logo_url) localStorage.setItem('current_school_logo', school.logo_url);
+            if (school.logo_url) {
+              localStorage.setItem('current_school_logo', school.logo_url);
+            }
           }
           navigate(`/${staffData.role}/dashboard`);
           return;
@@ -172,9 +174,14 @@ const LoginPage = () => {
      throw new Error(`Unauthorized: You are not registered with ${school.name}.`);
     }
 
+
     // Store school context
     localStorage.setItem('current_school_id', school.id);
     localStorage.setItem('current_school_name', school.name);
+    localStorage.setItem('current_school_code', school.school_code);
+    if (school.logo_url) {
+      localStorage.setItem('current_school_logo', school.logo_url);
+    }
 
     setShowWelcome(true);
     setTimeout(() => navigate(`/${selectedRole === 'admin' ? 'admin' : 'teacher'}/dashboard`), 2000);
