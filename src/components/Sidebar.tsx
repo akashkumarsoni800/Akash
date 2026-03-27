@@ -123,14 +123,24 @@ const Sidebar = () => {
       <div className="flex items-center gap-4">
        <div className="w-14 h-14 rounded-[5px] flex items-center justify-center bg-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden border border-slate-100">
         {schoolLogo ? (
-          <img src={schoolLogo} className="w-full h-full object-contain p-1" alt="logo" />
+          <img 
+            src={schoolLogo} 
+            className="w-full h-full object-contain p-1" 
+            alt="logo" 
+            crossOrigin="anonymous"
+            onError={(e: any) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextSibling.style.display = 'flex';
+            }}
+          />
         ) : schoolCode === 'ASM01' ? (
           <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl">
-            {(!schoolName || schoolName === 'Academic Luminary') ? 'T' : schoolName.charAt(0).toUpperCase()}
-          </div>
-        )}
+        ) : null}
+        
+        {/* Persistent Fallback / Placeholder */}
+        <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl" style={{ display: schoolLogo ? 'none' : 'flex' }}>
+          {(!schoolName || schoolName === 'Academic Luminary') ? 'T' : schoolName.charAt(0).toUpperCase()}
+        </div>
        </div>
        <div>
         <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">{(!schoolName || schoolName === 'Academic Luminary') ? 'Tekool' : schoolName}</h2>

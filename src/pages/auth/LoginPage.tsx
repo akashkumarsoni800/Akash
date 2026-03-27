@@ -8,6 +8,7 @@ import {
  ArrowRight, Lock, Mail, Globe, 
  Briefcase, CheckCircle2, Eye, EyeOff
 } from 'lucide-react';
+import TekoolLogo from '../../components/shared/TekoolLogo';
 
 const LoginPage = () => {
  const navigate = useNavigate();
@@ -234,14 +235,14 @@ const LoginPage = () => {
       className="w-full max-w-full"
      >
       <div className="text-center mb-16">
-       <div className="w-24 h-24 bg-white shadow-2xl active:scale-95 tracking-widest rounded-[5px] p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
-        <img src="/logo.png" className="w-full h-full object-contain" alt="Tekool" />
+       <div className="mx-auto mb-8 flex flex-col items-center">
+        <TekoolLogo size="xl" letterOnly className="hover:rotate-6 transition-transform" />
+        <h1 className="text-6xl md:text-7xl font-black text-slate-900 leading-[0.9] mt-8 uppercase">
+          TEKOOL DIGITAL<br/>
+          <span className="text-slate-400">ECOSYSTEM</span>
+        </h1>
        </div>
-       <h1 className="text-6xl md:text-7xl font-black text-slate-900  leading-[0.9] mb-4 uppercase">
-        TEKOOL DIGITAL<br/>
-        <span className="text-slate-400">ECOSYSTEM</span>
-       </h1>
-       <p className="text-slate-500 font-black  text-[10px] flex items-center justify-center gap-2">
+       <p className="text-slate-500 font-black text-[10px] flex items-center justify-center gap-2">
         <Globe size={14} className="text-blue-500" /> Advanced Institutional Intelligence Platform
        </p>
       </div>
