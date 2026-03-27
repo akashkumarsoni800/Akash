@@ -166,10 +166,10 @@ const TeacherSalary = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 pb-32">
-   <div className="max-w-full mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-4">
     
     {/* --- HEADER --- */}
-    <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
+    <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
        <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-none uppercase">
         Teacher<br/>
@@ -180,7 +180,7 @@ const TeacherSalary = () => {
        </p>
       </motion.div>
       
-       <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
+       <div className="bg-white border border-slate-100 rounded-[5px] p-4 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
        <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
        <div>
         <p className="text-[9px] font-black text-slate-400 mb-1 leading-none">Total Amount</p>
@@ -195,19 +195,19 @@ const TeacherSalary = () => {
      <motion.div 
       initial={{ opacity: 0, x: -20 }} 
       animate={{ opacity: 1, x: 0 }} 
-      className="premium-card p-10 md:p-14 relative overflow-hidden group"
+      className="premium-card p-4 md:p-6 relative overflow-hidden group"
      >
       <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110"></div>
       
-      <div className="flex items-center gap-6 mb-14 relative z-10 border-b border-slate-50 pb-10">
+      <div className="flex items-center gap-6 mb-8 relative z-10 border-b border-slate-50 pb-6">
         <div className="w-14 h-14 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-inner">
          <Receipt size={30} />
         </div>
         <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Add<br/><span className="text-[var(--accent-admin)] uppercase">Salary</span></h2>
       </div>
       
-      <form onSubmit={handleSalarySubmit} className="space-y-10 relative z-10">
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <form onSubmit={handleSalarySubmit} className="space-y-6 relative z-10">
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <div className="space-y-3 group">
           <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Select Teacher</label>
           <div className="relative">
@@ -249,7 +249,7 @@ const TeacherSalary = () => {
          </div>
        </div>
 
-       <div className="bg-slate-50 border border-slate-100 p-10 rounded-[5px] relative overflow-hidden space-y-10">
+       <div className="bg-slate-50 border border-slate-100 p-6 rounded-[5px] relative overflow-hidden space-y-6">
          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
          
          <div className="flex items-center gap-4 relative z-10 border-b border-slate-100 pb-6">
@@ -327,7 +327,7 @@ const TeacherSalary = () => {
          </div>
        </div>
 
-       <div className="bg-slate-900 p-12 rounded-[5px] text-white shadow-2xl relative overflow-hidden group/total">
+       <div className="bg-slate-900 p-8 rounded-[5px] text-white shadow-2xl relative overflow-hidden group/total">
          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="text-center md:text-left">
@@ -351,9 +351,9 @@ const TeacherSalary = () => {
      <motion.div 
       initial={{ opacity: 0, x: 20 }} 
       animate={{ opacity: 1, x: 0 }} 
-      className="premium-card p-10 md:p-14 flex flex-col h-[1000px] overflow-hidden group"
+      className="premium-card p-4 md:p-6 flex flex-col h-[1000px] overflow-hidden group"
      >
-      <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
+      <div className="flex items-center justify-between mb-8 border-b border-slate-50 pb-6">
         <div className="space-y-3">
           <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Salary<br/><span className="text-[var(--accent-admin)] uppercase">History</span></h2>
          <p className="text-[9px] font-black text-slate-400  leading-none">Historical Payment </p>
@@ -382,12 +382,12 @@ const TeacherSalary = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 * idx }}
-          className="bg-white rounded-[5px] border border-slate-50 p-8 hover:border-blue-200 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 group/item relative overflow-hidden"
+          className="bg-white rounded-[5px] border border-slate-50 p-4 hover:border-blue-200 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 group/item relative overflow-hidden"
          >
           <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 opacity-10 blur-3xl group-hover/item:opacity-30 transition-opacity"></div>
           
           <div className="relative z-10">
-           <div className="flex justify-between items-start gap-6 mb-12">
+           <div className="flex justify-between items-start gap-6 mb-6">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-slate-50 rounded-[5px] flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl transition-colors">
                {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
@@ -408,7 +408,7 @@ const TeacherSalary = () => {
             </span>
            </div>
            
-            <div className="grid grid-cols-4 gap-4 p-6 bg-slate-50/50 rounded-[5px] mb-10 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
+            <div className="grid grid-cols-4 gap-4 p-4 bg-slate-50/50 rounded-[5px] mb-6 border border-slate-50 group-hover/item:bg-white group-hover/item:border-blue-50 transition-all duration-700">
              <div className="text-left space-y-1">
               <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Base</p>
               <p className="text-sm font-black text-slate-900 tracking-tight">₹{(salary.basic_salary || 0).toLocaleString()}</p>
