@@ -16,6 +16,7 @@ const Sidebar = () => {
  const navigate = useNavigate();
  const [isMobileOpen, setIsMobileOpen] = useState(false); 
  const [loading, setLoading] = useState(true);
+  const [logoLoadError, setLogoLoadError] = useState(false);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
   let schoolName = localStorage.getItem('current_school_name') || 'Tekool';
