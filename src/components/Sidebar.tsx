@@ -169,7 +169,7 @@ const Sidebar = () => {
       <AnimatePresence>
         {isMobileOpen && (
           <div
-            className="fixed inset-0 bg-black/40 z-[999] lg:hidden"
+            className={`fixed inset-0 bg-black/40 z-[999] ${isReallyDesktop ? 'hidden' : ''}`}
             onClick={() => setIsMobileOpen(false)}
           />
         )}

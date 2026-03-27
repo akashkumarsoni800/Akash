@@ -44,6 +44,23 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 
   React.useEffect(() => {
     fetchNotices();
+    const checkDevice = () => {
+      // Hardware-level detection: Needs wide screen AND a mouse (pointer: fine)
+      const isWide = window.innerWidth >= 1024;
+      const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+      const isTouchOnly = window.matchMedia('(pointer: coarse)').matches;
+      
+      setIsReallyDesktop(isWide && hasFinePointer && !isTouchOnly);
+    };
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    const mediaQuery = window.matchMedia('(pointer: fine), (pointer: coarse)');
+    mediaQuery.addEventListener('change', checkDevice);
+
+    return () => {
+      window.removeEventListener('resize', checkDevice);
+      mediaQuery.removeEventListener('change', checkDevice);
+    };
   }, []);
 
   // Define searchable modules based on roles
@@ -128,7 +145,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white/80 backdrop-blur-3xl z-[100] px-4 md:px-8 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter">
+    <header className={`fixed top-0 right-0 left-0 ${isReallyDesktop ? 'left-64' : 'left-0'} bg-white/80 backdrop-blur-3xl z-[100] px-4 md:px-8 h-20 flex justify-between items-center border-b border-slate-100/50 no-print transition-all duration-300 font-inter`}>
 
       <div className="flex items-center gap-10 flex-1">
         {/* Mobile Toggle */}
@@ -137,13 +154,13 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
             console.log("Menu clicked");
             onMenuClick();
           }}
-          className="p-4 hover:bg-slate-100 rounded-[5px] lg:hidden transition-all active:scale-95 relative z-[10000] pointer-events-auto"
+          className={`p-4 hover:bg-slate-100 rounded-[5px] ${isReallyDesktop ? 'hidden' : 'block'} transition-all active:scale-95 relative z-[10000] pointer-events-auto`}
         >
           <Menu size={24} className="text-slate-600" />
         </button>
 
         {/* Global Search Bar (Figma Style) */}
-        <div className="relative hidden md:block w-full max-w-lg">
+        <div className={`relative ${isReallyDesktop ? 'block' : 'hidden md:block'} w-full max-w-lg`}>
           <div className="flex items-center gap-6 bg-slate-50/50 border border-slate-200/50 rounded-[5px] px-6 py-3.5 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
             <Search size={22} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
             <input
@@ -383,13 +400,13 @@ const HeaderMenuItem = ({ icon: Icon, label, onClick, variant = 'default' }: any
   <button
     onClick={onClick}
     className={`flex w-full items-center gap-4 p-4 rounded-[5px] text-[11px] font-black tracking-widest transition-all group ${variant === 'danger'
-        ? 'text-rose-400 hover:bg-rose-50 hover:text-rose-600'
-        : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'
+      ? 'text-rose-400 hover:bg-rose-50 hover:text-rose-600'
+      : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'
       }`}
   >
     <div className={`w-9 h-9 rounded-[5px] flex items-center justify-center transition-all ${variant === 'danger'
-        ? 'bg-rose-50 text-rose-400 group-hover:bg-white'
-        : 'bg-slate-50 text-slate-400 group-hover:bg-white group-hover:shadow-sm'
+      ? 'bg-rose-50 text-rose-400 group-hover:bg-white'
+      : 'bg-slate-50 text-slate-400 group-hover:bg-white group-hover:shadow-sm'
       }`}>
       <Icon size={18} />
     </div>
@@ -397,5 +414,4 @@ const HeaderMenuItem = ({ icon: Icon, label, onClick, variant = 'default' }: any
   </button>
 );
 
-export default DashboardHeader;
 export default DashboardHeader;
