@@ -12,18 +12,82 @@ import {
 const LoginPage = () => {
  const navigate = useNavigate();
  const [loading, setLoading] = useState(false);
+ const [checkingSession, setCheckingSession] = useState(true); // ✅ New state
  const [selectedRole, setSelectedRole] = useState<string | null>(null);
  const [showWelcome, setShowWelcome] = useState(false);
  const [showPassword, setShowPassword] = useState(false);
  
  const [loginData, setLoginData] = useState({
-  school_code: '', // ✅ New field
+  school_code: '', 
   full_name: '',
   father_name: '',
   class_name: '',
   password: '',
   email: ''
  });
+
+ // ✅ AUTO-REDIRECT LOGIC: Check if user is already logged in
+ React.useEffect(() => {
+  const checkSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      try {
+        // Try to identify role from teachers table first
+        const { data: staffData } = await supabase
+          .from('teachers')
+          .select('role, school_id')
+          .eq('email', session.user.email)
+          .maybeSingle();
+
+        if (staffData) {
+          // Fetch complete school metadata for branding
+          const { data: school } = await supabase
+            .from('schools')
+            .select('name, logo_url, school_code')
+            .eq('id', staffData.school_id)
+            .maybeSingle();
+
+          if (school) {
+            localStorage.setItem('current_school_id', staffData.school_id);
+            localStorage.setItem('current_school_name', school.name);
+            localStorage.setItem('current_school_code', school.school_code);
+            if (school.logo_url) localStorage.setItem('current_school_logo', school.logo_url);
+          }
+          navigate(`/${staffData.role}/dashboard`);
+          return;
+        }
+
+        // Check if student
+        const { data: studentData } = await supabase
+          .from('students')
+          .select('school_id')
+          .eq('email', session.user.email)
+          .maybeSingle();
+
+        if (studentData) {
+          const { data: school } = await supabase
+            .from('schools')
+            .select('name, logo_url, school_code')
+            .eq('id', studentData.school_id)
+            .maybeSingle();
+
+          if (school) {
+            localStorage.setItem('current_school_id', studentData.school_id);
+            localStorage.setItem('current_school_name', school.name);
+            localStorage.setItem('current_school_code', school.school_code);
+            if (school.logo_url) localStorage.setItem('current_school_logo', school.logo_url);
+          }
+          navigate('/student/dashboard');
+          return;
+        }
+      } catch (err) {
+        console.error("Session check redirect failed:", err);
+      }
+    }
+    setCheckingSession(false);
+  };
+  checkSession();
+ }, [navigate]);
 
  const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -127,6 +191,15 @@ const LoginPage = () => {
   { id: 'teacher', icon: <Briefcase size={40} />, label: 'Teacher', sub: 'Educator Hub', color: 'bg-emerald-600' },
   { id: 'student', icon: <GraduationCap size={40} />, label: 'Student', sub: 'Learning Portal', color: 'bg-purple-600' }
  ];
+
+  if (checkingSession) return (
+    <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 font-inter">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-slate-800 border-t-slate-300 rounded-full animate-spin"></div>
+        <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Authenticating Protocol...</p>
+      </div>
+    </div>
+  );
 
  return (
   <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 relative overflow-hidden font-inter">
