@@ -40,13 +40,26 @@ const StudentFees = () => {
   const pending = (fees || []).filter((f: any) => f.status === 'Pending').reduce((sum: number, f: any) => sum + Number(f.total_amount), 0);
 
   const handleWhatsApp = (fee: any) => {
+    if (!student?.contact_number) return toast.error("Contact number not found in profile");
+
+    // ✅ Clean Phone Number
+    let phone = student.contact_number.replace(/\D/g, ''); 
+    if (phone.length === 10) phone = `91${phone}`;
+    else if (phone.length === 12 && phone.startsWith('91')) phone = phone;
+    else if (phone.length > 10 && !phone.startsWith('91')) phone = `91${phone.slice(-10)}`;
+
     const breakdown = Object.entries(fee.fee_structure || {})
       .filter(([_, val]) => Number(val) > 0)
-      .map(([key, val]) => `• ${key.toUpperCase()}: ₹${val}`)
+      .map(([key, val]) => {
+        // Try to find the head name (key might be an ID or a name depending on legacy)
+        return `• ${key.toUpperCase()}: ₹${val}`;
+      })
       .join('%0A');
 
-    const message = `*📄 FEE RECEIPT - ${localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}*%0A%0A*Student:* ${student?.full_name}%0A*Month:* ${fee.month}%0A%0A*BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAID:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Thank you for choosing ASM!_`;
-    window.open(`https://wa.me/91${student?.contact_number}?text=${message}`, '_blank');
+    const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
+    const message = `*📄 FEE RECEIPT - ${schoolName.toUpperCase()}*%0A%0A*Student:* ${student?.full_name}%0A*Month:* ${fee.month}%0A%0A*BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAID:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Thank you for your payment!_%0A_ASM Management_`;
+    
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
     toast.success("Receipt shared on WhatsApp!");
   };
 

@@ -94,7 +94,7 @@ const Home = () => {
             >
               <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">The Future of Education</span>
               <h1 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tighter uppercase">
-                Empower Your <br/> Schools with One <span className="text-indigo-600 underline decoration-indigo-200">Unified Platform</span>
+                Tekool: Free <br/> School Management <span className="text-indigo-600 underline decoration-indigo-200">System India</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 The ultimate school management solution for growing educational institutions and chains. Synchronize data across campuses with institutional-grade security.
@@ -161,8 +161,8 @@ const Home = () => {
         <section id="features" className="py-32 bg-white">
           <div className="max-w-[1400px] mx-auto px-6 md:px-10">
             <div className="text-center max-w-full mx-auto mb-20 space-y-4">
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">Why Multi-School Management?</h2>
-              <p className="text-lg text-slate-500 leading-relaxed uppercase font-black text-[10px] tracking-widest">Centralize the complexity of diverse campuses into a single, high-performance command center.</p>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">India's Leading Free School ERP</h2>
+              <p className="text-lg text-slate-500 leading-relaxed uppercase font-black text-[10px] tracking-widest">The most powerful and free school management software tailored for Indian educational institutions.</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-10">
@@ -190,8 +190,8 @@ const Home = () => {
           <div className="max-w-[1400px] mx-auto px-6 md:px-10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
               <div className="max-w-2xl space-y-4">
-                <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">Every Tool Your Schools Need</h2>
-                <p className="text-lg text-slate-500">A comprehensive ecosystem designed to automate administrative friction and let educators focus on learning.</p>
+                <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">Everything in One Free Software</h2>
+                <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Tekool provides a comprehensive digital ecosystem for your campus.</p>
               </div>
               <button className="text-indigo-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group">
                 Explore All modules <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />

@@ -26,7 +26,9 @@ const ManageFees = () => {
  const [month, setMonth] = useState('');
  const [feeValues, setFeeValues] = useState<any>({});
  const [bulkMode, setBulkMode] = useState(false);
- const [remindMonth, setRemindMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [remindMonth, setRemindMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [showNextMonthPrompt, setShowNextMonthPrompt] = useState(false);
+  const [nextMonth, setNextMonth] = useState('');
 
  // ✅ 1. Persistent Data Hooks
  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
@@ -54,7 +56,27 @@ const ManageFees = () => {
     feeHeads.forEach((h: any) => initialValues[h.id] = 0);
     setFeeValues(initialValues);
   }
- }, [feeHeads]);
+  }, [feeHeads]);
+
+  // ✅ Automated Next Month Check
+  useEffect(() => {
+    const checkNextMonth = async () => {
+      const today = new Date();
+      const nextDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+      const nextMonthStr = `${nextDate.getFullYear()}-${(nextDate.getMonth() + 1).toString().padStart(2, '0')}`;
+      setNextMonth(nextMonthStr);
+
+      const { count } = await supabase
+        .from('fees')
+        .select('*', { count: 'exact', head: true })
+        .eq('month', nextMonthStr);
+      
+      if (count === 0) {
+        setShowNextMonthPrompt(true);
+      }
+    };
+    checkNextMonth();
+  }, []);
 
  const handleAddFeeHead = async () => {
   if (!newHeadName) return toast.error("Enter fee head name");
@@ -102,6 +124,20 @@ const ManageFees = () => {
    setLocalLoading(false);
   }
  };
+
+  const handlePrepareNextMonth = async () => {
+    if (!nextMonth) return;
+    
+    // Set target month to nextMonth and trigger clone
+    setMonth(nextMonth);
+    toast.info(`Preparing records for ${nextMonth}...`);
+    
+    // We can't easily wait for setMonth to reflect, so we use a small delay or pass it directly
+    setTimeout(() => {
+        handleCloneLastMonthFees(); 
+        setShowNextMonthPrompt(false);
+    }, 100);
+  };
 
  const handleAssignFee = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -154,6 +190,12 @@ const ManageFees = () => {
   const student = fee.students;
   if (!student?.contact_number) return toast.error("No contact number found");
 
+  // ✅ Clean Phone Number (Remove non-digits and ensure 91 prefix)
+  let phone = student.contact_number.replace(/\D/g, ''); 
+  if (phone.length === 10) phone = `91${phone}`;
+  else if (phone.length === 12 && phone.startsWith('91')) phone = phone;
+  else if (phone.length > 10 && !phone.startsWith('91')) phone = `91${phone.slice(-10)}`;
+
   const breakdown = Object.entries(fee.fee_structure || {})
    .filter(([_, val]) => Number(val) > 0)
     .map(([headId, val]) => {
@@ -162,10 +204,22 @@ const ManageFees = () => {
     })
    .join('%0A');
 
-  const message = `*📄 FEE REMINDER - ${localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir'}*%0A%0A*Student:* ${student.full_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month._%0A_Thank you, ASM Management_`;
-  
-  window.open(`https://wa.me/91${student.contact_number}?text=${message}`, '_blank');
- };
+  const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
+  const message = `*📄 FEE REMINDER - ${schoolName.toUpperCase()}*%0A%0A*Student:* ${student.full_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month to avoid late fees._%0A_Thank you, Management_`;
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+  };
+
+  const handleBulkReminders = () => {
+    if (pendingReminders.length === 0) return toast.error("No pending reminders");
+    if (!window.confirm(`This will open ${pendingReminders.length} WhatsApp tabs. Continue?`)) return;
+
+    pendingReminders.forEach((fee: any, idx: number) => {
+      setTimeout(() => {
+        handleSendReminder(fee);
+      }, idx * 1500); // 1.5s delay to prevent browser blocking/spam
+    });
+    toast.success(`Dispatching ${pendingReminders.length} reminders...`);
+  };
 
  if (loading && students.length === 0) {
   return (
@@ -211,8 +265,33 @@ const ManageFees = () => {
 
     {/* --- MAIN INTERFACE --- */}
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-     
-     {/* --- LEFT: MAIN CONFIG & REMINDERS --- */}
+          {/* 🟢 AUTOMATION BANNER */}
+        {showNextMonthPrompt && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-10 p-8 bg-blue-600 rounded-[5px] text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-blue-200 border-none relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-6 relative z-10">
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
+                <Clock size={28} className="text-white" />
+              </div>
+              <div className="text-center md:text-left">
+                <h3 className="text-xl font-black uppercase tracking-tight">Automation Engine</h3>
+                <p className="text-[10px] font-black opacity-80 uppercase tracking-widest mt-1">Fees for {nextMonth} are not prepared yet.</p>
+              </div>
+            </div>
+            <button 
+              onClick={handlePrepareNextMonth}
+              className="w-full md:w-auto px-10 py-4 bg-white text-blue-600 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl uppercase relative z-10"
+            >
+              Prepare {nextMonth} Records Now
+            </button>
+          </motion.div>
+        )}
+
+        {/* --- LEFT: MAIN ASSIGNMENT CONSOLE --- */}
      <div className="lg:col-span-2 space-y-10">
        {/* 🔵 FEE ASSIGNMENT FORM */}
        <motion.div 
@@ -344,14 +423,22 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">PENDING FEE ALERTS</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[5px]">
-            <Calendar size={16} className="text-slate-400 ml-2" />
-            <input 
+           <div className="flex items-center gap-4">
+            <button 
+              onClick={handleBulkReminders}
+              className="px-6 py-3 bg-emerald-600 text-white rounded-[5px] text-[9px] font-black tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase shadow-lg shadow-emerald-100"
+            >
+              <Zap size={14} /> Dispatch All Pending
+            </button>
+            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[5px]">
+              <Calendar size={16} className="text-slate-400 ml-2" />
+              <input 
               type="month" 
               className="bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase" 
               value={remindMonth}
               onChange={(e) => setRemindMonth(e.target.value)}
             />
+            </div>
           </div>
         </div>
 
