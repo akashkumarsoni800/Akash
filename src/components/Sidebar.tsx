@@ -18,7 +18,8 @@ const Sidebar = () => {
  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
-  const schoolName = localStorage.getItem('current_school_name') || 'ASMD';
+  let schoolName = localStorage.getItem('current_school_name') || 'Tekool';
+  if (schoolName === 'ASMD' || schoolName === 'Academic Luminary') schoolName = 'Tekool';
   const schoolCode = localStorage.getItem('current_school_code');
 
   useEffect(() => {
