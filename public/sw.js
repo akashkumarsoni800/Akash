@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tekool-v1';
+const CACHE_NAME = 'tekool-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();

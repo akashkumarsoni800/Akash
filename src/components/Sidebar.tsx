@@ -130,7 +130,10 @@ const Sidebar = () => {
             className="w-full h-full object-contain p-1" 
             alt="logo" 
             crossOrigin="anonymous"
-            onError={() => setLogoLoadError(true)}
+            onError={() => {
+              console.warn("Sidebar logo load failed, falling back to logo.png");
+              setLogoLoadError(true);
+            }}
           />
         ) : (
           <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />

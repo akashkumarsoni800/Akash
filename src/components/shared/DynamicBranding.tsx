@@ -83,18 +83,24 @@ const DynamicBranding = () => {
             const cachedLogo = localStorage.getItem('current_school_logo');
             const cachedName = localStorage.getItem('current_school_name');
 
-            if (data.logo_url !== cachedLogo || data.name !== cachedName) {
-              if (data.logo_url) localStorage.setItem('current_school_logo', data.logo_url);
-              if (data.name) localStorage.setItem('current_school_name', data.name);
-              // Update state or trigger local refresh
-              updateBranding();
+            if (data.logo_url) {
+              console.log("Branding Sync: New logo detected", data.logo_url);
+              localStorage.setItem('current_school_logo', data.logo_url);
             }
+            if (data.name) {
+              console.log("Branding Sync: New name detected", data.name);
+              localStorage.setItem('current_school_name', data.name);
+            }
+            // Dispatch manual storage event for same-tab reactivity
+            window.dispatchEvent(new Event('storage'));
+            updateBranding();
           }
         } catch (err) {
           console.error("Branding sync failed:", err);
         }
       };
 
+      console.log("Setting PWA Icon:", iconUrl);
       generateManifest();
       fetchLatestBranding();
     };
