@@ -121,7 +121,7 @@ const DynamicBranding = () => {
       clearInterval(interval);
     };
   }, []);
- Riverside
+
   return null;
 };
 
