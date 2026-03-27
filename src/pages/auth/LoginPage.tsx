@@ -236,7 +236,7 @@ const LoginPage = () => {
      >
       <div className="text-center mb-16">
        <div className="mx-auto mb-8 flex flex-col items-center">
-        <TekoolLogo size="xl" letterOnly className="hover:rotate-6 transition-transform" />
+        <img src="/logo.png" className="w-32 h-32 object-contain hover:rotate-6 transition-transform" alt="Logo" />
         <h1 className="text-6xl md:text-7xl font-black text-slate-900 leading-[0.9] mt-8 uppercase">
           TEKOOL DIGITAL<br/>
           <span className="text-slate-400">ECOSYSTEM</span>
