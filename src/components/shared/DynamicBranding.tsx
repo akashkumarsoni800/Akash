@@ -25,43 +25,53 @@ const DynamicBranding = () => {
       const iconUrl = schoolLogo || '/logo.png';
 
       // 3. Dynamic Manifest Generation
-      const generateManifest = async () => {
-        const manifest = {
-          "name": schoolName,
-          "short_name": schoolName,
-          "description": `${schoolName} - Powered by Tekool`,
-          "start_url": window.location.origin + "/",
-          "display": "standalone",
-          "background_color": "#ffffff",
-          "theme_color": "#ffffff",
-          "icons": [
-            {
-              "src": iconUrl,
-              "sizes": "192x192",
-              "type": "image/png",
-              "purpose": "any maskable"
-            },
-            {
-              "src": iconUrl,
-              "sizes": "512x512",
-              "type": "image/png",
-              "purpose": "any maskable"
-            }
-          ]
-        };
+        const generateManifest = () => {
+          const manifest = {
+            "name": schoolName,
+            "short_name": schoolName.substring(0, 12),
+            "description": `${schoolName} - Powered by Tekool`,
+            "start_url": "./",
+            "scope": "/",
+            "display": "standalone",
+            "orientation": "portrait",
+            "background_color": "#ffffff",
+            "theme_color": "#0f172a",
+            "icons": [
+              {
+                "src": iconUrl,
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any maskable"
+              },
+              {
+                "src": iconUrl,
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+              }
+            ]
+          };
 
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], { type: 'application/json' });
-        const manifestURL = URL.createObjectURL(blob);
+          const stringManifest = JSON.stringify(manifest);
+          const blob = new Blob([stringManifest], { type: 'application/manifest+json' });
+          const manifestURL = URL.createObjectURL(blob);
 
-        const manifestLink = document.getElementById('manifest-link');
-        if (manifestLink) {
-          manifestLink.setAttribute('href', manifestURL);
-        }
+          const manifestLink = document.getElementById('manifest-link');
+          if (manifestLink) {
+            manifestLink.setAttribute('href', manifestURL);
+            console.log("Manifest link updated:", manifestURL);
+          } else {
+            console.warn("Manifest link element not found.");
+          }
 
         // Update Favicon and Apple Touch Icon too
         const faviconLink = document.getElementById('favicon-link');
-        if (faviconLink) faviconLink.setAttribute('href', iconUrl);
+        if (faviconLink) {
+          faviconLink.setAttribute('href', iconUrl);
+          console.log("Favicon updated:", iconUrl);
+        } else {
+          console.warn("Favicon link element not found.");
+        }
 
         const appleIconLink = document.getElementById('apple-touch-icon');
         if (appleIconLink) appleIconLink.setAttribute('href', iconUrl);

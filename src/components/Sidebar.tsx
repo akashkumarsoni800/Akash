@@ -222,7 +222,7 @@ const Sidebar = () => {
      )}
     </nav>
 
-    <div className="p-4 mt-auto">
+     <div className="p-4 mt-auto">
      <div className="p-4 rounded-[5px] bg-slate-800/40 border border-slate-700/50 mb-4">
        <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden border border-slate-600 flex items-center justify-center">
@@ -233,14 +233,26 @@ const Sidebar = () => {
          <p className="text-[8px] font-black text-slate-500 tracking-widest mt-0.5">{profile.role}</p>
         </div>
        </div>
-       <button 
-        onClick={handleLogout}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[5px] bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black tracking-widest border border-transparent hover:border-rose-500/20"
-       >
-        <LogOut size={12} /> Terminate session
-       </button>
+       <div className="flex flex-col gap-2">
+         <button 
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[5px] bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black tracking-widest border border-transparent hover:border-rose-500/20"
+         >
+          <LogOut size={12} /> Terminate session
+         </button>
+         <button 
+          onClick={() => {
+            localStorage.removeItem('current_school_logo');
+            localStorage.removeItem('current_school_name');
+            window.location.reload();
+          }}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[5px] bg-slate-800/20 text-slate-500 hover:text-blue-400 transition-all text-[9px] font-black tracking-widest border border-dashed border-slate-700 hover:border-blue-500/30"
+         >
+          <PieChart size={10} /> Force Sync Branding
+         </button>
+       </div>
      </div>
-     <p className="text-[8px] font-black text-slate-600 text-center ">Integrated Logic</p>
+     <p className="text-[8px] font-black text-slate-600 text-center ">Integrated Logic • v3.0</p>
     </div>
    </aside>
 
