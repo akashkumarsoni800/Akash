@@ -1,6 +1,6 @@
 {
-  "name": "Adarsh Shishu Mandir Digital",
-  "short_name": "ASMD Portal",
+  "name": "Tekool Digital Portal",
+  "short_name": "Tekool",
   "description": "Premium School Management System",
   "start_url": "/",
   "display": "standalone",

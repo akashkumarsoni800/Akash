@@ -50,10 +50,15 @@ import DocumentHub from './pages/admin/DocumentHub';
 import GalleryPage from './pages/GalleryPage';
 
 
+// --- SHARED ---
+import DynamicBranding from './components/shared/DynamicBranding';
+
+
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 notranslate flex flex-col">
+        <DynamicBranding />
         <Toaster position="top-right" richColors closeButton />
 
         <Routes>

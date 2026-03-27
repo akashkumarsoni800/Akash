@@ -47,8 +47,8 @@ const Home = () => {
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white shadow-lg shadow-indigo-100 font-black text-xl">A</div>
-            <span className="text-xl font-black tracking-tighter text-indigo-950 uppercase hidden sm:block">Academic <span className="text-indigo-600">Luminary</span></span>
+            <div className="w-10 h-10 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white shadow-lg shadow-indigo-100 font-black text-xl">T</div>
+            <span className="text-xl font-black tracking-tighter text-indigo-950 uppercase hidden sm:block">Tekool</span>
           </div>
 
           <nav className="hidden lg:flex items-center gap-10">
@@ -265,7 +265,7 @@ const Home = () => {
             <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Voice of Leadership</h2>
             <div className="max-w-full mx-auto space-y-10">
               <p className="text-3xl md:text-5xl font-black leading-tight tracking-tighter italic">
-                "Academic Luminary has completely transformed how we manage our network of 12 international schools. The unified reporting alone saved us hundreds of manual labor hours per month."
+                "Tekool has completely transformed how we manage our network of 12 international schools. The unified reporting alone saved us hundreds of manual labor hours per month."
               </p>
               <div className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full border-4 border-indigo-500/30 overflow-hidden ring-4 ring-slate-900">
@@ -305,8 +305,8 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 md:col-span-1 space-y-8 text-left">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white font-black text-sm uppercase">A</div>
-                <span className="text-sm font-black text-indigo-950 uppercase">Academic Luminary</span>
+                <div className="w-8 h-8 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white font-black text-sm uppercase">T</div>
+                <span className="text-sm font-black text-indigo-950 uppercase">Tekool</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Redefining institutional management through precision engineering and editorial design.</p>
             </div>
@@ -317,7 +317,7 @@ const Home = () => {
           </div>
 
           <div className="pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-5">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">© 2024 Academic Luminary. All rights reserved.</p>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">© 2024 Tekool. All rights reserved.</p>
             <div className="flex gap-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">
               <span>Engage globally. Manage locally.</span>
             </div>
