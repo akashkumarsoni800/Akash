@@ -18,10 +18,11 @@
 
 body {
   background-color: var(--bg-main);
-  color: #0f172a; /* text-slate-900 */
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-primary);
+  line-height: 1.6; /* Increased for readability */
 }
 
 h1, h2, h3 {
@@ -88,16 +89,17 @@ h4, h5, h6 {
 
 .premium-card {
   background-color: white;
-  border-radius: 2rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9; /* border-slate-100 */
+  border-radius: 2.5rem; /* Larger radius for premium feel */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(226, 232, 240, 0.6);
   overflow: hidden;
-  transition: all 0.5s;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .premium-card:hover {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border-color: #e2e8f0;
+  box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  border-color: #cbd5e1;
 }
 
 .premium-stat-card {
