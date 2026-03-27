@@ -204,7 +204,7 @@ export default function ExamsManagement() {
              <div className="relative">
               <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
               <textarea 
-               className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
+               className="w-full pl-16 pr-8 py-3 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
                placeholder="Mathematics, Physics, Chemistry... (comma separated)"
                value={formData.subjects}
                onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
@@ -214,10 +214,10 @@ export default function ExamsManagement() {
            </div>
 
            <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-blue-600 border-none shadow-xl">
+            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-3 hover:bg-blue-600 border-none shadow-xl">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Save Exam</>}
             </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>
          </form>
         </motion.div>
@@ -234,7 +234,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within/input:text-blue-600">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
-   <input className={`premium-input text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-5`} {...props} />
+   <input className={`premium-input text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-3`} {...props} />
   </div>
  </div>
 );

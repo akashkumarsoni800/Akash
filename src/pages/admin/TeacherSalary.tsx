@@ -337,7 +337,7 @@ const TeacherSalary = () => {
           <button 
            type="submit" 
            disabled={loading}
-           className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl"
+           className="premium-button-admin w-full bg-white text-slate-900 duration-300 hover:bg-blue-600 hover:text-white border-none shadow-xl py-3"
           >
            {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
            {loading ? 'Authenticating...' : 'Authorize Payment'}
@@ -431,7 +431,7 @@ const TeacherSalary = () => {
             <button 
              onClick={() => markSalaryPaid(salary.id)}
              disabled={salaryLoading[salary.id] || salary.status === 'Paid'}
-             className="flex-1 py-5 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
+             className="flex-1 py-3 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
             >
              {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
              {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
@@ -446,7 +446,7 @@ const TeacherSalary = () => {
        )}
       </div>
       
-      <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
+      <button className="mt-10 py-3 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
         Open Audit Vault →
       </button>
      </motion.div>

@@ -252,10 +252,10 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
            </div>
 
            <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-emerald-600 border-none shadow-xl">
+            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-3 hover:bg-emerald-600 border-none shadow-xl">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Save Teacher</>}
             </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>
          </form>
         </motion.div>
@@ -272,7 +272,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-emerald-600">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-400 transition-colors" size={18} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-3 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
   </div>
  </div>
 );
