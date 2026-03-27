@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { 
  UserPlus, Plus, Search, 
@@ -45,22 +46,47 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Identity conflict: Email registered to scholar (${existing.full_name})`);
 
-   // 2. Auth Protocol & Database Indexing via Edge Function
+   // 2. Auth Protocol & Database Indexing via Secondary Client
    const schoolId = localStorage.getItem('current_school_id');
-   const { data, error } = await supabase.functions.invoke('create-user', {
-    body: {
-     full_name: formData.fullName,
-     email: formData.email,
-     password: formData.password,
-     role: 'teacher',
-     subject: formData.subject,
-     phone: formData.phone,
-     school_id: schoolId
+   
+   // Initialize temporary client to prevent session hijack
+   const tempSupabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    {
+     auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+     }
+    }
+   );
+
+   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+    email: formData.email,
+    password: formData.password,
+    options: {
+     data: {
+      full_name: formData.fullName,
+      role: 'teacher'
+     }
     }
    });
 
-   if (error) throw new Error(error.message || "Failed to connect to server.");
-   if (data && data.error) throw new Error(data.error);
+   if (authError) throw authError;
+
+   if (authData.user) {
+    const { error: dbError } = await supabase.from('teachers').insert([{
+     id: authData.user.id,
+     full_name: formData.fullName,
+     subject: formData.subject,
+     email: formData.email,
+     phone: formData.phone,
+     role: 'teacher',
+     school_id: schoolId
+    }]);
+    if (dbError) throw dbError;
+   }
 
    toast.success("Identity Secured: Faculty Node Initialized 💎");
    setIsModalOpen(false);

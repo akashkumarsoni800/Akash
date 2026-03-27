@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
@@ -35,22 +36,48 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as a student (${existingStudent.full_name}).`);
    }
 
-   // 1. Create Auth User & Database Record via Edge Function
+   // 1. Create Auth User & Database Record via Secondary Client
    const schoolId = localStorage.getItem('current_school_id');
-   const { data, error } = await supabase.functions.invoke('create-user', {
-    body: {
-     full_name: formData.name,
-     email: formData.email,
-     password: 'Teacher@123',
-     role: 'teacher',
-     subject: formData.subject,
-     phone: formData.phone,
-     school_id: schoolId
+   
+   // Initialize temporary client to prevent session hijack
+   const tempSupabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    {
+     auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+     }
     }
+   );
+
+   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+    email: formData.email,
+    password: 'Teacher@123',
+    options: {
+     data: {
+      full_name: formData.name,
+      role: 'teacher',
+     },
+    },
    });
 
-   if (error) throw new Error(error.message || "Failed to connect to server.");
-   if (data && data.error) throw new Error(data.error);
+   if (authError) throw authError;
+
+   if (authData.user) {
+    const { error: dbError } = await supabase.from('teachers').insert([{
+     id: authData.user.id,
+     full_name: formData.name,
+     subject: formData.subject,
+     email: formData.email,
+     phone: formData.phone,
+     role: 'teacher',
+     school_id: schoolId
+    }]);
+    
+    if (dbError) throw dbError;
+   }
 
    toast.success("Teacher Created Successfully!");
    navigate('/admin/dashboard');

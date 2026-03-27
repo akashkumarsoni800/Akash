@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
@@ -27,17 +28,44 @@ const CreateAdmin = () => {
     throw new Error("Password must be at least 6 characters long.");
    }
 
-   const { data, error } = await supabase.functions.invoke('create-user', {
-    body: {
-     ...formData,
-     role: 'admin'
+   // 1. Initialize temporary client for session isolation
+   const tempSupabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    {
+     auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+     }
     }
+   );
+
+   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+    email: formData.email,
+    password: formData.password,
+    options: {
+     data: {
+      full_name: formData.full_name,
+      role: 'admin',
+     },
+    },
    });
 
-   if (error) throw new Error(error.message || "Failed to connect to server.");
-   
-   if (data && data.error) {
-    throw new Error(data.error);
+   if (authError) throw authError;
+
+   if (authData.user) {
+    const schoolId = localStorage.getItem('current_school_id');
+    const { error: dbError } = await supabase.from('teachers').insert([{
+     id: authData.user.id,
+     full_name: formData.full_name,
+     email: formData.email,
+     role: 'admin',
+     school_id: schoolId,
+     subject: 'Administration'
+    }]);
+
+    if (dbError) throw dbError;
    }
 
    toast.success(`New Admin Paid: ${formData.full_name}`);
