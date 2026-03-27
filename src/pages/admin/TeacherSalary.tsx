@@ -382,7 +382,7 @@ const TeacherSalary = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 * idx }}
-          className="bg-white rounded-[3.5rem] border border-slate-50 p-8 hover:border-blue-200 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 group/item relative overflow-hidden"
+          className="bg-white rounded-[5px] border border-slate-50 p-8 hover:border-blue-200 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-700 group/item relative overflow-hidden"
          >
           <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 opacity-10 blur-3xl group-hover/item:opacity-30 transition-opacity"></div>
           
