@@ -122,29 +122,27 @@ const Sidebar = () => {
    <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
       <div className="flex items-center gap-4">
-       <div className="w-14 h-14 rounded-[5px] flex items-center justify-center bg-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden border border-slate-100">
-        {schoolLogo ? (
+       <div className="w-14 h-14 rounded-[5px] flex items-center justify-center bg-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden border border-slate-100 relative">
+        {schoolLogo && !logoLoadError ? (
           <img 
             src={schoolLogo} 
             className="w-full h-full object-contain p-1" 
             alt="logo" 
             crossOrigin="anonymous"
-            onError={(e: any) => {
-              e.currentTarget.style.display = 'none';
-              e.currentTarget.nextSibling.style.display = 'flex';
-            }}
+            onError={() => setLogoLoadError(true)}
           />
         ) : schoolCode === 'ASM01' ? (
           <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
-        ) : null}
-        
-        {/* Persistent Fallback / Placeholder */}
-        <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl" style={{ display: schoolLogo ? 'none' : 'flex' }}>
-          {(!schoolName || schoolName === 'Academic Luminary') ? 'T' : schoolName.charAt(0).toUpperCase()}
-        </div>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl bg-white">
+            {(!schoolName || schoolName === 'Academic Luminary' || schoolName === 'ASMD') ? 'T' : schoolName.charAt(0).toUpperCase()}
+          </div>
+        )}
        </div>
        <div>
-        <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">{(!schoolName || schoolName === 'Academic Luminary') ? 'Tekool' : schoolName}</h2>
+        <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">
+          {(!schoolName || schoolName === 'Academic Luminary' || schoolName === 'ASMD') ? 'Tekool' : schoolName}
+        </h2>
         <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v5.0</p>
        </div>
       </div>

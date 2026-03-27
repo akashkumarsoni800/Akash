@@ -45,7 +45,7 @@ const DynamicBranding = () => {
 
               // Draw Dark Letter (Larger)
               ctx.fillStyle = '#1e293b'; // slate-800
-              ctx.font = 'black 350px Outfit, Inter, sans-serif'; 
+              ctx.font = 'bold 350px Arial, sans-serif'; 
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
               ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 266); 
@@ -64,7 +64,7 @@ const DynamicBranding = () => {
           "start_url": "/",
           "display": "standalone",
           "background_color": "#ffffff",
-          "theme_color": "#2563eb",
+          "theme_color": "#ffffff",
           "icons": [
             {
               "src": iconUrl,
