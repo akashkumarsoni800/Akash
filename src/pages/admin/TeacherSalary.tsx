@@ -355,7 +355,7 @@ const TeacherSalary = () => {
      >
       <div className="flex items-center justify-between mb-14 border-b border-slate-50 pb-10">
         <div className="space-y-3">
-          <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Salary<br/><span className="text-[var(--accent-admin)] uppercase">History</span></h2>
+          <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Salary<br/><span className="text-[var(--accent-admin)] uppercase">History</span></h2>
          <p className="text-[9px] font-black text-slate-400  leading-none">Historical Payment </p>
         </div>
         <div className="flex flex-col items-end gap-2">
