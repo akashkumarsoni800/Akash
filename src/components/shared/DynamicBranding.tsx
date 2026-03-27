@@ -27,7 +27,7 @@ const DynamicBranding = () => {
         let iconUrl = schoolLogo || '/logo.png';
         
         // --- LETTER LOGO FALLBACK ---
-        if (!schoolLogo && schoolCode !== 'ASM01' && schoolName !== 'Tekool') {
+        if (!schoolLogo && schoolCode !== 'ASM01') {
           try {
             const canvas = document.createElement('canvas');
             canvas.width = 512;
