@@ -46,6 +46,10 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Identity conflict: Email registered to scholar (${existing.full_name})`);
 
+   // 1.1 Faculty Conflict Check
+   const { data: existingStaff } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
+   if (existingStaff) throw new Error(`Identity conflict: Email registered to faculty (${existingStaff.full_name})`);
+
    // 2. Auth Protocol & Database Indexing via Secondary Client
    const schoolId = localStorage.getItem('current_school_id');
    

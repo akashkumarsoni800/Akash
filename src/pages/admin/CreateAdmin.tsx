@@ -28,6 +28,10 @@ const CreateAdmin = () => {
     throw new Error("Password must be at least 6 characters long.");
    }
 
+   // 1.0 Identity Conflict Check
+   const { data: existing } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
+   if (existing) throw new Error(`Identity conflict: Email registered to faculty (${existing.full_name})`);
+
    // 1. Initialize temporary client for session isolation
    const tempSupabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,

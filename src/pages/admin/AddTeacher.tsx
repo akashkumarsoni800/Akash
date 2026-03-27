@@ -36,6 +36,17 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as a student (${existingStudent.full_name}).`);
    }
 
+   // 0.1 Check if email already exists in Teachers table
+   const { data: existingTeacher } = await supabase
+    .from('teachers')
+    .select('full_name')
+    .eq('email', formData.email)
+    .maybeSingle();
+
+   if (existingTeacher) {
+    throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
+   }
+
    // 1. Create Auth User & Database Record via Secondary Client
    const schoolId = localStorage.getItem('current_school_id');
    
