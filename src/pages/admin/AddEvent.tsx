@@ -24,8 +24,10 @@ const AddEvent = () => {
 
   try {
    const { error } = await supabase
-    .from('events')
+    .from('notices')
     .insert([
+      {
+       school_id: localStorage.getItem('current_school_id'),
      {
       title: formData.title,
       description: formData.description,

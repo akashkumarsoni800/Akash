@@ -16,14 +16,29 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 
   // Fetch notices for the Bell icon
   const fetchNotices = async () => {
-    const schoolId = localStorage.getItem('current_school_id');
-    const { data } = await supabase
-      .from('notices')
-      .select('id, title, created_at, category')
-      .eq('school_id', schoolId)
-      .order('created_at', { ascending: false })
-      .limit(5);
-    if (data) setNotices(data);
+    try {
+      const schoolId = localStorage.getItem('current_school_id');
+      if (!schoolId) return;
+
+      const { data, error } = await supabase
+        .from('notices')
+        .select('id, title, created_at, category')
+        .eq('school_id', schoolId)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.warn("Notices table exists but query failed. Table might be empty or RLS restricted.");
+        } else {
+          console.error("Notice fetch error:", error);
+        }
+        return;
+      }
+      if (data) setNotices(data);
+    } catch (err) {
+      console.error("Critical notice fetch fail:", err);
+    }
   };
 
   React.useEffect(() => {

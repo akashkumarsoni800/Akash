@@ -1,11 +1,11 @@
 {
-  "name": "Tekool Digital Portal",
+  "name": "Tekool Digital Ecosystem",
   "short_name": "Tekool",
-  "description": "Premium School Management System",
-  "start_url": "/",
+  "description": "Premium School Management Ecosystem",
+  "start_url": "/?pwa=v1",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "logo.png",
