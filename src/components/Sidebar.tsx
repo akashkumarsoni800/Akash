@@ -132,12 +132,8 @@ const Sidebar = () => {
             crossOrigin="anonymous"
             onError={() => setLogoLoadError(true)}
           />
-        ) : schoolCode === 'ASM01' ? (
-          <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl bg-white uppercase">
-            {schoolName ? schoolName.charAt(0).toUpperCase() : 'T'}
-          </div>
+          <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
         )}
        </div>
        <div>
