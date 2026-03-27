@@ -208,7 +208,7 @@ const Sidebar = () => {
    </aside>
 
    <main className={`transition-all duration-500 pt-20 min-h-screen lg:ml-64`}>
-    <div className="pb-10 w-full px-4 md:px-10 animate__animated animate__fadeIn">
+    <div className="pb-10 w-full animate__animated animate__fadeIn">
      <Outlet />
      <div className="mt-20 no-print opacity-80 hover:opacity-100 transition-opacity px-4 md:px-0">
       <GlobalGallerySlider />
