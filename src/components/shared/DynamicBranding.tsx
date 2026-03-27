@@ -23,38 +23,7 @@ const DynamicBranding = () => {
 
       // 3. Dynamic Manifest Generation
       const generateManifest = async () => {
-        let iconUrl = schoolLogo || '/logo.png';
-
-        // --- LETTER LOGO FALLBACK ---
-        if (!schoolLogo && schoolCode !== 'ASM01') {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              // --- Clean White Background ---
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, 512, 512);
-
-              // Subtle Slate Border
-              ctx.strokeStyle = '#e2e8f0'; // slate-200
-              ctx.lineWidth = 10;
-              ctx.strokeRect(5, 5, 502, 502);
-
-              // Draw Dark Letter (Larger)
-              ctx.fillStyle = '#1e293b'; // slate-800
-              ctx.font = 'bold 350px Arial, sans-serif';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 266);
-
-              iconUrl = canvas.toDataURL('image/png');
-            }
-          } catch (e) {
-            console.error("Canvas icon generation failed:", e);
-          }
-        }
+        const iconUrl = schoolLogo || '/logo.png';
 
         const manifest = {
           "name": schoolName,
