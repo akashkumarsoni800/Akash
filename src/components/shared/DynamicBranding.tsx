@@ -3,8 +3,7 @@ import { useEffect } from 'react';
 const DynamicBranding = () => {
   useEffect(() => {
     const updateBranding = () => {
-      let schoolName = localStorage.getItem('current_school_name') || 'Tekool';
-      if (schoolName === 'Academic Luminary') schoolName = 'Tekool';
+      const schoolName = localStorage.getItem('current_school_name') || 'Tekool';
       const schoolLogo = localStorage.getItem('current_school_logo');
       const schoolCode = localStorage.getItem('current_school_code');
 
@@ -25,7 +24,7 @@ const DynamicBranding = () => {
       // 3. Dynamic Manifest Generation
       const generateManifest = async () => {
         let iconUrl = schoolLogo || '/logo.png';
-        
+
         // --- LETTER LOGO FALLBACK ---
         if (!schoolLogo && schoolCode !== 'ASM01') {
           try {
@@ -45,11 +44,11 @@ const DynamicBranding = () => {
 
               // Draw Dark Letter (Larger)
               ctx.fillStyle = '#1e293b'; // slate-800
-              ctx.font = 'bold 350px Arial, sans-serif'; 
+              ctx.font = 'bold 350px Arial, sans-serif';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 266); 
-              
+              ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 266);
+
               iconUrl = canvas.toDataURL('image/png');
             }
           } catch (e) {
@@ -82,9 +81,9 @@ const DynamicBranding = () => {
         };
 
         const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const blob = new Blob([stringManifest], { type: 'application/json' });
         const manifestURL = URL.createObjectURL(blob);
-        
+
         const manifestLink = document.getElementById('manifest-link');
         if (manifestLink) {
           manifestLink.setAttribute('href', manifestURL);
@@ -93,7 +92,7 @@ const DynamicBranding = () => {
         // Update Favicon and Apple Touch Icon too
         const faviconLink = document.getElementById('favicon-link');
         if (faviconLink) faviconLink.setAttribute('href', iconUrl);
-        
+
         const appleIconLink = document.getElementById('apple-touch-icon');
         if (appleIconLink) appleIconLink.setAttribute('href', iconUrl);
       };
@@ -106,7 +105,7 @@ const DynamicBranding = () => {
 
     // Listen for storage changes (school switch)
     window.addEventListener('storage', updateBranding);
-    
+
     // Also check every few seconds just in case (localStorage isn't reactive in same tab)
     const interval = setInterval(updateBranding, 3000);
 

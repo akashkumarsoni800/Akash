@@ -135,14 +135,14 @@ const Sidebar = () => {
         ) : schoolCode === 'ASM01' ? (
           <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl bg-white">
-            {(!schoolName || schoolName === 'Academic Luminary' || schoolName === 'ASMD') ? 'T' : schoolName.charAt(0).toUpperCase()}
+          <div className="w-full h-full flex items-center justify-center text-slate-800 font-black text-2xl bg-white uppercase">
+            {schoolName ? schoolName.charAt(0).toUpperCase() : 'T'}
           </div>
         )}
        </div>
        <div>
         <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">
-          {(!schoolName || schoolName === 'Academic Luminary' || schoolName === 'ASMD') ? 'Tekool' : schoolName}
+          {schoolName || 'Tekool'}
         </h2>
         <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v5.0</p>
        </div>
