@@ -112,7 +112,7 @@ const GalleryManagement = () => {
         </div>
         <button 
           onClick={() => setShowUpload(!showUpload)}
-          className="bg-blue-600 text-white px-8 py-4 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center gap-3"
+          className="bg-blue-600 text-white px-8 py-4 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-2xl active:scale-95 tracking-widest flex items-center gap-3"
         >
           {showUpload ? <X size={18}/> : <Plus size={18} />}
           {showUpload ? "Cancel" : "Add Photo"}
@@ -125,7 +125,7 @@ const GalleryManagement = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-white p-8 rounded-[5px] border border-blue-100 shadow-xl space-y-6"
+            className="bg-white p-8 rounded-[5px] border border-blue-100 shadow-2xl active:scale-95 tracking-widest space-y-6"
           >
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Caption / Event Name</label>

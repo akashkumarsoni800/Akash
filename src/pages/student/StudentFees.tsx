@@ -168,7 +168,7 @@ const StudentFees = () => {
                 </button>
                 <button 
                  onClick={() => window.print()} 
-                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-slate-900 text-white font-black text-[10px] tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/print"
+                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-slate-900 text-white font-black text-[10px] tracking-widest shadow-2xl active:scale-95 tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/print"
                 >
                  <Download size={16} className="group-hover/print:translate-y-1 transition-transform" /> Download PDF
                 </button>

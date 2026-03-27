@@ -126,7 +126,7 @@ export default function StudentDashboard() {
          alt="Profile"
         />
        </div>
-       <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-[5px] shadow-xl border-4 border-white z-20 animate-bounce">
+       <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-[5px] shadow-2xl active:scale-95 tracking-widest border-4 border-white z-20 animate-bounce">
         <CheckCircle2 size={24} />
        </div>
        <div className="absolute -top-6 -left-8 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
@@ -219,7 +219,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
  };
 
  return (
-  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
    <div className="flex justify-between items-start">
     <div>
      <p className="text-[9px] font-black text-slate-400 tracking-widest mb-4">{title}</p>
@@ -255,7 +255,7 @@ const ActionCard = ({ icon, label, path, color, navigate }: any) => {
  return (
   <button 
    onClick={() => navigate(path)}
-   className={`bg-white border border-slate-100 rounded-[5px] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
+   className={`bg-white border border-slate-100 rounded-[5px] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
   >
     <div className="text-4xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">{icon}</div>
     <h4 className="font-black  text-lg leading-tight">{label}</h4>

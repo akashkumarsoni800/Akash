@@ -22,7 +22,7 @@ const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, s
  return (
   <button 
    onClick={onClick}
-   className="bg-white border border-slate-100 rounded-[5px] p-8 text-left transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
+   className="bg-white border border-slate-100 rounded-[5px] p-8 text-left transition-all duration-300 group hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 relative overflow-hidden"
   >
    <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
    
@@ -198,7 +198,7 @@ export default function TeacherDashboard() {
       <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
        <div className="text-center lg:text-left">
         <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
-         <div className="w-16 h-16 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white shadow-xl shadow-emerald-100 animate-float">
+         <div className="w-16 h-16 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 animate-float">
           <Activity size={32}/>
          </div>
          <div>
@@ -222,7 +222,7 @@ export default function TeacherDashboard() {
        </div>
 
        <div className="flex flex-wrap justify-center gap-3">
-         <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
+         <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-700 transition-all shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 flex items-center gap-2">
           Record Presence
          </button>
          <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
@@ -236,7 +236,7 @@ export default function TeacherDashboard() {
     {/* Quick Stats Grid */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Pupil Directory</p>
@@ -260,7 +260,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Daily Presence</p>
@@ -283,7 +283,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Submission Hub</p>
@@ -304,7 +304,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Academic Index</p>
@@ -384,7 +384,7 @@ export default function TeacherDashboard() {
       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
       
       <div className="flex justify-between items-start mb-10 relative z-10">
-       <div className="w-20 h-20 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
+       <div className="w-20 h-20 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white text-3xl font-black shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
         {teacher?.full_name?.[0] || 'T'}
        </div>
        <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-[5px] tracking-widest border border-emerald-100/50">
@@ -408,7 +408,7 @@ export default function TeacherDashboard() {
 
       <button 
        onClick={() => navigate('/profile-setup')}
-       className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-[5px] font-black text-[10px]  shadow-xl transition-all active:scale-95"
+       className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest transition-all active:scale-95"
       >
        Manage Profile 
       </button>
@@ -431,7 +431,7 @@ export default function TeacherDashboard() {
      </p>
      <button 
       onClick={fetchDashboardData}
-      className="bg-emerald-600 text-white px-12 py-5 rounded-[5px] font-black text-[11px]  shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
+      className="bg-emerald-600 text-white px-12 py-5 rounded-[5px] font-black text-[11px]  shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
      >
       <Activity size={18} /> Forced Sync
      </button>

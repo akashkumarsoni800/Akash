@@ -139,7 +139,7 @@ const TeacherHomework: React.FC = () => {
           <p className="text-xl font-black text-slate-900 ">{homeworks.length} Assignments</p>
          </div>
        </div>
-       <button className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
+       <button className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
          <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" /> Emit New Task
        </button>
       </div>
@@ -157,7 +157,7 @@ const TeacherHomework: React.FC = () => {
        className={`group relative p-8 md:p-10 rounded-[5px] border-4 transition-all duration-700 cursor-pointer overflow-hidden ${
         selectedHomework === hw.id 
          ? 'bg-white border-emerald-600 shadow-2xl shadow-emerald-100 scale-[1.02]' 
-         : 'bg-white border-transparent shadow-sm hover:shadow-xl hover:border-slate-100'
+         : 'bg-white border-transparent shadow-sm hover:shadow-2xl active:scale-95 tracking-widest hover:border-slate-100'
        }`}
       >
        <div className="absolute -right-8 -top-8 text-slate-50 opacity-10 group-hover:opacity-20 transition-opacity rotate-12">
@@ -291,7 +291,7 @@ const TeacherHomework: React.FC = () => {
               </span>
              </td>
              <td className="p-8 text-right">
-               <button className="relative bg-slate-900 text-white px-8 py-3 rounded-[5px] font-black text-[9px]  shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group/btn overflow-hidden">
+               <button className="relative bg-slate-900 text-white px-8 py-3 rounded-[5px] font-black text-[9px]  shadow-2xl active:scale-95 tracking-widest hover:bg-emerald-600 transition-all active:scale-95 group/btn overflow-hidden">
                 <span className="relative z-10 flex items-center gap-2 font-black ">Evaluate <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></span>
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                </button>
@@ -305,7 +305,7 @@ const TeacherHomework: React.FC = () => {
         {/* Mobile Tablet Grid */}
         <div className="lg:hidden space-y-6">
           {submissions.map((submission) => (
-           <div key={submission.id} className="bg-white p-8 rounded-[5px] shadow-sm border border-slate-100 space-y-6 group hover:shadow-xl transition-all">
+           <div key={submission.id} className="bg-white p-8 rounded-[5px] shadow-sm border border-slate-100 space-y-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
              <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-slate-50 rounded-[5px] flex items-center justify-center font-black text-slate-300 text-lg ">{submission.student_name?.charAt(0)}</div>

@@ -144,7 +144,7 @@ const StudentProfile = () => {
    <h1 className="text-5xl font-black text-slate-900  uppercase"> Error</h1>
    <p className="text-slate-400 mt-4 font-black tracking-widest text-xs">{error || "Reference node not found"}</p>
    <div className="flex gap-6 mt-12">
-    <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
+    <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all ">Go Back</button>
     <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
    </div>
   </div>
@@ -157,7 +157,7 @@ const StudentProfile = () => {
     {/* --- TOP ACTIONS --- */}
     <div className="flex justify-between items-center no-print">
      <div className="flex gap-4">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[5px] font-black text-[10px] text-slate-900 shadow-sm hover:shadow-xl transition-all ">
+      <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[5px] font-black text-[10px] text-slate-900 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all ">
        <ChevronLeft size={18} /> Back
       </button>
       <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[5px] font-black text-[10px] shadow-2xl flex items-center gap-4 hover:bg-indigo-600 transition-all ">
@@ -235,7 +235,7 @@ const StudentProfile = () => {
       >
        <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
        <div className="flex items-center gap-5 relative z-10 border-b border-slate-50 pb-10">
-         <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-white shadow-xl">
+         <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest">
           <Fingerprint size={24} />
          </div>
          <h3 className="font-black text-[12px] text-slate-900  uppercase">Student Dossier</h3>
@@ -323,7 +323,7 @@ const StudentProfile = () => {
             </div>
            ) : (
             fees.map((fee: any) => (
-             <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
+             <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-2xl active:scale-95 tracking-widest group/row">
                <div className="flex items-center gap-6">
                 <div className="w-12 h-12 bg-white rounded-[5px] flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors font-black text-xs ">
                   {fee.month ? fee.month.charAt(0) : 'C'}
@@ -379,7 +379,7 @@ const StudentProfile = () => {
             </div>
            ) : (
             results.map((res: any) => (
-             <div key={res.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-10 border border-transparent hover:border-emerald-100 hover:shadow-xl group/res">
+             <div key={res.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-10 border border-transparent hover:border-emerald-100 hover:shadow-2xl active:scale-95 tracking-widest group/res">
                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div className="space-y-4">
                  <div className="flex items-center gap-3">
@@ -446,7 +446,7 @@ const MiniStatCard = ({ label, value, icon: Icon, color }: any) => {
   };
 
   return (
-   <div className={`p-8 rounded-[5px] border ${colorMap[color as keyof typeof colorMap]} shadow-inner space-y-4 group hover:shadow-xl transition-all duration-500`}>
+   <div className={`p-8 rounded-[5px] border ${colorMap[color as keyof typeof colorMap]} shadow-inner space-y-4 group hover:shadow-2xl active:scale-95 tracking-widest transition-all duration-500`}>
      <div className="flex items-center justify-between">
       <Icon size={16} className="opacity-40 group-hover:scale-110 transition-transform" />
       <div className={`w-1.5 h-1.5 rounded-full ${color === 'emerald' ? 'bg-emerald-500' : color === 'rose' ? 'bg-rose-500' : 'bg-slate-300'}`} />

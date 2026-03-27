@@ -169,14 +169,14 @@ const TeacherAnalytics: React.FC = () => {
 
     {/* Period Selector */}
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex justify-center mb-12">
-     <div className="bg-white/70 backdrop-blur-xl p-4 rounded-[5px] shadow-xl border border-white/50 flex gap-2">
+     <div className="bg-white/70 backdrop-blur-xl p-4 rounded-[5px] shadow-2xl active:scale-95 tracking-widest border border-white/50 flex gap-2">
       {(['week', 'month', 'term'] as const).map((period) => (
        <button
         key={period}
         onClick={() => setSelectedPeriod(period)}
         className={`px-8 py-4 rounded-[5px] font-black tracking-widest text-sm transition-all duration-300 ${
          selectedPeriod === period
-          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl shadow-purple-500/25 scale-105'
+          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-2xl active:scale-95 tracking-widest shadow-purple-500/25 scale-105'
           : 'bg-white text-gray-700 hover:bg-gray-50 shadow-lg hover:scale-105'
         }`}
        >
@@ -333,7 +333,7 @@ const TeacherAnalytics: React.FC = () => {
     >
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => navigate('/teacher/students')}
      >
       👥 View Students ({analytics.totalStudents})
@@ -341,7 +341,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => window.print()}
      >
       📈 Full Report
@@ -349,7 +349,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => {
        const top = analytics.recentResults.sort((a,b) => b.marks - a.marks)[0];
        import('sonner').then(({ toast }) => toast.info(`Top Performer: ${top?.student_name || 'Calculating...'} (${top?.marks || 0}%)`));
@@ -360,7 +360,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => {
        import('sonner').then(({ toast }) => toast.warning(`Critical Protocol: ${analytics.lowAttendance} students identified with sub-optimal attendance.`));
       }}

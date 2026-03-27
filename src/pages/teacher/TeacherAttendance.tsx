@@ -104,8 +104,8 @@ const TeacherAttendance = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
-       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📝</div>
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
+       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📝</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Session Date</p>
         <p className="text-2xl font-black text-slate-900 ">{today}</p>
@@ -116,7 +116,7 @@ const TeacherAttendance = () => {
     {/* --- CLASS SELECTOR --- */}
     <div className="grid md:grid-cols-4 gap-6">
      <div className="md:col-span-3">
-       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-xl transition-all duration-500">
+       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all duration-500">
         <div className="w-full md:w-1/3 space-y-3">
          <label className="text-[9px] font-black text-slate-400 tracking-widest ml-2">Select Target List</label>
          <div className="relative group/sel">
@@ -159,7 +159,7 @@ const TeacherAttendance = () => {
        </div>
      </div>
      
-     <div className="bg-slate-900 rounded-[5px] p-8 flex flex-col justify-center items-center text-center shadow-xl group hover:bg-blue-600 transition-all duration-700">
+     <div className="bg-slate-900 rounded-[5px] p-8 flex flex-col justify-center items-center text-center shadow-2xl active:scale-95 tracking-widest group hover:bg-blue-600 transition-all duration-700">
        <div className="w-14 h-14 bg-white/10 rounded-[5px] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
         <ShieldCheck className="text-blue-400 group-hover:text-white" size={24} />
        </div>
@@ -203,7 +203,7 @@ const TeacherAttendance = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.05 }}
-          className={`bg-white p-8 rounded-[5px] border transition-all duration-300 flex items-center justify-between group/card shadow-sm hover:shadow-xl ${
+          className={`bg-white p-8 rounded-[5px] border transition-all duration-300 flex items-center justify-between group/card shadow-sm hover:shadow-2xl active:scale-95 tracking-widest ${
            attendance[s.id] === 'P' 
            ? 'border-emerald-100 hover:border-emerald-200 bg-gradient-to-br from-white to-emerald-50/20' 
            : 'border-red-100 hover:border-red-200 bg-gradient-to-br from-white to-red-50/20 shadow-red-100/50'

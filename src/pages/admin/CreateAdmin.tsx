@@ -69,7 +69,7 @@ const CreateAdmin = () => {
        </p>
       </motion.div>
  
-      <div className="flex bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
+      <div className="flex bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
        <div className="w-14 h-14 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-sm border border-blue-100 group-hover:scale-110 transition-transform">
          <Fingerprint size={28} />
        </div>

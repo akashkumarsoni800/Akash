@@ -54,13 +54,13 @@ const AddEvent = () => {
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Dashboard</span>
      </button>
 
-     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-xl flex items-center gap-4 group">
+     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
        <span className="text-[10px] font-black  text-blue-400 ">Ready to Save</span>
      </div>
@@ -78,8 +78,8 @@ const AddEvent = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
-       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
+       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Status</p>
         <p className="text-3xl font-black text-slate-900  ">Active</p>
@@ -205,7 +205,7 @@ const AddEvent = () => {
         </div>
        </div>
 
-       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
+       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
         <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
           <Clock size={20} />
         </div>

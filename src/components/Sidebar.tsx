@@ -121,7 +121,7 @@ const Sidebar = () => {
    <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
-      <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
+      <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden ${
        profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
       }`}>
        {schoolLogo ? (

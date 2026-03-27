@@ -125,7 +125,7 @@ const DocumentHub = () => {
       <button 
        onClick={fetchStudent} 
        disabled={loading} 
-       className="premium-button-admin w-full md:w-auto bg-slate-900 text-white hover:bg-purple-600 border-none shadow-xl"
+       className="premium-button-admin w-full md:w-auto bg-slate-900 text-white hover:bg-purple-600 border-none shadow-2xl active:scale-95 tracking-widest"
       >
        {loading ? <RefreshCw className="animate-spin" size={20}/> : <Users size={20}/>}
        <span>{loading ? 'Analyzing...' : 'Access '}</span>
@@ -198,7 +198,7 @@ const DocumentHub = () => {
            onClick={() => setStudent(std)}
            className={`flex items-center gap-5 p-6 rounded-[5px] transition-all text-left border relative overflow-hidden group ${
             student?.id === std.id 
-            ? 'bg-purple-600 border-purple-600 shadow-xl shadow-purple-200' 
+            ? 'bg-purple-600 border-purple-600 shadow-2xl active:scale-95 tracking-widest shadow-purple-200' 
             : 'bg-slate-50 border-slate-100 hover:border-purple-200 hover:bg-white hover:shadow-lg'
            }`}
           >
@@ -318,7 +318,7 @@ const PremiumDocBtn = ({ icon: Icon, label, active, onClick, accent }: any) => {
     onClick={onClick} 
     className={`p-8 rounded-[5px] border-4 transition-all flex flex-col items-center gap-5 group hover:shadow-2xl active:scale-95 ${
      active 
-     ? `${accents[accent]} shadow-xl scale-105` 
+     ? `${accents[accent]} shadow-2xl active:scale-95 tracking-widest scale-105` 
      : 'bg-white border-transparent text-slate-300 hover:bg-slate-50 hover:text-slate-500'
     }`}
    >
@@ -402,7 +402,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
     </div>
 
     <div className="space-y-3">
-      <div className="bg-slate-900 p-3 rounded-[5px] border border-slate-800 shadow-xl">
+      <div className="bg-slate-900 p-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest">
        <p className="text-[9px] font-black text-white text-center leading-tight ">
         ❗ School Security Protocol: Electronic devices prohibited in terminal zones.
        </p>

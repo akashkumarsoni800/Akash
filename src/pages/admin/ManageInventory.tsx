@@ -90,7 +90,7 @@ const ManageInventory = () => {
       </motion.div>
       
       <div className="flex flex-wrap items-center justify-center gap-4">
-       <div className="bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
+       <div className="bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
          <div className="w-12 h-12 bg-amber-50 rounded-[5px] flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform shadow-inner">
           <Archive size={22} />
          </div>

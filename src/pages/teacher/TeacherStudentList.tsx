@@ -112,7 +112,7 @@ const StudentList: React.FC = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-2xl active:scale-95 tracking-widest transition-all relative z-20">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 transition-transform">🎓</div>
        <div>
         <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Managed Class</p>
@@ -181,7 +181,7 @@ const StudentList: React.FC = () => {
         <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 opacity-10 blur-3xl group-hover:opacity-30 transition-opacity"></div>
         
         <div className="flex items-center gap-6 mb-10 relative z-10">
-         <div className="w-20 h-20 bg-slate-50 rounded-[5px] border-4 border-white shadow-xl flex items-center justify-center font-black text-slate-300 text-3xl group-hover:border-emerald-100 group-hover:text-emerald-600 transition-all overflow-hidden bg-cover bg-center" style={student.photo_url ? {backgroundImage: `url(${student.photo_url})`} : {}}>
+         <div className="w-20 h-20 bg-slate-50 rounded-[5px] border-4 border-white shadow-2xl active:scale-95 tracking-widest flex items-center justify-center font-black text-slate-300 text-3xl group-hover:border-emerald-100 group-hover:text-emerald-600 transition-all overflow-hidden bg-cover bg-center" style={student.photo_url ? {backgroundImage: `url(${student.photo_url})`} : {}}>
           {!student.photo_url && student.full_name[0]}
          </div>
          <div>
@@ -220,7 +220,7 @@ const StudentList: React.FC = () => {
              <Mail size={18} />
            </div>
           </div>
-          <button className="flex items-center gap-3 bg-slate-900 text-white px-6 py-4 rounded-[5px] font-black text-[9px] tracking-widest shadow-xl group-hover:bg-emerald-600 transition-all ">
+          <button className="flex items-center gap-3 bg-slate-900 text-white px-6 py-4 rounded-[5px] font-black text-[9px] tracking-widest shadow-2xl active:scale-95 tracking-widest group-hover:bg-emerald-600 transition-all ">
            Profile <ChevronRight size={14} />
           </button>
         </div>

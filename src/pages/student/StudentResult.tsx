@@ -71,7 +71,7 @@ const StudentResult = () => {
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-emerald-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-emerald-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
@@ -133,7 +133,7 @@ const StudentResult = () => {
       >
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-10">
          <div className="flex items-center gap-6">
-           <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-white shadow-xl rotate-[15deg] group-hover:rotate-0 transition-transform duration-500">
+           <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest rotate-[15deg] group-hover:rotate-0 transition-transform duration-500">
             <FileText size={28}/>
            </div>
            <div>
@@ -157,7 +157,7 @@ const StudentResult = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 * i }}
             key={i} 
-            className="bg-slate-50/50 p-8 rounded-[5px] border border-transparent hover:border-emerald-200 hover:bg-white transition-all duration-500 group/row shadow-sm hover:shadow-xl group-hover:border-slate-100"
+            className="bg-slate-50/50 p-8 rounded-[5px] border border-transparent hover:border-emerald-200 hover:bg-white transition-all duration-500 group/row shadow-sm hover:shadow-2xl active:scale-95 tracking-widest group-hover:border-slate-100"
            >
              <div className="flex justify-between items-end">
               <div className="space-y-3">

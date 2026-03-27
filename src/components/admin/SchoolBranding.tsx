@@ -66,7 +66,7 @@ const SchoolBranding = () => {
         <p className="text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase">Configure your school's visual identity</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-12 items-center bg-white p-12 rounded-[5px] border border-slate-100 shadow-xl">
+      <div className="grid md:grid-cols-2 gap-12 items-center bg-white p-12 rounded-[5px] border border-slate-100 shadow-2xl active:scale-95 tracking-widest">
         {/* Current Identity */}
         <div className="space-y-8">
           <div className="space-y-4">

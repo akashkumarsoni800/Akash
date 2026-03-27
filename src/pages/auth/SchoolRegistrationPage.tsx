@@ -124,7 +124,7 @@ export default function SchoolRegistrationPage() {
 
   if (successData) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 text-white font-inter">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-white font-inter">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -185,7 +185,7 @@ export default function SchoolRegistrationPage() {
           <div className="flex flex-col lg:flex-row">
             
             {/* Left: Branding */}
-            <div className="lg:w-2/5 bg-slate-950 p-12 md:p-16 flex flex-col justify-between text-white relative">
+            <div className="lg:w-2/5 bg-slate-900 p-12 md:p-16 flex flex-col justify-between text-white relative">
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full"></div>
               
               <div className="relative z-10 space-y-10">
@@ -316,7 +316,7 @@ export default function SchoolRegistrationPage() {
                   <button 
                     type="submit" 
                     disabled={loading}
-                    className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
+                    className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
                   >
                     {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Sparkles size={20} /> Initialize Institution</>}
                   </button>

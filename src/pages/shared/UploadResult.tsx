@@ -259,7 +259,7 @@ const UploadResult = () => {
                 {/* Promotion Check */}
                 <div className="flex justify-between items-center bg-slate-50 p-8 rounded-[5px] border border-slate-100">
                    <div className="flex items-center gap-6">
-                    <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl' : 'bg-white text-slate-200 border border-slate-100'}`}>
+                    <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-2xl active:scale-95 tracking-widest' : 'bg-white text-slate-200 border border-slate-100'}`}>
                       <Zap size={20} />
                     </div>
                     <div>

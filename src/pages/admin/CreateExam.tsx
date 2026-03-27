@@ -80,7 +80,7 @@ const CreateExam = () => {
        </p>
       </motion.div>
 
-      <div className="flex bg-white border border-slate-100 rounded-[5px] p-5 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
+      <div className="flex bg-white border border-slate-100 rounded-[5px] p-5 shadow-sm items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
        <div className="w-14 h-14 bg-purple-50 rounded-[5px] flex items-center justify-center text-purple-600 shadow-sm border border-purple-100 group-hover:scale-110 transition-transform">
          <FileText size={28} />
        </div>

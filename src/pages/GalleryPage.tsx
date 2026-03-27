@@ -44,7 +44,7 @@ const GalleryPage = () => {
           <div className="flex items-center gap-6">
             <button 
               onClick={() => navigate(-1)}
-              className="w-12 h-12 bg-white border border-slate-100 rounded-[5px] flex items-center justify-center text-slate-400 hover:text-blue-600 hover:shadow-xl transition-all shadow-sm"
+              className="w-12 h-12 bg-white border border-slate-100 rounded-[5px] flex items-center justify-center text-slate-400 hover:text-blue-600 hover:shadow-2xl active:scale-95 tracking-widest transition-all shadow-sm"
             >
               <ArrowLeft size={20} />
             </button>
@@ -81,7 +81,7 @@ const GalleryPage = () => {
                   alt={img.caption}
                   className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-8">
+                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-8">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[10px] font-black text-white uppercase tracking-widest">{img.caption}</p>
@@ -116,7 +116,7 @@ const GalleryPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-6 md:p-12"
+            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-xl flex items-center justify-center p-6 md:p-12"
           >
             <button 
               onClick={() => setSelectedImage(null)}

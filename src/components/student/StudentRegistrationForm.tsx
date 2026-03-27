@@ -106,7 +106,7 @@ export default function StudentRegistrationForm() {
            <div className="flex flex-col lg:flex-row">
               
               {/* Left Side: Illustration / Info */}
-              <div className="lg:w-1/3 bg-slate-950 p-12 flex flex-col justify-between relative overflow-hidden">
+              <div className="lg:w-1/3 bg-slate-900 p-12 flex flex-col justify-between relative overflow-hidden">
                  <div className="absolute inset-0 opacity-20 pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#1e40af_0%,transparent_70%)]"></div>
                  </div>
@@ -226,7 +226,7 @@ export default function StudentRegistrationForm() {
                        <button 
                          type="submit" 
                          disabled={loading}
-                         className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
+                         className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                        >
                          {loading ? <RefreshCw className="animate-spin" size={20} /> : <><UserPlus size={20} /> Submit Registration</>}
                        </button>

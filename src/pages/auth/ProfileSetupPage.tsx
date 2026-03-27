@@ -186,7 +186,7 @@ const ProfileSetupPage = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-2xl active:scale-95 tracking-widest transition-all relative z-20">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 transition-transform">👤</div>
        <div>
         <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Access Level</p>
@@ -226,7 +226,7 @@ const ProfileSetupPage = () => {
                <img src={formData.avatar_url || `https://ui-avatars.com/api/?name=${formData.full_name}&background=f8fafc&color=cbd5e1&bold=true`} className="w-full h-full object-cover grayscale group-hover/avatar:grayscale-0 transition-all duration-500" />
              )}
             </motion.div>
-            <label className="absolute -bottom-4 -right-4 bg-slate-950 text-white w-14 h-14 rounded-[5px] flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all border-4 border-white shadow-2xl z-20 active:scale-95 group/cam">
+            <label className="absolute -bottom-4 -right-4 bg-slate-900 text-white w-14 h-14 rounded-[5px] flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all border-4 border-white shadow-2xl z-20 active:scale-95 group/cam">
              <Camera size={24} className="group-hover/cam:rotate-12 transition-transform" />
              <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
             </label>
@@ -293,7 +293,7 @@ const ProfileSetupPage = () => {
           <button 
            type="submit" 
            disabled={saving || uploading} 
-           className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+           className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
           >
            {saving ? (
              <RefreshCw className="animate-spin" size={24} />
@@ -311,7 +311,7 @@ const ProfileSetupPage = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-slate-950 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group"
+        className="bg-slate-900 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group"
        >
          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
          <h3 className="text-[10px] font-black text-blue-400  mb-12 relative z-10 text-center md:text-left uppercase">Calibration Pulse</h3>

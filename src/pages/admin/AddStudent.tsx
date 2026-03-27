@@ -304,7 +304,7 @@ const AddStudent = () => {
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="relative group">
-              <div className="w-40 h-40 rounded-[5px] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
+              <div className="w-40 h-40 rounded-[5px] bg-white border-4 border-white shadow-2xl active:scale-95 tracking-widest overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
                 {photoPreview ? (
                   <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
                 ) : (
@@ -386,7 +386,7 @@ const AddStudent = () => {
                     <button 
                       type="button"
                       onClick={capturePhoto}
-                      className="flex-1 bg-blue-600 text-white py-6 rounded-[5px] font-black tracking-widest text-xs shadow-xl shadow-blue-100 hover:bg-slate-900 transition-all active:scale-95"
+                      className="flex-1 bg-blue-600 text-white py-6 rounded-[5px] font-black tracking-widest text-xs shadow-2xl active:scale-95 tracking-widest shadow-blue-100 hover:bg-slate-900 transition-all active:scale-95"
                     >
                       CAPTURE
                     </button>

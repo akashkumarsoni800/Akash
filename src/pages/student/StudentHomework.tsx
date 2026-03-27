@@ -80,13 +80,13 @@ const StudentHomework = () => {
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-purple-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-purple-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-purple-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
      </button>
 
-     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-xl flex items-center gap-4 group">
+     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
        <span className="text-[10px] font-black  text-purple-400 ">Digital Classroom Active</span>
      </div>
@@ -104,8 +104,8 @@ const StudentHomework = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
-       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📚</div>
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
+       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📚</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Task Density</p>
         <p className="text-3xl font-black text-slate-900 ">{homeworks.length} Assignments</p>
@@ -130,7 +130,7 @@ const StudentHomework = () => {
             hw.isSubmitted ? 'bg-emerald-50 text-emerald-600' : 'bg-purple-50 text-purple-600'
           }`}>
             <div className="absolute top-0 left-0 w-full h-[6px] opacity-20 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-            <div className="p-8 rounded-[5px] bg-white shadow-xl mb-6 group-hover:scale-110 transition-transform duration-500">
+            <div className="p-8 rounded-[5px] bg-white shadow-2xl active:scale-95 tracking-widest mb-6 group-hover:scale-110 transition-transform duration-500">
              {hw.isSubmitted ? <CheckCircle2 size={40}/> : <Clock size={40} className="animate-pulse"/>}
             </div>
             <p className="text-[10px] font-black  ">{hw.subject || 'Core Discipline'}</p>
@@ -164,11 +164,11 @@ const StudentHomework = () => {
             </div>
 
             <div className="mt-12 flex flex-col sm:flex-row gap-6 items-center relative z-10">
-             <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-xl shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
+             <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
                <FileText size={18} className="group-hover/btn:rotate-12 transition-transform"/> Access Materials
              </button>
              {!hw.isSubmitted && (
-              <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-[5px] font-black text-[10px]  shadow-xl shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
+              <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
                 <Send size={18} className="group-hover/submit:translate-x-1 group-hover/submit:-translate-y-1 transition-transform"/> Submit Execution
               </button>
              )}

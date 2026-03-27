@@ -122,7 +122,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
      {roleFilter === 'teacher' && (
       <button 
        onClick={() => setIsModalOpen(true)}
-       className="premium-button-admin bg-slate-950 text-white hover:bg-emerald-600 border-none shadow-xl"
+       className="premium-button-admin bg-slate-900 text-white hover:bg-emerald-600 border-none shadow-2xl active:scale-95 tracking-widest"
       >
        <UserPlus size={16} className="group-hover:scale-110 transition-transform" /> Add Teacher
       </button>
@@ -138,7 +138,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
          initial={{ opacity: 0, scale: 0.95 }}
          animate={{ opacity: 1, scale: 1 }}
          transition={{ delay: idx * 0.05 }}
-         className="bg-white border border-slate-100 p-8 rounded-[5px] shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
+         className="bg-white border border-slate-100 p-8 rounded-[5px] shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
             <button 
@@ -252,7 +252,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
            </div>
 
            <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-3 hover:bg-emerald-600 border-none shadow-xl">
+            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-900 text-white py-3 hover:bg-emerald-600 border-none shadow-2xl active:scale-95 tracking-widest">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Save Teacher</>}
             </button>
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>

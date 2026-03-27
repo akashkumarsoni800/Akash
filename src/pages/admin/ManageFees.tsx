@@ -263,12 +263,12 @@ const ManageFees = () => {
       <div className="flex bg-white p-2 rounded-[5px] border border-slate-100 shadow-sm relative z-20">
        <button 
         onClick={() => setBulkMode(false)} 
-        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-2xl active:scale-95 tracking-widest' : 'text-slate-400 hover:text-blue-600'}`}>
         Single 
        </button>
        <button 
         onClick={() => setBulkMode(true)} 
-        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-2xl active:scale-95 tracking-widest' : 'text-slate-400 hover:text-blue-600'}`}>
         Bulk Distribution
        </button>
       </div>
@@ -340,7 +340,7 @@ const ManageFees = () => {
            
            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
               {feeHeads.map(head => (
-               <div key={head.id} className="bg-white p-6 rounded-[5px] flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 group/item relative">
+               <div key={head.id} className="bg-white p-6 rounded-[5px] flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 group/item relative">
                 <span className="font-black text-[10px] text-slate-400 tracking-widest group-hover/item:text-blue-600 transition-colors uppercase">{head.name}</span>
                 <div className="flex items-center gap-3">
                  <span className="text-slate-200 font-black text-[9px] ">INR</span>
@@ -385,7 +385,7 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-blue-400 mb-2">Authenticated Total</p>
              <h2 className="text-5xl md:text-6xl font-black text-white leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
-           <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-xl relative z-10 px-12">
+           <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-12">
              {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
              {loading ? 'Processing...' : 'Authorize Transaction'}
            </button>
@@ -423,7 +423,7 @@ const ManageFees = () => {
         <div className="space-y-4">
           {pendingReminders.length > 0 ? (
             pendingReminders.map((fee) => (
-              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-emerald-100">
+              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100">
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
                   <div className="w-10 h-10 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-300 font-bold text-xs uppercase">
                     {fee.students?.class_name}

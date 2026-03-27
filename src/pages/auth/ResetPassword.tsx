@@ -162,7 +162,7 @@ const ResetPassword = () => {
        
        {/* Header */}
        <div className="text-center space-y-4">
-         <div className="w-20 h-20 bg-slate-50 rounded-[5px] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
+         <div className="w-20 h-20 bg-slate-50 rounded-[5px] border-4 border-white shadow-2xl active:scale-95 tracking-widest flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
           <ShieldCheck size={36} className="text-blue-600" />
          </div>
          <h2 className="text-4xl font-black text-slate-900  leading-none uppercase">
@@ -255,7 +255,7 @@ const ResetPassword = () => {
              <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+              className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
              >
               {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldAlert size={20} /> Authorize Verification</>}
              </button>
@@ -309,7 +309,7 @@ const ResetPassword = () => {
              <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+              className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
              >
               {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Zap size={20} /> Commit Credentials</>}
              </button>
@@ -339,7 +339,7 @@ const ResetPassword = () => {
 
             <button 
              onClick={() => navigate('/')}
-             className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
+             className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
             >
              Return to <ArrowRight size={18} />
             </button>

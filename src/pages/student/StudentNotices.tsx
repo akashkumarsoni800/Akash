@@ -45,7 +45,7 @@ const StudentNotices = () => {
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
@@ -69,8 +69,8 @@ const StudentNotices = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
-       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
+       <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Active Broadcasts</p>
         <p className="text-3xl font-black text-slate-900 ">{notices.length} Updates</p>

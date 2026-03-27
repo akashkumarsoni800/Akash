@@ -180,7 +180,7 @@ const TeacherSalary = () => {
        </p>
       </motion.div>
       
-       <div className="bg-white border border-slate-100 rounded-[5px] p-4 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative z-20">
+       <div className="bg-white border border-slate-100 rounded-[5px] p-4 shadow-sm flex items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all relative z-20">
        <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-xl shadow-2xl shadow-slate-200 group-hover:scale-110 group-hover:rotate-6 transition-transform">💰</div>
        <div>
         <p className="text-[9px] font-black text-slate-400 mb-1 leading-none">Total Amount</p>
@@ -337,7 +337,7 @@ const TeacherSalary = () => {
           <button 
            type="submit" 
            disabled={loading}
-           className="premium-button-admin w-full bg-white text-slate-900 duration-300 hover:bg-blue-600 hover:text-white border-none shadow-xl py-3"
+           className="premium-button-admin w-full bg-white text-slate-900 duration-300 hover:bg-blue-600 hover:text-white border-none shadow-2xl active:scale-95 tracking-widest py-3"
           >
            {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
            {loading ? 'Authenticating...' : 'Authorize Payment'}
@@ -431,12 +431,12 @@ const TeacherSalary = () => {
             <button 
              onClick={() => markSalaryPaid(salary.id)}
              disabled={salaryLoading[salary.id] || salary.status === 'Paid'}
-             className="flex-1 py-3 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-xl active:scale-95 group/release"
+             className="flex-1 py-3 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-2xl active:scale-95 tracking-widest active:scale-95 group/release"
             >
              {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
              {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
             </button>
-            <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[5px] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-xl group-hover/item:text-blue-500 active:scale-95">
+            <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[5px] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-2xl active:scale-95 tracking-widest group-hover/item:text-blue-500 active:scale-95">
              <Download size={24} />
             </button>
            </div>

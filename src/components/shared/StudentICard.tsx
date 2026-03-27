@@ -81,7 +81,7 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
    {!hidePrintButton && (
     <button 
      onClick={handlePrint}
-     className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-[5px] font-black text-xs  shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
+     className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-[5px] font-black text-xs  shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all active:scale-95 no-print"
     >
      🖨️ Print Digital Card
     </button>

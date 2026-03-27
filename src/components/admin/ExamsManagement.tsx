@@ -92,7 +92,7 @@ export default function ExamsManagement() {
      </div>
      <button 
       onClick={() => setIsModalOpen(true)}
-      className="premium-button-admin bg-slate-950 text-white hover:bg-blue-600 border-none shadow-xl"
+      className="premium-button-admin bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 tracking-widest"
      >
       <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Add Exam
      </button>
@@ -122,7 +122,7 @@ export default function ExamsManagement() {
          initial={{ opacity: 0, y: 20 }}
          animate={{ opacity: 1, y: 0 }}
          transition={{ delay: idx * 0.05 }}
-         className="premium-card p-8 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
+         className="premium-card p-8 hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 transition-all group relative overflow-hidden"
         >
          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
            <button onClick={() => deleteExam(exam.id)} className="p-2 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all">
@@ -214,7 +214,7 @@ export default function ExamsManagement() {
            </div>
 
            <div className="flex gap-4 pt-6">
-            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-3 hover:bg-blue-600 border-none shadow-xl">
+            <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-900 text-white py-3 hover:bg-blue-600 border-none shadow-2xl active:scale-95 tracking-widest">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Save Exam</>}
             </button>
             <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-3 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>

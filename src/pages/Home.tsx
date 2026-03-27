@@ -61,7 +61,7 @@ const Home = () => {
             <button onClick={() => navigate('/login')} className="hidden md:block text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-600 p-2">Login</button>
             <button 
               onClick={() => navigate('/register-school')}
-              className="px-8 py-3.5 bg-indigo-900 text-white rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100 active:scale-95"
+              className="px-8 py-3.5 bg-indigo-900 text-white rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-2xl active:scale-95 tracking-widest shadow-indigo-100 active:scale-95"
             >
               Get Started
             </button>
@@ -211,7 +211,7 @@ const Home = () => {
               </div>
 
               {/* Smaller Feature */}
-              <div className="md:col-span-4 bg-indigo-900 p-12 rounded-[5px] shadow-xl text-white flex flex-col items-center justify-center text-center group">
+              <div className="md:col-span-4 bg-indigo-900 p-12 rounded-[5px] shadow-2xl active:scale-95 tracking-widest text-white flex flex-col items-center justify-center text-center group">
                 <Calendar size={64} className="mb-6 opacity-30 group-hover:scale-110 transition-transform" />
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Intelligent Timetable</h3>
                 <p className="text-indigo-200 text-sm leading-relaxed">AI-powered scheduling that eliminates faculty clashes and optimizes room utilization automatically.</p>
@@ -288,7 +288,7 @@ const Home = () => {
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to unify <br/> your institution?</h2>
                 <p className="text-lg text-indigo-300 max-w-xl mx-auto">Join the hundreds of forward-thinking schools that have simplified their operations and elevated experience.</p>
                 <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-xl">Complete Registration</button>
+                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-2xl active:scale-95 tracking-widest">Complete Registration</button>
                    <button className="px-12 py-5 bg-indigo-900/50 border border-indigo-700 text-white font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-800 transition-all">Schedule a Call</button>
                 </div>
               </div>
@@ -367,7 +367,7 @@ const StatCard = ({ icon, title, desc }: any) => (
 );
 
 const FeatureBox = ({ icon, title, desc }: any) => (
-  <div className="md:col-span-4 bg-white p-10 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between h-72">
+  <div className="md:col-span-4 bg-white p-10 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group flex flex-col justify-between h-72">
     <div className="w-12 h-12 bg-indigo-50 rounded-[5px] flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
       {icon}
     </div>

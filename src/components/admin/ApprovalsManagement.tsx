@@ -75,7 +75,7 @@ export default function ApprovalsManagement() {
          initial={{ opacity: 0, x: -20 }}
          animate={{ opacity: 1, x: 0 }}
          transition={{ delay: idx * 0.05 }}
-         className="premium-card p-8 hover:shadow-xl transition-all group flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden"
+         className="premium-card p-8 hover:shadow-2xl active:scale-95 tracking-widest transition-all group flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden"
         >
          <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-400" />
          
@@ -101,7 +101,7 @@ export default function ApprovalsManagement() {
          <div className="flex gap-3 w-full md:w-auto">
            <button 
             onClick={() => handleAction(req.student_id, 'approved')}
-            className="premium-button-admin flex-1 md:flex-none bg-slate-950 text-white hover:bg-blue-600 border-none shadow-xl"
+            className="premium-button-admin flex-1 md:flex-none bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 tracking-widest"
            >
             <CheckCircle size={16} /> Approve
            </button>

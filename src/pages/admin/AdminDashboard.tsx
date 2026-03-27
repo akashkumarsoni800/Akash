@@ -44,7 +44,7 @@ const ActionCard = ({ icon: Icon, label, color, onClick }: any) => {
  return (
   <button 
    onClick={onClick} 
-   className={`flex flex-col items-center justify-center gap-2 p-5 bg-white border rounded-[5px] shadow-sm transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
+   className={`flex flex-col items-center justify-center gap-2 p-5 bg-white border rounded-[5px] shadow-sm transition-all duration-300 group hover:shadow-2xl active:scale-95 tracking-widest hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
   >
     <div className="p-3 rounded-[5px] transition-all duration-300">
      <Icon size={20} className="group-hover:scale-110 transition-transform" />
@@ -62,7 +62,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
  };
 
  return (
-  <motion.div variants={itemVar} className="premium-card p-6 md:p-8 bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all">
+  <motion.div variants={itemVar} className="premium-card p-6 md:p-8 bg-white border border-slate-100 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all">
    <div className="flex justify-between items-start">
     <div>
      <p className="text-slate-400 text-[10px] font-black tracking-widest mb-4 italic uppercase">{title}</p>
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
     <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[5px] p-8 md:p-10 shadow-sm transition-all hover:shadow-md">
      <div className="flex flex-col lg:flex-row justify-between items-center gap-8 mb-10">
       <div className="flex items-center gap-4 text-center lg:text-left">
-       <div className="w-14 h-14 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-xl shadow-blue-200 animate-float">
+       <div className="w-14 h-14 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest shadow-blue-200 animate-float">
         <LayoutDashboard size={28}/>
        </div>
        <div>

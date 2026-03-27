@@ -70,7 +70,7 @@ const GlobalGallerySlider = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.1 }}
             onClick={() => navigate('/gallery')}
-            className="relative min-w-[280px] md:min-w-[320px] aspect-[16/10] rounded-[5px] overflow-hidden group cursor-pointer shadow-sm hover:shadow-xl transition-all snap-start"
+            className="relative min-w-[280px] md:min-w-[320px] aspect-[16/10] rounded-[5px] overflow-hidden group cursor-pointer shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all snap-start"
           >
             <img 
               src={img.image_url} 

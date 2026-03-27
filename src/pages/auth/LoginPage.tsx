@@ -161,7 +161,7 @@ const LoginPage = () => {
       className="w-full max-w-full"
      >
       <div className="text-center mb-16">
-       <div className="w-24 h-24 bg-white shadow-xl rounded-[5px] p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
+       <div className="w-24 h-24 bg-white shadow-2xl active:scale-95 tracking-widest rounded-[5px] p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
         <ShieldCheck className="text-blue-600" size={48} />
        </div>
        <h1 className="text-6xl md:text-7xl font-black text-slate-900  leading-[0.9] mb-4 uppercase">
@@ -296,7 +296,7 @@ const LoginPage = () => {
              </button>
             </div>
            </div>
-           <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white  font-black shadow-lg hover:shadow-xl mt-4 ${
+           <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white  font-black shadow-lg hover:shadow-2xl active:scale-95 tracking-widest mt-4 ${
             selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
            }`}>
              {loading ? 'Authenticating...' : 'Establish Link'}
