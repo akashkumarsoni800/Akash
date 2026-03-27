@@ -115,7 +115,7 @@ const TeacherHomework: React.FC = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-7xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -130,8 +130,8 @@ const TeacherHomework: React.FC = () => {
       </motion.div>
 
       <div className="flex flex-wrap items-center gap-4">
-       <div className="bg-white px-6 py-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4 group">
-         <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+       <div className="bg-white px-6 py-4 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-4 group">
+         <div className="w-10 h-10 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
           <BookOpen size={20} />
          </div>
          <div>
@@ -139,7 +139,7 @@ const TeacherHomework: React.FC = () => {
           <p className="text-xl font-black text-slate-900 ">{homeworks.length} Assignments</p>
          </div>
        </div>
-       <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px]  shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
+       <button className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3 active:scale-95 group">
          <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" /> Emit New Task
        </button>
       </div>
@@ -154,7 +154,7 @@ const TeacherHomework: React.FC = () => {
        animate={{ opacity: 1, y: 0 }}
        transition={{ delay: index * 0.1 }}
        onClick={() => fetchSubmissions(hw.id)}
-       className={`group relative p-8 md:p-10 rounded-[3.5rem] border-4 transition-all duration-700 cursor-pointer overflow-hidden ${
+       className={`group relative p-8 md:p-10 rounded-[5px] border-4 transition-all duration-700 cursor-pointer overflow-hidden ${
         selectedHomework === hw.id 
          ? 'bg-white border-emerald-600 shadow-2xl shadow-emerald-100 scale-[1.02]' 
          : 'bg-white border-transparent shadow-sm hover:shadow-xl hover:border-slate-100'
@@ -173,7 +173,7 @@ const TeacherHomework: React.FC = () => {
              }`}>{hw.subject || 'Core Discipline'}</p>
              <h3 className="text-3xl font-black text-slate-900  leading-none uppercase">{hw.title}</h3>
             </div>
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+            <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${
              selectedHomework === hw.id 
              ? 'bg-emerald-600 text-white shadow-lg' 
              : 'bg-slate-50 text-slate-300 group-hover:bg-emerald-50 group-hover:text-emerald-600'
@@ -226,7 +226,7 @@ const TeacherHomework: React.FC = () => {
        initial={{ opacity: 0, y: 40 }}
        animate={{ opacity: 1, y: 0 }}
        exit={{ opacity: 0, y: -40 }}
-       className="bg-white rounded-[4rem] p-10 md:p-14 shadow-sm border border-slate-100 space-y-12 relative overflow-hidden"
+       className="bg-white rounded-[5px] p-10 md:p-14 shadow-sm border border-slate-100 space-y-12 relative overflow-hidden"
       >
        <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 opacity-20" />
        
@@ -244,13 +244,13 @@ const TeacherHomework: React.FC = () => {
           </div>
          </div>
          
-         <div className="flex bg-slate-50 rounded-2xl p-1.5 border border-slate-100 shadow-inner">
-          <button className="px-8 py-3 font-black text-[10px] tracking-widest rounded-xl bg-white text-emerald-600 shadow-md transition-all ">✅ Authenticated ({submissions.length})</button>
-          <button className="px-8 py-3 font-black text-[10px] tracking-widest rounded-xl text-slate-400 hover:text-slate-900 transition-all ">⏳ Awaiting ({selectedHW.submissions.pending})</button>
+         <div className="flex bg-slate-50 rounded-[5px] p-1.5 border border-slate-100 shadow-inner">
+          <button className="px-8 py-3 font-black text-[10px] tracking-widest rounded-[5px] bg-white text-emerald-600 shadow-md transition-all ">✅ Authenticated ({submissions.length})</button>
+          <button className="px-8 py-3 font-black text-[10px] tracking-widest rounded-[5px] text-slate-400 hover:text-slate-900 transition-all ">⏳ Awaiting ({selectedHW.submissions.pending})</button>
          </div>
        </div>
 
-       <div className="asm-table-container custom-scrollbar border border-slate-50 bg-slate-50/30 rounded-[3rem] p-4 md:p-10">
+       <div className="asm-table-container custom-scrollbar border border-slate-50 bg-slate-50/30 rounded-[5px] p-4 md:p-10">
         <div className="hidden lg:block overflow-x-auto">
          <table className="w-full text-left">
           <thead>
@@ -263,10 +263,10 @@ const TeacherHomework: React.FC = () => {
           </thead>
           <tbody className="divide-y divide-slate-100">
            {submissions.map((submission) => (
-            <tr key={submission.id} className="group hover:bg-white hover:shadow-2xl transition-all duration-300 rounded-[2rem]">
+            <tr key={submission.id} className="group hover:bg-white hover:shadow-2xl transition-all duration-300 rounded-[5px]">
              <td className="p-8">
                <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner transition-colors group-hover:border-emerald-200 group-hover:text-emerald-600 text-xl ">
+                <div className="w-14 h-14 bg-white rounded-[5px] flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner transition-colors group-hover:border-emerald-200 group-hover:text-emerald-600 text-xl ">
                   {submission.student_name ? submission.student_name.charAt(0) : 'S'}
                 </div>
                 <div>
@@ -276,7 +276,7 @@ const TeacherHomework: React.FC = () => {
                </div>
              </td>
              <td className="p-8 text-center">
-               <div className="inline-flex items-center gap-3 bg-slate-100/50 px-5 py-2 rounded-xl group-hover:bg-emerald-50 transition-colors">
+               <div className="inline-flex items-center gap-3 bg-slate-100/50 px-5 py-2 rounded-[5px] group-hover:bg-emerald-50 transition-colors">
                 <Clock size={12} className="text-slate-400 group-hover:text-emerald-500" />
                 <span className="font-black text-slate-500 text-[10px] tracking-wider group-hover:text-emerald-700">{new Date(submission.submitted_at).toLocaleString('en-GB')}</span>
                </div>
@@ -291,7 +291,7 @@ const TeacherHomework: React.FC = () => {
               </span>
              </td>
              <td className="p-8 text-right">
-               <button className="relative bg-slate-900 text-white px-8 py-3 rounded-xl font-black text-[9px]  shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group/btn overflow-hidden">
+               <button className="relative bg-slate-900 text-white px-8 py-3 rounded-[5px] font-black text-[9px]  shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group/btn overflow-hidden">
                 <span className="relative z-10 flex items-center gap-2 font-black ">Evaluate <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" /></span>
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                </button>
@@ -305,10 +305,10 @@ const TeacherHomework: React.FC = () => {
         {/* Mobile Tablet Grid */}
         <div className="lg:hidden space-y-6">
           {submissions.map((submission) => (
-           <div key={submission.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6 group hover:shadow-xl transition-all">
+           <div key={submission.id} className="bg-white p-8 rounded-[5px] shadow-sm border border-slate-100 space-y-6 group hover:shadow-xl transition-all">
              <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center font-black text-slate-300 text-lg ">{submission.student_name?.charAt(0)}</div>
+                <div className="w-12 h-12 bg-slate-50 rounded-[5px] flex items-center justify-center font-black text-slate-300 text-lg ">{submission.student_name?.charAt(0)}</div>
                 <div>
                  <h3 className="font-black text-slate-900 text-sm leading-tight uppercase">{submission.student_name}</h3>
                  <p className="text-[8px] font-black text-slate-400 tracking-widest mt-0.5">ID: {submission.student_id}</p>
@@ -322,11 +322,11 @@ const TeacherHomework: React.FC = () => {
                {submission.status}
               </span>
              </div>
-             <div className="flex justify-between items-center text-[10px] font-black text-slate-400 tracking-wider bg-slate-50 px-4 py-2 rounded-xl">
+             <div className="flex justify-between items-center text-[10px] font-black text-slate-400 tracking-wider bg-slate-50 px-4 py-2 rounded-[5px]">
               <div className="flex items-center gap-2"><Clock size={12}/> {new Date(submission.submitted_at).toLocaleDateString()}</div>
               <span>{new Date(submission.submitted_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
              </div>
-             <button className="w-full text-[10px] font-black  bg-slate-900 text-white py-4 rounded-2xl hover:bg-emerald-600 transition-all active:scale-95">
+             <button className="w-full text-[10px] font-black  bg-slate-900 text-white py-4 rounded-[5px] hover:bg-emerald-600 transition-all active:scale-95">
               Evaluate Submission
              </button>
            </div>
@@ -340,7 +340,7 @@ const TeacherHomework: React.FC = () => {
     {/* --- IDLE STATE --- */}
     {!selectedHW && !loading && homeworks.length > 0 && (
      <div className="py-40 text-center space-y-10 group bg-white rounded-[5rem] shadow-sm border border-slate-100">
-       <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center mx-auto mb-4 shadow-inner text-6xl group-hover:scale-110 transition-transform duration-1000 grayscale opacity-40">📊</div>
+       <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-4 shadow-inner text-6xl group-hover:scale-110 transition-transform duration-1000 grayscale opacity-40">📊</div>
        <div className="space-y-4 px-10">
         <h4 className="text-3xl font-black text-slate-900  ">Fleet Awaiting Select</h4>
         <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed">

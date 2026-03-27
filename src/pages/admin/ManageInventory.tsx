@@ -75,7 +75,7 @@ const ManageInventory = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-7xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -90,8 +90,8 @@ const ManageInventory = () => {
       </motion.div>
       
       <div className="flex flex-wrap items-center justify-center gap-4">
-       <div className="bg-white px-8 py-5 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
-         <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform shadow-inner">
+       <div className="bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
+         <div className="w-12 h-12 bg-amber-50 rounded-[5px] flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform shadow-inner">
           <Archive size={22} />
          </div>
          <div className="pr-2">
@@ -137,7 +137,7 @@ const ManageInventory = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card p-10 flex flex-col justify-between group">
        <div className="flex justify-between items-start">
          <h3 className="text-[10px] font-black text-slate-300  uppercase">Critical Status</h3>
-         <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500 shadow-inner">
+         <div className="w-10 h-10 bg-rose-50 rounded-[5px] flex items-center justify-center text-rose-500 shadow-inner">
           <AlertTriangle size={20} />
          </div>
        </div>
@@ -170,7 +170,7 @@ const ManageInventory = () => {
          <p className="text-[9px] font-black text-slate-400  leading-none">Logistics Oversight </p>
        </div>
        <div className="flex flex-wrap justify-center gap-3">
-         <div className="bg-white border border-slate-100 px-6 py-3 rounded-2xl flex items-center gap-3 shadow-inner">
+         <div className="bg-white border border-slate-100 px-6 py-3 rounded-[5px] flex items-center gap-3 shadow-inner">
           <Search size={16} className="text-slate-300" />
           <input type="text" placeholder="SKU Search..." className="bg-transparent border-none focus:ring-0 text-[10px] font-black text-slate-900 tracking-widest w-32 placeholder:text-slate-200" />
          </div>
@@ -193,7 +193,7 @@ const ManageInventory = () => {
           <tr key={item.id} className="hover:bg-slate-50/80 transition-all group/row">
            <td className="px-12 py-8">
             <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/row:border-amber-200 group-hover/row:text-amber-600 text-xl transition-colors">
+              <div className="w-14 h-14 bg-slate-50 rounded-[5px] flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/row:border-amber-200 group-hover/row:text-amber-600 text-xl transition-colors">
                {item.item_name ? item.item_name.charAt(0) : 'A'}
               </div>
               <div>
@@ -203,7 +203,7 @@ const ManageInventory = () => {
             </div>
            </td>
            <td className="px-12 py-8 text-center">
-            <span className="bg-white px-5 py-2 rounded-xl text-[9px] font-black text-slate-400 tracking-widest border border-slate-100 group-hover/row:border-amber-100 group-hover/row:text-amber-600 transition-all ">
+            <span className="bg-white px-5 py-2 rounded-[5px] text-[9px] font-black text-slate-400 tracking-widest border border-slate-100 group-hover/row:border-amber-100 group-hover/row:text-amber-600 transition-all ">
              {item.category}
             </span>
            </td>
@@ -228,7 +228,7 @@ const ManageInventory = () => {
             </div>
            </td>
            <td className="px-12 py-8 text-right">
-            <button onClick={() => deleteItem(item.id)} className="inline-flex w-12 h-12 bg-slate-50 text-slate-200 rounded-2xl items-center justify-center hover:bg-rose-600 hover:text-white transition-all hover:shadow-2xl active:scale-95 group/btn">
+            <button onClick={() => deleteItem(item.id)} className="inline-flex w-12 h-12 bg-slate-50 text-slate-200 rounded-[5px] items-center justify-center hover:bg-rose-600 hover:text-white transition-all hover:shadow-2xl active:scale-95 group/btn">
              <Trash2 size={20} className="group-hover/btn:scale-110 transition-transform" />
             </button>
            </td>
@@ -266,7 +266,7 @@ const ManageInventory = () => {
         initial={{ opacity: 0, scale: 0.9, y: 40 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         exit={{ opacity: 0, scale: 0.9, y: 40 }} 
-        className="bg-white border border-slate-100 w-full max-w-xl p-12 md:p-16 rounded-[4rem] relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden"
+        className="bg-white border border-slate-100 w-full max-w-xl p-12 md:p-16 rounded-[5px] relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden"
       >
         <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-amber-500 to-orange-600"></div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50/50 blur-3xl rounded-full -mr-32 -mt-32 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
@@ -290,7 +290,7 @@ const ManageInventory = () => {
          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           <div className="space-y-2 group">
            <label className="text-[10px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-amber-500">Logistics Classification</label>
-           <select className="premium-input bg-slate-50 border-none rounded-2xl font-black text-[10px] outline-none focus:ring-4 focus:ring-amber-100 focus:bg-white transition-all appearance-none cursor-pointer" 
+           <select className="premium-input bg-slate-50 border-none rounded-[5px] font-black text-[10px] outline-none focus:ring-4 focus:ring-amber-100 focus:bg-white transition-all appearance-none cursor-pointer" 
             onChange={e => setNewItem({...newItem, category: e.target.value})}>
             <option value="Books">Educational Assets</option>
             <option value="Uniform">Apparel Units</option>
@@ -334,7 +334,7 @@ const ManageInventory = () => {
           <button type="submit" disabled={loading} className="premium-button-admin flex-1 bg-slate-900 text-white hover:bg-amber-600 border-none shadow-2xl">
            {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldCheck size={20} className="group-hover:rotate-12 transition-transform" /> Authorize Entry</>}
           </button>
-          <button type="button" onClick={() => setShowAddModal(false)} className="px-10 py-6 rounded-2xl font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all">Abort Protocol</button>
+          <button type="button" onClick={() => setShowAddModal(false)} className="px-10 py-6 rounded-[5px] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all">Abort Protocol</button>
          </div>
         </form>
       </motion.div>

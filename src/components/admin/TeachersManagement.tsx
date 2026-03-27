@@ -138,23 +138,23 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
          initial={{ opacity: 0, scale: 0.95 }}
          animate={{ opacity: 1, scale: 1 }}
          transition={{ delay: idx * 0.05 }}
-         className="bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
+         className="bg-white border border-slate-100 p-8 rounded-[5px] shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
             <button 
              onClick={() => resetPassword(t.email)} 
-             className="p-2 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+             className="p-2 bg-blue-50 text-blue-500 rounded-[5px] hover:bg-blue-600 hover:text-white transition-all shadow-sm"
              title="Reset Access Node"
             >
              <RefreshCw size={16} />
             </button>
-            <button onClick={() => deleteTeacher(t.id)} className="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+            <button onClick={() => deleteTeacher(t.id)} className="p-2 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all">
              <Trash2 size={16} />
             </button>
           </div>
 
          <div className="space-y-6">
-           <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-2xl font-black border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
+           <div className="w-16 h-16 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600 text-2xl font-black border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
             {t.full_name?.[0]}
            </div>
            
@@ -179,7 +179,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
      </AnimatePresence>
 
      {teachers.length === 0 && !loading && (
-      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[3.5rem]">
+      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[5px]">
         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
          <GraduationCap size={40} />
         </div>
@@ -197,14 +197,14 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
          initial={{ scale: 0.95, y: 20 }}
          animate={{ scale: 1, y: 0 }}
          exit={{ scale: 0.95, y: 20 }}
-         className="bg-white w-full max-w-2xl rounded-[3.5rem] p-10 md:p-14 shadow-2xl border border-slate-100"
+         className="bg-white w-full max-w-2xl rounded-[5px] p-10 md:p-14 shadow-2xl border border-slate-100"
         >
          <div className="flex justify-between items-center mb-10">
            <div className="space-y-1">
             <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Teacher</h2>
             <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Fill in details to add staff</p>
            </div>
-           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
+           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-100 transition-all">
             <X size={20} />
            </button>
          </div>
@@ -255,7 +255,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
             <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-emerald-600 border-none shadow-xl">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><ShieldCheck size={18} /> Save Teacher</>}
             </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>
          </form>
         </motion.div>
@@ -272,7 +272,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-emerald-600">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-400 transition-colors" size={18} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
   </div>
  </div>
 );

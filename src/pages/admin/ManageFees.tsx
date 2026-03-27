@@ -260,15 +260,15 @@ const ManageFees = () => {
        </p>
       </motion.div>
 
-      <div className="flex bg-white p-2 rounded-3xl border border-slate-100 shadow-sm relative z-20">
+      <div className="flex bg-white p-2 rounded-[5px] border border-slate-100 shadow-sm relative z-20">
        <button 
         onClick={() => setBulkMode(false)} 
-        className={`px-10 py-4 rounded-2xl font-black text-[10px] tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${!bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
         Single 
        </button>
        <button 
         onClick={() => setBulkMode(true)} 
-        className={`px-10 py-4 rounded-2xl font-black text-[10px] tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
+        className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all ${bulkMode ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:text-blue-600'}`}>
         Bulk Distribution
        </button>
       </div>
@@ -296,7 +296,7 @@ const ManageFees = () => {
             </h2>
             <p className="text-[10px] font-black text-slate-400 tracking-widest leading-none mt-1">Manual Account Distribution </p>
            </div>
-           <div className="px-6 py-2.5 bg-blue-50 rounded-2xl text-[10px] font-black text-blue-600 tracking-widest border border-blue-100 shadow-sm">
+           <div className="px-6 py-2.5 bg-blue-50 rounded-[5px] text-[10px] font-black text-blue-600 tracking-widest border border-blue-100 shadow-sm">
              Active
            </div>
           </div>
@@ -329,10 +329,10 @@ const ManageFees = () => {
            </div>
           </div>
 
-          <div className="bg-slate-50/50 p-10 rounded-[3rem] border border-slate-100 relative overflow-hidden">
+          <div className="bg-slate-50/50 p-10 rounded-[5px] border border-slate-100 relative overflow-hidden">
            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
            <div className="flex items-center gap-4 mb-10 border-b border-slate-100 pb-6 relative z-10">
-             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
+             <div className="w-10 h-10 bg-white rounded-[5px] flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
               <Plus size={20} />
              </div>
              <h3 className="text-[10px] font-black text-slate-400  leading-none uppercase">Structure Breakdown</h3>
@@ -340,7 +340,7 @@ const ManageFees = () => {
            
            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
               {feeHeads.map(head => (
-               <div key={head.id} className="bg-white p-6 rounded-2xl flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 group/item relative">
+               <div key={head.id} className="bg-white p-6 rounded-[5px] flex justify-between items-center border border-slate-100 hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 group/item relative">
                 <span className="font-black text-[10px] text-slate-400 tracking-widest group-hover/item:text-blue-600 transition-colors uppercase">{head.name}</span>
                 <div className="flex items-center gap-3">
                  <span className="text-slate-200 font-black text-[9px] ">INR</span>
@@ -354,7 +354,7 @@ const ManageFees = () => {
                </div>
               ))}
               {/* Add New Fee Head */}
-              <div className="bg-blue-50/30 p-4 rounded-2xl border border-dashed border-blue-200 flex gap-4 items-center">
+              <div className="bg-blue-50/30 p-4 rounded-[5px] border border-dashed border-blue-200 flex gap-4 items-center">
                 <input 
                   type="text" 
                   placeholder="New Fee Head..." 
@@ -372,14 +372,14 @@ const ManageFees = () => {
               <button 
                 type="button" 
                 onClick={handleCloneLastMonthFees}
-                className="px-6 py-3 border border-blue-100 rounded-xl text-[9px] font-black text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
+                className="px-6 py-3 border border-blue-100 rounded-[5px] text-[9px] font-black text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
               >
                 <RefreshCw size={14} /> CLONE LAST MONTH'S RECORDS 
               </button>
             </div>
           </div>
 
-          <div className="bg-slate-900 p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="bg-slate-900 p-10 rounded-[5px] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
            <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
            <div className="text-center md:text-left mb-0 relative z-10">
              <p className="text-[10px] font-black text-blue-400 mb-2">Authenticated Total</p>
@@ -401,7 +401,7 @@ const ManageFees = () => {
        >
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-6">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
+            <div className="w-12 h-12 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600">
              <MessageSquare size={24} />
             </div>
             <div>
@@ -409,7 +409,7 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">PENDING FEE ALERTS</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl">
+          <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[5px]">
             <Calendar size={16} className="text-slate-400 ml-2" />
             <input 
               type="month" 
@@ -423,9 +423,9 @@ const ManageFees = () => {
         <div className="space-y-4">
           {pendingReminders.length > 0 ? (
             pendingReminders.map((fee) => (
-              <div key={fee.id} className="p-6 bg-slate-50 rounded-3xl flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-emerald-100">
+              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-emerald-100">
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 font-bold text-xs uppercase">
+                  <div className="w-10 h-10 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-300 font-bold text-xs uppercase">
                     {fee.students?.class_name}
                   </div>
                   <div>
@@ -435,7 +435,7 @@ const ManageFees = () => {
                 </div>
                 <button 
                   onClick={() => handleSendReminder(fee)}
-                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-xl font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <Send size={14} /> SEND REMINDER
                 </button>
@@ -464,17 +464,17 @@ const ManageFees = () => {
          Fiscal Index
         </h3>
         <div className="space-y-8 relative z-10">
-          <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
+          <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
            <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400 tracking-widest mb-3">Fund Allocation</p>
            <p className="text-4xl font-black text-slate-900 group-hover/card:text-white ">₹{feeStats.totalCollected.toLocaleString()}</p>
           </div>
           <div className="grid grid-cols-2 gap-6">
-           <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+           <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
              <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2">Pending Units</p>
              <p className="text-2xl font-black text-slate-900 ">{feeStats.totalPending}</p>
            </div>
-           <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+           <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
              <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2">Overdue Alert</p>
              <p className="text-2xl font-black text-rose-500 ">{feeStats.overdue}</p>
            </div>
@@ -499,10 +499,10 @@ const ManageFees = () => {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 + idx * 0.1 }}
-            className="p-6 bg-slate-50/50 rounded-3xl border border-slate-50 flex justify-between items-center group/item hover:bg-white hover:shadow-2xl hover:border-blue-100 transition-all cursor-pointer relative overflow-hidden"
+            className="p-6 bg-slate-50/50 rounded-[5px] border border-slate-50 flex justify-between items-center group/item hover:bg-white hover:shadow-2xl hover:border-blue-100 transition-all cursor-pointer relative overflow-hidden"
            >
             <div className="flex items-center gap-5 relative z-10">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
+              <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
                {p.status === 'Paid' ? <CheckCircle size={20}/> : <RefreshCw size={20} className="animate-spin" />}
               </div>
               <div>
@@ -519,7 +519,7 @@ const ManageFees = () => {
            </div>
           )}
         </div>
-        <button className="mt-10 py-5 bg-slate-50 rounded-2xl text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100">
+        <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100">
           Audit Sequential Logs →
         </button>
        </motion.div>

@@ -172,7 +172,7 @@ const ProfileSetupPage = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-4xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -186,7 +186,7 @@ const ProfileSetupPage = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-xl transition-all relative z-20">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 transition-transform">👤</div>
        <div>
         <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Access Level</p>
@@ -201,7 +201,7 @@ const ProfileSetupPage = () => {
       <motion.div 
        initial={{ opacity: 0, y: 30 }}
        animate={{ opacity: 1, y: 0 }}
-       className="lg:col-span-3 bg-white p-10 md:p-14 rounded-[4rem] shadow-sm border border-slate-100 space-y-12 relative overflow-hidden group"
+       className="lg:col-span-3 bg-white p-10 md:p-14 rounded-[5px] shadow-sm border border-slate-100 space-y-12 relative overflow-hidden group"
       >
        <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600" />
        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110 pointer-events-none"></div>
@@ -218,7 +218,7 @@ const ProfileSetupPage = () => {
           <div className="relative group/avatar w-40 h-40">
             <motion.div 
              whileHover={{ scale: 1.05 }}
-             className="w-full h-full rounded-[3.5rem] bg-slate-50 border-4 border-white shadow-2xl overflow-hidden flex items-center justify-center relative z-10 group-hover/avatar:border-blue-100 transition-all duration-500"
+             className="w-full h-full rounded-[5px] bg-slate-50 border-4 border-white shadow-2xl overflow-hidden flex items-center justify-center relative z-10 group-hover/avatar:border-blue-100 transition-all duration-500"
             >
              {uploading ? (
                <RefreshCw className="animate-spin text-blue-600" size={40} />
@@ -226,7 +226,7 @@ const ProfileSetupPage = () => {
                <img src={formData.avatar_url || `https://ui-avatars.com/api/?name=${formData.full_name}&background=f8fafc&color=cbd5e1&bold=true`} className="w-full h-full object-cover grayscale group-hover/avatar:grayscale-0 transition-all duration-500" />
              )}
             </motion.div>
-            <label className="absolute -bottom-4 -right-4 bg-slate-950 text-white w-14 h-14 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all border-4 border-white shadow-2xl z-20 active:scale-95 group/cam">
+            <label className="absolute -bottom-4 -right-4 bg-slate-950 text-white w-14 h-14 rounded-[5px] flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all border-4 border-white shadow-2xl z-20 active:scale-95 group/cam">
              <Camera size={24} className="group-hover/cam:rotate-12 transition-transform" />
              <input type="file" className="hidden" accept="image/*" onChange={uploadAvatar} disabled={uploading} />
             </label>
@@ -293,7 +293,7 @@ const ProfileSetupPage = () => {
           <button 
            type="submit" 
            disabled={saving || uploading} 
-           className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+           className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
           >
            {saving ? (
              <RefreshCw className="animate-spin" size={24} />
@@ -311,7 +311,7 @@ const ProfileSetupPage = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-slate-950 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
+        className="bg-slate-950 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group"
        >
          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
          <h3 className="text-[10px] font-black text-blue-400  mb-12 relative z-10 text-center md:text-left uppercase">Calibration Pulse</h3>
@@ -331,7 +331,7 @@ const ProfileSetupPage = () => {
           </div>
          </div>
 
-         <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
+         <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-[5px] border border-white/5">
           <p className="text-[9px] font-black text-white/30  leading-relaxed">
            Notice: Identity calibration requires absolute nomenclature accuracy for institutional indexing.
           </p>
@@ -342,10 +342,10 @@ const ProfileSetupPage = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm space-y-10"
+        className="bg-white rounded-[5px] border border-slate-100 p-12 shadow-sm space-y-10"
        >
          <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shadow-inner">
+          <div className="w-10 h-10 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-500 shadow-inner">
             <Info size={20} />
           </div>
           <h4 className="text-lg font-black text-slate-900  ">Identity Guide</h4>
@@ -369,7 +369,7 @@ const ProfileSetupPage = () => {
            <button 
             type="button"
             onClick={() => navigate('/reset-password')}
-            className="w-full flex items-center justify-center gap-3 py-4 bg-slate-50 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 border border-slate-100 shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-4 bg-slate-50 text-slate-900 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 border border-slate-100 shadow-sm"
            >
             <LucideLock size={16} /> Change Password Protocol
            </button>
@@ -388,7 +388,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
   </div>
  </div>
 );

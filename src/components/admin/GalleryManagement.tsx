@@ -112,7 +112,7 @@ const GalleryManagement = () => {
         </div>
         <button 
           onClick={() => setShowUpload(!showUpload)}
-          className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center gap-3"
+          className="bg-blue-600 text-white px-8 py-4 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center gap-3"
         >
           {showUpload ? <X size={18}/> : <Plus size={18} />}
           {showUpload ? "Cancel" : "Add Photo"}
@@ -125,7 +125,7 @@ const GalleryManagement = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-white p-8 rounded-[2.5rem] border border-blue-100 shadow-xl space-y-6"
+            className="bg-white p-8 rounded-[5px] border border-blue-100 shadow-xl space-y-6"
           >
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Caption / Event Name</label>
@@ -145,7 +145,7 @@ const GalleryManagement = () => {
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 accept="image/*"
               />
-              <div className="border-4 border-dashed border-slate-100 rounded-[2.5rem] p-12 text-center group-hover:border-blue-200 transition-all bg-slate-50/30">
+              <div className="border-4 border-dashed border-slate-100 rounded-[5px] p-12 text-center group-hover:border-blue-200 transition-all bg-slate-50/30">
                 {uploading ? (
                   <RefreshCw className="animate-spin text-blue-600 mx-auto" size={40} />
                 ) : (
@@ -163,13 +163,13 @@ const GalleryManagement = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {images.map((img) => (
-          <div key={img.id} className="group relative aspect-square rounded-[2rem] overflow-hidden bg-slate-100 shadow-sm hover:shadow-2xl transition-all">
+          <div key={img.id} className="group relative aspect-square rounded-[5px] overflow-hidden bg-slate-100 shadow-sm hover:shadow-2xl transition-all">
             <img src={img.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
             <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
               <p className="text-white text-[10px] font-black uppercase tracking-widest mb-4 leading-tight">{img.caption}</p>
               <button 
                 onClick={() => handleDelete(img.id, img.image_url)}
-                className="w-10 h-10 bg-rose-500 text-white rounded-xl flex items-center justify-center hover:bg-rose-600 transition-colors shadow-lg"
+                className="w-10 h-10 bg-rose-500 text-white rounded-[5px] flex items-center justify-center hover:bg-rose-600 transition-colors shadow-lg"
               >
                 <Trash2 size={18} />
               </button>

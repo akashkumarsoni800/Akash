@@ -13,13 +13,13 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
  return (
   <div className="flex flex-col items-center gap-6">
    {/* Printable Area */}
-   <div ref={componentRef} className="print:m-0 print:shadow-none bg-white p-2 sm:p-4 rounded-xl">
-    <div className="w-[3.5in] h-[2.2in] flex bg-white border-[3px] border-blue-900 rounded-2xl overflow-hidden font-sans shadow-lg relative">
+   <div ref={componentRef} className="print:m-0 print:shadow-none bg-white p-2 sm:p-4 rounded-[5px]">
+    <div className="w-[3.5in] h-[2.2in] flex bg-white border-[3px] border-blue-900 rounded-[5px] overflow-hidden font-sans shadow-lg relative">
      
      {/* Left Security Bar */}
      <div className="w-[1.2in] bg-blue-900 text-white flex flex-col items-center justify-center p-3 relative overflow-hidden">
        
-       <div className="relative z-10 w-20 h-20 rounded-2xl border-2 border-white/50 overflow-hidden mb-2 bg-blue-900/10">
+       <div className="relative z-10 w-20 h-20 rounded-[5px] border-2 border-white/50 overflow-hidden mb-2 bg-blue-900/10">
         <img 
          src={student.photo_url || "/default-avatar.png"} 
          className="w-full h-full object-cover select-none" 
@@ -81,7 +81,7 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
    {!hidePrintButton && (
     <button 
      onClick={handlePrint}
-     className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-xs  shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
+     className="flex items-center gap-2 bg-blue-600 hover:bg-black text-white px-10 py-4 rounded-[5px] font-black text-xs  shadow-xl hover:shadow-2xl transition-all active:scale-95 no-print"
     >
      🖨️ Print Digital Card
     </button>

@@ -125,13 +125,13 @@ export default function ExamsManagement() {
          className="premium-card p-8 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
         >
          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-           <button onClick={() => deleteExam(exam.id)} className="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+           <button onClick={() => deleteExam(exam.id)} className="p-2 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all">
             <Trash2 size={16} />
            </button>
          </div>
  
          <div className="space-y-6">
-           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+           <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
             <FileText size={24} />
            </div>
            <div>
@@ -153,7 +153,7 @@ export default function ExamsManagement() {
      </AnimatePresence>
 
      {exams.length === 0 && !loading && (
-      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[3rem]">
+      <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-100 rounded-[5px]">
         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
          <Search size={40} />
         </div>
@@ -171,14 +171,14 @@ export default function ExamsManagement() {
          initial={{ scale: 0.95, opacity: 0 }}
          animate={{ scale: 1, opacity: 1 }}
          exit={{ scale: 0.95, opacity: 0 }}
-         className="bg-white w-full max-w-lg rounded-[3.5rem] p-10 md:p-14 shadow-2xl border border-slate-100"
+         className="bg-white w-full max-w-lg rounded-[5px] p-10 md:p-14 shadow-2xl border border-slate-100"
         >
          <div className="flex justify-between items-center mb-10">
            <div className="space-y-1">
             <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Add Exam</h2>
             <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Create a new exam schedule</p>
            </div>
-           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all">
+           <button onClick={() => setIsModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-100 transition-all">
             <Plus size={20} className="rotate-45" />
            </button>
          </div>
@@ -204,7 +204,7 @@ export default function ExamsManagement() {
              <div className="relative">
               <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
               <textarea 
-               className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
+               className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
                placeholder="Mathematics, Physics, Chemistry... (comma separated)"
                value={formData.subjects}
                onChange={(e: any) => setFormData({ ...formData, subjects: e.target.value })}
@@ -217,7 +217,7 @@ export default function ExamsManagement() {
             <button type="submit" disabled={loading} className="flex-1 premium-button-admin bg-slate-950 text-white py-6 hover:bg-blue-600 border-none shadow-xl">
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Save Exam</>}
             </button>
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-3xl font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-10 bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black  text-[10px] hover:bg-slate-100 hover:text-slate-600 transition-all">Cancel</button>
            </div>
          </form>
         </motion.div>

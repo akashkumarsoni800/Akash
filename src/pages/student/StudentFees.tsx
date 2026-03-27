@@ -61,14 +61,14 @@ const StudentFees = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-4xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- BACK BUTTON --- */}
     <motion.button 
      initial={{ opacity: 0, x: -10 }}
      animate={{ opacity: 1, x: 0 }}
      onClick={() => navigate(-1)} 
-     className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl text-[10px] font-black tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95"
+     className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] text-[10px] font-black tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95"
     >
      <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Return to Dashboard
     </motion.button>
@@ -77,7 +77,7 @@ const StudentFees = () => {
     <motion.div 
      initial={{ opacity: 0, y: -20 }}
      animate={{ opacity: 1, y: 0 }}
-     className="bg-slate-900 rounded-[4rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden group"
+     className="bg-slate-900 rounded-[5px] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600 opacity-10 rounded-full blur-[80px] -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110" />
       
@@ -88,7 +88,7 @@ const StudentFees = () => {
           <h1 className="text-5xl md:text-7xl font-black  leading-none uppercase">Personal<br/>Ledger</h1>
          </div>
          <div className="flex items-center justify-center md:justify-start gap-4">
-          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white/40">
+          <div className="w-10 h-10 bg-white/10 rounded-[5px] flex items-center justify-center text-white/40">
             <User size={20} />
           </div>
           <div>
@@ -98,7 +98,7 @@ const StudentFees = () => {
          </div>
        </div>
 
-       <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center min-w-[280px] shadow-inner group/stat relative overflow-hidden">
+       <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[5px] border border-white/10 text-center min-w-[280px] shadow-inner group/stat relative overflow-hidden">
          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/stat:opacity-5 transition-opacity" />
          <p className="text-[10px] font-black text-blue-300 mb-2 ">Outstanding Balance</p>
          <p className={`text-6xl font-black  ${totalPending > 0 ? 'text-blue-400' : 'text-emerald-400 '}`}>₹{totalPending.toLocaleString()}</p>
@@ -113,7 +113,7 @@ const StudentFees = () => {
     {/* --- TRANSACTION FEED --- */}
     <div className="space-y-8">
       <div className="flex items-center gap-4 px-6">
-       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 font-black text-xs shadow-sm">IV</div>
+       <div className="w-10 h-10 bg-white rounded-[5px] flex items-center justify-center text-slate-300 border border-slate-100 font-black text-xs shadow-sm">IV</div>
        <h3 className="text-xl font-black text-slate-900  uppercase">Invoiced Settlements</h3>
       </div>
 
@@ -124,7 +124,7 @@ const StudentFees = () => {
          initial={{ opacity: 0, x: -20 }}
          animate={{ opacity: 1, x: 0 }}
          transition={{ delay: 0.1 * idx }}
-         className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all duration-700"
+         className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all duration-700"
         >
           <div className="flex flex-col md:flex-row">
            <div className={`p-10 md:w-72 flex flex-col justify-center items-center text-center relative overflow-hidden transition-colors duration-700 ${fee.status === 'Paid' ? 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white' : 'bg-slate-900 text-white'}`}>
@@ -162,13 +162,13 @@ const StudentFees = () => {
               <div className="flex gap-4 w-full lg:w-auto">
                 <button 
                  onClick={() => handleWhatsApp(fee)} 
-                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-white border border-emerald-100 text-emerald-600 font-black text-[10px] tracking-widest shadow-sm hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 "
+                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-white border border-emerald-100 text-emerald-600 font-black text-[10px] tracking-widest shadow-sm hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 "
                 >
                  <Send size={16}/> Share
                 </button>
                 <button 
                  onClick={() => window.print()} 
-                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-2xl bg-slate-900 text-white font-black text-[10px] tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/print"
+                 className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-slate-900 text-white font-black text-[10px] tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/print"
                 >
                  <Download size={16} className="group-hover/print:translate-y-1 transition-transform" /> Download PDF
                 </button>
@@ -180,8 +180,8 @@ const StudentFees = () => {
        ))}
        
        {fees.length === 0 && (
-        <div className="bg-white p-24 rounded-[4rem] border border-dashed border-slate-200 text-center space-y-8 group">
-          <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto transition-transform duration-1000 group-hover:rotate-12">
+        <div className="bg-white p-24 rounded-[5px] border border-dashed border-slate-200 text-center space-y-8 group">
+          <div className="w-24 h-24 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto transition-transform duration-1000 group-hover:rotate-12">
            <Wallet size={40} className="text-slate-200"/>
           </div>
           <div className="space-y-2">

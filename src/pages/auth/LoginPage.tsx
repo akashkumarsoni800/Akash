@@ -141,7 +141,7 @@ const LoginPage = () => {
       animate={{ opacity: 1, scale: 1 }}
       className="text-center"
      >
-      <div className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-3xl text-white ${
+      <div className={`w-24 h-24 rounded-[5px] flex items-center justify-center mx-auto mb-10 shadow-3xl text-white ${
        selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
       }`}>
        <CheckCircle2 size={48} />
@@ -158,10 +158,10 @@ const LoginPage = () => {
       key="selector"
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }} 
-      className="w-full max-w-6xl"
+      className="w-full max-w-full"
      >
       <div className="text-center mb-16">
-       <div className="w-24 h-24 bg-white shadow-xl rounded-3xl p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
+       <div className="w-24 h-24 bg-white shadow-xl rounded-[5px] p-5 border border-slate-100 flex items-center justify-center mx-auto mb-8 hover:rotate-6 transition-transform">
         <ShieldCheck className="text-blue-600" size={48} />
        </div>
        <h1 className="text-6xl md:text-7xl font-black text-slate-900  leading-[0.9] mb-4 uppercase">
@@ -181,7 +181,7 @@ const LoginPage = () => {
          whileHover={{ y: -10 }}
          className={`role-card role-card-${role.id}`}
         >
-          <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-white mb-4 ${role.color} shadow-lg`}>
+          <div className={`w-20 h-20 rounded-[5px] flex items-center justify-center text-white mb-4 ${role.color} shadow-lg`}>
            {role.icon}
           </div>
           <div>

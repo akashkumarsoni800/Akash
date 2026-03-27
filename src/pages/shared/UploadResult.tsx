@@ -136,11 +136,11 @@ const UploadResult = () => {
           </motion.div>
         </div>
 
-        <div className="premium-card p-10 md:p-16 relative overflow-hidden bg-white rounded-[4rem] shadow-2xl">
+        <div className="premium-card p-10 md:p-16 relative overflow-hidden bg-white rounded-[5px] shadow-2xl">
           {/* Form Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-50 pb-10 mb-12">
             <div className="flex items-center gap-6">
-              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shadow-inner">
+              <div className="w-14 h-14 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600 shadow-inner">
                 <Award size={28} />
               </div>
               <div>
@@ -150,7 +150,7 @@ const UploadResult = () => {
             </div>
 
             {selectedStudent && (
-              <div className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl border border-emerald-100 flex items-center gap-4">
+              <div className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-[5px] border border-emerald-100 flex items-center gap-4">
                 <User size={18} />
                 <span className="text-xs font-black tracking-widest uppercase">{selectedStudent.full_name} ({selectedStudent.class_name})</span>
               </div>
@@ -168,7 +168,7 @@ const UploadResult = () => {
                     setClassFilter(e.target.value);
                     setSelectedStudent(null);
                   }}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[5px] px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
                 >
                   {classes.map(c => <option key={c} value={c}>{c === 'All' ? 'All Classes' : c}</option>)}
                 </select>
@@ -178,7 +178,7 @@ const UploadResult = () => {
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">2. Select Student</label>
                 <select
                   required
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[5px] px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
                   onChange={(e) => {
                     const found = students.find(s => String(s.student_id) === String(e.target.value));
                     setSelectedStudent(found || null);
@@ -198,7 +198,7 @@ const UploadResult = () => {
                 <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1 uppercase">3. Choose Exam</label>
                 <select
                   required
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[5px] px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
                   onChange={(e) => handleExamSelect(e.target.value)}
                   value={selectedExamId}
                 >
@@ -216,14 +216,14 @@ const UploadResult = () => {
                 placeholder="Type name to narrow list..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all text-center"
+                className="w-full bg-slate-50 border border-slate-100 rounded-[5px] px-6 py-4 text-sm font-black text-slate-900 outline-none focus:ring-4 focus:ring-emerald-50 transition-all text-center"
               />
             </div>
 
             {/* Results Table Area */}
             {selectedStudent && selectedExamId ? (
               <div className="pt-10 border-t border-slate-50 space-y-10">
-                <div className="bg-slate-50/50 rounded-[3rem] border border-slate-100 overflow-hidden">
+                <div className="bg-slate-50/50 rounded-[5px] border border-slate-100 overflow-hidden">
                   <table className="w-full text-left">
                     <thead className="bg-white/50 border-b border-slate-100">
                       <tr>
@@ -246,7 +246,7 @@ const UploadResult = () => {
                                 newRes[i].marks = e.target.value;
                                 setResults(newRes);
                               }}
-                              className="w-24 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-center focus:border-emerald-400 outline-none"
+                              className="w-24 bg-white border border-slate-200 rounded-[5px] px-4 py-3 text-sm font-black text-center focus:border-emerald-400 outline-none"
                             />
                           </td>
                           <td className="px-10 py-6 text-center text-slate-400 text-sm font-black">{r.max_marks}</td>
@@ -257,9 +257,9 @@ const UploadResult = () => {
                 </div>
 
                 {/* Promotion Check */}
-                <div className="flex justify-between items-center bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
+                <div className="flex justify-between items-center bg-slate-50 p-8 rounded-[5px] border border-slate-100">
                    <div className="flex items-center gap-6">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl' : 'bg-white text-slate-200 border border-slate-100'}`}>
+                    <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${isFinalExam ? 'bg-emerald-600 text-white shadow-xl' : 'bg-white text-slate-200 border border-slate-100'}`}>
                       <Zap size={20} />
                     </div>
                     <div>
@@ -269,7 +269,7 @@ const UploadResult = () => {
                   </div>
                   <input
                     type="checkbox"
-                    className="w-10 h-10 rounded-xl border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer"
+                    className="w-10 h-10 rounded-[5px] border-slate-200 text-emerald-600 focus:ring-emerald-500 transition-all cursor-pointer"
                     checked={isFinalExam}
                     onChange={(e) => setIsFinalExam(e.target.checked)}
                   />
@@ -278,14 +278,14 @@ const UploadResult = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-slate-900 text-white hover:bg-emerald-600 py-8 rounded-[2.5rem] text-lg font-black tracking-widest flex items-center justify-center gap-4 shadow-2xl transition-all"
+                  className="w-full bg-slate-900 text-white hover:bg-emerald-600 py-8 rounded-[5px] text-lg font-black tracking-widest flex items-center justify-center gap-4 shadow-2xl transition-all"
                 >
                   {loading ? <RefreshCw className="animate-spin" size={24} /> : <FileUp size={24} />}
                   {loading ? 'PROCESSING...' : 'SAVE ASSESSMENT DATA'}
                 </button>
               </div>
             ) : (
-              <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-[4rem] opacity-30">
+              <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-[5px] opacity-30">
                 <Target size={48} className="mx-auto mb-6 text-slate-300" />
                 <p className="font-black text-[10px] text-slate-400 tracking-widest uppercase">Select student and exam to activate entry node</p>
               </div>

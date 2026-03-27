@@ -80,7 +80,7 @@ export default function ApprovalsManagement() {
          <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-400" />
          
          <div className="flex items-center gap-6 flex-1 w-full md:w-auto">
-           <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 border border-amber-100 shadow-sm shrink-0">
+           <div className="w-16 h-16 bg-amber-50 rounded-[5px] flex items-center justify-center text-amber-600 border border-amber-100 shadow-sm shrink-0">
             <Clock size={28} />
            </div>
            <div className="space-y-1 overflow-hidden">
@@ -117,7 +117,7 @@ export default function ApprovalsManagement() {
      </AnimatePresence>
 
      {approvals.length === 0 && !loading && (
-      <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[4rem] bg-slate-50/30">
+      <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[5px] bg-slate-50/30">
         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200 shadow-inner">
          <ShieldCheck size={48} />
         </div>

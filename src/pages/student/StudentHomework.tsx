@@ -74,19 +74,19 @@ const StudentHomework = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-6xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION & CONTEXT --- */}
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-purple-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-purple-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-purple-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
      </button>
 
-     <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
+     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-xl flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
        <span className="text-[10px] font-black  text-purple-400 ">Digital Classroom Active</span>
      </div>
@@ -104,7 +104,7 @@ const StudentHomework = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📚</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Task Density</p>
@@ -122,7 +122,7 @@ const StudentHomework = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.1 }}
-        className="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-purple-100 transition-all duration-700"
+        className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-purple-100 transition-all duration-700"
        >
          <div className="flex flex-col lg:flex-row">
           {/* Status Sidebar */}
@@ -130,7 +130,7 @@ const StudentHomework = () => {
             hw.isSubmitted ? 'bg-emerald-50 text-emerald-600' : 'bg-purple-50 text-purple-600'
           }`}>
             <div className="absolute top-0 left-0 w-full h-[6px] opacity-20 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-            <div className="p-8 rounded-[2rem] bg-white shadow-xl mb-6 group-hover:scale-110 transition-transform duration-500">
+            <div className="p-8 rounded-[5px] bg-white shadow-xl mb-6 group-hover:scale-110 transition-transform duration-500">
              {hw.isSubmitted ? <CheckCircle2 size={40}/> : <Clock size={40} className="animate-pulse"/>}
             </div>
             <p className="text-[10px] font-black  ">{hw.subject || 'Core Discipline'}</p>
@@ -154,7 +154,7 @@ const StudentHomework = () => {
                <h2 className="text-3xl md:text-5xl font-black text-slate-900  leading-none uppercase">{hw.title}</h2>
                <div className="flex items-center gap-4 text-[10px] font-black  text-slate-400">
                 <Calendar size={16} className="text-purple-600"/> 
-                <span className="bg-slate-100 px-4 py-1.5 rounded-xl">Deadline: {new Date(hw.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                <span className="bg-slate-100 px-4 py-1.5 rounded-[5px]">Deadline: {new Date(hw.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                </div>
              </div>
 
@@ -164,11 +164,11 @@ const StudentHomework = () => {
             </div>
 
             <div className="mt-12 flex flex-col sm:flex-row gap-6 items-center relative z-10">
-             <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px]  shadow-xl shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
+             <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-xl shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn">
                <FileText size={18} className="group-hover/btn:rotate-12 transition-transform"/> Access Materials
              </button>
              {!hw.isSubmitted && (
-              <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-2xl font-black text-[10px]  shadow-xl shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
+              <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-[5px] font-black text-[10px]  shadow-xl shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit">
                 <Send size={18} className="group-hover/submit:translate-x-1 group-hover/submit:-translate-y-1 transition-transform"/> Submit Execution
               </button>
              )}
@@ -180,9 +180,9 @@ const StudentHomework = () => {
        <motion.div 
          initial={{ opacity: 0, scale: 0.95 }}
          animate={{ opacity: 1, scale: 1 }}
-         className="py-32 text-center bg-white rounded-[4rem] border-4 border-dashed border-slate-100 shadow-inner group"
+         className="py-32 text-center bg-white rounded-[5px] border-4 border-dashed border-slate-100 shadow-inner group"
        >
-         <div className="w-32 h-32 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📚</div>
+         <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📚</div>
          <div className="space-y-4">
           <h3 className="text-3xl font-black text-slate-900  uppercase">Repository Clear</h3>
           <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10">

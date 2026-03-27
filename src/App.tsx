@@ -126,7 +126,7 @@ function App() {
               </p>
               <a 
                 href="/" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-3xl font-black text-xl  tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 border-0"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-[5px] font-black text-xl  tracking-widest shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 border-0"
               >
                 ← Back to Login
               </a>

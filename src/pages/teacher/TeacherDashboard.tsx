@@ -22,16 +22,16 @@ const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, s
  return (
   <button 
    onClick={onClick}
-   className="bg-white border border-slate-100 rounded-3xl p-8 text-left transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
+   className="bg-white border border-slate-100 rounded-[5px] p-8 text-left transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
   >
    <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
    
    <div className="flex justify-between items-start mb-8 relative z-10">
-    <div className={`p-4 rounded-2xl transition-all duration-500 shadow-sm ${accentColors[color as keyof typeof accentColors]}`}>
+    <div className={`p-4 rounded-[5px] transition-all duration-500 shadow-sm ${accentColors[color as keyof typeof accentColors]}`}>
      <Icon size={28} />
     </div>
     {badgeCount > 0 && (
-     <span className="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-lg shadow-rose-100 flex items-center gap-1 animate-pulse">
+     <span className="bg-rose-500 text-white text-[10px] font-black px-3 py-1.5 rounded-[5px] shadow-lg shadow-rose-100 flex items-center gap-1 animate-pulse">
       <Bell size={10} /> {badgeCount}
      </span>
     )}
@@ -190,7 +190,7 @@ export default function TeacherDashboard() {
     <motion.div 
      initial={{ opacity: 0, y: -20 }} 
      animate={{ opacity: 1, y: 0 }}
-     className="bg-white border border-slate-100 rounded-3xl p-8 md:p-12 shadow-sm transition-all relative overflow-hidden group"
+     className="bg-white border border-slate-100 rounded-[5px] p-8 md:p-12 shadow-sm transition-all relative overflow-hidden group"
     >
      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 opacity-20 rounded-full -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
      
@@ -198,7 +198,7 @@ export default function TeacherDashboard() {
       <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
        <div className="text-center lg:text-left">
         <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
-         <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-emerald-100 animate-float">
+         <div className="w-16 h-16 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white shadow-xl shadow-emerald-100 animate-float">
           <Activity size={32}/>
          </div>
          <div>
@@ -210,11 +210,11 @@ export default function TeacherDashboard() {
         </div>
         
         <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Active Batch</p>
           <p className="text-lg font-black text-slate-800 ">{teacher?.subject || 'General'}</p>
          </div>
-         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Staff ID</p>
           <p className="text-lg font-black text-slate-800 ">#{teacher?.id?.slice(0, 5) || 'SYNC'}</p>
          </div>
@@ -222,10 +222,10 @@ export default function TeacherDashboard() {
        </div>
 
        <div className="flex flex-wrap justify-center gap-3">
-         <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
+         <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 flex items-center gap-2">
           Record Presence
          </button>
-         <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
+         <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
           Sync 
          </button>
        </div>
@@ -236,7 +236,7 @@ export default function TeacherDashboard() {
     {/* Quick Stats Grid */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Pupil Directory</p>
@@ -245,7 +245,7 @@ export default function TeacherDashboard() {
           <span className="text-[9px] font-black text-slate-400 tracking-tight">Active</span>
          </div>
         </div>
-        <div className="p-4 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+        <div className="p-4 bg-blue-50 text-blue-600 rounded-[5px] group-hover:scale-110 transition-transform">
          <Users size={24} />
         </div>
        </div>
@@ -260,7 +260,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Daily Presence</p>
@@ -269,7 +269,7 @@ export default function TeacherDashboard() {
           <span className="text-[9px] font-black text-slate-400 tracking-tight">Sync</span>
          </div>
         </div>
-        <div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+        <div className="p-4 bg-emerald-50 text-emerald-600 rounded-[5px] group-hover:scale-110 transition-transform">
          <PieChart size={24} />
         </div>
        </div>
@@ -283,7 +283,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Submission Hub</p>
@@ -292,7 +292,7 @@ export default function TeacherDashboard() {
           <span className="text-[9px] font-black text-slate-400 tracking-tight">Queue</span>
          </div>
         </div>
-        <div className="p-4 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
+        <div className="p-4 bg-amber-50 text-amber-600 rounded-[5px] group-hover:scale-110 transition-transform">
          <Clock size={24} />
         </div>
        </div>
@@ -304,7 +304,7 @@ export default function TeacherDashboard() {
      </motion.div>
 
      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all group">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-xl transition-all group">
        <div className="flex justify-between items-start">
         <div>
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Academic Index</p>
@@ -313,7 +313,7 @@ export default function TeacherDashboard() {
           <span className="text-[9px] font-black text-slate-400 tracking-tight">KPI</span>
          </div>
         </div>
-        <div className="p-4 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition-transform">
+        <div className="p-4 bg-purple-50 text-purple-600 rounded-[5px] group-hover:scale-110 transition-transform">
          <GraduationCap size={24} />
         </div>
        </div>
@@ -379,15 +379,15 @@ export default function TeacherDashboard() {
       initial={{ scale: 0.95, opacity: 0 }} 
       animate={{ scale: 1, opacity: 1 }} 
       transition={{ delay: 0.5 }}
-      className="bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden group hover:shadow-2xl hover:border-emerald-100 transition-all duration-500"
+      className="bg-white border border-slate-100 rounded-[5px] p-8 relative overflow-hidden group hover:shadow-2xl hover:border-emerald-100 transition-all duration-500"
      >
       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[5rem] -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
       
       <div className="flex justify-between items-start mb-10 relative z-10">
-       <div className="w-20 h-20 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
+       <div className="w-20 h-20 bg-emerald-600 rounded-[5px] flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100 group-hover:rotate-6 transition-all duration-500">
         {teacher?.full_name?.[0] || 'T'}
        </div>
-       <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-xl tracking-widest border border-emerald-100/50">
+       <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-[5px] tracking-widest border border-emerald-100/50">
         Verified Faculty
        </span>
       </div>
@@ -408,7 +408,7 @@ export default function TeacherDashboard() {
 
       <button 
        onClick={() => navigate('/profile-setup')}
-       className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[10px]  shadow-xl transition-all active:scale-95"
+       className="mt-10 w-full py-5 bg-slate-900 hover:bg-black text-white rounded-[5px] font-black text-[10px]  shadow-xl transition-all active:scale-95"
       >
        Manage Profile 
       </button>
@@ -419,7 +419,7 @@ export default function TeacherDashboard() {
     <motion.div 
      initial={{ opacity: 0, y: 20 }} 
      animate={{ opacity: 1, y: 0 }}
-     className="bg-white border border-slate-100 rounded-3xl p-12 flex flex-col items-center text-center relative overflow-hidden group"
+     className="bg-white border border-slate-100 rounded-[5px] p-12 flex flex-col items-center text-center relative overflow-hidden group"
     >
      <div className="absolute inset-0 bg-slate-50/30 opacity-0 group-hover:opacity-100 transition-opacity"></div>
      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-emerald-600 mb-8 shadow-inner relative z-10">
@@ -431,7 +431,7 @@ export default function TeacherDashboard() {
      </p>
      <button 
       onClick={fetchDashboardData}
-      className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black text-[11px]  shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
+      className="bg-emerald-600 text-white px-12 py-5 rounded-[5px] font-black text-[11px]  shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
      >
       <Activity size={18} /> Forced Sync
      </button>

@@ -284,7 +284,7 @@ const AddStudent = () => {
         className="premium-card p-10 md:p-16 space-y-12"
       >
         <div className="flex items-center gap-6 border-b border-slate-50 pb-8">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+          <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-inner">
            <User size={24} />
           </div>
           <div>
@@ -294,9 +294,9 @@ const AddStudent = () => {
         </div>
 
         {/* --- PHOTO UPLOAD SECTION --- */}
-        <div className="space-y-8 bg-slate-50/50 p-8 md:p-10 rounded-[3rem] border border-slate-100 shadow-inner">
+        <div className="space-y-8 bg-slate-50/50 p-8 md:p-10 rounded-[5px] border border-slate-100 shadow-inner">
           <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
-            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+            <div className="w-10 h-10 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600">
              <Camera size={20} />
             </div>
             <h3 className="text-xl font-black text-slate-900 uppercase">Student Photo</h3>
@@ -304,7 +304,7 @@ const AddStudent = () => {
 
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="relative group">
-              <div className="w-40 h-40 rounded-[2.5rem] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
+              <div className="w-40 h-40 rounded-[5px] bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center text-slate-100 transition-all group-hover:shadow-2xl">
                 {photoPreview ? (
                   <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
                 ) : (
@@ -315,7 +315,7 @@ const AddStudent = () => {
                 <button 
                   type="button" 
                   onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
-                  className="absolute -top-2 -right-2 w-8 h-8 bg-rose-500 text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-rose-600 transition-all active:scale-90"
+                  className="absolute -top-2 -right-2 w-8 h-8 bg-rose-500 text-white rounded-[5px] flex items-center justify-center shadow-lg hover:bg-rose-600 transition-all active:scale-90"
                 >
                   <RefreshCw size={14} />
                 </button>
@@ -327,7 +327,7 @@ const AddStudent = () => {
                 <button 
                   type="button"
                   onClick={() => setShowWebcam(true)}
-                  className="flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-2xl text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
+                  className="flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-[5px] text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
                 >
                   <Camera size={18} /> OPEN CAMERA
                 </button>
@@ -340,7 +340,7 @@ const AddStudent = () => {
                   />
                   <button 
                     type="button"
-                    className="w-full flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-2xl text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
+                    className="w-full flex items-center justify-center gap-3 p-5 bg-white border border-slate-100 rounded-[5px] text-[10px] font-black tracking-widest text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm"
                   >
                     <Upload size={18} /> UPLOAD FILE
                   </button>
@@ -360,15 +360,15 @@ const AddStudent = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl flex items-center justify-center p-6"
               >
-                <div className="bg-white rounded-[3rem] p-10 w-full max-w-xl shadow-2xl space-y-8 relative overflow-hidden">
+                <div className="bg-white rounded-[5px] p-10 w-full max-w-xl shadow-2xl space-y-8 relative overflow-hidden">
                   <div className="flex justify-between items-center">
                     <h3 className="text-2xl font-black text-slate-900 uppercase">Live Capture</h3>
-                    <button onClick={() => setShowWebcam(false)} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-600 transition-all">
+                    <button onClick={() => setShowWebcam(false)} className="p-3 bg-slate-50 rounded-[5px] text-slate-400 hover:text-slate-600 transition-all">
                       <ChevronRight size={24} className="rotate-90" />
                     </button>
                   </div>
                   
-                  <div className="relative rounded-3xl overflow-hidden bg-slate-100 shadow-inner aspect-video flex items-center justify-center">
+                  <div className="relative rounded-[5px] overflow-hidden bg-slate-100 shadow-inner aspect-video flex items-center justify-center">
                     {WebcamComp ? (
                       <WebcamComp
                         audio={false}
@@ -386,14 +386,14 @@ const AddStudent = () => {
                     <button 
                       type="button"
                       onClick={capturePhoto}
-                      className="flex-1 bg-blue-600 text-white py-6 rounded-2xl font-black tracking-widest text-xs shadow-xl shadow-blue-100 hover:bg-slate-900 transition-all active:scale-95"
+                      className="flex-1 bg-blue-600 text-white py-6 rounded-[5px] font-black tracking-widest text-xs shadow-xl shadow-blue-100 hover:bg-slate-900 transition-all active:scale-95"
                     >
                       CAPTURE
                     </button>
                     <button 
                       type="button"
                       onClick={toggleCamera}
-                      className="px-8 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-all active:scale-95"
+                      className="px-8 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-100 transition-all active:scale-95"
                     >
                       <FlipHorizontal size={24} />
                     </button>
@@ -426,7 +426,7 @@ const AddStudent = () => {
           <label className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
           <div className="flex gap-4">
            <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full premium-input pl-8 uppercase" required />
-           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-2xl hover:bg-slate-900 transition-all shadow-lg active:scale-95">
+           <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-[5px] hover:bg-slate-900 transition-all shadow-lg active:scale-95">
             <RefreshCw size={20}/>
            </button>
           </div>
@@ -445,7 +445,7 @@ const AddStudent = () => {
            name="address"
            value={formData.address}
            onChange={handleChange}
-           className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
+           className="w-full p-8 bg-slate-50 border border-slate-100 rounded-[5px] font-black text-slate-900 outline-none h-32 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100/50 transition-all text-sm"
            required
           />
          </div>

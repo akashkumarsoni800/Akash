@@ -74,19 +74,19 @@ const StudentAttendance = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-6xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION & CONTEXT --- */}
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
      </button>
 
-     <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
+     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-xl flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
        <span className="text-[10px] font-black  text-blue-400 ">Real-Time Sync Active</span>
      </div>
@@ -104,7 +104,7 @@ const StudentAttendance = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📅</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Audit Score</p>
@@ -126,7 +126,7 @@ const StudentAttendance = () => {
      initial={{ opacity: 0, y: 20 }}
      animate={{ opacity: 1, y: 0 }}
      transition={{ delay: 0.2 }}
-     className="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group"
+     className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group"
     >
       <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row justify-between items-center gap-6 px-12">
        <h3 className="font-black text-[10px] text-slate-400  flex items-center gap-3 uppercase">
@@ -135,7 +135,7 @@ const StudentAttendance = () => {
        <div className="flex items-center gap-4">
          <div className="relative group/filter">
           <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/filter:text-blue-500 transition-colors" size={14}/>
-          <select className="bg-white border border-slate-100 rounded-xl pl-10 pr-6 py-2 text-[9px] font-black tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
+          <select className="bg-white border border-slate-100 rounded-[5px] pl-10 pr-6 py-2 text-[9px] font-black tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none">
             <option>Full List</option>
             <option>Last 30 Cycles</option>
             <option>Flagged Only</option>
@@ -153,12 +153,12 @@ const StudentAttendance = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.05 * idx }}
             key={idx} 
-            className={`bg-white rounded-[2.5rem] p-8 border transition-all duration-500 flex flex-col md:flex-row items-center justify-between group/row shadow-sm hover:shadow-xl ${
+            className={`bg-white rounded-[5px] p-8 border transition-all duration-500 flex flex-col md:flex-row items-center justify-between group/row shadow-sm hover:shadow-xl ${
               record.status === 'P' ? 'hover:border-blue-100 border-slate-50' : 'hover:border-rose-100 border-rose-50 shadow-rose-500/5 bg-rose-50/10'
             }`}
            >
             <div className="flex items-center gap-8 w-full md:w-auto">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors shadow-sm ${
+              <div className={`w-16 h-16 rounded-[5px] flex items-center justify-center transition-colors shadow-sm ${
                record.status === 'P' ? 'bg-blue-50 text-blue-600 group-hover/row:bg-blue-600 group-hover/row:text-white' : 'bg-rose-50 text-rose-600 group-hover/row:bg-rose-600 group-hover/row:text-white'
               }`}>
                <Calendar size={24}/>
@@ -186,8 +186,8 @@ const StudentAttendance = () => {
           ))}
         </div>
        ) : (
-        <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[3rem] border border-dashed border-slate-200 opacity-30 group">
-          <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
+        <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[5px] border border-dashed border-slate-200 opacity-30 group">
+          <div className="w-24 h-24 bg-white rounded-[5px] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
           <div className="space-y-2">
            <h4 className="text-xl font-black text-slate-900  "> Nullified</h4>
            <p className="text-[9px] font-black text-slate-400 ">No presence records found in the current session cycle.</p>
@@ -210,8 +210,8 @@ const PremiumStatBox = ({ label, value, icon: Icon, accent }: any) => {
   };
 
   return (
-   <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all text-center group relative overflow-hidden">
-     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all group-hover:scale-110 group-hover:rotate-3 ${colors[accent]}`}>
+   <div className="bg-white p-8 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all text-center group relative overflow-hidden">
+     <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mx-auto mb-6 transition-all group-hover:scale-110 group-hover:rotate-3 ${colors[accent]}`}>
       <Icon size={24}/>
      </div>
      <p className="text-[9px] font-black text-slate-400 tracking-widest mb-2 ">{label}</p>

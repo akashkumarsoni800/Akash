@@ -42,18 +42,18 @@ const StudentICardPage = () => {
 
  return (
   <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans pb-24">
-   <button onClick={() => navigate(-1)} className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl shadow-sm text-indigo-600 font-black text-[10px] mb-10 border border-indigo-50 tracking-widest hover:shadow-md transition-all">
+   <button onClick={() => navigate(-1)} className="flex items-center gap-2 bg-white px-5 py-3 rounded-[5px] shadow-sm text-indigo-600 font-black text-[10px] mb-10 border border-indigo-50 tracking-widest hover:shadow-md transition-all">
     <ChevronLeft size={16}/> Back to Dashboard
    </button>
 
-   <div className="max-w-4xl mx-auto space-y-10">
+   <div className="max-w-full mx-auto space-y-10">
     <div className="text-center space-y-3">
      <div className="inline-block bg-indigo-50 px-4 py-1.5 rounded-full text-[9px] font-black text-indigo-600  mb-2">Electronic Credentials</div>
      <h1 className="text-4xl md:text-6xl font-black text-gray-900  leading-none uppercase">Student ID Card</h1>
      <p className="text-gray-400 font-black text-[10px] ">Official School Identity</p>
     </div>
 
-    <div className="flex flex-col items-center bg-white rounded-[4rem] p-10 md:p-20 shadow-2xl border border-gray-100 relative overflow-hidden">
+    <div className="flex flex-col items-center bg-white rounded-[5px] p-10 md:p-20 shadow-2xl border border-gray-100 relative overflow-hidden">
       {/* Security Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none font-black text-[20rem] text-indigo-900 flex items-center justify-center -rotate-12 select-none">ID</div>
       

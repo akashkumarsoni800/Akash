@@ -44,9 +44,9 @@ const ActionCard = ({ icon: Icon, label, color, onClick }: any) => {
  return (
   <button 
    onClick={onClick} 
-   className={`flex flex-col items-center justify-center gap-2 p-5 bg-white border rounded-2xl shadow-sm transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
+   className={`flex flex-col items-center justify-center gap-2 p-5 bg-white border rounded-[5px] shadow-sm transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
   >
-    <div className="p-3 rounded-xl transition-all duration-300">
+    <div className="p-3 rounded-[5px] transition-all duration-300">
      <Icon size={20} className="group-hover:scale-110 transition-transform" />
     </div>
     <span className="text-[10px] font-black tracking-[0.2em] text-center leading-tight">{label}</span>
@@ -71,7 +71,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
       {subText && <span className="text-[10px] text-slate-400 font-bold tracking-tight">{subText}</span>}
      </div>
     </div>
-    <div className={`p-4 rounded-xl ${colorStyles[color as keyof typeof colorStyles]}`}>
+    <div className={`p-4 rounded-[5px] ${colorStyles[color as keyof typeof colorStyles]}`}>
      <Icon size={24} className="opacity-80" />
     </div>
    </div>
@@ -146,10 +146,10 @@ const AdminDashboard = () => {
    <div className="max-w-full mx-auto space-y-10">
     
     {/* --- HEADER & TOP ACTIONS --- */}
-    <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-3xl p-8 md:p-10 shadow-sm transition-all hover:shadow-md">
+    <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[5px] p-8 md:p-10 shadow-sm transition-all hover:shadow-md">
      <div className="flex flex-col lg:flex-row justify-between items-center gap-8 mb-10">
       <div className="flex items-center gap-4 text-center lg:text-left">
-       <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-200 animate-float">
+       <div className="w-14 h-14 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-xl shadow-blue-200 animate-float">
         <LayoutDashboard size={28}/>
        </div>
        <div>
@@ -158,13 +158,13 @@ const AdminDashboard = () => {
        </div>
       </div>
       <div className="flex flex-wrap justify-center gap-3">
-        <button onClick={() => navigate('/admin/create-exam')} className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
+        <button onClick={() => navigate('/admin/create-exam')} className="px-6 py-3 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
          <Zap size={14} className="text-yellow-400"/> Examination
         </button>
-        <button onClick={() => navigate('/admin/manage-fees')} className="px-6 py-3 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2">
+        <button onClick={() => navigate('/admin/manage-fees')} className="px-6 py-3 bg-blue-50 text-blue-600 rounded-[5px] text-[10px] font-black tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2">
          <CreditCard size={14}/> Financials
         </button>
-        <button onClick={() => navigate('/admin/upload-result')} className="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm flex items-center gap-2">
+        <button onClick={() => navigate('/admin/upload-result')} className="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm flex items-center gap-2">
          <CheckCircle size={14}/> Assessments
         </button>
       </div>
@@ -191,13 +191,13 @@ const AdminDashboard = () => {
     </div>
 
     {/* --- TABLES SECTION --- */}
-    <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm mt-10">
+    <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[5px] overflow-hidden shadow-sm mt-10">
      <div className="flex flex-wrap border-b border-slate-100 p-2 gap-2 bg-slate-50/50">
       {['overview', 'students', 'teachers', 'admins', 'exams', 'approvals', 'gallery', 'branding'].map(tab => (
        <button 
         key={tab} 
         onClick={() => setActiveTab(tab)} 
-        className={`px-8 py-3.5 text-[10px] font-black tracking-widest rounded-2xl transition-all duration-300 ${
+        className={`px-8 py-3.5 text-[10px] font-black tracking-widest rounded-[5px] transition-all duration-300 ${
          activeTab === tab 
           ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' 
           : 'text-slate-400 hover:text-slate-600 hover:bg-white'
@@ -213,14 +213,14 @@ const AdminDashboard = () => {
        {activeTab === 'overview' && (
         <motion.div key="ov" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pendingStudents.map(s => (
-           <div key={s.student_id} className="p-6 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between h-48 group hover:border-blue-200 transition-all">
+           <div key={s.student_id} className="p-6 rounded-[5px] border border-slate-100 bg-slate-50/30 flex flex-col justify-between h-48 group hover:border-blue-200 transition-all">
             <div>
              <h4 className="font-black text-slate-800 text-lg leading-tight tracking-tight">{s.full_name}</h4>
              <span className="inline-block mt-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-black tracking-wider">Class {s.class_name}</span>
             </div>
             <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
-              <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-blue-600 text-white py-3 rounded-xl text-[9px] font-black tracking-widest hover:bg-blue-700 shadow-md transition-all">Approve</button>
-              <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-white text-rose-500 py-3 rounded-xl text-[9px] font-black tracking-widest border border-rose-100 hover:bg-rose-50 transition-all">Reject</button>
+              <button onClick={() => handleAction('approve', 'students', s.student_id)} className="flex-1 bg-blue-600 text-white py-3 rounded-[5px] text-[9px] font-black tracking-widest hover:bg-blue-700 shadow-md transition-all">Approve</button>
+              <button onClick={() => handleAction('delete', 'students', s.student_id)} className="flex-1 bg-white text-rose-500 py-3 rounded-[5px] text-[9px] font-black tracking-widest border border-rose-100 hover:bg-rose-50 transition-all">Reject</button>
             </div>
            </div>
           ))}

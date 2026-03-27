@@ -99,7 +99,7 @@ const AddTeacher = () => {
      <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600" />
      
      <div className="flex items-center gap-6 border-b border-slate-50 pb-8 mb-10">
-       <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+       <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-inner">
         <UserPlus size={24} />
        </div>
        <div>
@@ -154,7 +154,7 @@ const AddTeacher = () => {
         </div>
       </div>
 
-      <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 relative overflow-hidden">
+      <div className="bg-slate-50 p-6 rounded-[5px] border border-slate-100 space-y-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-2xl rounded-full" />
         <div className="flex items-center gap-3 relative z-10">
          <Info size={16} className="text-blue-500" />
@@ -181,7 +181,7 @@ const AddTeacher = () => {
         <button 
          type="button"
          onClick={() => navigate('/admin/dashboard')}
-         className="px-10 py-6 rounded-[2rem] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
+         className="px-10 py-6 rounded-[5px] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
         >
          Abort Induction
         </button>

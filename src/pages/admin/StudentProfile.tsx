@@ -138,14 +138,14 @@ const StudentProfile = () => {
 
  if (error || !student) return (
   <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-12 text-center">
-   <div className="w-32 h-32 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 mb-10 shadow-inner">
+   <div className="w-32 h-32 bg-rose-50 rounded-[5px] flex items-center justify-center text-rose-500 mb-10 shadow-inner">
      <AlertCircle size={60} />
    </div>
    <h1 className="text-5xl font-black text-slate-900  uppercase"> Error</h1>
    <p className="text-slate-400 mt-4 font-black tracking-widest text-xs">{error || "Reference node not found"}</p>
    <div className="flex gap-6 mt-12">
-    <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[2rem] font-black text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
-    <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
+    <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all ">Go Back</button>
+    <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
    </div>
   </div>
  );
@@ -157,10 +157,10 @@ const StudentProfile = () => {
     {/* --- TOP ACTIONS --- */}
     <div className="flex justify-between items-center no-print">
      <div className="flex gap-4">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[2rem] font-black text-[10px] text-slate-900 shadow-sm hover:shadow-xl transition-all ">
+      <button onClick={() => navigate(-1)} className="flex items-center gap-4 bg-white border border-slate-100 px-8 py-5 rounded-[5px] font-black text-[10px] text-slate-900 shadow-sm hover:shadow-xl transition-all ">
        <ChevronLeft size={18} /> Back
       </button>
-      <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[2rem] font-black text-[10px] shadow-2xl flex items-center gap-4 hover:bg-indigo-600 transition-all ">
+      <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[5px] font-black text-[10px] shadow-2xl flex items-center gap-4 hover:bg-indigo-600 transition-all ">
        <Printer size={18} /> Print Dossier
       </button>
      </div>
@@ -174,13 +174,13 @@ const StudentProfile = () => {
     <motion.div 
      initial={{ opacity: 0, scale: 0.95 }}
      animate={{ opacity: 1, scale: 1 }}
-     className="bg-indigo-950 rounded-[4rem] p-10 md:p-14 text-white shadow-2xl relative overflow-hidden border-b-[12px] border-indigo-600/30 group"
+     className="bg-indigo-950 rounded-[5px] p-10 md:p-14 text-white shadow-2xl relative overflow-hidden border-b-[12px] border-indigo-600/30 group"
     >
      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500 opacity-10 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[5s] group-hover:scale-110 pointer-events-none"></div>
      
      <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
       <div className="flex flex-col md:flex-row items-center gap-12 text-center md:text-left">
-       <label className="relative group w-48 h-48 rounded-[3.5rem] bg-white/5 border-[6px] border-white/10 overflow-hidden flex items-center justify-center backdrop-blur-md cursor-pointer hover:border-indigo-400/50 hover:shadow-[0_0_50px_rgba(129,140,248,0.3)] transition-all flex-shrink-0">
+       <label className="relative group w-48 h-48 rounded-[5px] bg-white/5 border-[6px] border-white/10 overflow-hidden flex items-center justify-center backdrop-blur-md cursor-pointer hover:border-indigo-400/50 hover:shadow-[0_0_50px_rgba(129,140,248,0.3)] transition-all flex-shrink-0">
         {uploading ? (
          <RefreshCw className="animate-spin text-white" size={40} />
         ) : student.photo_url ? (
@@ -202,13 +202,13 @@ const StudentProfile = () => {
         </div>
         <h1 className="text-5xl md:text-8xl font-black  leading-none uppercase">{student.full_name}</h1>
         <div className="flex flex-wrap justify-center md:justify-start gap-5">
-          <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-black border border-white/5  flex items-center gap-3"><BookOpen size={14} className="text-indigo-400" /> Class: {student.class_name}</div>
-          <div className="bg-white/5 px-6 py-2.5 rounded-2xl text-[11px] font-black border border-white/5  flex items-center gap-3"><GraduationCap size={14} className="text-indigo-400" /> Roll: {student.roll_no}</div>
+          <div className="bg-white/5 px-6 py-2.5 rounded-[5px] text-[11px] font-black border border-white/5  flex items-center gap-3"><BookOpen size={14} className="text-indigo-400" /> Class: {student.class_name}</div>
+          <div className="bg-white/5 px-6 py-2.5 rounded-[5px] text-[11px] font-black border border-white/5  flex items-center gap-3"><GraduationCap size={14} className="text-indigo-400" /> Roll: {student.roll_no}</div>
         </div>
        </div>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center min-w-[280px] shadow-2xl relative overflow-hidden group/stat transition-all hover:bg-white/10">
+      <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[5px] border border-white/10 text-center min-w-[280px] shadow-2xl relative overflow-hidden group/stat transition-all hover:bg-white/10">
        <div className="absolute inset-0 bg-indigo-500/5 group-hover/stat:bg-indigo-500/10 transition-colors"></div>
        <p className="text-[11px] font-black text-indigo-300 mb-4  relative z-10 leading-none">Attendance Rate</p>
        <p className={`text-8xl font-black relative z-10 leading-none transition-colors duration-500 ${attendanceRate >= 75 ? 'text-emerald-400 group-hover/stat:text-emerald-300' : 'text-rose-400 group-hover/stat:text-rose-300'}`}>
@@ -231,11 +231,11 @@ const StudentProfile = () => {
        initial={{ opacity: 0, x: -20 }}
        animate={{ opacity: 1, x: 0 }}
        transition={{ delay: 0.2 }}
-       className="bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-100 space-y-12 relative overflow-hidden group"
+       className="bg-white rounded-[5px] p-12 shadow-sm border border-slate-100 space-y-12 relative overflow-hidden group"
       >
        <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
        <div className="flex items-center gap-5 relative z-10 border-b border-slate-50 pb-10">
-         <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
+         <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-white shadow-xl">
           <Fingerprint size={24} />
          </div>
          <h3 className="font-black text-[12px] text-slate-900  uppercase">Student Dossier</h3>
@@ -259,11 +259,11 @@ const StudentProfile = () => {
        initial={{ opacity: 0, x: -20 }}
        animate={{ opacity: 1, x: 0 }}
        transition={{ delay: 0.3 }}
-       className="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group"
+       className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group"
       >
         <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
          <div className="flex items-center gap-4">
-           <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white shadow-lg"><CreditCard size={20}/></div>
+           <div className="w-10 h-10 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white shadow-lg"><CreditCard size={20}/></div>
            <h3 className="font-black text-[10px] text-slate-900 uppercase">Identity Card</h3>
          </div>
          <div className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[8px] font-black tracking-widest ">ASM-001-ST</div>
@@ -286,7 +286,7 @@ const StudentProfile = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group"
+        className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group"
        >
         <div className="p-12 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
           <div className="flex items-center gap-5">
@@ -299,7 +299,7 @@ const StudentProfile = () => {
            </div>
           </div>
           <div className="flex gap-4">
-           <button className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm"><Download size={20} /></button>
+           <button className="w-12 h-12 bg-slate-50 rounded-[5px] flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm"><Download size={20} /></button>
           </div>
         </div>
         
@@ -323,9 +323,9 @@ const StudentProfile = () => {
             </div>
            ) : (
             fees.map((fee: any) => (
-             <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
+             <div key={fee.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-transparent hover:border-indigo-100 hover:shadow-xl group/row">
                <div className="flex items-center gap-6">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors font-black text-xs ">
+                <div className="w-12 h-12 bg-white rounded-[5px] flex items-center justify-center text-slate-300 group-hover/row:text-indigo-600 border border-slate-100 shadow-sm transition-colors font-black text-xs ">
                   {fee.month ? fee.month.charAt(0) : 'C'}
                  </div>
                  <div>
@@ -338,7 +338,7 @@ const StudentProfile = () => {
                    <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Impact</p>
                    <p className="font-black text-indigo-600 text-2xl  leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
                  </div>
-                 <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black  shadow-sm border transition-all ${
+                 <span className={`px-6 py-2.5 rounded-[5px] text-[10px] font-black  shadow-sm border transition-all ${
                    fee.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100 animate-pulse"
                  }`}>
                    {fee.status || "Pending"}
@@ -357,7 +357,7 @@ const StudentProfile = () => {
          initial={{ opacity: 0, y: 30 }}
          animate={{ opacity: 1, y: 0 }}
          transition={{ delay: 0.5 }}
-         className="bg-white rounded-[4rem] shadow-sm border border-slate-100 overflow-hidden group"
+         className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group"
         >
          <div className="p-12 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
            <div className="flex items-center gap-5">
@@ -379,7 +379,7 @@ const StudentProfile = () => {
             </div>
            ) : (
             results.map((res: any) => (
-             <div key={res.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[2rem] p-10 border border-transparent hover:border-emerald-100 hover:shadow-xl group/res">
+             <div key={res.id} className="bg-slate-50/50 hover:bg-white transition-all rounded-[5px] p-10 border border-transparent hover:border-emerald-100 hover:shadow-xl group/res">
                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div className="space-y-4">
                  <div className="flex items-center gap-3">
@@ -392,14 +392,14 @@ const StudentProfile = () => {
                 <div className="flex items-center gap-8">
                  <div className="text-right">
                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Status</p>
-                  <span className={`px-6 py-2 rounded-xl text-[10px] font-black border ${
+                  <span className={`px-6 py-2 rounded-[5px] text-[10px] font-black border ${
                    res.status === 'PASS' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'
                   }`}>
                    {res.status}
                   </span>
                  </div>
                  <div className="w-px h-12 bg-slate-100 hidden md:block" />
-                 <button className="p-4 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                 <button className="p-4 bg-white border border-slate-100 rounded-[5px] text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
                   <ArrowRight size={20} />
                  </button>
                 </div>
@@ -407,7 +407,7 @@ const StudentProfile = () => {
                
                <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
                 {(res.marks_data as any[])?.slice(0, 4).map((m: any, i: number) => (
-                 <div key={i} className="bg-white/50 p-4 rounded-2xl border border-slate-50">
+                 <div key={i} className="bg-white/50 p-4 rounded-[5px] border border-slate-50">
                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-tighter truncate">{m.subject}</p>
                   <p className="text-lg font-black text-slate-900">{m.marks}/{m.max_marks}</p>
                  </div>
@@ -428,7 +428,7 @@ const StudentProfile = () => {
 // Sub-components
 const DossierItem = ({ icon: Icon, label, value }: any) => (
  <div className="flex items-start gap-6 group/item">
-  <div className="bg-slate-50 p-4 rounded-2xl text-slate-300 group-hover/item:bg-indigo-50 group-hover/item:text-indigo-600 transition-all border border-slate-50 shadow-inner">
+  <div className="bg-slate-50 p-4 rounded-[5px] text-slate-300 group-hover/item:bg-indigo-50 group-hover/item:text-indigo-600 transition-all border border-slate-50 shadow-inner">
     <Icon size={22} />
   </div>
   <div className="space-y-1">
@@ -446,7 +446,7 @@ const MiniStatCard = ({ label, value, icon: Icon, color }: any) => {
   };
 
   return (
-   <div className={`p-8 rounded-[2.5rem] border ${colorMap[color as keyof typeof colorMap]} shadow-inner space-y-4 group hover:shadow-xl transition-all duration-500`}>
+   <div className={`p-8 rounded-[5px] border ${colorMap[color as keyof typeof colorMap]} shadow-inner space-y-4 group hover:shadow-xl transition-all duration-500`}>
      <div className="flex items-center justify-between">
       <Icon size={16} className="opacity-40 group-hover:scale-110 transition-transform" />
       <div className={`w-1.5 h-1.5 rounded-full ${color === 'emerald' ? 'bg-emerald-500' : color === 'rose' ? 'bg-rose-500' : 'bg-slate-300'}`} />

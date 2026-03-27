@@ -100,9 +100,9 @@ export default function StudentRegistrationForm() {
       <motion.div 
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl relative z-10"
+        className="w-full max-w-full relative z-10"
       >
-        <div className="bg-white rounded-[4rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
+        <div className="bg-white rounded-[5px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
            <div className="flex flex-col lg:flex-row">
               
               {/* Left Side: Illustration / Info */}
@@ -112,7 +112,7 @@ export default function StudentRegistrationForm() {
                  </div>
                  
                  <div className="relative z-10 space-y-8">
-                    <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-blue-400 border border-white/10">
+                    <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-[5px] flex items-center justify-center text-blue-400 border border-white/10">
                        <Compass size={32} />
                     </div>
                     <div>
@@ -161,7 +161,7 @@ export default function StudentRegistrationForm() {
 
                  <form onSubmit={handleSubmit} className="space-y-8">
                     {/* ✅ School Identifier Node */}
-                    <div className="bg-blue-50/50 p-6 rounded-[2rem] border border-blue-100/50">
+                    <div className="bg-blue-50/50 p-6 rounded-[5px] border border-blue-100/50">
                         <InputField 
                           label="Institutional Identifier (School Code)" 
                           icon={ShieldCheck} 
@@ -226,7 +226,7 @@ export default function StudentRegistrationForm() {
                        <button 
                          type="submit" 
                          disabled={loading}
-                         className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
+                         className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black   text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50  group/btn"
                        >
                          {loading ? <RefreshCw className="animate-spin" size={20} /> : <><UserPlus size={20} /> Submit Registration</>}
                        </button>
@@ -234,14 +234,14 @@ export default function StudentRegistrationForm() {
                        <button 
                          type="button"
                          onClick={() => navigate('/')}
-                         className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black   text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
+                         className="w-full bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black   text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
                        >
                           Already have an account? Login <ArrowRight size={14} />
                        </button>
                     </div>
                  </form>
 
-                 <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-start gap-4">
+                 <div className="bg-slate-50 p-8 rounded-[5px] border border-slate-100 flex items-start gap-4">
                     <Info size={18} className="text-blue-500 mt-1" />
                     <p className="text-[10px] font-black text-slate-400 leading-relaxed">
                        Administrative Protocol: All submissions are filtered through central security audits. 
@@ -261,7 +261,7 @@ const InputField = ({ label, icon: Icon, isPassword, showPassword, setShowPasswo
     <label className="block text-[9px] font-black text-slate-400   ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all  text-sm placeholder:text-slate-200`} {...props} />
       {isPassword && (
         <button 
           type="button"

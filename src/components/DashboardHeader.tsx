@@ -121,14 +121,14 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
        console.log("Menu clicked");
        onMenuClick();
      }} 
-     className="p-4 hover:bg-slate-100 rounded-2xl lg:hidden transition-all active:scale-95 relative z-[10000] pointer-events-auto"
+     className="p-4 hover:bg-slate-100 rounded-[5px] lg:hidden transition-all active:scale-95 relative z-[10000] pointer-events-auto"
     >
      <Menu size={24} className="text-slate-600" />
     </button>
 
      {/* Global Search Bar (Figma Style) */}
      <div className="relative hidden md:block w-full max-w-lg">
-       <div className="flex items-center gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl px-5 py-3 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
+       <div className="flex items-center gap-4 bg-slate-50/50 border border-slate-200/50 rounded-[5px] px-5 py-3 group focus-within:bg-white focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100/30 transition-all shadow-sm">
         <Search size={18} className="text-slate-300 group-focus-within:text-blue-500 transition-colors" />
         <input 
          type="text" 
@@ -152,7 +152,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50 p-2"
+              className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[5px] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50 p-2"
             >
               {searchResults.length > 0 ? (
                 <div className="max-h-[400px] overflow-y-auto asm-hide-scrollbar">
@@ -164,9 +164,9 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
                         setIsSearchOpen(false);
                         setSearchQuery('');
                       }}
-                      className="w-full flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group text-left"
+                      className="w-full flex items-center gap-4 p-4 hover:bg-slate-50 rounded-[5px] transition-all group text-left"
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                      <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center transition-all ${
                         result.type === 'Module' ? 'bg-blue-50 text-blue-500' : 'bg-purple-50 text-purple-500'
                       }`}>
                         {result.type === 'Module' ? <Settings size={18} /> : <User size={18} />}
@@ -200,7 +200,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
        <div className="relative">
          <button 
            onClick={() => { setIsNotifOpen(!isNotifOpen); setIsGlobeOpen(false); setIsProfileOpen(false); }}
-           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all relative group"
+           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[5px] transition-all relative group"
          >
           <Bell size={20} className={notices.length > 0 ? 'text-blue-500' : ''} />
           {notices.length > 0 && (
@@ -216,7 +216,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
                  animate={{ opacity: 1, y: 0, scale: 1 }}
                  exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                 className="absolute right-0 mt-4 w-80 bg-white rounded-[2.5rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-6 z-50"
+                 className="absolute right-0 mt-4 w-80 bg-white rounded-[5px] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-6 z-50"
                >
                  <div className="flex items-center justify-between mb-6">
                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">School Bulletins</p>
@@ -236,7 +236,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
                  </div>
                  <button 
                   onClick={() => { navigate(userRole === 'admin' ? '/admin/add-event' : '/student/dashboard'); setIsNotifOpen(false); }}
-                  className="w-full mt-6 py-3 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all"
+                  className="w-full mt-6 py-3 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-[5px] hover:bg-blue-50 hover:text-blue-600 transition-all"
                  >
                    View All Notices
                  </button>
@@ -250,7 +250,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
        <div className="relative">
          <button 
            onClick={() => { setIsGlobeOpen(!isGlobeOpen); setIsNotifOpen(false); setIsProfileOpen(false); }}
-           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
+           className="p-3.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-[5px] transition-all"
          >
           <Globe size={20} />
          </button>
@@ -263,23 +263,23 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
                  animate={{ opacity: 1, y: 0, scale: 1 }}
                  exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                 className="absolute right-0 mt-4 w-64 bg-white rounded-[2rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-4 z-50"
+                 className="absolute right-0 mt-4 w-64 bg-white rounded-[5px] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-4 z-50"
                >
                  <div className="px-2 py-2 mb-2 border-b border-slate-50">
                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">Environment Config</p>
                  </div>
                  <div className="space-y-1">
-                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-all group">
+                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-[5px] transition-all group">
                      <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">System Language</span>
                      <span className="bg-slate-900 text-white text-[8px] font-black px-2 py-1 rounded uppercase tracking-widest">Hindi</span>
                    </button>
-                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-all group text-left">
+                   <button className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-[5px] transition-all group text-left">
                      <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">Current Region</span>
                      <span className="text-[10px] font-black text-slate-400 uppercase">Bihar, IN</span>
                    </button>
                    <button 
                     onClick={() => { window.open('https://wa.me/917323891040', '_blank'); setIsGlobeOpen(false); }}
-                    className="w-full flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl transition-all group"
+                    className="w-full flex items-center justify-between p-3 hover:bg-blue-50 rounded-[5px] transition-all group"
                    >
                      <span className="text-[11px] font-black text-slate-600 group-hover:text-blue-600 uppercase">Tech Support</span>
                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
@@ -299,12 +299,12 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
     <div className="relative">
      <button 
       onClick={() => setIsProfileOpen(!isProfileOpen)} 
-      className="flex items-center gap-4 p-1 rounded-2xl hover:bg-slate-50 transition-all group"
+      className="flex items-center gap-4 p-1 rounded-[5px] hover:bg-slate-50 transition-all group"
      >
       <div className="relative">
        <img 
         src={avatarUrl || `https://ui-avatars.com/api/?name=${full_name}&background=0f172a&color=fff`} 
-        className="w-11 h-11 rounded-xl object-cover border-2 border-white shadow-md ring-1 ring-slate-100/50 transition-transform group-hover:scale-105" 
+        className="w-11 h-11 rounded-[5px] object-cover border-2 border-white shadow-md ring-1 ring-slate-100/50 transition-transform group-hover:scale-105" 
         alt="Profile" 
        />
        <div className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm ${userRole === 'admin' ? 'bg-blue-500' : userRole === 'teacher' ? 'bg-emerald-500' : 'bg-purple-500'}`}></div>
@@ -327,7 +327,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
          initial={{ opacity: 0, y: 15, scale: 0.95 }}
          animate={{ opacity: 1, y: 0, scale: 1 }}
          exit={{ opacity: 0, y: 15, scale: 0.95 }}
-         className="absolute right-0 mt-4 w-72 bg-white rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-3 z-20"
+         className="absolute right-0 mt-4 w-72 bg-white rounded-[5px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-slate-100 p-3 z-20"
         >
          <div className="px-5 py-4 border-b border-slate-50 mb-3 flex items-center justify-between">
           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">Global Control</p>
@@ -367,7 +367,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
 const HeaderMenuItem = ({ icon: Icon, label, onClick, variant = 'default' }: any) => (
  <button 
   onClick={onClick}
-  className={`flex w-full items-center gap-4 p-4 rounded-xl text-[11px] font-black tracking-widest transition-all group ${
+  className={`flex w-full items-center gap-4 p-4 rounded-[5px] text-[11px] font-black tracking-widest transition-all group ${
    variant === 'danger' 
    ? 'text-rose-400 hover:bg-rose-50 hover:text-rose-600' 
    : 'text-slate-500 hover:bg-slate-50 hover:text-blue-600'

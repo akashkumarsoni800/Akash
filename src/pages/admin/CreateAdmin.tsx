@@ -55,7 +55,7 @@ const CreateAdmin = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-4xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -69,8 +69,8 @@ const CreateAdmin = () => {
        </p>
       </motion.div>
  
-      <div className="flex bg-white px-8 py-5 rounded-[2.5rem] border border-slate-100 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
-       <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border border-blue-100 group-hover:scale-110 transition-transform">
+      <div className="flex bg-white px-8 py-5 rounded-[5px] border border-slate-100 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
+       <div className="w-14 h-14 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-sm border border-blue-100 group-hover:scale-110 transition-transform">
          <Fingerprint size={28} />
        </div>
        <div className="pr-4">
@@ -93,13 +93,13 @@ const CreateAdmin = () => {
  
        <div className="space-y-10 relative z-10">
         <div className="flex items-center gap-4 border-b border-slate-50 pb-8">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+          <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 shadow-inner">
            <UserPlus size={24} />
           </div>
           <h2 className="text-3xl font-black text-slate-900  uppercase">Induction Flow</h2>
         </div>
 
-        <div className="bg-amber-50/50 p-6 rounded-3xl border border-amber-100 flex gap-5 items-start">
+        <div className="bg-amber-50/50 p-6 rounded-[5px] border border-amber-100 flex gap-5 items-start">
          <ShieldAlert className="text-amber-500 shrink-0 mt-1" size={24} />
          <p className="text-[11px] font-black text-amber-700 leading-relaxed">
           <span className="block font-black tracking-widest mb-1 text-amber-600">Operational Warning</span>
@@ -162,7 +162,7 @@ const CreateAdmin = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group"
+        className="bg-slate-900 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group"
        >
          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
          <h3 className="text-[10px] font-black text-blue-400  mb-12 relative z-10 text-center md:text-left uppercase">Protocol Insights</h3>
@@ -182,7 +182,7 @@ const CreateAdmin = () => {
           </div>
          </div>
 
-         <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
+         <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-[5px] border border-white/5">
           <p className="text-[9px] font-black text-white/30  leading-relaxed">
             Notice: induction logs are recorded in the institutional audit vault for perpetual monitoring. Sequential authorization required.
           </p>
@@ -193,10 +193,10 @@ const CreateAdmin = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm space-y-10"
+        className="bg-white rounded-[5px] border border-slate-100 p-12 shadow-sm space-y-10"
        >
          <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shadow-inner">
+          <div className="w-10 h-10 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-500 shadow-inner">
             <Info size={20} />
           </div>
           <h4 className="text-lg font-black text-slate-900 ">Operational Help</h4>
@@ -225,7 +225,7 @@ const CreateAdmin = () => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
-      className="bg-white border border-slate-100 rounded-[3.5rem] p-10 md:p-14 shadow-sm"
+      className="bg-white border border-slate-100 rounded-[5px] p-10 md:p-14 shadow-sm"
      >
       <TeachersManagement roleFilter="admin" />
      </motion.div>

@@ -138,7 +138,7 @@ export default function StudentsManagement() {
                   </td>
                   <td className="px-10 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-900 overflow-hidden border-2 border-white shadow-sm shrink-0">
+                      <div className="w-10 h-10 rounded-[5px] bg-slate-900 overflow-hidden border-2 border-white shadow-sm shrink-0">
                         <img src={s.photo_url || `https://ui-avatars.com/api/?name=${s.full_name}&background=0f172a&color=fff`} className="w-full h-full object-cover" alt="" />
                       </div>
                       <div className="space-y-0.5">
@@ -161,25 +161,25 @@ export default function StudentsManagement() {
                       <button 
                         onClick={() => handleViewProfile(s.student_id)}
                         title="View Profile"
-                        className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm shadow-emerald-50"
+                        className="p-2.5 bg-emerald-50 text-emerald-600 rounded-[5px] hover:bg-emerald-600 hover:text-white transition-all shadow-sm shadow-emerald-50"
                       >
                         <Eye size={14} />
                       </button>
                       <button 
                         onClick={() => handleEdit(s.student_id)}
                         title="Edit Student"
-                        className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm shadow-blue-50"
+                        className="p-2.5 bg-blue-50 text-blue-600 rounded-[5px] hover:bg-blue-600 hover:text-white transition-all shadow-sm shadow-blue-50"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button 
                         onClick={() => handleDelete(s.student_id)}
                         title="Delete Student"
-                        className="p-2.5 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm shadow-rose-50"
+                        className="p-2.5 bg-rose-50 text-rose-500 rounded-[5px] hover:bg-rose-500 hover:text-white transition-all shadow-sm shadow-rose-50"
                       >
                         <Trash2 size={14} />
                       </button>
-                      <button className="p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                      <button className="p-2.5 bg-slate-50 text-slate-400 rounded-[5px] hover:bg-slate-900 hover:text-white transition-all shadow-sm">
                         <MoreVertical size={14} />
                       </button>
                     </div>

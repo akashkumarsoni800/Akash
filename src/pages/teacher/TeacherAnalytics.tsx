@@ -156,7 +156,7 @@ const TeacherAnalytics: React.FC = () => {
 
  return (
   <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 py-12 px-4">
-   <div className="max-w-7xl mx-auto">
+   <div className="max-w-full mx-auto">
     {/* Header */}
     <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
      <h1 className="text-6xl md:text-7xl font-black  bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6 uppercase">
@@ -169,12 +169,12 @@ const TeacherAnalytics: React.FC = () => {
 
     {/* Period Selector */}
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex justify-center mb-12">
-     <div className="bg-white/70 backdrop-blur-xl p-4 rounded-3xl shadow-xl border border-white/50 flex gap-2">
+     <div className="bg-white/70 backdrop-blur-xl p-4 rounded-[5px] shadow-xl border border-white/50 flex gap-2">
       {(['week', 'month', 'term'] as const).map((period) => (
        <button
         key={period}
         onClick={() => setSelectedPeriod(period)}
-        className={`px-8 py-4 rounded-2xl font-black tracking-widest text-sm transition-all duration-300 ${
+        className={`px-8 py-4 rounded-[5px] font-black tracking-widest text-sm transition-all duration-300 ${
          selectedPeriod === period
           ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl shadow-purple-500/25 scale-105'
           : 'bg-white text-gray-700 hover:bg-gray-50 shadow-lg hover:scale-105'
@@ -192,7 +192,7 @@ const TeacherAnalytics: React.FC = () => {
       initial={{ scale: 0.9, opacity: 0 }} 
       animate={{ scale: 1, opacity: 1 }} 
       transition={{ delay: 0.1 }}
-      className="group bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
+      className="group bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
       whileHover={{ scale: 1.02 }}
      >
       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">👥</div>
@@ -207,7 +207,7 @@ const TeacherAnalytics: React.FC = () => {
       initial={{ scale: 0.9, opacity: 0 }} 
       animate={{ scale: 1, opacity: 1 }} 
       transition={{ delay: 0.2 }}
-      className="group bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
+      className="group bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
       whileHover={{ scale: 1.02 }}
      >
       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📊</div>
@@ -224,7 +224,7 @@ const TeacherAnalytics: React.FC = () => {
       initial={{ scale: 0.9, opacity: 0 }} 
       animate={{ scale: 1, opacity: 1 }} 
       transition={{ delay: 0.3 }}
-      className="group bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
+      className="group bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
       whileHover={{ scale: 1.02 }}
      >
       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">⭐</div>
@@ -245,7 +245,7 @@ const TeacherAnalytics: React.FC = () => {
       initial={{ opacity: 0, x: -50 }} 
       animate={{ opacity: 1, x: 0 }} 
       transition={{ delay: 0.4 }}
-      className="bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50 group hover:shadow-3xl"
+      className="bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50 group hover:shadow-3xl"
      >
       <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-8 flex items-center gap-3 uppercase">
        📈 Performance Distribution
@@ -302,7 +302,7 @@ const TeacherAnalytics: React.FC = () => {
       initial={{ opacity: 0, x: 50 }} 
       animate={{ opacity: 1, x: 0 }} 
       transition={{ delay: 0.5 }}
-      className="bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/50"
+      className="bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50"
      >
       <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-8 uppercase">📅 Attendance Trend</h3>
       <div className="space-y-6">
@@ -333,7 +333,7 @@ const TeacherAnalytics: React.FC = () => {
     >
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
       onClick={() => navigate('/teacher/students')}
      >
       👥 View Students ({analytics.totalStudents})
@@ -341,7 +341,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
       onClick={() => window.print()}
      >
       📈 Full Report
@@ -349,7 +349,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
       onClick={() => {
        const top = analytics.recentResults.sort((a,b) => b.marks - a.marks)[0];
        import('sonner').then(({ toast }) => toast.info(`Top Performer: ${top?.student_name || 'Calculating...'} (${top?.marks || 0}%)`));
@@ -360,7 +360,7 @@ const TeacherAnalytics: React.FC = () => {
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
-      className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-3xl font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
+      className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-xl hover:shadow-2xl transition-all duration-300"
       onClick={() => {
        import('sonner').then(({ toast }) => toast.warning(`Critical Protocol: ${analytics.lowAttendance} students identified with sub-optimal attendance.`));
       }}
@@ -373,7 +373,7 @@ const TeacherAnalytics: React.FC = () => {
     <motion.div 
      initial={{ opacity: 0 }} 
      animate={{ opacity: 1 }} 
-     className="text-center mt-16 p-6 bg-white/50 backdrop-blur-xl rounded-3xl border border-white/30"
+     className="text-center mt-16 p-6 bg-white/50 backdrop-blur-xl rounded-[5px] border border-white/30"
     >
      <div className="text-2xl mb-2">🔄</div>
      <p className="text-lg font-black text-gray-700">Live Data • Updates every 30 seconds</p>

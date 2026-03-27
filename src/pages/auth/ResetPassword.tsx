@@ -155,14 +155,14 @@ const ResetPassword = () => {
     animate={{ opacity: 1, y: 0 }}
     className="w-full max-w-lg relative z-10"
    >
-    <div className="bg-white rounded-[4rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
+    <div className="bg-white rounded-[5px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden group">
       <div className="absolute top-0 left-0 w-full h-[8px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600" />
       
       <div className="p-10 md:p-14 space-y-12">
        
        {/* Header */}
        <div className="text-center space-y-4">
-         <div className="w-20 h-20 bg-slate-50 rounded-[2.5rem] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
+         <div className="w-20 h-20 bg-slate-50 rounded-[5px] border-4 border-white shadow-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all">
           <ShieldCheck size={36} className="text-blue-600" />
          </div>
          <h2 className="text-4xl font-black text-slate-900  leading-none uppercase">
@@ -182,13 +182,13 @@ const ResetPassword = () => {
            onSubmit={handleVerifyIdentity} 
            className="space-y-8"
           >
-            <div className="flex bg-slate-50 p-2 rounded-2xl gap-2">
+            <div className="flex bg-slate-50 p-2 rounded-[5px] gap-2">
              {(['student', 'staff'] as const).map(r => (
               <button 
                key={r}
                type="button"
                onClick={() => setResetRole(r)}
-               className={`flex-1 py-3 rounded-xl font-black text-[10px] tracking-widest uppercase transition-all ${
+               className={`flex-1 py-3 rounded-[5px] font-black text-[10px] tracking-widest uppercase transition-all ${
                 resetRole === r ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'
                }`}
               >
@@ -255,7 +255,7 @@ const ResetPassword = () => {
              <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+              className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
              >
               {loading ? <RefreshCw className="animate-spin" size={20} /> : <><ShieldAlert size={20} /> Authorize Verification</>}
              </button>
@@ -263,7 +263,7 @@ const ResetPassword = () => {
              <button 
               type="button"
               onClick={() => navigate('/')}
-              className="w-full bg-slate-50 text-slate-400 py-6 rounded-[2rem] font-black  text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
+              className="w-full bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black  text-[10px] hover:text-slate-900 transition-all flex items-center justify-center gap-4 active:scale-95 "
              >
                <ChevronLeft size={16} /> Revert to 
              </button>
@@ -309,7 +309,7 @@ const ResetPassword = () => {
              <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
+              className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50 group/btn"
              >
               {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Zap size={20} /> Commit Credentials</>}
              </button>
@@ -339,7 +339,7 @@ const ResetPassword = () => {
 
             <button 
              onClick={() => navigate('/')}
-             className="w-full bg-slate-950 text-white py-6 rounded-[2rem] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
+             className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black  text-xs shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 "
             >
              Return to <ArrowRight size={18} />
             </button>
@@ -351,7 +351,7 @@ const ResetPassword = () => {
 
       {/* Footer Alert */}
       <div className="bg-slate-50 p-10 border-t border-slate-100 flex items-center gap-6">
-       <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm border border-slate-100">
+       <div className="w-12 h-12 bg-white rounded-[5px] flex items-center justify-center text-blue-500 shadow-sm border border-slate-100">
          <Info size={24} />
        </div>
        <p className="text-[10px] font-black text-slate-400 leading-relaxed">
@@ -369,7 +369,7 @@ const InputField = ({ label, icon: Icon, isPassword, showPassword, setShowPasswo
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600 ">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={20} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
    {isPassword && (
     <button 
      type="button"

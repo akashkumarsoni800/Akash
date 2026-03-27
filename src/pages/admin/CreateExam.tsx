@@ -66,7 +66,7 @@ const CreateExam = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-4xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -80,8 +80,8 @@ const CreateExam = () => {
        </p>
       </motion.div>
 
-      <div className="flex bg-white border border-slate-100 rounded-3xl p-5 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
-       <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 shadow-sm border border-purple-100 group-hover:scale-110 transition-transform">
+      <div className="flex bg-white border border-slate-100 rounded-[5px] p-5 shadow-sm items-center gap-6 group hover:shadow-xl transition-all">
+       <div className="w-14 h-14 bg-purple-50 rounded-[5px] flex items-center justify-center text-purple-600 shadow-sm border border-purple-100 group-hover:scale-110 transition-transform">
          <FileText size={28} />
        </div>
        <div className="pr-4">
@@ -97,13 +97,13 @@ const CreateExam = () => {
       <motion.div 
        initial={{ opacity: 0, y: 30 }}
        animate={{ opacity: 1, y: 0 }}
-       className="lg:col-span-3 bg-white p-10 md:p-14 rounded-[4rem] shadow-sm border border-slate-100 space-y-12 relative overflow-hidden"
+       className="lg:col-span-3 bg-white p-10 md:p-14 rounded-[5px] shadow-sm border border-slate-100 space-y-12 relative overflow-hidden"
       >
        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-600 to-blue-600" />
        
        <div className="space-y-8">
         <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
-          <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+          <div className="w-10 h-10 bg-purple-50 rounded-[5px] flex items-center justify-center text-purple-600">
            <Layout size={20} />
           </div>
           <h2 className="text-2xl font-black text-slate-900  uppercase">Basic Info</h2>
@@ -133,7 +133,7 @@ const CreateExam = () => {
 
        <div className="space-y-8">
         <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
-          <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+          <div className="w-10 h-10 bg-purple-50 rounded-[5px] flex items-center justify-center text-purple-600">
            <BookOpen size={20} />
           </div>
           <h2 className="text-2xl font-black text-slate-900  uppercase">Subjects</h2>
@@ -146,7 +146,7 @@ const CreateExam = () => {
             <input 
              type="text" 
              placeholder="Enter Subject Name (e.g. Math)"
-             className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all text-sm"
+             className="w-full pl-16 pr-8 py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all text-sm"
              value={currentSubject}
              onChange={e => setCurrentSubject(e.target.value)}
              onKeyPress={e => e.key === 'Enter' && handleAddSubject()}
@@ -154,7 +154,7 @@ const CreateExam = () => {
           </div>
           <button 
            onClick={handleAddSubject}
-           className="bg-slate-900 text-white px-8 py-5 rounded-2xl font-black  text-[10px] shadow-lg hover:bg-purple-600 active:scale-95 transition-all "
+           className="bg-slate-900 text-white px-8 py-5 rounded-[5px] font-black  text-[10px] shadow-lg hover:bg-purple-600 active:scale-95 transition-all "
           >
            Add Subject
           </button>
@@ -168,10 +168,10 @@ const CreateExam = () => {
              initial={{ opacity: 0, scale: 0.8 }}
              animate={{ opacity: 1, scale: 1 }}
              exit={{ opacity: 0, scale: 0.8 }}
-             className="bg-white border border-slate-100 pl-6 pr-3 py-3 rounded-2xl text-[10px] font-black  text-slate-600 flex items-center gap-4 shadow-sm hover:border-purple-200 hover:text-purple-600 transition-all group "
+             className="bg-white border border-slate-100 pl-6 pr-3 py-3 rounded-[5px] text-[10px] font-black  text-slate-600 flex items-center gap-4 shadow-sm hover:border-purple-200 hover:text-purple-600 transition-all group "
             >
              {sub}
-             <button onClick={() => removeSubject(sub)} className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-all">
+             <button onClick={() => removeSubject(sub)} className="w-8 h-8 rounded-[5px] bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-all">
                <Trash2 size={14} />
              </button>
             </motion.span>
@@ -179,7 +179,7 @@ const CreateExam = () => {
           </div>
          </AnimatePresence>
          {subjects.length === 0 && (
-          <div className="py-10 text-center border-2 border-dashed border-slate-100 rounded-[2.5rem] bg-slate-50/50">
+          <div className="py-10 text-center border-2 border-dashed border-slate-100 rounded-[5px] bg-slate-50/50">
             <p className="text-[10px] font-black text-slate-300 tracking-widest">No subjects added yet...</p>
           </div>
          )}
@@ -190,7 +190,7 @@ const CreateExam = () => {
          <button 
           onClick={handleCreateExam}
           disabled={loading}
-          className="flex-1 bg-slate-900 text-white px-10 py-6 rounded-[2rem] font-black  text-xs shadow-2xl shadow-slate-200 hover:bg-purple-600 active:scale-95 transition-all flex items-center justify-center gap-4 group "
+          className="flex-1 bg-slate-900 text-white px-10 py-6 rounded-[5px] font-black  text-xs shadow-2xl shadow-slate-200 hover:bg-purple-600 active:scale-95 transition-all flex items-center justify-center gap-4 group "
          >
           {loading ? (
            <RefreshCw className="animate-spin" size={20} />
@@ -200,7 +200,7 @@ const CreateExam = () => {
          </button>
          <button 
           onClick={() => navigate('/admin/dashboard')}
-          className="px-10 py-6 rounded-[2rem] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all "
+          className="px-10 py-6 rounded-[5px] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all "
          >
           Cancel
          </button>
@@ -214,7 +214,7 @@ const CreateExam = () => {
        transition={{ delay: 0.2 }}
        className="lg:col-span-2 space-y-8"
       >
-       <div className="bg-slate-900 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group">
+       <div className="bg-slate-900 p-10 rounded-[5px] text-white space-y-10 relative overflow-hidden group">
          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 blur-3xl group-hover:bg-purple-500/40 transition-all duration-1000" />
          <div className="relative z-10 space-y-2">
           <p className="text-[10px] font-black text-purple-400  ">School Insight</p>
@@ -236,16 +236,16 @@ const CreateExam = () => {
           </div>
          </div>
 
-         <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/5">
+         <div className="bg-white/5 backdrop-blur-md p-6 rounded-[5px] border border-white/5">
           <p className="text-[9px] font-black text-white/40 tracking-widest leading-relaxed">
             Notice: The exam details will be visible to all students and teachers once you save it.
           </p>
          </div>
        </div>
 
-       <div className="bg-white p-10 rounded-[4rem] border border-slate-100 shadow-sm space-y-8">
+       <div className="bg-white p-10 rounded-[5px] border border-slate-100 shadow-sm space-y-8">
          <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
+          <div className="w-10 h-10 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-500">
             <Info size={20} />
           </div>
           <h4 className="text-lg font-black text-slate-900  ">Operational Help</h4>
@@ -279,7 +279,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-purple-500">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-purple-400 transition-colors" size={18} />}
-   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all text-sm`} {...props} />
+   <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all text-sm`} {...props} />
   </div>
  </div>
 );

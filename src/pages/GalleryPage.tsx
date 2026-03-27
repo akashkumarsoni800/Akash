@@ -38,13 +38,13 @@ const GalleryPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-12 px-6 md:px-12 pb-32">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-full mx-auto space-y-12">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-6">
             <button 
               onClick={() => navigate(-1)}
-              className="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-600 hover:shadow-xl transition-all shadow-sm"
+              className="w-12 h-12 bg-white border border-slate-100 rounded-[5px] flex items-center justify-center text-slate-400 hover:text-blue-600 hover:shadow-xl transition-all shadow-sm"
             >
               <ArrowLeft size={20} />
             </button>
@@ -74,7 +74,7 @@ const GalleryPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.05 }}
                 onClick={() => setSelectedImage(img)}
-                className="relative break-inside-avoid rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-sm hover:shadow-2xl transition-all border border-white"
+                className="relative break-inside-avoid rounded-[5px] overflow-hidden group cursor-pointer shadow-sm hover:shadow-2xl transition-all border border-white"
               >
                 <img 
                   src={img.image_url} 
@@ -89,7 +89,7 @@ const GalleryPage = () => {
                         <Calendar size={10} /> {new Date(img.created_at).toLocaleDateString()}
                       </div>
                     </div>
-                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/20">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-[5px] flex items-center justify-center text-white border border-white/20">
                       <Maximize2 size={16} />
                     </div>
                   </div>
@@ -128,7 +128,7 @@ const GalleryPage = () => {
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="relative max-w-5xl w-full aspect-video rounded-[3rem] overflow-hidden shadow-3xl shadow-blue-500/20"
+              className="relative max-w-full w-full aspect-video rounded-[5px] overflow-hidden shadow-3xl shadow-blue-500/20"
             >
               <img src={selectedImage.image_url} className="w-full h-full object-contain bg-slate-900" alt="" />
               <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent">
@@ -139,10 +139,10 @@ const GalleryPage = () => {
                     <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Archived on {new Date(selectedImage.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex gap-4">
-                    <button className="p-4 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all border border-white/10">
+                    <button className="p-4 bg-white/10 text-white rounded-[5px] hover:bg-white/20 transition-all border border-white/10">
                       <Download size={20} />
                     </button>
-                    <button className="p-4 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all border border-white/10">
+                    <button className="p-4 bg-white/10 text-white rounded-[5px] hover:bg-white/20 transition-all border border-white/10">
                       <Share2 size={20} />
                     </button>
                   </div>

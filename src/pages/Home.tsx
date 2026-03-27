@@ -47,7 +47,7 @@ const Home = () => {
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 font-black text-xl">A</div>
+            <div className="w-10 h-10 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white shadow-lg shadow-indigo-100 font-black text-xl">A</div>
             <span className="text-xl font-black tracking-tighter text-indigo-950 uppercase hidden sm:block">Academic <span className="text-indigo-600">Luminary</span></span>
           </div>
 
@@ -61,7 +61,7 @@ const Home = () => {
             <button onClick={() => navigate('/login')} className="hidden md:block text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-600 p-2">Login</button>
             <button 
               onClick={() => navigate('/register-school')}
-              className="px-8 py-3.5 bg-indigo-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100 active:scale-95"
+              className="px-8 py-3.5 bg-indigo-900 text-white rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-100 active:scale-95"
             >
               Get Started
             </button>
@@ -93,24 +93,24 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
                 <button 
                   onClick={() => navigate('/register-school')}
-                  className="px-12 py-5 bg-indigo-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-200 hover:bg-indigo-900 transition-all active:scale-95 flex items-center justify-center gap-3"
+                  className="px-12 py-5 bg-indigo-600 text-white rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-200 hover:bg-indigo-900 transition-all active:scale-95 flex items-center justify-center gap-3"
                 >
                   Register School <ArrowRight size={18} />
                 </button>
                 {deferredPrompt && !isInstalled && (
                   <button 
                     onClick={handleInstallClick}
-                    className="px-12 py-5 bg-emerald-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-emerald-100 hover:bg-emerald-700 transition-all animate-bounce flex items-center justify-center gap-3"
+                    className="px-12 py-5 bg-emerald-600 text-white rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl shadow-emerald-100 hover:bg-emerald-700 transition-all animate-bounce flex items-center justify-center gap-3"
                   >
                     <Download size={18} /> Install Application
                   </button>
                 )}
                 {isInstalled && (
-                  <div className="px-12 py-5 bg-slate-100 text-slate-500 rounded-[2rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 border border-slate-200">
+                  <div className="px-12 py-5 bg-slate-100 text-slate-500 rounded-[5px] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 border border-slate-200">
                     <CheckCircle2 size={18} className="text-emerald-500" /> App Installed
                   </div>
                 )}
-                <button className="px-12 py-5 bg-white text-indigo-900 border-2 border-indigo-100 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-all">Book a Demo</button>
+                <button className="px-12 py-5 bg-white text-indigo-900 border-2 border-indigo-100 rounded-[5px] font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-all">Book a Demo</button>
               </div>
 
               {/* Stats/Proof */}
@@ -136,11 +136,11 @@ const Home = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="rounded-[3rem] p-4 bg-white border border-slate-100 shadow-2xl relative overflow-hidden">
-                <img src="/logo.png" className="w-full h-full object-contain p-12 bg-slate-50 rounded-[2.5rem]" alt="Hero Branding" />
+              <div className="rounded-[5px] p-4 bg-white border border-slate-100 shadow-2xl relative overflow-hidden">
+                <img src="/logo.png" className="w-full h-full object-contain p-12 bg-slate-50 rounded-[5px]" alt="Hero Branding" />
                 
                 {/* Floating UI Elements */}
-                <div className="absolute top-12 -right-10 bg-white p-6 rounded-3xl shadow-2xl border border-slate-50 animate-bounce">
+                <div className="absolute top-12 -right-10 bg-white p-6 rounded-[5px] shadow-2xl border border-slate-50 animate-bounce">
                     <CheckCircle2 size={32} className="text-emerald-500 mb-3" />
                     <p className="text-[10px] font-black text-slate-400 uppercase">Synced</p>
                     <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Data Integrity</p>
@@ -155,7 +155,7 @@ const Home = () => {
         {/* --- WHY MULTI-SCHOOL --- */}
         <section id="features" className="py-32 bg-white">
           <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-            <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+            <div className="text-center max-w-full mx-auto mb-20 space-y-4">
               <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">Why Multi-School Management?</h2>
               <p className="text-lg text-slate-500 leading-relaxed uppercase font-black text-[10px] tracking-widest">Centralize the complexity of diverse campuses into a single, high-performance command center.</p>
             </div>
@@ -195,13 +195,13 @@ const Home = () => {
 
             <div className="grid md:grid-cols-12 gap-6">
               {/* Massive Main Feature */}
-              <div className="md:col-span-8 bg-white p-12 rounded-[3.5rem] border border-slate-100 shadow-sm flex flex-col justify-between group hover:shadow-2xl transition-all">
+              <div className="md:col-span-8 bg-white p-12 rounded-[5px] border border-slate-100 shadow-sm flex flex-col justify-between group hover:shadow-2xl transition-all">
                 <div className="space-y-4">
                   <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Centralized Core</span>
                   <h3 className="text-3xl font-black text-slate-900 uppercase">Automated Admissions & Fees</h3>
                   <p className="text-slate-500 max-w-md">Streamline student onboarding and digital fee collection with automated invoicing and parent notifications.</p>
                 </div>
-                <div className="mt-12 h-64 bg-slate-50 rounded-[2.5rem] p-8 flex items-center justify-center relative overflow-hidden">
+                <div className="mt-12 h-64 bg-slate-50 rounded-[5px] p-8 flex items-center justify-center relative overflow-hidden">
                     <Receipt size={120} className="text-indigo-100 opacity-50 rotate-12 absolute -right-4 -bottom-4" />
                     <div className="w-full h-8 bg-indigo-100 rounded-full overflow-hidden relative">
                         <div className="absolute inset-0 w-3/4 bg-indigo-600 rounded-full animate-pulse"></div>
@@ -211,7 +211,7 @@ const Home = () => {
               </div>
 
               {/* Smaller Feature */}
-              <div className="md:col-span-4 bg-indigo-900 p-12 rounded-[3.5rem] shadow-xl text-white flex flex-col items-center justify-center text-center group">
+              <div className="md:col-span-4 bg-indigo-900 p-12 rounded-[5px] shadow-xl text-white flex flex-col items-center justify-center text-center group">
                 <Calendar size={64} className="mb-6 opacity-30 group-hover:scale-110 transition-transform" />
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Intelligent Timetable</h3>
                 <p className="text-indigo-200 text-sm leading-relaxed">AI-powered scheduling that eliminates faculty clashes and optimizes room utilization automatically.</p>
@@ -249,8 +249,8 @@ const Home = () => {
                 </div>
              </div>
              <div className="relative">
-                <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80&w=1000" className="rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] grayscale hover:grayscale-0 transition-all duration-700" alt="Students" />
-                <div className="absolute -bottom-10 -right-10 bg-indigo-600 p-10 rounded-[3rem] text-white shadow-2xl animate-float">
+                <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80&w=1000" className="rounded-[5px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] grayscale hover:grayscale-0 transition-all duration-700" alt="Students" />
+                <div className="absolute -bottom-10 -right-10 bg-indigo-600 p-10 rounded-[5px] text-white shadow-2xl animate-float">
                   <p className="text-4xl font-black">98%</p>
                   <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mt-1">Satisfaction Rate</p>
                 </div>
@@ -263,7 +263,7 @@ const Home = () => {
           <Quote className="absolute -top-10 -left-10 text-white/5 w-64 h-64" />
           <div className="max-w-[1400px] mx-auto px-6 md:px-10 text-center space-y-16 relative">
             <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Voice of Leadership</h2>
-            <div className="max-w-4xl mx-auto space-y-10">
+            <div className="max-w-full mx-auto space-y-10">
               <p className="text-3xl md:text-5xl font-black leading-tight tracking-tighter italic">
                 "Academic Luminary has completely transformed how we manage our network of 12 international schools. The unified reporting alone saved us hundreds of manual labor hours per month."
               </p>
@@ -282,14 +282,14 @@ const Home = () => {
 
         {/* --- FINAL CTA --- */}
         <section className="py-24 bg-white relative">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="p-16 md:p-24 bg-indigo-950 rounded-[4rem] text-center text-white relative overflow-hidden shadow-2xl">
+          <div className="max-w-full mx-auto px-6">
+            <div className="p-16 md:p-24 bg-indigo-950 rounded-[5px] text-center text-white relative overflow-hidden shadow-2xl">
               <div className="relative z-10 space-y-10 animate__animated animate__pulse">
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to unify <br/> your institution?</h2>
                 <p className="text-lg text-indigo-300 max-w-xl mx-auto">Join the hundreds of forward-thinking schools that have simplified their operations and elevated experience.</p>
                 <div className="flex flex-col sm:flex-row gap-5 justify-center">
-                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[2rem] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-xl">Complete Registration</button>
-                   <button className="px-12 py-5 bg-indigo-900/50 border border-indigo-700 text-white font-black rounded-[2rem] text-xs uppercase tracking-widest hover:bg-indigo-800 transition-all">Schedule a Call</button>
+                   <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-xl">Complete Registration</button>
+                   <button className="px-12 py-5 bg-indigo-900/50 border border-indigo-700 text-white font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-800 transition-all">Schedule a Call</button>
                 </div>
               </div>
               <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px]"></div>
@@ -338,10 +338,10 @@ const Home = () => {
               <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="block text-4xl font-black text-slate-900 uppercase tracking-tighter">{item}</a>
             ))}
             <div className="pt-10 border-t border-slate-100 space-y-4">
-              <button onClick={() => navigate('/login')} className="w-full py-5 text-xl font-black text-slate-900 uppercase tracking-tighter border-2 border-slate-100 rounded-3xl">Login</button>
+              <button onClick={() => navigate('/login')} className="w-full py-5 text-xl font-black text-slate-900 uppercase tracking-tighter border-2 border-slate-100 rounded-[5px]">Login</button>
               <button 
                 onClick={() => { navigate('/register-school'); setIsMenuOpen(false); }}
-                className="w-full py-5 bg-indigo-900 text-white text-xl font-black rounded-3xl uppercase tracking-tighter"
+                className="w-full py-5 bg-indigo-900 text-white text-xl font-black rounded-[5px] uppercase tracking-tighter"
               >
                 Get Started
               </button>
@@ -356,9 +356,9 @@ const Home = () => {
 const StatCard = ({ icon, title, desc }: any) => (
   <motion.div 
     whileHover={{ y: -10 }}
-    className="p-10 rounded-[3rem] bg-slate-50/50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:border-indigo-100 transition-all group"
+    className="p-10 rounded-[5px] bg-slate-50/50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:border-indigo-100 transition-all group"
   >
-    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm mb-8 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+    <div className="w-16 h-16 bg-white rounded-[5px] flex items-center justify-center text-indigo-600 shadow-sm mb-8 group-hover:bg-indigo-600 group-hover:text-white transition-all">
       {icon}
     </div>
     <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-4">{title}</h3>
@@ -367,8 +367,8 @@ const StatCard = ({ icon, title, desc }: any) => (
 );
 
 const FeatureBox = ({ icon, title, desc }: any) => (
-  <div className="md:col-span-4 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between h-72">
-    <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+  <div className="md:col-span-4 bg-white p-10 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between h-72">
+    <div className="w-12 h-12 bg-indigo-50 rounded-[5px] flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
       {icon}
     </div>
     <div className="space-y-2">
@@ -380,7 +380,7 @@ const FeatureBox = ({ icon, title, desc }: any) => (
 
 const StakeholderItem = ({ icon, title, desc }: any) => (
   <div className="flex gap-6 group">
-    <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shrink-0">
+    <div className="w-14 h-14 bg-indigo-50 rounded-[5px] flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shrink-0">
       {icon}
     </div>
     <div className="space-y-1">

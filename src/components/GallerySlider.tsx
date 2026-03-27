@@ -87,11 +87,11 @@ const GallerySlider = () => {
  };
 
  return (
- <div className="w-full relative group notranslate mb-8 px-4 max-w-7xl mx-auto">
+ <div className="w-full relative group notranslate mb-8 px-4 max-w-full mx-auto">
   
   {/* ... (Add Photo Button Code) ... */}
 
-  <div className="relative h-48 md:h-80 overflow-hidden rounded-[40px] shadow-2xl bg-white border border-gray-100">
+  <div className="relative h-48 md:h-80 overflow-hidden rounded-[5px] shadow-2xl bg-white border border-gray-100">
    {gallery.map((img, i) => (
     <div 
      key={img.id}

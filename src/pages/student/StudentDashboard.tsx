@@ -89,7 +89,7 @@ export default function StudentDashboard() {
     <motion.div 
      initial={{ opacity: 0, y: -20 }} 
      animate={{ opacity: 1, y: 0 }}
-     className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden group"
+     className="bg-white border border-slate-100 rounded-[5px] p-8 md:p-12 shadow-sm relative overflow-hidden group"
     >
      <div className="absolute top-0 right-0 w-80 h-80 bg-purple-50 opacity-20 rounded-full -mr-40 -mt-40 transition-transform duration-[3s] group-hover:scale-110"></div>
      
@@ -107,11 +107,11 @@ export default function StudentDashboard() {
        </h1>
 
        <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-        <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
+        <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Assigned Batch</p>
           <p className="text-lg font-black text-slate-800 ">Class {student?.class_name}</p>
         </div>
-        <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">
+        <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1"> No</p>
           <p className="text-lg font-black text-slate-800 ">#{student?.roll_no}</p>
         </div>
@@ -119,14 +119,14 @@ export default function StudentDashboard() {
       </div>
 
       <div className="relative">
-       <div className="w-48 h-48 md:w-60 md:h-60 rounded-[3rem] p-2 bg-slate-50 border border-slate-100 shadow-2xl relative z-10 overflow-hidden group-hover:rotate-2 transition-transform duration-700">
+       <div className="w-48 h-48 md:w-60 md:h-60 rounded-[5px] p-2 bg-slate-50 border border-slate-100 shadow-2xl relative z-10 overflow-hidden group-hover:rotate-2 transition-transform duration-700">
         <img 
          src={student?.photo_url || `https://ui-avatars.com/api/?name=${student?.full_name}&background=1e293b&color=fff`} 
-         className="w-full h-full object-cover rounded-[2.5rem]" 
+         className="w-full h-full object-cover rounded-[5px]" 
          alt="Profile"
         />
        </div>
-       <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-2xl shadow-xl border-4 border-white z-20 animate-bounce">
+       <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-[5px] shadow-xl border-4 border-white z-20 animate-bounce">
         <CheckCircle2 size={24} />
        </div>
        <div className="absolute -top-6 -left-6 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
@@ -184,10 +184,10 @@ export default function StudentDashboard() {
         <Bell size={16} className="text-purple-600"/> Latest Broadcasts
        </h3>
        
-       <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm flex flex-col gap-6">
+       <div className="bg-white rounded-[5px] p-8 border border-slate-100 shadow-sm flex flex-col gap-6">
         {stats.notices.length > 0 ? stats.notices.map((notice, idx) => (
-         <div key={idx} className="flex gap-4 group cursor-pointer hover:bg-slate-50 p-4 -mx-4 rounded-2xl transition-all" onClick={() => navigate('/student/notices')}>
-           <div className="bg-purple-50 p-3.5 rounded-xl text-purple-600 self-start group-hover:bg-purple-600 group-hover:text-white transition-all">
+         <div key={idx} className="flex gap-4 group cursor-pointer hover:bg-slate-50 p-4 -mx-4 rounded-[5px] transition-all" onClick={() => navigate('/student/notices')}>
+           <div className="bg-purple-50 p-3.5 rounded-[5px] text-purple-600 self-start group-hover:bg-purple-600 group-hover:text-white transition-all">
             <Calendar size={18}/>
            </div>
            <div className="flex-1">
@@ -198,7 +198,7 @@ export default function StudentDashboard() {
         )) : (
          <div className="text-center py-12 opacity-30 font-black text-[10px] tracking-widest text-slate-400">Zero Broadcasts</div>
         )}
-        <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-2xl text-[10px] font-black tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group">
+        <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-[5px] text-[10px] font-black tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group">
          Full Archive Access <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform"/>
         </button>
        </div>
@@ -219,7 +219,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
  };
 
  return (
-  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
    <div className="flex justify-between items-start">
     <div>
      <p className="text-[9px] font-black text-slate-400 tracking-widest mb-4">{title}</p>
@@ -228,7 +228,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
       <span className="text-[9px] font-black text-slate-400 ">{subText}</span>
      </div>
     </div>
-    <div className={`p-4 rounded-2xl group-hover:scale-110 transition-transform ${accentColors[color as keyof typeof accentColors]}`}>
+    <div className={`p-4 rounded-[5px] group-hover:scale-110 transition-transform ${accentColors[color as keyof typeof accentColors]}`}>
      <Icon size={24} />
     </div>
    </div>
@@ -255,7 +255,7 @@ const ActionCard = ({ icon, label, path, color, navigate }: any) => {
  return (
   <button 
    onClick={() => navigate(path)}
-   className={`bg-white border border-slate-100 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
+   className={`bg-white border border-slate-100 rounded-[5px] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 ${themes[color as keyof typeof themes]}`}
   >
     <div className="text-4xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">{icon}</div>
     <h4 className="font-black  text-lg leading-tight">{label}</h4>

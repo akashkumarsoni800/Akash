@@ -90,7 +90,7 @@ const TeacherAttendance = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-5xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- DYNAMIC HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -104,7 +104,7 @@ const TeacherAttendance = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📝</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Session Date</p>
@@ -116,7 +116,7 @@ const TeacherAttendance = () => {
     {/* --- CLASS SELECTOR --- */}
     <div className="grid md:grid-cols-4 gap-6">
      <div className="md:col-span-3">
-       <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-xl transition-all duration-500">
+       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-8 group hover:shadow-xl transition-all duration-500">
         <div className="w-full md:w-1/3 space-y-3">
          <label className="text-[9px] font-black text-slate-400 tracking-widest ml-2">Select Target List</label>
          <div className="relative group/sel">
@@ -135,11 +135,11 @@ const TeacherAttendance = () => {
 
         {selectedClass && (
          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex gap-4 w-full md:w-auto">
-          <div className="flex-1 bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex flex-col justify-center">
+          <div className="flex-1 bg-emerald-50 border border-emerald-100 p-6 rounded-[5px] flex flex-col justify-center">
             <p className="text-[8px] font-black text-emerald-600 tracking-widest mb-1">Authenticated</p>
             <p className="text-2xl font-black text-emerald-700 leading-none">{presentCount} Present</p>
           </div>
-          <div className="flex-1 bg-red-50 border border-red-100 p-6 rounded-[2rem] flex flex-col justify-center">
+          <div className="flex-1 bg-red-50 border border-red-100 p-6 rounded-[5px] flex flex-col justify-center">
             <p className="text-[8px] font-black text-red-600 tracking-widest mb-1">Flagged</p>
             <p className="text-2xl font-black text-red-700 leading-none">{absentCount} Absent</p>
           </div>
@@ -150,7 +150,7 @@ const TeacherAttendance = () => {
          <button 
           onClick={saveAttendance} 
           disabled={loading}
-          className="w-full md:w-auto px-10 py-6 bg-slate-900 text-white rounded-[2rem] font-black tracking-widest text-[11px] shadow-2xl shadow-slate-200 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 "
+          className="w-full md:w-auto px-10 py-6 bg-slate-900 text-white rounded-[5px] font-black tracking-widest text-[11px] shadow-2xl shadow-slate-200 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 "
          >
           {loading ? <CheckCircle2 className="animate-spin" size={18}/> : <CheckSquare size={18}/>}
           Secure 
@@ -159,8 +159,8 @@ const TeacherAttendance = () => {
        </div>
      </div>
      
-     <div className="bg-slate-900 rounded-[3rem] p-8 flex flex-col justify-center items-center text-center shadow-xl group hover:bg-blue-600 transition-all duration-700">
-       <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+     <div className="bg-slate-900 rounded-[5px] p-8 flex flex-col justify-center items-center text-center shadow-xl group hover:bg-blue-600 transition-all duration-700">
+       <div className="w-14 h-14 bg-white/10 rounded-[5px] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
         <ShieldCheck className="text-blue-400 group-hover:text-white" size={24} />
        </div>
        <p className="text-blue-400 group-hover:text-white/80 font-black text-[8px] tracking-widest mb-1">Cloud Sync</p>
@@ -180,7 +180,7 @@ const TeacherAttendance = () => {
       >
        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
         <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3 uppercase">
-         <span className="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center text-xs">01</span>
+         <span className="bg-blue-100 text-blue-600 w-10 h-10 rounded-[5px] flex items-center justify-center text-xs">01</span>
          Presence List <span className="text-slate-300 ml-2">Class {selectedClass}</span>
         </h2>
         
@@ -189,7 +189,7 @@ const TeacherAttendance = () => {
          <input 
           type="text" 
           placeholder="Search presence by name..."
-          className="premium-input w-full pl-16 rounded-2xl"
+          className="premium-input w-full pl-16 rounded-[5px]"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
          />
@@ -203,14 +203,14 @@ const TeacherAttendance = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.05 }}
-          className={`bg-white p-8 rounded-[2.5rem] border transition-all duration-300 flex items-center justify-between group/card shadow-sm hover:shadow-xl ${
+          className={`bg-white p-8 rounded-[5px] border transition-all duration-300 flex items-center justify-between group/card shadow-sm hover:shadow-xl ${
            attendance[s.id] === 'P' 
            ? 'border-emerald-100 hover:border-emerald-200 bg-gradient-to-br from-white to-emerald-50/20' 
            : 'border-red-100 hover:border-red-200 bg-gradient-to-br from-white to-red-50/20 shadow-red-100/50'
           }`}
          >
           <div className="flex items-center gap-6">
-           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm transition-all ${
+           <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center text-xl font-black shadow-sm transition-all ${
             attendance[s.id] === 'P' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
            }`}>
             {s.full_name[0].toUpperCase()}
@@ -225,7 +225,7 @@ const TeacherAttendance = () => {
 
           <button 
            onClick={() => toggleStatus(s.id)}
-           className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-90 shadow-lg ${
+           className={`w-14 h-14 rounded-[5px] flex items-center justify-center transition-all active:scale-90 shadow-lg ${
             attendance[s.id] === 'P' 
             ? 'bg-emerald-600 text-white shadow-emerald-200 hover:bg-emerald-700' 
             : 'bg-red-600 text-white shadow-red-200 hover:bg-red-700'
@@ -238,8 +238,8 @@ const TeacherAttendance = () => {
        </div>
       </motion.div>
      ) : (
-      <div className="flex flex-col items-center justify-center py-40 bg-white rounded-[3.5rem] border border-dashed border-slate-200 opacity-30 group">
-       <div className="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+      <div className="flex flex-col items-center justify-center py-40 bg-white rounded-[5px] border border-dashed border-slate-200 opacity-30 group">
+       <div className="w-24 h-24 bg-slate-100 rounded-[5px] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform duration-700">
         <Calendar size={48} className="text-slate-400" />
        </div>
        <h3 className="text-2xl font-black text-slate-900  mb-2 uppercase">Identity Recognition Locked</h3>

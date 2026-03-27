@@ -65,19 +65,19 @@ const StudentResult = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-10 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-6xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION & CONTEXT --- */}
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-emerald-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
      </button>
 
-     <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+     <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] border border-slate-100 shadow-sm">
        <Star size={16} className="text-amber-400 fill-amber-400" />
        <span className="text-[10px] font-black tracking-widest text-slate-400 ">Academic Distinction Protocol</span>
      </div>
@@ -91,7 +91,7 @@ const StudentResult = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
-        className="bg-slate-900 rounded-[3.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden group border-b-[12px] border-emerald-500/20"
+        className="bg-slate-900 rounded-[5px] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden group border-b-[12px] border-emerald-500/20"
       >
         <div className="absolute -bottom-20 -right-20 opacity-5 group-hover:opacity-10 transition-opacity duration-1000 rotate-12 group-hover:rotate-0">
          <GraduationCap size={400}/>
@@ -99,9 +99,9 @@ const StudentResult = () => {
         
         <div className="relative flex flex-col md:flex-row justify-between items-center gap-12">
          <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-           <div className="w-24 h-24 md:w-40 md:h-40 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center text-4xl md:text-6xl font-black border border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-700 ">
+           <div className="w-24 h-24 md:w-40 md:h-40 bg-white/5 backdrop-blur-3xl rounded-[5px] flex items-center justify-center text-4xl md:text-6xl font-black border border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-700 ">
             {studentData.photo_url ? (
-             <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[2.5rem]" alt="Profile" />
+             <img src={studentData.photo_url} className="w-full h-full object-cover rounded-[5px]" alt="Profile" />
             ) : studentData.full_name[0].toUpperCase()}
            </div>
            <div className="space-y-4">
@@ -111,8 +111,8 @@ const StudentResult = () => {
             </div>
             <h2 className="text-4xl md:text-7xl font-black  leading-none uppercase">{studentData.full_name}</h2>
             <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
-              <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
-              <span className="bg-white/5 px-6 py-2 rounded-xl text-[10px] font-black border border-white/5 tracking-widest backdrop-blur-md">List #{studentData.roll_no}</span>
+              <span className="bg-white/5 px-6 py-2 rounded-[5px] text-[10px] font-black border border-white/5 tracking-widest backdrop-blur-md">Node {studentData.class_name}</span>
+              <span className="bg-white/5 px-6 py-2 rounded-[5px] text-[10px] font-black border border-white/5 tracking-widest backdrop-blur-md">List #{studentData.roll_no}</span>
             </div>
            </div>
          </div>
@@ -129,7 +129,7 @@ const StudentResult = () => {
         initial={{ opacity: 0, scale: 0.98 }} 
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-[4rem] p-10 md:p-20 shadow-sm border border-slate-100 relative overflow-hidden group"
+        className="bg-white rounded-[5px] p-10 md:p-20 shadow-sm border border-slate-100 relative overflow-hidden group"
       >
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-10">
          <div className="flex items-center gap-6">
@@ -143,7 +143,7 @@ const StudentResult = () => {
          </div>
          
          <div className="flex items-center gap-4">
-           <button onClick={() => window.print()} className="bg-slate-50 text-slate-900 px-8 py-5 rounded-2xl font-black text-[11px] tracking-widest shadow-sm border border-slate-100 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-3 ">
+           <button onClick={() => window.print()} className="bg-slate-50 text-slate-900 px-8 py-5 rounded-[5px] font-black text-[11px] tracking-widest shadow-sm border border-slate-100 hover:bg-slate-900 hover:text-white transition-all flex items-center gap-3 ">
             <Printer size={18}/> Print 
            </button>
          </div>
@@ -157,7 +157,7 @@ const StudentResult = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 * i }}
             key={i} 
-            className="bg-slate-50/50 p-8 rounded-[3rem] border border-transparent hover:border-emerald-200 hover:bg-white transition-all duration-500 group/row shadow-sm hover:shadow-xl group-hover:border-slate-100"
+            className="bg-slate-50/50 p-8 rounded-[5px] border border-transparent hover:border-emerald-200 hover:bg-white transition-all duration-500 group/row shadow-sm hover:shadow-xl group-hover:border-slate-100"
            >
              <div className="flex justify-between items-end">
               <div className="space-y-3">
@@ -196,7 +196,7 @@ const StudentResult = () => {
          </div>
          
          <div className="flex flex-col gap-6 w-full lg:w-96">
-           <button className="bg-slate-900 text-white px-12 py-7 rounded-[2.5rem] font-black text-xs  flex items-center justify-center gap-4 shadow-2xl hover:bg-emerald-600 transition-all active:scale-95 group/btn ">
+           <button className="bg-slate-900 text-white px-12 py-7 rounded-[5px] font-black text-xs  flex items-center justify-center gap-4 shadow-2xl hover:bg-emerald-600 transition-all active:scale-95 group/btn ">
             <Download size={22} className="group-hover/btn:translate-y-1 transition-transform" /> 
             Archive Digital Protocol
            </button>
@@ -212,9 +212,9 @@ const StudentResult = () => {
      <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="py-32 text-center space-y-10 bg-white rounded-[4rem] border-4 border-dashed border-slate-100 shadow-inner group"
+      className="py-32 text-center space-y-10 bg-white rounded-[5px] border-4 border-dashed border-slate-100 shadow-inner group"
      >
-       <div className="bg-slate-50 w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-[360deg] transition-transform duration-1000 rotate-12">🎓</div>
+       <div className="bg-slate-50 w-32 h-32 rounded-[5px] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-[360deg] transition-transform duration-1000 rotate-12">🎓</div>
        <div className="space-y-4">
         <h3 className="text-3xl font-black text-slate-900  uppercase">List Unavailable</h3>
         <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10">
@@ -232,7 +232,7 @@ const StudentResult = () => {
 };
 
 const PremiumQuickStat = ({ label, value, accent }: any) => (
- <div className="bg-white/10 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] min-w-[180px] shadow-2xl group/stat hover:bg-white/15 transition-all">
+ <div className="bg-white/10 backdrop-blur-xl border border-white/5 p-6 rounded-[5px] min-w-[180px] shadow-2xl group/stat hover:bg-white/15 transition-all">
    <p className="text-[9px] font-black text-emerald-400 mb-2 ">{label}</p>
    <p className="text-3xl font-black text-white  leading-none group-hover/stat:scale-110 transition-transform origin-left">{value}</p>
  </div>

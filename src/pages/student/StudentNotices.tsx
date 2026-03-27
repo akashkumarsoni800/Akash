@@ -39,19 +39,19 @@ const StudentNotices = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-5xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION & CONTEXT --- */}
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Exit</span>
      </button>
 
-     <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+     <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] border border-slate-100 shadow-sm">
        <Star size={16} className="text-blue-400 fill-blue-400" />
        <span className="text-[10px] font-black tracking-widest text-slate-400 ">Priority Broadcast Channel</span>
      </div>
@@ -69,7 +69,7 @@ const StudentNotices = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Active Broadcasts</p>
@@ -87,7 +87,7 @@ const StudentNotices = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.1 }}
-        className="bg-white rounded-[3.5rem] p-8 md:p-16 shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all duration-700"
+        className="bg-white rounded-[5px] p-8 md:p-16 shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all duration-700"
        >
          <div className="absolute -right-20 -top-20 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-1000 rotate-12 group-hover:rotate-0">
           <Megaphone size={400}/>
@@ -96,7 +96,7 @@ const StudentNotices = () => {
          <div className="relative z-10 space-y-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-6">
-             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-[5px] flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                <Bell size={28} className="group-hover:animate-ring" />
              </div>
              <div className="space-y-1">
@@ -107,7 +107,7 @@ const StudentNotices = () => {
              </div>
             </div>
             
-            <div className="bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100 flex items-center gap-4 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
+            <div className="bg-slate-50 px-6 py-3 rounded-[5px] border border-slate-100 flex items-center gap-4 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
              <Calendar size={16} className="text-blue-500 group-hover:text-blue-100" />
              <span className="text-[10px] font-black tracking-widest text-slate-500 group-hover:text-white">
                {new Date(notice.created_at || notice.event_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -135,9 +135,9 @@ const StudentNotices = () => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="py-32 text-center bg-white rounded-[4rem] border-4 border-dashed border-slate-100 shadow-inner group"
+        className="py-32 text-center bg-white rounded-[5px] border-4 border-dashed border-slate-100 shadow-inner group"
       >
-        <div className="w-32 h-32 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📭</div>
+        <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📭</div>
         <div className="space-y-4">
          <h3 className="text-3xl font-black text-slate-900  uppercase">List Locked</h3>
          <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10">

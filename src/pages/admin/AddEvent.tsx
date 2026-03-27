@@ -48,19 +48,19 @@ const AddEvent = () => {
 
  return (
   <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-   <div className="max-w-6xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION --- */}
     <div className="flex justify-between items-center">
      <button 
       onClick={() => navigate(-1)} 
-      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
+      className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
       <span className="font-black tracking-widest text-[10px] text-slate-600">Portal Dashboard</span>
      </button>
 
-     <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4 group">
+     <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-xl flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
        <span className="text-[10px] font-black  text-blue-400 ">Ready to Save</span>
      </div>
@@ -78,7 +78,7 @@ const AddEvent = () => {
        </p>
       </motion.div>
       
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
+      <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1">Status</p>
@@ -93,7 +93,7 @@ const AddEvent = () => {
      <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="lg:col-span-7 bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden group"
+      className="lg:col-span-7 bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group"
      >
        <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex justify-between items-center px-12">
         <h3 className="font-black text-[10px] text-slate-400  flex items-center gap-3 uppercase">
@@ -141,7 +141,7 @@ const AddEvent = () => {
             required
             rows={6}
             placeholder="Detail the operational notice here..."
-            className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-8 py-6 text-base font-black text-slate-600 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner leading-relaxed"
+            className="w-full bg-slate-50 border border-slate-100 rounded-[5px] px-8 py-6 text-base font-black text-slate-600 placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all shadow-inner leading-relaxed"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
            />
@@ -152,7 +152,7 @@ const AddEvent = () => {
           <button
            type="submit"
            disabled={loading}
-           className="w-full bg-slate-900 text-white py-6 rounded-[2rem] hover:bg-blue-600 font-black  shadow-2xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 group/btn overflow-hidden relative"
+           className="w-full bg-slate-900 text-white py-6 rounded-[5px] hover:bg-blue-600 font-black  shadow-2xl shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 group/btn overflow-hidden relative"
           >
            {loading ? (
             <RefreshCw className="animate-spin" size={20} />
@@ -169,7 +169,7 @@ const AddEvent = () => {
 
      {/* --- PREVIEW PANEL --- */}
      <div className="lg:col-span-5 space-y-8">
-       <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+       <div className="bg-slate-900 p-10 rounded-[5px] shadow-2xl relative overflow-hidden group">
         <div className="absolute -right-10 -top-10 text-blue-500/10 group-hover:rotate-12 transition-transform duration-1000">
           <Megaphone size={200} />
         </div>
@@ -205,8 +205,8 @@ const AddEvent = () => {
         </div>
        </div>
 
-       <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
-        <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+       <div className="bg-white p-8 rounded-[5px] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all">
+        <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
           <Clock size={20} />
         </div>
         <p className="text-slate-600 font-black text-[10px] tracking-widest leading-relaxed">

@@ -359,7 +359,7 @@ const TeacherSalary = () => {
          <p className="text-[9px] font-black text-slate-400  leading-none">Historical Payment </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-         <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-2xl text-[10px] font-black border border-blue-100 shadow-sm">
+         <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-[5px] text-[10px] font-black border border-blue-100 shadow-sm">
           {salaries.length} Slips Indexed
          </div>
          <div className="flex items-center gap-2">
@@ -389,7 +389,7 @@ const TeacherSalary = () => {
           <div className="relative z-10">
            <div className="flex justify-between items-start gap-6 mb-12">
             <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl transition-colors">
+              <div className="w-14 h-14 bg-slate-50 rounded-[5px] flex items-center justify-center font-black text-slate-200 border border-slate-100 shadow-inner group-hover/item:border-blue-100 group-hover/item:text-blue-600 text-xl transition-colors">
                {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
               </div>
               <div>
@@ -399,7 +399,7 @@ const TeacherSalary = () => {
                </p>
               </div>
             </div>
-            <span className={`px-6 py-2.5 rounded-2xl text-[10px] font-black  border transition-all ${
+            <span className={`px-6 py-2.5 rounded-[5px] text-[10px] font-black  border transition-all ${
              salary.status === 'Paid' 
               ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
               : 'bg-rose-50 text-rose-600 border-rose-100 animate-pulse'

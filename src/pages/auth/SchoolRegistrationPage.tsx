@@ -130,7 +130,7 @@ export default function SchoolRegistrationPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-xl w-full text-center space-y-10"
         >
-          <div className="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl shadow-blue-500/20">
+          <div className="w-24 h-24 bg-blue-600 rounded-[5px] flex items-center justify-center mx-auto shadow-2xl shadow-blue-500/20">
             <Sparkles size={48} className="text-white" />
           </div>
           
@@ -139,7 +139,7 @@ export default function SchoolRegistrationPage() {
             <p className="text-slate-400 font-bold tracking-widest text-xs uppercase">Your institution is now digitally synchronized</p>
           </div>
 
-          <div className="bg-white/5 border border-white/10 p-10 rounded-[3rem] space-y-8 backdrop-blur-xl">
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[5px] space-y-8 backdrop-blur-xl">
             <div>
               <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2">Institutional Name</p>
               <h2 className="text-2xl font-black tracking-tight">{successData.name}</h2>
@@ -158,7 +158,7 @@ export default function SchoolRegistrationPage() {
 
           <button 
             onClick={() => navigate('/login')}
-            className="w-full bg-blue-600 hover:bg-white hover:text-slate-950 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-widest transition-all shadow-2xl flex items-center justify-center gap-4 group"
+            className="w-full bg-blue-600 hover:bg-white hover:text-slate-950 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest transition-all shadow-2xl flex items-center justify-center gap-4 group"
           >
             Enter Management Console <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
           </button>
@@ -179,9 +179,9 @@ export default function SchoolRegistrationPage() {
       <motion.div 
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-5xl relative z-10"
+        className="w-full max-w-full relative z-10"
       >
-        <div className="bg-white rounded-[4rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-[5px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden">
           <div className="flex flex-col lg:flex-row">
             
             {/* Left: Branding */}
@@ -189,7 +189,7 @@ export default function SchoolRegistrationPage() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full"></div>
               
               <div className="relative z-10 space-y-10">
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-blue-400 border border-white/10">
+                <div className="w-16 h-16 bg-white/10 rounded-[5px] flex items-center justify-center text-blue-400 border border-white/10">
                   <Building2 size={32} />
                 </div>
                 <div>
@@ -258,7 +258,7 @@ export default function SchoolRegistrationPage() {
                           />
                           <label 
                             htmlFor="logo-upload" 
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-[5px] text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all cursor-pointer"
                           >
                             Choose Image
                           </label>
@@ -316,7 +316,7 @@ export default function SchoolRegistrationPage() {
                   <button 
                     type="submit" 
                     disabled={loading}
-                    className="w-full bg-slate-950 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
+                    className="w-full bg-slate-950 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
                   >
                     {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Sparkles size={20} /> Initialize Institution</>}
                   </button>
@@ -324,14 +324,14 @@ export default function SchoolRegistrationPage() {
                   <button 
                     type="button" 
                     onClick={() => navigate('/')}
-                    className="w-full bg-slate-50 text-slate-400 py-6 rounded-3xl font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
+                    className="w-full bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
                   >
                     Cancel Onboarding
                   </button>
                 </div>
               </form>
 
-              <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100/50 flex items-start gap-4">
+              <div className="bg-blue-50/50 p-8 rounded-[5px] border border-blue-100/50 flex items-start gap-4">
                 <Info size={18} className="text-blue-500 mt-1" />
                 <p className="text-[10px] font-black text-slate-500 leading-relaxed uppercase tracking-wider">
                   Important: This process will create a master administrative account. Keep your School Code secure but shareable with your team.
@@ -357,7 +357,7 @@ const InputField = ({ label, icon: Icon, isPassword, showPassword, setShowPasswo
     <label className="block text-[9px] font-black text-slate-400 ml-2 uppercase tracking-widest transition-colors group-focus-within:text-blue-600">{label}</label>
     <div className="relative">
       {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-400 transition-colors" size={18} />}
-      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-2xl font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
+      <input className={`w-full ${Icon ? 'pl-16' : 'px-8'} ${isPassword ? 'pr-14' : 'px-8'} py-5 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200`} {...props} />
       {isPassword && (
         <button 
           type="button"

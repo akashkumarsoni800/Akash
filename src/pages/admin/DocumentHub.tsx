@@ -89,7 +89,7 @@ const DocumentHub = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-6xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     <div className="no-print flex justify-between items-center">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
@@ -102,7 +102,7 @@ const DocumentHub = () => {
        </p>
       </motion.div>
  
-      <div className="hidden lg:flex items-center gap-4 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+      <div className="hidden lg:flex items-center gap-4 bg-white px-6 py-3 rounded-[5px] border border-slate-100 shadow-sm">
        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
        <span className="text-[10px] font-black tracking-widest text-slate-400">Secure Active</span>
       </div>
@@ -132,7 +132,7 @@ const DocumentHub = () => {
       </button>
      </div>
 
-     <div className="lg:col-span-4 bg-purple-600 p-8 rounded-[3rem] shadow-purple-200 shadow-2xl flex flex-col justify-center relative overflow-hidden group">
+     <div className="lg:col-span-4 bg-purple-600 p-8 rounded-[5px] shadow-purple-200 shadow-2xl flex flex-col justify-center relative overflow-hidden group">
       <div className="absolute -right-6 -top-6 text-white/10 group-hover:rotate-12 transition-transform duration-1000">
         <GraduationCap size={150} />
       </div>
@@ -185,7 +185,7 @@ const DocumentHub = () => {
          <h3 className="font-black text-slate-900 tracking-widest flex items-center gap-4 uppercase">
            <Users className="text-purple-600" /> {student ? "List Target Selected" : `Extracted (${studentsList.length})`}
          </h3>
-         <div className="flex items-center gap-3 bg-purple-50 px-4 py-2 rounded-xl">
+         <div className="flex items-center gap-3 bg-purple-50 px-4 py-2 rounded-[5px]">
            <Zap size={14} className="text-purple-600" />
            <span className="text-[9px] font-black text-purple-600 tracking-widest">Bulk Synthesis Support Active</span>
          </div>
@@ -196,13 +196,13 @@ const DocumentHub = () => {
           <button 
            key={std.id}
            onClick={() => setStudent(std)}
-           className={`flex items-center gap-5 p-6 rounded-[2rem] transition-all text-left border relative overflow-hidden group ${
+           className={`flex items-center gap-5 p-6 rounded-[5px] transition-all text-left border relative overflow-hidden group ${
             student?.id === std.id 
             ? 'bg-purple-600 border-purple-600 shadow-xl shadow-purple-200' 
             : 'bg-slate-50 border-slate-100 hover:border-purple-200 hover:bg-white hover:shadow-lg'
            }`}
           >
-           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-black overflow-hidden flex-shrink-0 shadow-inner ${
+           <div className={`w-16 h-16 rounded-[5px] flex items-center justify-center font-black overflow-hidden flex-shrink-0 shadow-inner ${
             student?.id === std.id ? 'bg-white text-purple-600' : 'bg-white text-slate-300'
            }`}>
             {std.photo_url ? (
@@ -242,7 +242,7 @@ const DocumentHub = () => {
      
      {(student || (studentsList.length > 0 && activeDoc)) ? (
       <div className="w-full flex flex-col items-center space-y-12">
-       <div className="w-full bg-slate-900/5 backdrop-blur-md p-6 md:p-14 rounded-[4rem] shadow-inner flex justify-center border border-slate-100 relative group/view">
+       <div className="w-full bg-slate-900/5 backdrop-blur-md p-6 md:p-14 rounded-[5px] shadow-inner flex justify-center border border-slate-100 relative group/view">
         <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-slate-900 px-6 py-2 rounded-full shadow-2xl z-20 opacity-0 group-hover/view:opacity-100 transition-opacity">
           <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
           <span className="text-[9px] font-black text-white tracking-widest ">Optical Precision Preview</span>
@@ -281,16 +281,16 @@ const DocumentHub = () => {
 
        <button 
         onClick={handlePrint} 
-        className="group relative bg-slate-900 text-white px-20 py-8 rounded-[2.5rem] font-black  flex items-center gap-6 shadow-2xl hover:bg-purple-600 transition-all active:scale-95 "
+        className="group relative bg-slate-900 text-white px-20 py-8 rounded-[5px] font-black  flex items-center gap-6 shadow-2xl hover:bg-purple-600 transition-all active:scale-95 "
        >
-        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem]" />
+        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[5px]" />
         <Printer size={32} className="group-hover:rotate-12 transition-transform" /> 
         <span>Authorize {student ? "Individual" : `Fleet-Wide (${studentsList.length})`} Printing</span>
        </button>
       </div>
      ) : (
       <div className="py-40 text-center space-y-10 group">
-        <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center mx-auto mb-4 shadow-inner text-6xl group-hover:scale-110 transition-transform duration-1000 grayscale opacity-40">📇</div>
+        <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-4 shadow-inner text-6xl group-hover:scale-110 transition-transform duration-1000 grayscale opacity-40">📇</div>
         <div className="space-y-4">
          <h4 className="text-3xl font-black text-slate-900  ">Chamber Idle</h4>
          <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10">
@@ -316,13 +316,13 @@ const PremiumDocBtn = ({ icon: Icon, label, active, onClick, accent }: any) => {
   return (
    <button 
     onClick={onClick} 
-    className={`p-8 rounded-[3rem] border-4 transition-all flex flex-col items-center gap-5 group hover:shadow-2xl active:scale-95 ${
+    className={`p-8 rounded-[5px] border-4 transition-all flex flex-col items-center gap-5 group hover:shadow-2xl active:scale-95 ${
      active 
      ? `${accents[accent]} shadow-xl scale-105` 
      : 'bg-white border-transparent text-slate-300 hover:bg-slate-50 hover:text-slate-500'
     }`}
    >
-    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+    <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center transition-all ${
       active ? 'scale-110 bg-white shadow-inner' : 'grayscale group-hover:grayscale-0'
     }`}>
       <Icon size={32} />
@@ -353,7 +353,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
     <div className="absolute top-0 right-0 w-24 h-24 bg-slate-900/5 rounded-bl-[4rem]" />
 
     <div className="flex justify-between items-center border-b-[2px] border-slate-900 pb-4 mb-6">
-      <div className="w-[80px] h-[80px] flex items-center justify-center bg-slate-50 rounded-2xl shadow-inner">
+      <div className="w-[80px] h-[80px] flex items-center justify-center bg-slate-50 rounded-[5px] shadow-inner">
        <img src={localStorage.getItem('current_school_logo') || "/logo.png"} alt="logo" className="w-full h-full object-contain p-2" />
       </div>
       
@@ -363,7 +363,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
        <div className="inline-block bg-slate-900 text-white px-8 py-1.5 rounded-full text-[10px] font-black  mt-3">Annual Examination Admit 2026</div>
       </div>
 
-      <div className="w-[80px] h-[80px] flex flex-col items-center justify-center border border-slate-100 rounded-2xl bg-slate-50/50">
+      <div className="w-[80px] h-[80px] flex flex-col items-center justify-center border border-slate-100 rounded-[5px] bg-slate-50/50">
        <span className="text-[8px] font-black text-slate-300 tracking-widest">Entry ID</span>
        <span className="text-xs font-black text-slate-900 font-mono mt-0.5">#{std.roll_no}</span>
       </div>
@@ -391,7 +391,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
         <AdmitDetailRow label=" Class" value={std.class_name} />
        </div>
        <AdmitDetailRow label="Paid Guardian" value={std.father_name} />
-       <div className="flex justify-between items-center bg-slate-50 px-5 py-2.5 rounded-2xl border border-slate-100">
+       <div className="flex justify-between items-center bg-slate-50 px-5 py-2.5 rounded-[5px] border border-slate-100">
         <div className="flex items-center gap-3">
           <Zap size={10} className="text-purple-600" />
           <p className="text-[8px] font-black text-slate-400 tracking-widest">School UUID:</p>
@@ -402,12 +402,12 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
     </div>
 
     <div className="space-y-3">
-      <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800 shadow-xl">
+      <div className="bg-slate-900 p-3 rounded-[5px] border border-slate-800 shadow-xl">
        <p className="text-[9px] font-black text-white text-center leading-tight ">
         ❗ School Security Protocol: Electronic devices prohibited in terminal zones.
        </p>
       </div>
-      <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl flex justify-between items-center">
+      <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px] flex justify-between items-center">
        <div className="flex items-center gap-4 text-slate-400 font-black text-[9px]">
          <Info size={12} />
          <span>Mandatory 30-minute pre-session check-in required.</span>
@@ -496,7 +496,7 @@ const DOBTemplate = ({ student }: any) => (
   
   <div>
    <div className="flex justify-between items-start mb-24">
-     <div className="w-24 h-24 bg-slate-50 flex items-center justify-center rounded-[2rem] shadow-inner">
+     <div className="w-24 h-24 bg-slate-50 flex items-center justify-center rounded-[5px] shadow-inner">
       <img src={localStorage.getItem('current_school_logo') || "/logo.png"} className="w-16 h-16 grayscale" alt="" />
      </div>
      <div className="text-right space-y-1">
@@ -544,7 +544,7 @@ const DOBTemplate = ({ student }: any) => (
 );
 
 const GatePassTemplate = ({ student }: any) => (
- <div className="w-[100mm] h-[65mm] p-8 border-[6px] border-rose-600 bg-white text-left m-6 rounded-[2.5rem] relative overflow-hidden shadow-2xl font-inter">
+ <div className="w-[100mm] h-[65mm] p-8 border-[6px] border-rose-600 bg-white text-left m-6 rounded-[5px] relative overflow-hidden shadow-2xl font-inter">
   <div className="absolute -right-6 -top-6 text-rose-50 -z-10 rotate-12">
     <DoorOpen size={120} />
   </div>

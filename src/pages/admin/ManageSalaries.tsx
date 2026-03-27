@@ -93,7 +93,7 @@ const ManageSalaries = () => {
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
-   <div className="max-w-7xl mx-auto space-y-12">
+   <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
@@ -165,14 +165,14 @@ const ManageSalaries = () => {
       <motion.div 
        initial={{ opacity: 0, y: 30 }}
        animate={{ opacity: 1, y: 0 }}
-       className="lg:col-span-2 bg-white rounded-[4rem] border border-slate-100 shadow-sm overflow-hidden group"
+       className="lg:col-span-2 bg-white rounded-[5px] border border-slate-100 shadow-sm overflow-hidden group"
       >
        <div className="p-10 md:p-14 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
          <div className="space-y-3">
           <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">Transaction<br/><span className="text-indigo-600 uppercase">Ledger</span></h2>
           <p className="text-[9px] font-black text-slate-400  leading-none">Real-time Accounting Stream</p>
          </div>
-         <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+         <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-[5px] border border-slate-100 shadow-sm">
           <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
           <span className="text-[10px] font-black text-slate-900 tracking-widest ">Nodes Active</span>
          </div>
@@ -210,7 +210,7 @@ const ManageSalaries = () => {
               </p>
             </td>
             <td className="px-12 py-8 text-right">
-              <span className={`px-5 py-2 rounded-xl text-[9px] font-black tracking-widest border ${
+              <span className={`px-5 py-2 rounded-[5px] text-[9px] font-black tracking-widest border ${
                tx.type === 'salary' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
               }`}>
                {tx.type === 'salary' ? 'Staff Payroll' : 'Fee Inward'}
@@ -231,7 +231,7 @@ const ManageSalaries = () => {
 
       {/* --- SYSTEM STATS & HELP --- */}
       <div className="space-y-10">
-       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group">
+       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-slate-900 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group">
          <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500 opacity-20 blur-3xl rounded-full" />
          <h3 className="text-[10px] font-black text-indigo-400  mb-12 relative z-10 uppercase">Vault Health</h3>
          <div className="space-y-10 relative z-10">
@@ -250,9 +250,9 @@ const ManageSalaries = () => {
          </div>
        </motion.div>
 
-       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-[3.5rem] border border-slate-100 p-12 shadow-sm space-y-8">
+       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-[5px] border border-slate-100 p-12 shadow-sm space-y-8">
          <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 shadow-inner">
+          <div className="w-10 h-10 bg-indigo-50 rounded-[5px] flex items-center justify-center text-indigo-500 shadow-inner">
             <Info size={20} />
           </div>
           <h4 className="text-lg font-black text-slate-900 ">Audit direct</h4>
@@ -293,10 +293,10 @@ const StatCard = ({ label, value, prefix = '₹', suffix = '', subText, icon: Ic
    initial={{ opacity: 0, scale: 0.9 }} 
    animate={{ opacity: 1, scale: 1 }} 
    transition={{ delay }}
-   className={`rounded-[3.5rem] p-10 relative overflow-hidden group transition-all duration-500 hover:-translate-y-2 ${main ? colorClasses.indigo : 'bg-white border border-slate-100 shadow-sm'}`}
+   className={`rounded-[5px] p-10 relative overflow-hidden group transition-all duration-500 hover:-translate-y-2 ${main ? colorClasses.indigo : 'bg-white border border-slate-100 shadow-sm'}`}
   >
    {!main && <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 opacity-20 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />}
-   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 relative z-10 shadow-sm ${main ? 'bg-white/20' : colorClasses[color as keyof typeof colorClasses]}`}>
+   <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center mb-8 relative z-10 shadow-sm ${main ? 'bg-white/20' : colorClasses[color as keyof typeof colorClasses]}`}>
     <Icon size={24} />
    </div>
    <p className={`text-[10px] font-black  mb-2 relative z-10 ${main ? 'text-white/40' : 'text-slate-300'}`}>{label}</p>

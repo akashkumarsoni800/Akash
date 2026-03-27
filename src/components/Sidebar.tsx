@@ -121,7 +121,7 @@ const Sidebar = () => {
    <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
      <div className="flex items-center gap-3">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
+      <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center text-white shadow-xl animate-float overflow-hidden ${
        profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
       }`}>
        {schoolLogo ? (
@@ -186,7 +186,7 @@ const Sidebar = () => {
     </nav>
 
     <div className="p-4 mt-auto">
-     <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 mb-4">
+     <div className="p-4 rounded-[5px] bg-slate-800/40 border border-slate-700/50 mb-4">
        <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden border border-slate-600 flex items-center justify-center">
          {profile.avatar ? <img src={profile.avatar} className="w-full h-full object-cover" /> : <Users size={14} className="text-slate-400" />}
