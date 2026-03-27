@@ -64,7 +64,7 @@ const StudentResult = () => {
  );
 
  return (
-  <div className="min-h-screen bg-slate-50 py-10 px-4 md:px-10 pb-32 font-inter">
+  <div className="min-h-screen bg-slate-50 py-10 pb-32 font-inter">
    <div className="max-w-full mx-auto space-y-12">
     
     {/* --- NAVIGATION & CONTEXT --- */}

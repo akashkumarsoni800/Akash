@@ -165,7 +165,7 @@ const TeacherSalary = () => {
  }
 
  return (
-  <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32">
+  <div className="min-h-screen bg-[var(--bg-main)] py-12 pb-32">
    <div className="max-w-full mx-auto space-y-12">
     
     {/* --- HEADER --- */}
