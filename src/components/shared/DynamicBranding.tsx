@@ -94,7 +94,7 @@ const DynamicBranding = () => {
               }
               // Dispatch manual storage event for same-tab reactivity
               window.dispatchEvent(new Event('storage'));
-              updateBranding();
+              setTimeout(() => updateBranding(), 100);
             }
           }
         } catch (err) {
@@ -102,7 +102,7 @@ const DynamicBranding = () => {
         }
       };
 
-      console.log("Setting PWA Icon:", iconUrl);
+      console.log("Branding System: Active Logo", iconUrl);
       generateManifest();
       fetchLatestBranding();
     };
@@ -110,18 +110,18 @@ const DynamicBranding = () => {
     // Run on mount
     updateBranding();
 
-    // Listen for storage changes (school switch)
+    // Listen for storage changes (school switch or same-tab dispatch)
     window.addEventListener('storage', updateBranding);
 
-    // Also check every few seconds just in case (localStorage isn't reactive in same tab)
-    const interval = setInterval(updateBranding, 3000);
+    // Periodic check for absolute certainty
+    const interval = setInterval(updateBranding, 5000);
 
     return () => {
       window.removeEventListener('storage', updateBranding);
       clearInterval(interval);
     };
   }, []);
-
+ Riverside
   return null;
 };
 
