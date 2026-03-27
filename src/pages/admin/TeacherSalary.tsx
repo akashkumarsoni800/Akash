@@ -332,7 +332,7 @@ const TeacherSalary = () => {
          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="text-center md:text-left">
             <p className="text-[10px] font-black text-blue-400 mb-2 leading-none">Net School Total</p>
-            <h2 className="text-5xl md:text-6xl font-black leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
+            <h2 className="text-3xl md:text-4xl font-black leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
           </div>
           <button 
            type="submit" 
@@ -393,7 +393,7 @@ const TeacherSalary = () => {
                {salary.teacher_name ? salary.teacher_name.charAt(0) : 'T'}
               </div>
               <div>
-               <h3 className="font-semibold text-2xl text-slate-900  group-hover/item:text-blue-600 transition-colors leading-none mb-3 uppercase">{salary.teacher_name}</h3>
+               <h3 className="font-semibold text-lg text-slate-900 group-hover/item:text-blue-600 transition-colors leading-none mb-2 uppercase">{salary.teacher_name}</h3>
                <p className="text-[10px] font-black text-slate-400 tracking-widest flex items-center gap-3">
                 {salary.designation} <span className="w-1.5 h-1.5 bg-slate-100 rounded-full"></span> <span className="text-blue-500 font-black">{salary.month}</span>
                </p>
