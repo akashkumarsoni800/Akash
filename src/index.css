@@ -178,16 +178,16 @@ h4, h5, h6 {
   opacity: 0.5;
 }
 
-.premium-button-admin { background-color: #0f172a; color: white; }
+.premium-button-admin { background-color: #0f172a; color: white; border-radius: 5px; }
 .premium-button-admin:hover { background-color: #2563eb; }
 
-.premium-button-teacher { background-color: #0f172a; color: white; }
+.premium-button-teacher { background-color: #0f172a; color: white; border-radius: 5px; }
 .premium-button-teacher:hover { background-color: #059669; }
 
-.premium-button-student { background-color: #0f172a; color: white; }
+.premium-button-student { background-color: #0f172a; color: white; border-radius: 5px; }
 .premium-button-student:hover { background-color: #7c3aed; }
 
-.premium-button-slate { background-color: #0f172a; color: white; }
+.premium-button-slate { background-color: #0f172a; color: white; border-radius: 5px; }
 .premium-button-slate:hover { background-color: #1e293b; }
 
 .role-card {
