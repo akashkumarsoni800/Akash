@@ -120,25 +120,25 @@ const Sidebar = () => {
 
    <aside className={`premium-sidebar lg:translate-x-0 ${isMobileOpen ? 'translate-x-0 !z-[1000]' : '-translate-x-full'} transition-all duration-300 ease-in-out flex flex-col pt-8 shadow-2xl lg:shadow-none`}>
     <div className="px-8 mb-10 flex items-center justify-between">
-     <div className="flex items-center gap-3">
-      <div className={`w-10 h-10 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden ${
-       profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
-      }`}>
-       {schoolLogo ? (
-         <img src={schoolLogo} className="w-full h-full object-cover" alt="logo" />
-       ) : schoolCode === 'ASM01' ? (
-         <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
-       ) : (
-         <div className="w-full h-full flex items-center justify-center bg-white/20 text-white font-black text-xl">
-           {schoolName.charAt(0).toUpperCase()}
-         </div>
-       )}
+      <div className="flex items-center gap-4">
+       <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest animate-float overflow-hidden ${
+        profile.role === 'admin' ? 'bg-blue-600' : profile.role === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
+       }`}>
+        {schoolLogo ? (
+          <img src={schoolLogo} className="w-full h-full object-cover" alt="logo" />
+        ) : schoolCode === 'ASM01' ? (
+          <img src="/logo.png" className="w-full h-full object-contain p-1.5" alt="logo" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-white text-slate-800 font-black text-2xl">
+            {schoolName.charAt(0).toUpperCase()}
+          </div>
+        )}
+       </div>
+       <div>
+        <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">{schoolName}</h2>
+        <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v5.0</p>
+       </div>
       </div>
-      <div>
-       <h2 className="text-sm font-black text-white  leading-none uppercase">{schoolName}</h2>
-       <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v4.0</p>
-      </div>
-     </div>
      <button onClick={() => setIsMobileOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors p-2">
       <X size={24}/>
      </button>

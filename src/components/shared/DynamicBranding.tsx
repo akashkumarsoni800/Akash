@@ -33,24 +33,21 @@ const DynamicBranding = () => {
             canvas.height = 512;
             const ctx = canvas.getContext('2d');
             if (ctx) {
-              // High-density background
-              const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-              gradient.addColorStop(0, '#1e293b'); // slate-800
-              gradient.addColorStop(1, '#0f172a'); // slate-900
-              ctx.fillStyle = gradient;
+              // --- Clean White Background ---
+              ctx.fillStyle = '#ffffff';
               ctx.fillRect(0, 0, 512, 512);
 
-              // 5px rounded border simulation (in layout)
-              ctx.strokeStyle = '#334155'; // slate-700
-              ctx.lineWidth = 20;
-              ctx.strokeRect(10, 10, 492, 492);
+              // Subtle Slate Border
+              ctx.strokeStyle = '#e2e8f0'; // slate-200
+              ctx.lineWidth = 10;
+              ctx.strokeRect(5, 5, 502, 502);
 
-              // Draw Letter
-              ctx.fillStyle = '#ffffff';
-              ctx.font = 'black 300px Outfit, Inter, sans-serif';
+              // Draw Dark Letter (Larger)
+              ctx.fillStyle = '#1e293b'; // slate-800
+              ctx.font = 'black 350px Outfit, Inter, sans-serif'; 
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 256);
+              ctx.fillText(schoolName.charAt(0).toUpperCase(), 256, 266); 
               
               iconUrl = canvas.toDataURL('image/png');
             }
