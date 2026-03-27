@@ -120,7 +120,7 @@ const TeacherAttendance = () => {
         <div className="w-full md:w-1/3 space-y-3">
          <label className="text-[9px] font-black text-slate-400 tracking-widest ml-2">Select Target List</label>
          <div className="relative group/sel">
-          <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/sel:text-blue-500 transition-colors" size={18} />
+          <Users className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/sel:text-blue-500 transition-colors" size={18} />
           <select 
            className="premium-input w-full pl-16 appearance-none"
            value={selectedClass}
@@ -185,7 +185,7 @@ const TeacherAttendance = () => {
         </h2>
         
         <div className="relative group/search w-full md:w-80">
-         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/search:text-blue-500 transition-colors" size={18} />
+         <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/search:text-blue-500 transition-colors" size={18} />
          <input 
           type="text" 
           placeholder="Search presence by name..."

@@ -305,7 +305,7 @@ const ManageFees = () => {
            <div className="space-y-3">
              <label className="text-[10px] font-black text-slate-400  ml-2">Target Class/Candidate</label>
              <div className="relative group/input">
-              <Users className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+              <Users className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
               {bulkMode ? (
                <select className="premium-input pl-16 appearance-none" value={selectedClass} onChange={(e)=>setSelectedClass(e.target.value)}>
                  <option value="">Select Target Class</option>
@@ -323,7 +323,7 @@ const ManageFees = () => {
            <div className="space-y-3">
              <label className="text-[10px] font-black text-slate-400  ml-2">Billing Period</label>
              <div className="relative group/input">
-              <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+              <Calendar className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
               <input type="month" className="premium-input pl-16" value={month} onChange={(e)=>setMonth(e.target.value)} required />
              </div>
            </div>

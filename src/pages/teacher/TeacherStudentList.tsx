@@ -130,7 +130,7 @@ const StudentList: React.FC = () => {
      <div className="absolute top-0 left-0 w-full h-[6px] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600" />
      
      <div className="lg:col-span-2 relative group/search">
-       <Search size={22} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/search:text-emerald-500 transition-colors" />
+       <Search size={22} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/search:text-emerald-500 transition-colors" />
        <input
         type="text"
         placeholder="Index scholar by nomenclature..."
@@ -141,7 +141,7 @@ const StudentList: React.FC = () => {
      </div>
 
      <div className="relative group/filter">
-       <Filter size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/filter:text-emerald-500 transition-colors" />
+       <Filter size={20} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/filter:text-emerald-500 transition-colors" />
        <select 
         value={selectedClass} 
         onChange={(e) => setSelectedClass(e.target.value)}
@@ -152,7 +152,7 @@ const StudentList: React.FC = () => {
      </div>
 
      <div className="relative group/sort">
-       <TrendingUp size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/sort:text-emerald-500 transition-colors" />
+       <TrendingUp size={20} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/sort:text-emerald-500 transition-colors" />
        <select 
         value={sortBy} 
         onChange={(e) => setSortBy(e.target.value as any)}

@@ -112,7 +112,7 @@ const DocumentHub = () => {
     <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
      <div className="lg:col-span-8 premium-card p-8 flex flex-col md:flex-row gap-6 items-center group overflow-visible">
       <div className="relative flex-1 w-full">
-       <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-purple-400 group-hover:scale-110 transition-transform" />
+       <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-purple-400 group-hover:scale-110 transition-transform" />
        <input 
         type="text" 
         placeholder="Search Identity, Roll, or Class..." 

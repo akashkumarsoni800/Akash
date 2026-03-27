@@ -86,7 +86,7 @@ export default function StudentsManagement() {
     
         <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
           <div className="relative group/search flex-1 md:w-80">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-blue-500 transition-colors" size={18} />
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-blue-500 transition-colors" size={18} />
             <input 
               type="text" 
               placeholder="Search students..."
@@ -96,7 +96,7 @@ export default function StudentsManagement() {
             />
           </div>
           <div className="relative md:w-48">
-            <Filter className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={16} />
+            <Filter className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" size={16} />
             <select 
               value={classFilter}
               onChange={(e) => setClassFilter(e.target.value)}

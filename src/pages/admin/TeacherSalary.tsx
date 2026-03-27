@@ -211,7 +211,7 @@ const TeacherSalary = () => {
          <div className="space-y-3 group">
           <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Select Teacher</label>
           <div className="relative">
-            <UserCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+            <UserCheck className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
             <select 
              value={newSalary.teacher_id}
              onChange={(e) => {
@@ -237,7 +237,7 @@ const TeacherSalary = () => {
          <div className="space-y-3 group">
           <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Payroll frequency</label>
           <div className="relative">
-            <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
+            <Calendar className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
             <input 
              type="month" 
              value={newSalary.month}
@@ -460,9 +460,9 @@ const InputField = ({ label, icon: Icon, prefix, accent, ...props }: any) => (
  <div className="space-y-1 group">
   <label className={`block text-[9px] font-black text-slate-400  ml-2 transition-colors ${accent === 'blue' ? 'group-focus-within:text-blue-500' : accent === 'rose' ? 'group-focus-within:text-rose-500' : 'group-focus-within:text-slate-900'}`}>{label}</label>
   <div className="relative">
-   {Icon && <Icon className={`absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 transition-colors ${accent === 'blue' ? 'group-focus-within/input:text-blue-400' : accent === 'rose' ? 'group-focus-within/input:text-rose-400' : 'group-focus-within/input:text-slate-400'}`} size={18} />}
-   {prefix && <span className={`absolute ${Icon ? 'left-16' : 'left-8'} top-1/2 -translate-y-1/2 font-black text-[9px] tracking-widest ${accent === 'blue' ? 'text-blue-300' : accent === 'rose' ? 'text-rose-300' : 'text-slate-200'}`}>{prefix}</span>}
-   <input className="premium-input" style={{ paddingLeft: Icon ? (prefix ? '6rem' : '4rem') : (prefix ? '4rem' : '2rem') }} {...props} />
+   {Icon && <Icon className={`absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 transition-colors ${accent === 'blue' ? 'group-focus-within/input:text-blue-400' : accent === 'rose' ? 'group-focus-within/input:text-rose-400' : 'group-focus-within/input:text-slate-400'}`} size={18} />}
+   {prefix && <span className={`absolute ${Icon ? 'left-24' : 'left-8'} top-1/2 -translate-y-1/2 font-black text-[9px] tracking-widest ${accent === 'blue' ? 'text-blue-300' : accent === 'rose' ? 'text-rose-300' : 'text-slate-200'}`}>{prefix}</span>}
+   <input className="premium-input" style={{ paddingLeft: Icon ? (prefix ? '8rem' : '6rem') : (prefix ? '6rem' : '4rem') }} {...props} />
   </div>
  </div>
 );

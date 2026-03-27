@@ -129,7 +129,7 @@ export default function StudentDashboard() {
        <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white p-4 rounded-[5px] shadow-xl border-4 border-white z-20 animate-bounce">
         <CheckCircle2 size={24} />
        </div>
-       <div className="absolute -top-6 -left-6 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+       <div className="absolute -top-6 -left-8 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50 animate-pulse"></div>
       </div>
      </div>
     </motion.div>

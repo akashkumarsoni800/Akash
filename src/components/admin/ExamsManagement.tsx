@@ -202,7 +202,7 @@ export default function ExamsManagement() {
             <div className="space-y-2 group">
              <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-600">Subjects</label>
              <div className="relative">
-              <BookOpen className="absolute left-6 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
+              <BookOpen className="absolute left-8 top-6 text-slate-200 group-focus-within:text-blue-400 transition-colors" size={18} />
               <textarea 
                className="w-full pl-16 pr-8 py-3 bg-slate-50 border-none rounded-[5px] font-black text-slate-900 outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all text-sm placeholder:text-slate-200 min-h-[120px] resize-none"
                placeholder="Mathematics, Physics, Chemistry... (comma separated)"
@@ -233,7 +233,7 @@ const InputField = ({ label, icon: Icon, ...props }: any) => (
  <div className="space-y-2 group/input">
   <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within/input:text-blue-600">{label}</label>
   <div className="relative">
-   {Icon && <Icon className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
+   {Icon && <Icon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
    <input className={`premium-input text-sm placeholder:text-slate-200 ${Icon ? 'pl-16' : 'px-8'} py-3`} {...props} />
   </div>
  </div>

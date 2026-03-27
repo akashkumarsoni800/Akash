@@ -78,7 +78,7 @@ const GlobalGallerySlider = () => {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+              <div className="absolute bottom-6 left-8 right-6 flex items-end justify-between">
                 <div>
                   <p className="text-[10px] font-black text-white uppercase tracking-widest line-clamp-1">{img.caption || 'School Event'}</p>
                   <p className="text-[8px] font-black text-blue-300 uppercase mt-1">{new Date(img.created_at).toLocaleDateString()}</p>
