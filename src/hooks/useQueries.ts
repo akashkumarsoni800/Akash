@@ -613,21 +613,26 @@ export const useGetRecentPayments = (limit: number = 5): any => {
   });
 };
 
-export const useGetFeeReminders = (month: string): any => {
+export const useGetFeeReminders = (month: string, allMonths: boolean = false): any => {
   const schoolId = getCurrentSchoolId();
   return useQuery({
-    queryKey: ['fee-reminders', month, schoolId],
+    queryKey: ['fee-reminders', month, schoolId, allMonths],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('fees')
         .select(`*, students(full_name, contact_number, class_name)`)
-        .eq('month', month)
         .eq('status', 'Pending')
         .eq('school_id', schoolId);
+      
+      if (!allMonths) {
+        query = query.eq('month', month);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
-    enabled: !!month && !!schoolId
+    enabled: (!!month || allMonths) && !!schoolId
   });
 };
 

@@ -27,6 +27,7 @@ const ManageFees = () => {
  const [feeValues, setFeeValues] = useState<any>({});
  const [bulkMode, setBulkMode] = useState(false);
   const [remindMonth, setRemindMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [showAllMonths, setShowAllMonths] = useState(false);
   const [showNextMonthPrompt, setShowNextMonthPrompt] = useState(false);
   const [nextMonth, setNextMonth] = useState('');
   const [waSearch, setWaSearch] = useState('');
@@ -40,7 +41,7 @@ const ManageFees = () => {
  const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
  const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
- const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth);
+ const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
 
  // ✅ 2. Mutations
  const addFeeHeadMutation = useAddFeeHead();
@@ -568,13 +569,20 @@ const ManageFees = () => {
            <div className="h-10 w-px bg-slate-200 mx-2 hidden md:block" />
  
            <div className="flex items-center gap-4 bg-white p-3 rounded-[5px] border border-slate-100 shadow-inner">
-             <Calendar size={16} className="text-slate-400 ml-2" />
+             <Calendar size={16} className={`ml-2 transition-colors ${showAllMonths ? 'text-slate-200' : 'text-slate-400'}`} />
              <input 
                type="month" 
-               className="bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase" 
+               className={`bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase transition-opacity ${showAllMonths ? 'opacity-20 pointer-events-none' : 'opacity-100'}`} 
                value={remindMonth}
                onChange={(e) => setRemindMonth(e.target.value)}
              />
+           </div>
+ 
+           <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-[5px] border border-slate-100 shadow-inner group/toggle cursor-pointer" onClick={() => setShowAllMonths(!showAllMonths)}>
+             <div className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${showAllMonths ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+               <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 ${showAllMonths ? 'left-4.5' : 'left-0.5'}`} style={{ left: showAllMonths ? '1.1rem' : '0.125rem' }}></div>
+             </div>
+             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Show All Months</span>
            </div>
  
            <button 
