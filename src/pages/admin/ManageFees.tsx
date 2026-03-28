@@ -170,7 +170,7 @@ const ManageFees = () => {
     }));
    } else {
     feesToInsert = [{
-     student_id: Number(selectedStudent), 
+     student_id: selectedStudent, 
      month,
      fee_structure: feeValues,
      total_amount: totalAmountValue,
@@ -194,9 +194,10 @@ const ManageFees = () => {
   setFeeValues({ ...feeValues, [headId]: value });
  };
 
- const handleSendReminder = (fee: any) => {
-  const student = fee.students;
-  if (!student?.contact_number) return toast.error("No contact number found");
+  const handleSendReminder = (fee: any) => {
+   const student = fee.students;
+   if (!student) return toast.error("Student record not linked. Please re-assign this fee.");
+   if (!student.contact_number) return toast.error(`No contact number found for ${student.full_name}`);
 
   // ✅ Clean Phone Number (Remove non-digits and ensure 91 prefix)
   let phone = student.contact_number.replace(/\D/g, ''); 
