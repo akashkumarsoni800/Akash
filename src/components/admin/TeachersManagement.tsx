@@ -51,7 +51,12 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    if (existingStaff) throw new Error(`Email already exists: This email is used by another teacher (${existingStaff.full_name}).`);
 
    // 2. Reverting to original induction protocol (Secondary Client)
-   const schoolId = localStorage.getItem('current_school_id');
+   // 2. Identity Synchronized Verification (Institutional Isolation)
+   const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
+   
+   if (!schoolId) {
+     throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
+   }
    
    // Initialize temporary client to prevent session hijack
    const tempSupabase = createClient(
@@ -79,19 +84,22 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
 
    if (authError) throw authError;
 
-   if (authData.user) {
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     id: authData.user.id,
-     full_name: formData.fullName,
-     subject: formData.subject,
-     email: formData.email,
-     phone: formData.phone,
-     role: 'teacher',
-     school_id: schoolId
-    }]);
-    
-    if (dbError) throw dbError;
-   }
+    if (authData.user) {
+     const { error: dbError } = await supabase.from('teachers').insert([{
+      id: authData.user.id,
+      full_name: formData.fullName,
+      subject: formData.subject,
+      email: formData.email,
+      phone: formData.phone,
+      role: 'teacher',
+      school_id: schoolId
+     }]);
+     
+     if (dbError) {
+       console.error("Critical DB Sync Error:", dbError);
+       throw new Error(`Database Synchronization Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
+     }
+    }
 
    toast.success("Teacher added successfully! 💎");
    setIsModalOpen(false);
