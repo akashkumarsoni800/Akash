@@ -29,6 +29,10 @@ const ManageFees = () => {
   const [remindMonth, setRemindMonth] = useState(new Date().toISOString().slice(0, 7));
   const [showNextMonthPrompt, setShowNextMonthPrompt] = useState(false);
   const [nextMonth, setNextMonth] = useState('');
+  const [waSearch, setWaSearch] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+  const webcamRef = useRef<any>(null);
+  const [WebcamComp, setWebcamComp] = useState<any>(null);
 
  // ✅ 1. Persistent Data Hooks
  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
@@ -76,6 +80,9 @@ const ManageFees = () => {
       }
     };
     checkNextMonth();
+    if (typeof window !== "undefined") {
+      import("react-webcam").then((mod) => setWebcamComp(() => mod.default));
+    }
   }, []);
 
  const handleAddFeeHead = async () => {
@@ -413,6 +420,89 @@ const ManageFees = () => {
         </form>
        </motion.div>
 
+       {/* 🟡 4. QUICK SCAN HUB */}
+       <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative"
+       >
+        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/30 blur-3xl rounded-full transition-opacity group-hover:opacity-100 opacity-50"></div>
+        <div className="flex items-center gap-6 mb-8 relative z-10">
+          <div className="w-12 h-12 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl">
+           <Zap size={24} className="animate-pulse" />
+          </div>
+          <div>
+           <h2 className="text-2xl font-black uppercase leading-none">Quick Lookup</h2>
+           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">Scan or Search Student</p>
+          </div>
+        </div>
+
+        <div className="space-y-6 relative z-10">
+          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Instantly load student profile to assign fees or view records.</p>
+          
+          <div className="flex gap-4">
+            <button 
+              onClick={() => setShowScanner(true)}
+              className="flex-1 py-4 bg-blue-600 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-blue-500 transition-all shadow-xl uppercase flex items-center justify-center gap-2"
+            >
+              <Camera size={16} /> Open Scanner
+            </button>
+            <button className="flex-1 py-4 bg-white/10 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-white/20 transition-all uppercase">
+              Manual ID Look
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {showScanner && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
+            >
+              <div className="bg-white rounded-[5px] p-10 w-full max-w-xl shadow-2xl space-y-8 relative overflow-hidden">
+                <div className="flex justify-between items-center text-slate-900">
+                  <h3 className="text-2xl font-black uppercase">Scanning...</h3>
+                  <button onClick={() => setShowScanner(false)} className="p-3 bg-slate-50 rounded-[5px] text-slate-400 hover:text-slate-600 transition-all">
+                    <AlertTriangle size={24} className="text-rose-500" />
+                  </button>
+                </div>
+                
+                <div className="relative rounded-[5px] overflow-hidden bg-slate-100 shadow-inner aspect-video flex items-center justify-center text-slate-900">
+                  {WebcamComp ? (
+                    <WebcamComp
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      className="w-full"
+                    />
+                  ) : (
+                    <div className="text-slate-300 font-black animate-pulse uppercase text-xs">Initializing...</div>
+                  )}
+                  <div className="absolute inset-x-0 top-1/2 h-0.5 bg-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.5)] animate-scan-line" />
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-slate-400 text-center uppercase tracking-widest">Searching student in database...</p>
+                  <button 
+                    onClick={() => {
+                      toast.success("Student Identified: Akash Soni");
+                      setSelectedStudent('123'); // Example ID
+                      setShowScanner(false);
+                    }}
+                    className="w-full py-6 bg-slate-900 text-white rounded-[5px] font-black tracking-widest text-xs shadow-2xl hover:bg-blue-600 transition-all uppercase"
+                  >
+                    Simulation: Found Student
+                  </button>
+                  <button onClick={() => setShowScanner(false)} className="w-full py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors">Cancel Scan</button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+       </motion.div>
+
        {/* 🟢 WHATSAPP REMINDERS HUB */}
        <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -449,7 +539,55 @@ const ManageFees = () => {
         </div>
 
         <div className="space-y-4">
-          {pendingReminders.length > 0 ? (
+          {/* ✅ 1. Quick Individual Reminder Search */}
+          <div className="relative group/search mb-8">
+            <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-emerald-500 transition-colors" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search by student name or roll number..."
+              value={waSearch}
+              onChange={(e) => setWaSearch(e.target.value)}
+              className="premium-input text-sm pl-16 py-4 bg-slate-50 border-slate-100 hover:border-emerald-200 focus:border-emerald-400 focus:ring-emerald-50"
+            />
+          </div>
+
+          {waSearch.length > 0 && (
+            <div className="mb-10 space-y-4 max-h-64 overflow-y-auto no-scrollbar">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2 mb-4">Search Results (Found: {students.filter((s:any) => s.full_name?.toLowerCase().includes(waSearch.toLowerCase()) || s.roll_no?.includes(waSearch)).length})</p>
+              {students.filter((s:any) => s.full_name?.toLowerCase().includes(waSearch.toLowerCase()) || s.roll_no?.includes(waSearch)).slice(0, 3).map((student: any) => (
+                <div key={student.student_id} className="p-5 bg-white border border-emerald-100 rounded-[5px] flex items-center justify-between group/res hover:shadow-xl transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-[5px] bg-slate-50 flex items-center justify-center font-black text-xs text-slate-400">
+                      {student.class_name}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-900 text-sm leading-none uppercase">{student.full_name}</h4>
+                      <p className="text-[10px] font-black text-slate-400 mt-1 uppercase">Roll #{student.roll_no}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleSendReminder({ students: student, total_amount: '---', month: 'Adhoc', status: 'Pending', fee_structure: {} })}
+                    className="px-6 py-2.5 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase"
+                  >
+                    <Send size={12} /> Remind Now
+                  </button>
+                </div>
+              ))}
+              {students.filter((s:any) => s.full_name?.toLowerCase().includes(waSearch.toLowerCase()) || s.roll_no?.includes(waSearch)).length === 0 && (
+                <p className="text-[10px] font-black text-slate-300 text-center py-4 italic uppercase">No matching students found.</p>
+              )}
+            </div>
+          )}
+
+          {/* ✅ 2. Automated Pending Reminders List */}
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2 mb-4">Pending Fee Alerts ({pendingReminders.length})</p>
+          
+          {remLoading ? (
+            <div className="py-12 text-center bg-slate-50/50 rounded-[5px] border border-slate-100 flex flex-col items-center gap-4">
+              <RefreshCw className="animate-spin text-emerald-500" size={24} />
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fetching pending fees...</p>
+            </div>
+          ) : pendingReminders.length > 0 ? (
             pendingReminders.map((fee: any) => (
               <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100">
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
@@ -470,9 +608,8 @@ const ManageFees = () => {
               </div>
             ))
           ) : (
-            <div className="py-20 text-center space-y-4 opacity-30">
-              <CheckCircle size={48} className="mx-auto text-emerald-500" />
-              <p className="font-black text-[10px] tracking-widest uppercase">NO PENDING FEES FOR {remindMonth}</p>
+            <div className="py-12 text-center bg-slate-50/50 rounded-[5px] border-2 border-dashed border-slate-100">
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">No pending fees for this month summary.</p>
             </div>
           )}
         </div>
