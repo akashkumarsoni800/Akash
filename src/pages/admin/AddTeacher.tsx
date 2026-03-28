@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
@@ -46,43 +47,58 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
    }
 
-    // 1. Create Account via Edge Function (Atomic Auth + DB)
+    // 1. Reverting to original induction protocol (Secondary Client)
     const schoolId = localStorage.getItem('current_school_id');
     
-    const { data: result, error: fnError } = await supabase.functions.invoke('create-user', {
-     body: {
-      email: formData.email,
-      password: 'Teacher@123',
-      full_name: formData.name,
-      role: 'teacher',
-      school_id: schoolId,
-      subject: formData.subject,
-      phone: formData.phone
+    // Initialize temporary client for session isolation
+    const tempSupabase = createClient(
+     import.meta.env.VITE_SUPABASE_URL,
+     import.meta.env.VITE_SUPABASE_ANON_KEY,
+     {
+      auth: {
+       persistSession: false,
+       autoRefreshToken: false,
+       detectSessionInUrl: false
+      }
      }
+    );
+
+    const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+     email: formData.email,
+     password: 'Teacher@123',
+     options: {
+      data: {
+       full_name: formData.name,
+       role: 'teacher',
+      },
+     },
     });
 
-     if (fnError) {
-      console.error("Full Function Error:", fnError);
-      let errorMessage = "Identity synchronization failed. Please check your credentials and try again.";
+    if (authError) throw authError;
+
+     if (authData.user) {
+      const { error: dbError } = await supabase.from('teachers').insert([{
+       id: authData.user.id,
+       full_name: formData.name,
+       subject: formData.subject,
+       email: formData.email,
+       phone: formData.phone,
+       role: 'teacher',
+       school_id: schoolId
+      }]);
       
-      // If our edge function returned a custom error message
-      if (fnError.message && !fnError.message.includes("non-2xx")) {
-        errorMessage = fnError.message;
-      }
-      
-      throw new Error(errorMessage);
+      if (dbError) throw dbError;
      }
-     if (result?.error) throw new Error(result.error);
 
-   toast.success("Teacher Created Successfully!");
-   navigate('/admin/dashboard');
+    toast.success("Teacher Created Successfully!");
+    navigate('/admin/dashboard');
 
-  } catch (err: any) {
-   toast.error("Error: " + err.message);
-  } finally {
-   setIsPending(false);
-  }
- };
+   } catch (err: any) {
+    toast.error("Error: " + err.message);
+   } finally {
+    setIsPending(false);
+   }
+  };
 
  return (
   <div className="min-h-screen bg-[var(--bg-main)] py-12 px-4 md:px-10 pb-32 flex items-center justify-center">
