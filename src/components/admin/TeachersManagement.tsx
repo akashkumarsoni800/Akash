@@ -110,7 +110,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
       phone: formData.phone,
       role: 'teacher',
       school_id: schoolId
-     }, { onConflict: 'id,school_id' });
+     }, { onConflict: 'id' });
      
      if (dbError) {
        console.error("Critical DB Sync Error:", dbError);

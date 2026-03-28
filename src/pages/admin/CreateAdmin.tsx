@@ -96,7 +96,7 @@ const CreateAdmin = () => {
      role: 'admin',
      school_id: schoolId,
      subject: 'Administration'
-    }, { onConflict: 'id,school_id' });
+    }, { onConflict: 'id' });
 
     if (dbError) {
       console.error("Critical Admin Sync Error:", dbError);
