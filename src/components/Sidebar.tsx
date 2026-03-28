@@ -152,7 +152,7 @@ const Sidebar = () => {
     <div className="h-screen flex items-center justify-center bg-[#f9fafb]">
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-4 border-slate-800 border-t-slate-300 rounded-full animate-spin"></div>
-        <p className="text-[10px] font-black text-slate-400 tracking-widest">Encrypting Session...</p>
+        <p className="text-[10px] font-black text-slate-400 tracking-widest">Loading...</p>
       </div>
     </div>
   );
@@ -207,29 +207,29 @@ const Sidebar = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto asm-hide-scrollbar">
-          <p className="text-[10px] font-black text-slate-500 px-4 mb-4 tracking-widest">Navigation</p>
+          <p className="text-[10px] font-black text-slate-500 px-4 mb-4 tracking-widest">Menu</p>
 
           {profile.role === 'admin' && (
             <>
-              <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={18} />} label="Command Center" />
-              <NavItem to="/admin/manage-fees" icon={<CreditCard size={18} />} label="Financial Hub" />
-              <NavItem to="/admin/add-student" icon={<UserPlus size={18} />} label="Enrollment" />
-              <NavItem to="/admin/teacher-salary" icon={<Wallet size={18} />} label="Payroll" />
-              <NavItem to="/admin/manage-salaries" icon={<PieChart size={18} />} label="Accounting" />
-              <NavItem to="/admin/inventory" icon={<Package size={18} />} label="Logistics" />
-              <NavItem to="/admin/upload-result" icon={<ClipboardList size={18} />} label="Assessments" />
-              <NavItem to="/admin/documents" icon={<FileText size={18} />} label="Document Hub" />
-              <NavItem to="/admin/add-event" icon={<Bell size={18} />} label="Bulletins" />
+              <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" />
+              <NavItem to="/admin/manage-fees" icon={<CreditCard size={18} />} label="Fees" />
+              <NavItem to="/admin/add-student" icon={<UserPlus size={18} />} label="Add Student" />
+              <NavItem to="/admin/teacher-salary" icon={<Wallet size={18} />} label="Staff Salary" />
+              <NavItem to="/admin/manage-salaries" icon={<PieChart size={18} />} label="Salaries" />
+              <NavItem to="/admin/inventory" icon={<Package size={18} />} label="Inventory" />
+              <NavItem to="/admin/upload-result" icon={<ClipboardList size={18} />} label="Results" />
+              <NavItem to="/admin/documents" icon={<FileText size={18} />} label="Documents" />
+              <NavItem to="/admin/add-event" icon={<Bell size={18} />} label="Notice Board" />
               <NavItem to="/admin/create-admin" icon={<ShieldCheck size={18} />} label=" Admins" />
             </>
           )}
 
           {profile.role === 'teacher' && (
             <>
-              <NavItem to="/teacher/dashboard" icon={<LayoutDashboard size={18} />} label="Faculty Desk" />
+              <NavItem to="/teacher/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" />
               <NavItem to="/teacher/students" icon={<Users2 size={18} />} label="My Class" />
               <NavItem to="/teacher/attendance" icon={<Calendar size={18} />} label="Attendance" />
-              <NavItem to="/teacher/upload-result" icon={<FileText size={18} />} label="Marking" />
+              <NavItem to="/teacher/upload-result" icon={<FileText size={18} />} label="Results" />
               <NavItem to="/teacher/analytics" icon={<PieChart size={18} />} label="Performance" />
             </>
           )}
@@ -237,12 +237,12 @@ const Sidebar = () => {
           {profile.role === 'student' && (
             <>
               <NavItem to="/student/dashboard" icon={<LayoutDashboard size={18} />} label="Overview" />
-              <NavItem to="/student/homework" icon={<BookOpen size={18} />} label="Academic Plan" />
-              <NavItem to="/student/attendance" icon={<Calendar size={18} />} label="Lifecycle" />
-              <NavItem to="/student/fees" icon={<CreditCard size={18} />} label="Bursary" />
+              <NavItem to="/student/homework" icon={<BookOpen size={18} />} label="Homework" />
+              <NavItem to="/student/attendance" icon={<Calendar size={18} />} label="Attendance" />
+              <NavItem to="/student/fees" icon={<CreditCard size={18} />} label="Fees" />
               <NavItem to="/student/result" icon={<ClipboardList size={18} />} label="Report Card" />
               <NavItem to="/student/id-card" icon={<ShieldCheck size={18} />} label="Identity" />
-              <NavItem to="/student/notices" icon={<FileText size={18} />} label="Briefings" />
+              <NavItem to="/student/notices" icon={<FileText size={18} />} label="Notice Board" />
             </>
           )}
         </nav>
@@ -263,7 +263,7 @@ const Sidebar = () => {
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[5px] bg-slate-700/50 text-slate-400 hover:bg-rose-600/10 hover:text-rose-500 transition-all text-[10px] font-black tracking-widest border border-transparent hover:border-rose-500/20"
               >
-                <LogOut size={12} /> Terminate session
+                <LogOut size={12} /> Logout
               </button>
               <button
                 onClick={() => {
@@ -277,7 +277,7 @@ const Sidebar = () => {
               </button>
             </div>
           </div>
-          <p className="text-[8px] font-black text-slate-600 text-center ">Integrated Logic • v3.0</p>
+          <p className="text-[8px] font-black text-slate-600 text-center ">School Management System • v3.0</p>
         </div>
       </aside>
 

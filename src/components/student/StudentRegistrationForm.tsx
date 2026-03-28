@@ -79,7 +79,7 @@ export default function StudentRegistrationForm() {
 
       if (dbError) throw dbError;
 
-      toast.success('Protocol Initiated: Registration Submitted 🛰️');
+      toast.success('Registration Submitted Successfully! 🛰️');
       navigate('/'); 
 
     } catch (error: any) {
@@ -121,14 +121,14 @@ export default function StudentRegistrationForm() {
                        <h2 className="text-3xl font-black text-white    leading-none uppercase">
                           Scholar<br/>Induction
                        </h2>
-                       <p className="text-[10px] font-black text-blue-400   mt-4">Protocol Version 4.0</p>
+                       <p className="text-[10px] font-black text-blue-400   mt-4">Version 4.0</p>
                     </div>
                  </div>
 
                  <div className="relative z-10 space-y-6">
                     <div className="flex items-start gap-4">
                        <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
-                       <p className="text-[11px] font-black text-slate-400 leading-relaxed">Verified Identity Vault</p>
+                       <p className="text-[11px] font-black text-slate-400 leading-relaxed">Secure Student Record</p>
                     </div>
                     <div className="flex items-start gap-4">
                        <div className="mt-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
@@ -162,7 +162,7 @@ export default function StudentRegistrationForm() {
                  </div>
 
                  <form onSubmit={handleSubmit} className="space-y-8">
-                    {/* ✅ School Identifier Node */}
+                    {/* ✅ School Identifier */}
                     <div className="bg-blue-50/50 p-6 rounded-[5px] border border-blue-100/50">
                         <InputField 
                           label="Institutional Identifier (School Code)" 
@@ -183,14 +183,14 @@ export default function StudentRegistrationForm() {
                          required
                        />
                        <InputField 
-                         label="Identity Anchor (Father/Guardian)" 
+                         label="Father's/Guardian's Name" 
                          icon={ShieldCheck} 
                          placeholder="Guardian Name..."
                          onChange={(e: any) => setFormData({ ...formData, guardianName: e.target.value })}
                          required
                        />
                        <InputField 
-                         label="Primary Node (Email)" 
+                         label="Email Address" 
                          type="email" 
                          icon={Mail} 
                          placeholder="email@institution.com"
@@ -246,7 +246,7 @@ export default function StudentRegistrationForm() {
                  <div className="bg-slate-50 p-8 rounded-[5px] border border-slate-100 flex items-start gap-4">
                     <Info size={18} className="text-blue-500 mt-1" />
                     <p className="text-[10px] font-black text-slate-400 leading-relaxed">
-                       Administrative Protocol: All submissions are filtered through central security audits. 
+                       Notice: All registrations are reviewed for accuracy and security. 
                        Approval may take up to 24 institutional hours.
                     </p>
                  </div>

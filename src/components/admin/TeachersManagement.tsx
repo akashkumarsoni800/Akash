@@ -32,25 +32,25 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
  });
 
  const handleDelete = async (id: any) => {
-  if (!window.confirm("Purge faculty record? This protocol is irreversible.")) return;
+  if (!window.confirm("Delete teacher record? This cannot be undone.")) return;
   deleteTeacher(id);
  };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  if (!formData.fullName || !formData.email) return toast.error("Essential parameters missing.");
+  if (!formData.fullName || !formData.email) return toast.error("Please fill in all required fields.");
 
   setIsSubmitting(true);
   try {
    // 1. Initial Identity Check
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
-   if (existing) throw new Error(`Identity conflict: Email registered to scholar (${existing.full_name})`);
+   if (existing) throw new Error(`Email already exists: This email is used by a student (${existing.full_name}).`);
 
    // 1.1 Faculty Conflict Check
    const { data: existingStaff } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
-   if (existingStaff) throw new Error(`Identity conflict: Email registered to faculty (${existingStaff.full_name})`);
+   if (existingStaff) throw new Error(`Email already exists: This email is used by another teacher (${existingStaff.full_name}).`);
 
-   // 2. Auth Protocol & Database Indexing via Secondary Client
+   // 2. Add teacher to the database
    const schoolId = localStorage.getItem('current_school_id');
    
    // Initialize temporary client to prevent session hijack
@@ -92,13 +92,13 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
     
     if (dbError) {
      if (dbError.code === '23505') {
-      throw new Error(`Protocol Failed: This identity (${formData.email}) is already indexed in another institutional node.`);
+       throw new Error(`Error: This email (${formData.email}) is already in use.`);
      }
      throw dbError;
     }
    }
 
-   toast.success("Identity Secured: Faculty Node Initialized 💎");
+   toast.success("Teacher added successfully! 💎");
    setIsModalOpen(false);
    setFormData({ fullName: '', email: '', phone: '', subject: '', password: 'Teacher@123' });
    queryClient.invalidateQueries({ queryKey: ['teachers'] });
@@ -114,24 +114,24 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
   toast.promise(
    new Promise((resolve) => setTimeout(resolve, 1200)),
    {
-    loading: 'Restoring identity hash...',
-    success: () => `Temporal sync active: (Teacher@123) for ${email} ✅`,
-    error: 'Protocol interruption.',
+    loading: 'Resetting password...',
+    success: () => `Password reset to: (Teacher@123) for ${email} ✅`,
+    error: 'Error resetting password.',
    }
   );
  };
 
- if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Synchronizing Node...</div>;
+ if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Loading Teachers...</div>;
 
  return (
   <div className="space-y-8">
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
     <div className="space-y-1">
      <h3 className="text-2xl font-black text-slate-900 leading-none uppercase tracking-tighter">
-      Faculty Management
+      Teacher Management
      </h3>
      <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mt-1">
-      {roleFilter} protocol active
+      Managing {roleFilter}s
      </p>
     </div>
     {roleFilter !== 'admin' && (
@@ -140,7 +140,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
        onClick={() => setIsModalOpen(true)}
        className="premium-button-admin flex-1 md:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white hover:bg-blue-600 border-none shadow-2xl active:scale-95 transition-all"
       >
-       <UserPlus size={16} /> Deploy Faculty
+       <UserPlus size={16} /> Add Teacher
       </button>
      </div>
     )}
@@ -173,7 +173,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
          <button 
           onClick={() => handleDelete(t.id)}
           className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
-          title="Purge Node"
+          title="Delete Teacher"
          >
           <Trash2 size={16} />
          </button>
@@ -229,8 +229,8 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
       >
        <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
         <div className="space-y-1">
-         <h3 className="text-xl font-black text-slate-900 uppercase">Deploy Faculty</h3>
-         <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Protocol: Secure Identity Initialization</p>
+         <h3 className="text-xl font-black text-slate-900 uppercase">Add Teacher</h3>
+         <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Enter Teacher Details</p>
         </div>
         <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-full transition-colors">
          <X size={20} className="text-slate-400" />
@@ -246,7 +246,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
            value={formData.fullName}
            onChange={e => setFormData({...formData, fullName: e.target.value})}
            className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
-           placeholder="ENTER IDENTITY NAME"
+           placeholder="ENTER TEACHER NAME"
           />
          </div>
 
@@ -266,7 +266,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
             value={formData.phone}
             onChange={e => setFormData({...formData, phone: e.target.value})}
             className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-[5px] text-xs font-black focus:ring-2 focus:ring-blue-500 transition-all outline-none"
-            placeholder="CONTACT PROTOCOL"
+            placeholder="PHONE NUMBER"
            />
           </div>
          </div>
@@ -297,7 +297,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
          disabled={isSubmitting}
          className="w-full py-5 bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-[5px] shadow-2xl hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-50"
         >
-         {isSubmitting ? 'SYNCING IDENTITY...' : 'EXECUTE DEPLOYMENT'}
+         {isSubmitting ? 'ADDING TEACHER...' : 'ADD TEACHER'}
         </button>
        </form>
       </motion.div>

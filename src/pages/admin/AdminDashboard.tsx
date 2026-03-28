@@ -139,23 +139,23 @@ const AdminDashboard = () => {
     <motion.div variants={itemVar} className="bg-white border border-slate-100 rounded-[5px] p-8 md:p-10 shadow-sm transition-all hover:shadow-md">
      <div className="flex flex-col lg:flex-row justify-between items-center gap-8 mb-10">
       <div className="flex items-center gap-4 text-center lg:text-left">
-       <div className="w-14 h-14 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest shadow-blue-200 animate-float">
-        <LayoutDashboard size={28}/>
-       </div>
-       <div>
-        <h1 className="text-3xl font-black text-slate-900  leading-none uppercase">Command Center</h1>
-        <p className="text-[10px] font-black text-blue-500 tracking-widest mt-2">Administrative Authority Level 4</p>
-       </div>
+        <div className="w-14 h-14 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest shadow-blue-200 animate-float">
+         <LayoutDashboard size={28}/>
+        </div>
+        <div>
+         <h1 className="text-3xl font-black text-slate-900  leading-none uppercase">Admin Dashboard</h1>
+         <p className="text-[10px] font-black text-blue-500 tracking-widest mt-2">School Management</p>
+        </div>
       </div>
       <div className="flex flex-wrap justify-center gap-3">
         <button onClick={() => navigate('/admin/create-exam')} className="px-6 py-3 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
-         <Zap size={14} className="text-yellow-400"/> Examination
+         <Zap size={14} className="text-yellow-400"/> Exams
         </button>
         <button onClick={() => navigate('/admin/manage-fees')} className="px-6 py-3 bg-blue-50 text-blue-600 rounded-[5px] text-[10px] font-black tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2">
-         <CreditCard size={14}/> Financials
+         <CreditCard size={14}/> Fees
         </button>
         <button onClick={() => navigate('/admin/upload-result')} className="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm flex items-center gap-2">
-         <CheckCircle size={14}/> Assessments
+         <CheckCircle size={14}/> Results
         </button>
       </div>
      </div>
@@ -164,10 +164,10 @@ const AdminDashboard = () => {
        <ActionCard icon={Wallet} label="Accounting" color="blue" onClick={() => navigate('/admin/manage-salaries')} />
        <ActionCard icon={FileStack} label="Docs Hub" color="orange" onClick={() => navigate('/admin/documents')} />
        <ActionCard icon={PieChart} label="Staff Payroll" color="purple" onClick={() => navigate('/admin/teacher-salary')} />
-       <ActionCard icon={Package} label="Logistics" color="amber" onClick={() => navigate('/admin/inventory')} />
-       <ActionCard icon={ShieldAlert} label="Security" color="red" onClick={() => navigate('/admin/create-admin')} />
-       <ActionCard icon={UserPlus} label="Enrollment" color="indigo" onClick={() => navigate('/admin/add-student')} />
-       <ActionCard icon={Plus} label="Faculty" color="emerald" onClick={() => navigate('/admin/add-teacher')} />
+        <ActionCard icon={Package} label="Inventory" color="amber" onClick={() => navigate('/admin/inventory')} />
+        <ActionCard icon={ShieldAlert} label="Security" color="red" onClick={() => navigate('/admin/create-admin')} />
+        <ActionCard icon={UserPlus} label="Add Student" color="indigo" onClick={() => navigate('/admin/add-student')} />
+        <ActionCard icon={Plus} label="Add Teacher" color="emerald" onClick={() => navigate('/admin/add-teacher')} />
        <ActionCard icon={ImageIcon} label="Gallery" color="purple" onClick={() => setActiveTab('gallery')} />
        <ActionCard icon={Settings} label="Branding" color="blue" onClick={() => setActiveTab('branding')} />
      </div>
@@ -175,9 +175,9 @@ const AdminDashboard = () => {
 
     {/* --- STATS --- */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-     <StatCard icon={GraduationCap} title="Enrolled Students" value={counts.students} color="blue" subText="Live admission data" />
-     <StatCard icon={Clock} title="Awaiting Approval" value={counts.pending} color="amber" subText="Action required" />
-     <StatCard icon={Users} title="Academic Staff" value={counts.teachers} color="emerald" subText="Faculty management" />
+     <StatCard icon={GraduationCap} title="Total Students" value={counts.students} color="blue" subText="Enrolled students" />
+     <StatCard icon={Clock} title="Pending Approvals" value={counts.pending} color="amber" subText="Action required" />
+     <StatCard icon={Users} title="Teachers" value={counts.teachers} color="emerald" subText="School staff" />
     </div>
 
     {/* --- TABLES SECTION --- */}
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
             </div>
            </div>
           ))}
-          {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black  text-[10px] text-slate-400">Zero Pending Authority Tasks</div>}
+          {pendingStudents.length === 0 && <div className="col-span-full py-20 text-center opacity-30 font-black  text-[10px] text-slate-400">No pending registration requests</div>}
         </motion.div>
        )}
 

@@ -26,13 +26,13 @@ export default function ExamsManagement() {
  });
 
  const handleDelete = async (id: any) => {
-  if (!window.confirm("Purge exam schedule? This protocol is irreversible.")) return;
+  if (!window.confirm("Delete exam schedule? This cannot be undone.")) return;
   deleteExam(id);
  };
 
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  if (!formData.title || !formData.subjects) return toast.error("All parameters required.");
+  if (!formData.title || !formData.subjects) return toast.error("Please fill in all fields.");
 
   const subjectsArray = formData.subjects.split(',').map(s => s.trim()).filter(s => s);
   
@@ -48,14 +48,14 @@ export default function ExamsManagement() {
   });
  };
 
- if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Synchronizing Schedules...</div>;
+ if (isLoading) return <div className="py-24 text-center text-[10px] font-black tracking-widest text-slate-400 uppercase animate-pulse">Loading Exams...</div>;
 
  return (
   <div className="space-y-8">
    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
     <div className="space-y-1">
      <h3 className="text-2xl font-black text-slate-900 leading-none uppercase tracking-tighter">Exam Schedules</h3>
-     <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mt-1">Academic Timelines Active</p>
+     <p className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mt-1">Manage School Exams</p>
     </div>
     <button 
      onClick={() => setIsModalOpen(true)}

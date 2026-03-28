@@ -156,7 +156,7 @@ export const useDeleteStudent = (): any => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['students'] });
       queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
-      toast.success("Student records purged successfully.");
+      toast.success("Student records deleted successfully.");
     }
   });
 };
@@ -241,7 +241,7 @@ export const useDeleteTeacher = (): any => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] });
       queryClient.invalidateQueries({ queryKey: ['dash-stats'] });
-      toast.success("Teacher records purged successfully.");
+      toast.success("Teacher records deleted successfully.");
     }
   });
 };
