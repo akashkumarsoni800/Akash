@@ -26,10 +26,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // 1. Check if user already exists in auth
-    const { data: userList, error: listError } = await supabaseClient.auth.admin.listUsers()
-    if (listError) throw listError
-
-    let user = userList.users.find((u) => u.email === email)
+    const { data: { user: existingUser }, error: fetchError } = await supabaseClient.auth.admin.getUserByEmail(email)
+    
+    let user = existingUser
 
     if (!user) {
       // 2. Create user if they don't exist
@@ -56,7 +55,12 @@ Deno.serve(async (req: Request) => {
         subject: subject || 'General'
       }, { onConflict: 'id,school_id' })
 
-    if (dbError) throw dbError
+    if (dbError) {
+      if (dbError.code === '23505') {
+        throw new Error(`This identity (${email}) is already globally synchronized. Staff may belong to only one institution.`);
+      }
+      throw dbError
+    }
 
     return new Response(JSON.stringify({ 
         success: true, 

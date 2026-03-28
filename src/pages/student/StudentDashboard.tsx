@@ -81,11 +81,11 @@ export default function StudentDashboard() {
 
        <div className="flex flex-wrap justify-center lg:justify-start gap-3">
         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
-          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Assigned Batch</p>
+          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Current Class</p>
           <p className="text-lg font-black text-slate-800 "> {student?.class_name || 'N/A'}</p>
         </div>
         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
-          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1"> No</p>
+          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Roll No</p>
           <p className="text-lg font-black text-slate-800 ">#{student?.roll_no || '---'}</p>
         </div>
        </div>
@@ -207,7 +207,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
      <div className="flex items-center gap-2">
       <div className={`w-2 h-2 rounded-full animate-pulse ${color === 'rose' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
-      <span className="text-[8px] font-black text-slate-400 tracking-wider">Live Sync</span>
+      <span className="text-[8px] font-black text-slate-400 tracking-wider">Connected</span>
      </div>
    </div>
   </motion.div>

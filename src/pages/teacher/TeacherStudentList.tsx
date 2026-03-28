@@ -91,7 +91,7 @@ const StudentList: React.FC = () => {
        <RefreshCw size={60} className="animate-spin text-emerald-600/20"/>
        <Users size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-emerald-600" />
      </div>
-     <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Faculty Liaison...</p>
+      <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10 uppercase">Loading Fees...</p>
     </div>
   );
  }
@@ -104,19 +104,19 @@ const StudentList: React.FC = () => {
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-center md:text-left">
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-        Faculty<br/>
-        <span className="text-emerald-600">Liaison</span>
+        Student<br/>
+        <span className="text-emerald-600">List</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
-        <ShieldCheck size={12} className="text-emerald-500" /> Paid Scholar Directory & Performance Hub v4.2
+        <ShieldCheck size={12} className="text-emerald-500" /> Student Directory & Performance Hub v4.2
        </p>
       </motion.div>
       
       <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm flex items-center gap-10 group hover:shadow-2xl active:scale-95 tracking-widest transition-all relative z-20">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl shadow-slate-200 group-hover:scale-110 transition-transform">🎓</div>
        <div>
-        <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Managed Class</p>
-        <p className="text-4xl font-black text-slate-900  leading-none">{students.length} Scholars</p>
+        <p className="text-[10px] font-black text-slate-400  mb-2 leading-none">Total Students</p>
+        <p className="text-4xl font-black text-slate-900  leading-none">{students.length} Students</p>
        </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ const StudentList: React.FC = () => {
        <Search size={22} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/search:text-emerald-500 transition-colors" />
        <input
         type="text"
-        placeholder="Index scholar by nomenclature..."
+        placeholder="Search student by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="premium-input text-sm placeholder:text-slate-200 pl-16 py-5"
@@ -158,9 +158,9 @@ const StudentList: React.FC = () => {
         onChange={(e) => setSortBy(e.target.value as any)}
         className="premium-input text-sm pl-16 py-5 appearance-none"
        >
-        <option value="name">Sort: Nomenclature</option>
-        <option value="marks">Sort: Academic Yield</option>
-        <option value="attendance">Sort: Presence Index</option>
+        <option value="name">Sort: Name</option>
+        <option value="marks">Sort: Grades</option>
+        <option value="attendance">Sort: Attendance</option>
        </select>
      </div>
     </motion.div>
@@ -187,8 +187,10 @@ const StudentList: React.FC = () => {
          <div>
           <h3 className="text-2xl font-black text-slate-900  leading-none mb-3 group-hover:text-emerald-600 transition-colors uppercase">{student.full_name}</h3>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black text-slate-400 tracking-widest">{student.roll_number}</span>
+            <span className="text-[8px] font-black text-slate-400 tracking-wider">Connected</span>
+            <span className="text-[8px] font-black text-slate-400 tracking-widest">{student.roll_number}</span>
             <span className="w-1.5 h-1.5 bg-slate-100 rounded-full" />
+            <p className="text-blue-400 group-hover:text-white/80 font-black text-[8px] tracking-widest mb-1">Backup Saved</p>
             <span className="text-emerald-500 font-black text-[10px] tracking-widest">{student.class_name}</span>
           </div>
          </div>
@@ -196,7 +198,7 @@ const StudentList: React.FC = () => {
         
         <div className="grid grid-cols-2 gap-6 mb-10 p-8 bg-slate-50/50 rounded-[5px] border border-slate-50 group-hover:bg-white group-hover:border-emerald-50 transition-all duration-700 relative z-10">
           <div className="space-y-2">
-           <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Presence Index</p>
+           <p className="text-[8px] font-black text-slate-400 tracking-widest uppercase">Status: Updated</p>
            <div className="flex items-end gap-2">
              <p className="text-2xl font-black text-slate-900 leading-none">{student.attendance_rate}%</p>
              <Activity size={14} className={student.attendance_rate >= 85 ? 'text-emerald-500' : 'text-amber-500'} />
@@ -232,7 +234,7 @@ const StudentList: React.FC = () => {
     {filteredStudents.length === 0 && (
      <div className="py-48 flex flex-col items-center justify-center text-center opacity-20">
        <Database size={100} className="text-slate-300 mb-8" />
-       <p className="font-black  text-slate-400 text-sm">No Matching Scholar Indexed</p>
+       <p className="font-black  text-slate-400 text-sm">No Students Found</p>
      </div>
     )}
 

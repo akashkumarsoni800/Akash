@@ -132,7 +132,7 @@ const StudentProfile = () => {
       <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
       <Fingerprint size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Individual ...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Loading Profile...</p>
    </div>
  );
 
@@ -142,7 +142,7 @@ const StudentProfile = () => {
      <AlertCircle size={60} />
    </div>
    <h1 className="text-5xl font-black text-slate-900  uppercase"> Error</h1>
-   <p className="text-slate-400 mt-4 font-black tracking-widest text-xs">{error || "Reference node not found"}</p>
+   <p className="text-slate-400 mt-4 font-black tracking-widest text-xs">{error || "Student not found"}</p>
    <div className="flex gap-6 mt-12">
     <button onClick={() => navigate(-1)} className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all ">Go Back</button>
     <button onClick={() => navigate("/admin/dashboard")} className="bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px] tracking-widest shadow-2xl hover:bg-indigo-600 transition-all ">Dashboard</button>
@@ -161,7 +161,7 @@ const StudentProfile = () => {
        <ChevronLeft size={18} /> Back
       </button>
       <button onClick={() => window.print()} className="bg-slate-900 text-white px-8 py-5 rounded-[5px] font-black text-[10px] shadow-2xl flex items-center gap-4 hover:bg-indigo-600 transition-all ">
-       <Printer size={18} /> Print Dossier
+       <Printer size={18} /> Print Profile
       </button>
      </div>
      <div className="bg-white px-6 py-3 rounded-full border border-slate-100 shadow-sm flex items-center gap-3">
@@ -190,7 +190,7 @@ const StudentProfile = () => {
         )}
         <div className="absolute inset-0 bg-indigo-900/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
          <Camera size={30} className="text-indigo-400" />
-         <span className="text-white text-[9px] font-black  mt-3">Sync Biometric</span>
+         <span className="text-white text-[9px] font-black  mt-3">Update Photo</span>
         </div>
         <input type="file" className="hidden" accept="image/*" onChange={uploadPhoto} disabled={uploading} />
        </label>
@@ -198,7 +198,7 @@ const StudentProfile = () => {
        <div className="space-y-6">
         <div className="inline-flex items-center gap-3 bg-emerald-500/20 text-emerald-400 px-6 py-2 rounded-full border border-emerald-500/30 shadow-lg backdrop-blur-md">
           <ShieldCheck size={14} />
-          <span className="text-[10px] font-black  ">Verified Academic Node</span>
+          <span className="text-[10px] font-black  ">Verified Student</span>
         </div>
         <h1 className="text-5xl md:text-8xl font-black  leading-none uppercase">{student.full_name}</h1>
         <div className="flex flex-wrap justify-center md:justify-start gap-5">
@@ -216,7 +216,7 @@ const StudentProfile = () => {
        </p>
        <div className="mt-8 flex items-center justify-center gap-3 relative z-10">
          <CalendarDays size={14} className="text-indigo-400" />
-         <p className="text-[9px] font-black text-indigo-300/40 tracking-widest ">Sequential Lifecycle Sync</p>
+         <p className="text-[9px] font-black text-indigo-300/40 tracking-widest ">Attendance Data</p>
        </div>
       </div>
      </div>
@@ -238,19 +238,19 @@ const StudentProfile = () => {
          <div className="w-12 h-12 bg-slate-900 rounded-[5px] flex items-center justify-center text-white shadow-2xl active:scale-95 tracking-widest">
           <Fingerprint size={24} />
          </div>
-         <h3 className="font-black text-[12px] text-slate-900  uppercase">Student Dossier</h3>
+         <h3 className="font-black text-[12px] text-slate-900  uppercase">Student Details</h3>
        </div>
        
        <div className="space-y-10 relative z-10">
         <DossierItem icon={User} label="School ID" value={student.student_id} />
-        <DossierItem icon={User} label="Paternal Authority" value={student.father_name} />
-        <DossierItem icon={Phone} label="Emergency Node" value={student.contact_number} />
-        <DossierItem icon={MapPin} label="Geospatial Hub" value={student.address} />
+        <DossierItem icon={User} label="Father's Name" value={student.father_name} />
+        <DossierItem icon={Phone} label="Contact Number" value={student.contact_number} />
+        <DossierItem icon={MapPin} label="Home Address" value={student.address} />
        </div>
 
        <div className="pt-8 border-t border-slate-50 opacity-30 flex items-center justify-center gap-3">
          <ShieldCheck size={14} />
-         <p className="text-[8px] font-black  ">End-to-End Encrypted </p>
+         <p className="text-[8px] font-black  ">Secure Data </p>
        </div>
       </motion.div>
 
@@ -264,7 +264,7 @@ const StudentProfile = () => {
         <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex items-center justify-between">
          <div className="flex items-center gap-4">
            <div className="w-10 h-10 bg-indigo-900 rounded-[5px] flex items-center justify-center text-white shadow-lg"><CreditCard size={20}/></div>
-           <h3 className="font-black text-[10px] text-slate-900 uppercase">Identity Card</h3>
+           <h3 className="font-black text-[10px] text-slate-900 uppercase">Student ID Card</h3>
          </div>
          <div className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[8px] font-black tracking-widest ">ASM-001-ST</div>
         </div>
@@ -275,7 +275,7 @@ const StudentProfile = () => {
          </div>
         </div>
         <div className="px-10 py-6 bg-white border-t border-slate-50 flex justify-center">
-         <button className="text-[9px] font-black text-indigo-600 hover:text-indigo-900 transition-colors">Recalibrate Visual Identity →</button>
+         <button className="text-[9px] font-black text-indigo-600 hover:text-indigo-900 transition-colors">Update Photo →</button>
         </div>
       </motion.div>
      </div>
@@ -295,7 +295,7 @@ const StudentProfile = () => {
            </div>
            <div className="space-y-1">
              <h3 className="font-black text-[14px] text-slate-900 leading-none uppercase">Financial<br/><span className="text-indigo-600 uppercase">Summary</span></h3>
-             <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Real-time Fiscal Indexing</p>
+             <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Fee Summary</p>
            </div>
           </div>
           <div className="flex gap-4">
@@ -305,21 +305,21 @@ const StudentProfile = () => {
         
         <div className="p-12 space-y-12">
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <MiniStatCard label="School Cost" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
-          <MiniStatCard label="Released Fund" value={`₹${paidFees.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
-          <MiniStatCard label="Outstanding" value={`₹${dueFees.toLocaleString()}`} icon={ArrowDownRight} color={dueFees > 0 ? "rose" : "emerald"} />
+          <MiniStatCard label="Total Fees" value={`₹${totalFees.toLocaleString()}`} icon={BookOpen} color="slate" />
+          <MiniStatCard label="Total Paid" value={`₹${paidFees.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
+          <MiniStatCard label="Balance Due" value={`₹${dueFees.toLocaleString()}`} icon={ArrowDownRight} color={dueFees > 0 ? "rose" : "emerald"} />
          </div>
 
          <div className="space-y-6">
           <div className="flex items-center justify-between px-6 border-b border-slate-50 pb-4">
-            <p className="text-[10px] font-black text-slate-300  ">Sequential Billing Feed</p>
+            <p className="text-[10px] font-black text-slate-300  ">Recent Fee Records</p>
           </div>
           
           <div className="space-y-4">
            {fees.length === 0 ? (
             <div className="py-24 text-center opacity-10">
              <CreditCard size={80} className="mx-auto mb-6 text-slate-500" />
-             <p className="font-black text-xs ">No Ledger Entries Recorded</p>
+             <p className="font-black text-xs ">No Fee Records Found</p>
             </div>
            ) : (
             fees.map((fee: any) => (
@@ -329,13 +329,13 @@ const StudentProfile = () => {
                   {fee.month ? fee.month.charAt(0) : 'C'}
                  </div>
                  <div>
-                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Billing Cycle</p>
+                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Month</p>
                    <h4 className="font-black text-slate-900 text-lg ">{fee.month || "Current Cycle"}</h4>
                  </div>
                 </div>
                 <div className="flex items-center gap-12">
                  <div className="text-right">
-                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Impact</p>
+                   <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Amount</p>
                    <p className="font-black text-indigo-600 text-2xl  leading-none">₹{Number(fee.total_amount).toLocaleString()}</p>
                  </div>
                  <span className={`px-6 py-2.5 rounded-[5px] text-[10px] font-black  shadow-sm border transition-all ${
@@ -366,7 +366,7 @@ const StudentProfile = () => {
             </div>
             <div className="space-y-1">
               <h3 className="font-black text-[14px] text-slate-900 leading-none uppercase">Academic<br/><span className="text-emerald-600 uppercase">Performance</span></h3>
-              <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Standardized Assessment Index</p>
+              <p className="text-[8px] font-black text-slate-400 tracking-widest leading-none">Exam Results</p>
             </div>
            </div>
          </div>
@@ -375,7 +375,7 @@ const StudentProfile = () => {
            {results.length === 0 ? (
             <div className="py-24 text-center opacity-10">
              <Award size={80} className="mx-auto mb-6 text-slate-500" />
-             <p className="font-black text-xs ">No Academic Records Authorized</p>
+             <p className="font-black text-xs ">No Result Records Found</p>
             </div>
            ) : (
             results.map((res: any) => (
@@ -384,7 +384,7 @@ const StudentProfile = () => {
                 <div className="space-y-4">
                  <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200" />
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest ">{res.exams?.title || "Examination Node"}</p>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest ">{res.exams?.title || "Exam Name"}</p>
                  </div>
                  <h4 className="text-3xl font-black text-slate-900 ">{Math.round(res.percentage || 0)}% Aggregate Score</h4>
                 </div>

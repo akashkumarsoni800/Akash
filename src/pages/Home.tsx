@@ -103,7 +103,7 @@ const Home = () => {
                 Tekool: Free <br/> School Management <span className="text-indigo-600 underline decoration-indigo-200">System India</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                The ultimate school management solution for growing educational institutions and chains. Synchronize data across campuses with institutional-grade security.
+                The ultimate school management solution for growing educational institutions and chains. Manage all school data with high-level security.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
@@ -154,7 +154,7 @@ const Home = () => {
                 <div className="absolute top-12 -right-10 bg-white p-6 rounded-[5px] shadow-2xl border border-slate-50 animate-bounce">
                     <CheckCircle2 size={32} className="text-emerald-500 mb-3" />
                     <p className="text-[10px] font-black text-slate-400 uppercase">Synced</p>
-                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Data Integrity</p>
+                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Accurate Records</p>
                 </div>
               </div>
               
@@ -174,18 +174,18 @@ const Home = () => {
             <div className="grid md:grid-cols-3 gap-10">
               <StatCard 
                 icon={<LayoutDashboard size={32}/>} 
-                title="Unified Command" 
-                desc="Switch between individual school data or view aggregate statistics across your entire organization with one click." 
+                title="One Dashboard" 
+                desc="Switch between individual school data or view complete statistics across your entire organization with one click." 
               />
               <StatCard 
                 icon={<BarChart3 size={32}/>} 
-                title="Global Insights" 
+                title="Complete Stats" 
                 desc="Real-time metrics on enrollment, fee collection, and academic performance from every school in your network." 
               />
               <StatCard 
                 icon={<Network size={32}/>} 
-                title="Seamless Sync" 
-                desc="Propagate policies, calendars, and circulars across all institutions instantly from the central hub." 
+                title="Instant Updates" 
+                desc="Update news, calendars, and notices for all students and staff instantly from the central hub." 
               />
             </div>
           </div>
@@ -196,8 +196,8 @@ const Home = () => {
           <div className="max-w-[1400px] mx-auto px-6 md:px-10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
               <div className="max-w-2xl space-y-4">
-                <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">Everything in One Free Software</h2>
-                <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Tekool provides a comprehensive digital ecosystem for your campus.</p>
+                <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">All Features for Free</h2>
+                <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Tekool provides all the tools your school needs.</p>
               </div>
               <button className="text-indigo-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group">
                 Explore All modules <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -208,9 +208,9 @@ const Home = () => {
               {/* Massive Main Feature */}
               <div className="md:col-span-8 bg-white p-12 rounded-[5px] border border-slate-100 shadow-sm flex flex-col justify-between group hover:shadow-2xl transition-all">
                 <div className="space-y-4">
-                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Centralized Core</span>
+                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Main Features</span>
                   <h3 className="text-3xl font-black text-slate-900 uppercase">Automated Admissions & Fees</h3>
-                  <p className="text-slate-500 max-w-md">Streamline student onboarding and digital fee collection with automated invoicing and parent notifications.</p>
+                  <p className="text-slate-500 max-w-md">Streamline student registration and digital fee collection with automated invoicing and parent notifications.</p>
                 </div>
                 <div className="mt-12 h-64 bg-slate-50 rounded-[5px] p-8 flex items-center justify-center relative overflow-hidden">
                     <Receipt size={120} className="text-indigo-100 opacity-50 rotate-12 absolute -right-4 -bottom-4" />
@@ -224,8 +224,8 @@ const Home = () => {
               {/* Smaller Feature */}
               <div className="md:col-span-4 bg-indigo-900 p-12 rounded-[5px] shadow-2xl active:scale-95 tracking-widest text-white flex flex-col items-center justify-center text-center group">
                 <Calendar size={64} className="mb-6 opacity-30 group-hover:scale-110 transition-transform" />
-                <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Intelligent Timetable</h3>
-                <p className="text-indigo-200 text-sm leading-relaxed">AI-powered scheduling that eliminates faculty clashes and optimizes room utilization automatically.</p>
+                <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Easy Timetable</h3>
+                <p className="text-indigo-200 text-sm leading-relaxed">Smart scheduling that eliminates teacher scheduling conflicts and picks the best rooms automatically.</p>
               </div>
 
               {/* Three bottom features */}
@@ -245,7 +245,7 @@ const Home = () => {
                   <StakeholderItem 
                     icon={<ShieldCheck size={24}/>} 
                     title="For Administrators" 
-                    desc="Total institutional control with multi-layered permissions and financial oversight." 
+                    desc="Complete control over school data, staff permissions, and fee management." 
                   />
                   <StakeholderItem 
                     icon={<Users2 size={24}/>} 
@@ -276,7 +276,7 @@ const Home = () => {
             <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Voice of Leadership</h2>
             <div className="max-w-full mx-auto space-y-10">
               <p className="text-3xl md:text-5xl font-black leading-tight tracking-tighter italic">
-                "Tekool has completely transformed how we manage our network of 12 international schools. The unified reporting alone saved us hundreds of manual labor hours per month."
+                "Tekool has completely transformed how we manage our network of 12 schools. The central reporting alone saved us hundreds of manual labor hours per month."
               </p>
               <div className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full border-4 border-indigo-500/30 overflow-hidden ring-4 ring-slate-900">
@@ -296,7 +296,7 @@ const Home = () => {
           <div className="max-w-full mx-auto px-6">
             <div className="p-16 md:p-24 bg-indigo-950 rounded-[5px] text-center text-white relative overflow-hidden shadow-2xl">
               <div className="relative z-10 space-y-10 animate__animated animate__pulse">
-                <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to unify <br/> your institution?</h2>
+                <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to digitize <br/> your school?</h2>
                 <p className="text-lg text-indigo-300 max-w-xl mx-auto">Join the hundreds of forward-thinking schools that have simplified their operations and elevated experience.</p>
                 <div className="flex flex-col sm:flex-row gap-5 justify-center">
                    <button onClick={() => navigate('/register-school')} className="px-12 py-5 bg-white text-indigo-950 font-black rounded-[5px] text-xs uppercase tracking-widest hover:bg-indigo-300 transition-all shadow-2xl active:scale-95 tracking-widest">Complete Registration</button>
@@ -319,7 +319,7 @@ const Home = () => {
                 <img src="/logo.png" className="w-8 h-8 object-contain" alt="Tekool Logo" />
                 <span className="text-sm font-black text-indigo-950 uppercase">Tekool</span>
               </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Redefining institutional management through precision engineering and editorial design.</p>
+              <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Making school management easy with modern tools and design.</p>
             </div>
             
             <FooterColumn title="Platform" links={['Features', 'Pricing', 'Solutions', 'API Docs']} />

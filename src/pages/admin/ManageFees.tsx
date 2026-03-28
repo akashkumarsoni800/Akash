@@ -228,7 +228,7 @@ const ManageFees = () => {
       <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
       <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
      </div>
-     <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10 uppercase">Initializing Fiscal List...</p>
+     <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10 uppercase">Loading Fees...</p>
    </div>
   );
  }
@@ -241,11 +241,11 @@ const ManageFees = () => {
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-        Financial<br/>
-        <span className="text-[var(--accent-admin)]">Oversight</span>
+        Fee<br/>
+        <span className="text-[var(--accent-admin)]">Management</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2 uppercase">
-        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid School Billing Suite v4.8
+        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Manage school fees and payments
        </p>
       </motion.div>
 
@@ -258,7 +258,7 @@ const ManageFees = () => {
        <button 
         onClick={() => setBulkMode(true)} 
         className={`px-10 py-4 rounded-[5px] font-black text-[10px] tracking-widest transition-all uppercase ${bulkMode ? 'bg-slate-900 text-white shadow-2xl active:scale-95 tracking-widest' : 'text-slate-400 hover:text-blue-600'}`}>
-        Bulk Distribution
+        Whole Class
        </button>
       </div>
     </div>
@@ -278,7 +278,7 @@ const ManageFees = () => {
                 <Clock size={28} className="text-white" />
               </div>
               <div className="text-center md:text-left">
-                <h3 className="text-xl font-black uppercase tracking-tight">Automation Engine</h3>
+                <h3 className="text-xl font-black uppercase tracking-tight">Quick Setup</h3>
                 <p className="text-[10px] font-black opacity-80 uppercase tracking-widest mt-1">Fees for {nextMonth} are not prepared yet.</p>
               </div>
             </div>
@@ -305,10 +305,10 @@ const ManageFees = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b border-slate-50">
            <div className="space-y-4 text-center md:text-left">
             <h2 className="text-4xl font-black text-slate-900  leading-none uppercase">
-             Fiscal<br/>
-             <span className="text-[var(--accent-admin)]">Assignment</span>
+             Add Fee<br/>
+             <span className="text-[var(--accent-admin)]">Record</span>
             </h2>
-            <p className="text-[10px] font-black text-slate-400 tracking-widest leading-none mt-1 uppercase">Manual Account Distribution </p>
+            <p className="text-[10px] font-black text-slate-400 tracking-widest leading-none mt-1 uppercase">Assign fees to students </p>
            </div>
            <div className="px-6 py-2.5 bg-blue-50 rounded-[5px] text-[10px] font-black text-blue-600 tracking-widest border border-blue-100 shadow-sm uppercase">
              Active
@@ -327,7 +327,7 @@ const ManageFees = () => {
                </select>
               ) : (
                <select className="premium-input pl-16 appearance-none uppercase" value={selectedStudent} onChange={(e)=>setSelectedStudent(e.target.value)}>
-                 <option value="">Identify Candidate</option>
+                 <option value="">Search Student</option>
                  {students.map((s: any) => <option key={s.student_id} value={s.student_id}>{s.full_name} — Roll #{s.roll_no}</option>)}
                </select>
               )}
@@ -335,7 +335,7 @@ const ManageFees = () => {
              </div>
            </div>
            <div className="space-y-3">
-             <label className="text-[10px] font-black text-slate-400  ml-2 uppercase">Billing Period</label>
+             <label className="text-[10px] font-black text-slate-400  ml-2 uppercase">Select Month</label>
              <div className="relative group/input">
               <Calendar className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={20} />
               <input type="month" className="premium-input pl-16 uppercase" value={month} onChange={(e)=>setMonth(e.target.value)} required />
@@ -349,7 +349,7 @@ const ManageFees = () => {
              <div className="w-10 h-10 bg-white rounded-[5px] flex items-center justify-center text-blue-600 shadow-sm border border-slate-100">
               <Plus size={20} />
              </div>
-             <h3 className="text-[10px] font-black text-slate-400  leading-none uppercase">Structure Breakdown</h3>
+             <h3 className="text-[10px] font-black text-slate-400  leading-none uppercase">Fee Details</h3>
            </div>
            
            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
@@ -375,8 +375,14 @@ const ManageFees = () => {
                   className="flex-1 bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase"
                   value={newHeadName}
                   onChange={(e) => setNewHeadName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddFeeHead();
+                    }
+                  }}
                 />
-                <button type="button" onClick={handleAddFeeHead} className="p-2 bg-blue-600 text-white rounded-[5px] hover:bg-slate-900 transition-colors">
+                <button type="button" onClick={handleAddFeeHead} className="p-2 bg-blue-600 text-white rounded-[5px] hover:bg-slate-900 transition-colors shadow-lg active:scale-95">
                   <Plus size={14} />
                 </button>
               </div>
@@ -388,7 +394,7 @@ const ManageFees = () => {
                 onClick={handleCloneLastMonthFees}
                 className="px-6 py-3 border border-blue-100 rounded-[5px] text-[9px] font-black text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2 uppercase"
               >
-                <RefreshCw size={14} /> CLONE LAST MONTH'S RECORDS 
+                <RefreshCw size={14} /> COPY LAST MONTH'S DATA 
               </button>
             </div>
           </div>
@@ -396,12 +402,12 @@ const ManageFees = () => {
           <div className="bg-slate-900 p-10 rounded-[5px] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
            <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
            <div className="text-center md:text-left mb-0 relative z-10">
-             <p className="text-[10px] font-black text-blue-400 mb-2 uppercase">Authenticated Total</p>
+             <p className="text-[10px] font-black text-blue-400 mb-2 uppercase">Total Amount</p>
              <h2 className="text-5xl md:text-6xl font-black text-white leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
            <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-12 uppercase">
              {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
-             {loading ? 'Processing...' : 'Authorize Transaction'}
+             {loading ? 'Processing...' : 'Save Fee Record'}
            </button>
           </div>
         </form>
@@ -426,9 +432,9 @@ const ManageFees = () => {
            <div className="flex items-center gap-4">
             <button 
               onClick={handleBulkReminders}
-              className="px-6 py-3 bg-emerald-600 text-white rounded-[5px] text-[9px] font-black tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase shadow-lg shadow-emerald-100"
+              className="px-4 py-2 bg-emerald-600 text-white rounded-[5px] text-[8px] font-black tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase shadow-lg shadow-emerald-50 active:scale-95"
             >
-              <Zap size={14} /> Dispatch All Pending
+              <Zap size={10} /> Send All Reminders
             </button>
             <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[5px]">
               <Calendar size={16} className="text-slate-400 ml-2" />
@@ -483,21 +489,21 @@ const ManageFees = () => {
        >
         <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
         <h3 className="text-[10px] font-black text-slate-300  mb-12 relative z-10 uppercase">
-         Fiscal Index
+         Payment Summary
         </h3>
         <div className="space-y-8 relative z-10">
           <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
-           <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400 tracking-widest mb-3 uppercase">Fund Allocation</p>
+           <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400 tracking-widest mb-3 uppercase">Total Collected</p>
            <p className="text-4xl font-black text-slate-900 group-hover/card:text-white uppercase">₹{feeStats.totalCollected.toLocaleString()}</p>
           </div>
           <div className="grid grid-cols-2 gap-6">
            <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
-             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Pending Units</p>
+             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Pending Payments</p>
              <p className="text-2xl font-black text-slate-900 uppercase">{feeStats.totalPending}</p>
            </div>
            <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
-             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Overdue Alert</p>
+             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Late Payments</p>
              <p className="text-2xl font-black text-rose-500 uppercase">{feeStats.overdue}</p>
            </div>
           </div>
@@ -511,7 +517,7 @@ const ManageFees = () => {
         className="premium-card p-12 flex flex-col min-h-[500px] relative group"
        >
         <div className="flex items-center justify-between mb-12">
-          <h3 className="text-[10px] font-black text-slate-300  uppercase">Transaction Feed</h3>
+          <h3 className="text-[10px] font-black text-slate-300  uppercase">Recent Payments</h3>
           <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
         </div>
         <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
@@ -542,7 +548,7 @@ const ManageFees = () => {
           )}
         </div>
         <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100 uppercase">
-          Audit Sequential Logs →
+          View All Records →
         </button>
        </motion.div>
      </div>

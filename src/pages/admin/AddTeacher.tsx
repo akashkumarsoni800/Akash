@@ -46,7 +46,7 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
    }
 
-    // 1. Synchronize Identity via Edge Function (Atomic Auth + DB)
+    // 1. Create Account via Edge Function (Atomic Auth + DB)
     const schoolId = localStorage.getItem('current_school_id');
     
     const { data: result, error: fnError } = await supabase.functions.invoke('create-user', {
@@ -61,8 +61,18 @@ const AddTeacher = () => {
      }
     });
 
-    if (fnError) throw fnError;
-    if (result?.error) throw new Error(result.error);
+     if (fnError) {
+      console.error("Full Function Error:", fnError);
+      let errorMessage = "Identity synchronization failed. Please check your credentials and try again.";
+      
+      // If our edge function returned a custom error message
+      if (fnError.message && !fnError.message.includes("non-2xx")) {
+        errorMessage = fnError.message;
+      }
+      
+      throw new Error(errorMessage);
+     }
+     if (result?.error) throw new Error(result.error);
 
    toast.success("Teacher Created Successfully!");
    navigate('/admin/dashboard');
@@ -158,10 +168,10 @@ const AddTeacher = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-2xl rounded-full" />
         <div className="flex items-center gap-3 relative z-10">
          <Info size={16} className="text-blue-500" />
-         <p className="text-[10px] font-black text-slate-400 tracking-widest leading-none">Security Protocol Note</p>
+         <p className="text-[10px] font-black text-slate-400 tracking-widest leading-none">Login Information</p>
         </div>
         <p className="text-[11px] font-black text-slate-500 leading-relaxed relative z-10">
-         Upon synchronization, a secure authentication node will be established. The default access token will be initialized as: <span className="text-blue-600 font-black notranslate">Teacher@123</span>. Instruct member to update credentials post-induction.
+         A new account will be created. The default password is: <span className="text-blue-600 font-black notranslate">Teacher@123</span>. Please ask the teacher to change their password after logging in.
         </p>
       </div>
 
@@ -193,7 +203,7 @@ const AddTeacher = () => {
     <div className="mt-12 text-center group cursor-default">
       <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm transition-all group-hover:scale-105">
        <Star size={14} className="text-amber-400 fill-amber-400" />
-       <p className="text-[9px] font-black text-slate-400 tracking-widest">School Standard ASM v4.2 Paid</p>
+       <p className="text-[9px] font-black text-slate-400 tracking-widest">Teacher Portal</p>
       </div>
     </div>
    </div>

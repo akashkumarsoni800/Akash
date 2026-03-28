@@ -163,7 +163,7 @@ const TeacherAttendance = () => {
        <div className="w-14 h-14 bg-white/10 rounded-[5px] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
         <ShieldCheck className="text-blue-400 group-hover:text-white" size={24} />
        </div>
-       <p className="text-blue-400 group-hover:text-white/80 font-black text-[8px] tracking-widest mb-1">Cloud Sync</p>
+       <p className="text-blue-400 group-hover:text-white/80 font-black text-[8px] tracking-widest mb-1">Backup Saved</p>
        <p className="text-white text-lg font-black ">Connected</p>
      </div>
     </div>

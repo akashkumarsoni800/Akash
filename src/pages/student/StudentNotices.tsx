@@ -20,7 +20,7 @@ const StudentNotices = () => {
      <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
      <Megaphone size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8 uppercase">Syncing Bulletin Feed...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 uppercase">Loading Notices...</p>
   </div>
  );
 
@@ -35,12 +35,12 @@ const StudentNotices = () => {
       className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-blue-200 transition-all active:scale-95 uppercase"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
-      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Portal Exit</span>
+      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Go Back</span>
      </button>
 
      <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] border border-slate-100 shadow-sm uppercase">
        <Star size={16} className="text-blue-400 fill-blue-400" />
-       <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Priority Broadcast Channel</span>
+       <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase">School Notifications</span>
      </div>
     </div>
 
@@ -59,7 +59,7 @@ const StudentNotices = () => {
       <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📢</div>
        <div>
-        <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Active Broadcasts</p>
+        <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Recent Notices</p>
         <p className="text-3xl font-black text-slate-900 uppercase">{notices.length} Updates</p>
        </div>
       </div>
@@ -89,7 +89,7 @@ const StudentNotices = () => {
              <div className="space-y-1">
                <h3 className="text-2xl md:text-4xl font-black text-slate-900  leading-none uppercase">{notice.title}</h3>
                <p className="text-[10px] font-black text-slate-400 tracking-widest flex items-center gap-2 uppercase">
-                <Zap size={10} className="text-blue-500" /> Paid Publication
+                <Zap size={10} className="text-blue-500" /> Official Notice
                </p>
              </div>
             </div>
@@ -111,7 +111,7 @@ const StudentNotices = () => {
 
           <div className="pt-6 flex items-center gap-4">
             <div className="h-[2px] w-12 bg-blue-100 rounded-full" />
-            <span className="text-[9px] font-black text-slate-300 uppercase">End of Transmission</span>
+            <span className="text-[9px] font-black text-slate-300 uppercase">End of Notice</span>
           </div>
          </div>
        </motion.div>
@@ -126,9 +126,9 @@ const StudentNotices = () => {
       >
         <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📭</div>
         <div className="space-y-4">
-         <h3 className="text-3xl font-black text-slate-900  uppercase">List Locked</h3>
+         <h3 className="text-3xl font-black text-slate-900  uppercase">No Notices</h3>
          <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10 uppercase">
-          The priority broadcast channel is currently silent. Please maintain operational focus until further updates are authorized.
+          There are no new notices at this time. Please check back later for updates.
          </p>
         </div>
       </motion.div>

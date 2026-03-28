@@ -69,7 +69,7 @@ const StudentFees = () => {
         <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
         <Wallet size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
       </div>
-      <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10 uppercase">Syncing Financial Ledger...</p>
+      <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10 uppercase">Loading Fees...</p>
     </div>
   );
 
@@ -98,15 +98,15 @@ const StudentFees = () => {
           <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="text-center md:text-left space-y-6">
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-blue-400 uppercase">Financial Management</p>
-                <h1 className="text-5xl md:text-7xl font-black  leading-none uppercase">Personal<br/>Ledger</h1>
+                <p className="text-[10px] font-black text-blue-400 uppercase">Fee Details</p>
+                <h1 className="text-5xl md:text-7xl font-black  leading-none uppercase">Your<br/>Fees</h1>
               </div>
               <div className="flex items-center justify-center md:justify-start gap-4">
                 <div className="w-10 h-10 bg-white/10 rounded-[5px] flex items-center justify-center text-white/40">
                   <User size={20} />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-white/30 tracking-widest uppercase">Paid Candidate</p>
+                  <p className="text-[8px] font-black text-white/30 tracking-widest uppercase">Student</p>
                   <p className="text-sm font-black text-white  tracking-tight uppercase">{student?.full_name}</p>
                 </div>
               </div>
@@ -114,11 +114,11 @@ const StudentFees = () => {
 
             <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[5px] border border-white/10 text-center min-w-[280px] shadow-inner group/stat relative overflow-hidden">
               <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/stat:opacity-5 transition-opacity" />
-              <p className="text-[10px] font-black text-blue-300 mb-2 uppercase">Outstanding Balance</p>
+              <p className="text-[10px] font-black text-blue-300 mb-2 uppercase">Balance Due</p>
               <p className={`text-6xl font-black uppercase ${pending > 0 ? 'text-blue-400' : 'text-emerald-400 '}`}>₹{pending.toLocaleString()}</p>
               <div className="mt-4 flex items-center justify-center gap-2">
                 <div className={`w-2 h-2 rounded-full animate-pulse ${pending > 0 ? 'bg-blue-400' : 'bg-emerald-400'}`} />
-                <p className="text-[8px] font-black text-white/20 tracking-widest uppercase">Real-time Sync Active</p>
+                <p className="text-[8px] font-black text-white/20 tracking-widest uppercase">Status: Updated</p>
               </div>
             </div>
           </div>
@@ -170,7 +170,7 @@ const StudentFees = () => {
 
                     <div className="flex flex-col lg:flex-row justify-between items-center pt-10 border-t border-slate-50 gap-10">
                       <div className="text-center lg:text-left transition-transform group-hover/content:-translate-y-1 duration-500">
-                        <p className="text-[9px] font-black text-slate-300 tracking-widest mb-1 uppercase">Authenticated Aggregate</p>
+                        <p className="text-[9px] font-black text-slate-300 tracking-widest mb-1 uppercase">Total Amount</p>
                         <h4 className="text-5xl font-black text-slate-900 uppercase">₹{Number(fee.total_amount).toLocaleString()}</h4>
                       </div>
                       <div className="flex gap-4 w-full lg:w-auto">
@@ -200,7 +200,7 @@ const StudentFees = () => {
                 </div>
                 <div className="space-y-2">
                   <p className="text-slate-900 font-black  text-2xl uppercase">List Clean</p>
-                  <p className="text-[10px] font-black text-slate-300 uppercase">No institutional billing nodes detected in current cycle.</p>
+                  <p className="text-[10px] font-black text-slate-300 uppercase">No fee records found for this period.</p>
                 </div>
               </div>
             )}
@@ -211,7 +211,7 @@ const StudentFees = () => {
         <div className="pt-12 text-center">
           <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50">
             <ShieldCheck size={14} className="text-blue-500" />
-            <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase">School Standard ASM v3.0 Paid</p>
+            <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase">ASM School Management System</p>
           </div>
         </div>
 

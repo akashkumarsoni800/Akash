@@ -131,7 +131,7 @@ const UploadResult = () => {
               Exam Results
             </h1>
             <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2">
-              <Target size={12} className="text-emerald-500" /> Professional Grade Ledger v4.8
+              <Target size={12} className="text-emerald-500" /> Enter Student Marks
             </p>
           </motion.div>
         </div>
@@ -145,7 +145,7 @@ const UploadResult = () => {
               </div>
               <div>
                 <h2 className="text-3xl font-black text-slate-900 uppercase">Enter Marks</h2>
-                <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">Sequence Activation Node</p>
+                <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">Enter marks information</p>
               </div>
             </div>
 
@@ -264,7 +264,7 @@ const UploadResult = () => {
                     </div>
                     <div>
                       <p className="text-sm font-black text-slate-900 leading-none">PROMOTE TO NEXT CLASS</p>
-                      <p className="text-[9px] font-black text-slate-400 mt-1 uppercase tracking-widest">Auto-upgrade scholar tier?</p>
+                      <p className="text-[9px] font-black text-slate-400 mt-1 uppercase tracking-widest">Promote student to next class?</p>
                     </div>
                   </div>
                   <input
@@ -281,13 +281,13 @@ const UploadResult = () => {
                   className="w-full bg-slate-900 text-white hover:bg-emerald-600 py-8 rounded-[5px] text-lg font-black tracking-widest flex items-center justify-center gap-4 shadow-2xl transition-all"
                 >
                   {loading ? <RefreshCw className="animate-spin" size={24} /> : <FileUp size={24} />}
-                  {loading ? 'PROCESSING...' : 'SAVE ASSESSMENT DATA'}
+                  {loading ? 'PROCESSING...' : 'SAVE RESULTS'}
                 </button>
               </div>
             ) : (
               <div className="py-32 text-center border-2 border-dashed border-slate-100 rounded-[5px] opacity-30">
                 <Target size={48} className="mx-auto mb-6 text-slate-300" />
-                <p className="font-black text-[10px] text-slate-400 tracking-widest uppercase">Select student and exam to activate entry node</p>
+                <p className="font-black text-[10px] text-slate-400 tracking-widest uppercase">Select student and exam to activate form</p>
               </div>
             )}
           </form>
