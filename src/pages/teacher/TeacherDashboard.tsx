@@ -42,7 +42,7 @@ const ActionCard = ({ icon: Icon, title, desc, onClick, color, badgeCount = 0, s
     <p className="text-[10px] font-black text-slate-400 tracking-widest leading-relaxed mb-6">{desc}</p>
     
     <div className="flex items-center justify-between pt-6 border-t border-slate-50">
-     <span className="text-[9px] font-black text-slate-900 tracking-wider">{status || 'COMMAND ACTIVE'}</span>
+     <span className="text-[9px] font-black text-slate-900 tracking-wider">{status || 'ONLINE'}</span>
      <ArrowRight size={16} className="text-slate-200 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
     </div>
    </div>
@@ -205,17 +205,17 @@ export default function TeacherDashboard() {
           <h1 className="text-4xl md:text-6xl font-black text-slate-900  leading-none uppercase">
            Hello, <span className="text-emerald-600">{teacher?.full_name?.split(' ')[0] || 'Teacher'}</span>
           </h1>
-          <p className="text-[10px] font-black text-emerald-500  mt-3">Faculty Command Level 3</p>
+          <p className="text-[10px] font-black text-emerald-500  mt-3">Teacher Portal</p>
          </div>
         </div>
         
         <div className="flex flex-wrap justify-center lg:justify-start gap-4">
          <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
-          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Active Batch</p>
+          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Subject</p>
           <p className="text-lg font-black text-slate-800 ">{teacher?.subject || 'General'}</p>
          </div>
          <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
-          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Staff ID</p>
+          <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Teacher ID</p>
           <p className="text-lg font-black text-slate-800 ">#{teacher?.id?.slice(0, 5) || 'SYNC'}</p>
          </div>
         </div>
@@ -223,10 +223,10 @@ export default function TeacherDashboard() {
 
        <div className="flex flex-wrap justify-center gap-3">
          <button onClick={() => navigate('/teacher/attendance')} className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-700 transition-all shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 flex items-center gap-2">
-          Record Presence
+          Attendance
          </button>
          <button onClick={fetchDashboardData} className="px-8 py-4 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-black transition-all shadow-lg flex items-center gap-2">
-          Sync 
+          Refresh
          </button>
        </div>
       </div>
@@ -239,7 +239,7 @@ export default function TeacherDashboard() {
       <div className="bg-white border border-slate-100 rounded-[5px] p-8 shadow-sm hover:shadow-2xl active:scale-95 tracking-widest transition-all group">
        <div className="flex justify-between items-start">
         <div>
-         <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Pupil Directory</p>
+         <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Students</p>
          <div className="flex items-baseline gap-2">
           <h3 className="text-4xl font-black text-slate-900 leading-none uppercase">{stats.totalStudents}</h3>
           <span className="text-[9px] font-black text-slate-400 tracking-tight">Active</span>
@@ -250,7 +250,7 @@ export default function TeacherDashboard() {
         </div>
        </div>
        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-        <span className="text-[9px] font-black text-slate-400 tracking-widest">Enrollment Meta</span>
+        <span className="text-[9px] font-black text-slate-400 tracking-widest">Total Students</span>
         <div className="flex gap-1">
          <div className="w-1 h-1 rounded-full bg-blue-400"></div>
          <div className="w-1 h-1 rounded-full bg-blue-200"></div>
@@ -266,7 +266,7 @@ export default function TeacherDashboard() {
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Daily Presence</p>
          <div className="flex items-baseline gap-2">
           <h3 className="text-4xl font-black text-slate-900 leading-none uppercase">{stats.attendancePercentage}%</h3>
-          <span className="text-[9px] font-black text-slate-400 tracking-tight">Sync</span>
+          <span className="text-[9px] font-black text-slate-400 tracking-tight">Present</span>
          </div>
         </div>
         <div className="p-4 bg-emerald-50 text-emerald-600 rounded-[5px] group-hover:scale-110 transition-transform">
@@ -274,7 +274,7 @@ export default function TeacherDashboard() {
         </div>
        </div>
        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-        <span className="text-[9px] font-black text-slate-400 tracking-widest">Attendance Logic</span>
+        <span className="text-[9px] font-black text-slate-400 tracking-widest">Attendance Progress</span>
         <div className="w-10 h-1 bg-emerald-100 rounded-full overflow-hidden">
          <div className="h-full bg-emerald-500" style={{ width: `${stats.attendancePercentage}%` }}></div>
         </div>
@@ -289,7 +289,7 @@ export default function TeacherDashboard() {
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Submission Hub</p>
          <div className="flex items-baseline gap-2">
           <h3 className="text-4xl font-black text-slate-900 leading-none uppercase">{stats.pendingHomework}</h3>
-          <span className="text-[9px] font-black text-slate-400 tracking-tight">Queue</span>
+          <span className="text-[9px] font-black text-slate-400 tracking-tight">Pending</span>
          </div>
         </div>
         <div className="p-4 bg-amber-50 text-amber-600 rounded-[5px] group-hover:scale-110 transition-transform">
@@ -310,7 +310,7 @@ export default function TeacherDashboard() {
          <p className="text-[10px] font-black text-slate-400 tracking-widest mb-4">Academic Index</p>
          <div className="flex items-baseline gap-2">
           <h3 className="text-4xl font-black text-slate-900 leading-none uppercase">{stats.avgPerformance}%</h3>
-          <span className="text-[9px] font-black text-slate-400 tracking-tight">KPI</span>
+          <span className="text-[9px] font-black text-slate-400 tracking-tight">Score</span>
          </div>
         </div>
         <div className="p-4 bg-purple-50 text-purple-600 rounded-[5px] group-hover:scale-110 transition-transform">
@@ -318,8 +318,8 @@ export default function TeacherDashboard() {
         </div>
        </div>
        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-        <span className="text-[9px] font-black text-slate-400 tracking-widest">Performance Meta</span>
-        <span className="text-[10px] font-black text-purple-600">PRO LEVEL</span>
+        <span className="text-[9px] font-black text-slate-400 tracking-widest">Class Performance</span>
+        <span className="text-[10px] font-black text-purple-600">EXCELLENT</span>
        </div>
       </div>
      </motion.div>
@@ -329,8 +329,8 @@ export default function TeacherDashboard() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
      <ActionCard 
       icon={ClipboardList} 
-      title="Mark Presence" 
-      desc="Batch Attendance Authority"
+      title="Take Attendance" 
+      desc="Mark attendance for your classes"
       onClick={() => navigate('/teacher/attendance')}
       color="emerald"
       badgeCount={stats.classesToday}
@@ -339,18 +339,18 @@ export default function TeacherDashboard() {
 
      <ActionCard 
       icon={BookOpen} 
-      title="Syllabus Management" 
-      desc="Content Delivery & Homework"
+      title="Homework" 
+      desc="Add and check homework"
       onClick={() => navigate('/teacher/homework')}
       color="blue"
       badgeCount={stats.pendingHomework}
-      status={`${stats.totalHomework} Tasks Assigned`}
+      status={`${stats.totalHomework} Total Homework`}
      />
 
      <ActionCard 
       icon={BarChart3} 
-      title="Result " 
-      desc="Academic KPI Management"
+      title="Results" 
+      desc="Manage student results"
       onClick={() => navigate('/teacher/upload-result')}
       color="amber"
       status="Live Ready"
@@ -358,8 +358,8 @@ export default function TeacherDashboard() {
 
      <ActionCard 
       icon={Users} 
-      title="Pupil " 
-      desc="Student Identity Management"
+      title="Students" 
+      desc="View and manage student profiles"
       onClick={() => navigate('/teacher/students')}
       color="purple"
       status={`${stats.totalStudents} Managed `}
@@ -367,11 +367,11 @@ export default function TeacherDashboard() {
 
      <ActionCard 
       icon={PieChart} 
-      title="Analytics Center" 
-      desc="Strategic Intelligence"
+      title="Class Reports" 
+      desc="View class performance details"
       onClick={() => navigate('/teacher/analytics')}
       color="rose"
-      status={`Avg: ${stats.avgPerformance}% INDEX`}
+      status={`Avg: ${stats.avgPerformance}% Score`}
      />
 
      {/* Teacher Profile Card */}
@@ -388,7 +388,7 @@ export default function TeacherDashboard() {
         {teacher?.full_name?.[0] || 'T'}
        </div>
        <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-4 py-2 rounded-[5px] tracking-widest border border-emerald-100/50">
-        Verified Faculty
+        Verified Teacher
        </span>
       </div>
 
@@ -401,7 +401,7 @@ export default function TeacherDashboard() {
          📚 {teacher?.subject || 'Education'}
         </span>
         <span className="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-[5px] text-[9px] font-black tracking-widest border border-slate-100">
-         👥 {stats.totalStudents} Pupils
+         👥 {stats.totalStudents} Students
         </span>
        </div>
       </div>
@@ -425,15 +425,15 @@ export default function TeacherDashboard() {
      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-emerald-600 mb-8 shadow-inner relative z-10">
       <RefreshCw size={32} className="animate-spin-slow" />
      </div>
-     <h4 className="text-2xl font-black text-slate-900  mb-2 relative z-10">Command Sync </h4>
+     <h4 className="text-2xl font-black text-slate-900  mb-2 relative z-10">System Status</h4>
      <p className="text-[10px] font-black text-slate-400 tracking-widest mb-10 relative z-10">
-      Last Integrity Check: {new Date().toLocaleTimeString()} • REAL-TIME ACTIVE
+      Last Updated: {new Date().toLocaleTimeString()} • LIVE
      </p>
      <button 
       onClick={fetchDashboardData}
       className="bg-emerald-600 text-white px-12 py-5 rounded-[5px] font-black text-[11px]  shadow-2xl active:scale-95 tracking-widest shadow-emerald-100 hover:bg-emerald-700 active:scale-95 transition-all relative z-10 flex items-center gap-3"
      >
-      <Activity size={18} /> Forced Sync
+      <Activity size={18} /> Refresh Now
      </button>
     </motion.div>
    </div>

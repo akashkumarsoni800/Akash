@@ -52,7 +52,7 @@ const StudentHomework = () => {
      <RefreshCw size={60} className="animate-spin text-purple-600/20"/>
      <BookOpen size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center uppercase">Syncing Assignment List...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center uppercase">Loading Homework List...</p>
   </div>
  );
 
@@ -67,12 +67,12 @@ const StudentHomework = () => {
       className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-purple-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-purple-600 group-hover:-translate-x-1 transition-transform" />
-      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Portal Exit</span>
+      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Back</span>
      </button>
 
      <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-       <span className="text-[10px] font-black  text-purple-400 uppercase">Digital Classroom Active</span>
+       <span className="text-[10px] font-black  text-purple-400 uppercase">Classroom Online</span>
      </div>
     </div>
 
@@ -81,10 +81,10 @@ const StudentHomework = () => {
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
         Academic<br/>
-        <span className="text-purple-600">Assets</span>
+        <span className="text-purple-600">Material</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2 uppercase">
-        <ShieldCheck size={12} className="text-purple-500" /> Paid Scholastic Tasks & Resource List
+        <ShieldCheck size={12} className="text-purple-500" /> Homework & Study Material
        </p>
       </motion.div>
       
@@ -92,12 +92,12 @@ const StudentHomework = () => {
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📚</div>
        <div>
         <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Task Density</p>
-        <p className="text-3xl font-black text-slate-900 uppercase">{homeworks.length} Assignments</p>
+        <p className="text-3xl font-black text-slate-900 uppercase">{homeworks.length} Total</p>
        </div>
       </div>
     </div>
 
-    {/* --- ASSIGNMENT TERMINAL --- */}
+    {/* --- HOMEWORK LIST --- */}
     <div className="space-y-10">
      <AnimatePresence>
       {homeworks.length > 0 ? homeworks.map((hw: any, idx: number) => (
@@ -117,12 +117,12 @@ const StudentHomework = () => {
             <div className="p-8 rounded-[5px] bg-white shadow-2xl active:scale-95 tracking-widest mb-6 group-hover:scale-110 transition-transform duration-500">
              {hw.isSubmitted ? <CheckCircle2 size={40}/> : <Clock size={40} className="animate-pulse"/>}
             </div>
-            <p className="text-[10px] font-black uppercase ">{hw.subject || 'Core Discipline'}</p>
-            <h3 className="text-3xl font-black  mt-2 uppercase">{hw.isSubmitted ? 'Authenticated' : 'Pending'}</h3>
+            <p className="text-[10px] font-black uppercase ">{hw.subject || 'Subject'}</p>
+            <h3 className="text-3xl font-black  mt-2 uppercase">{hw.isSubmitted ? 'Completed' : 'Pending'}</h3>
             {hw.submissionDate && (
              <div className="mt-4 flex items-center gap-2 bg-emerald-100/50 px-4 py-1.5 rounded-full">
               <Zap size={10} className="text-emerald-600" />
-              <p className="text-[9px] font-black text-emerald-700 tracking-widest uppercase">{new Date(hw.submissionDate).toLocaleDateString()} Logged</p>
+              <p className="text-[9px] font-black text-emerald-700 tracking-widest uppercase">{new Date(hw.submissionDate).toLocaleDateString()} Submitted</p>
              </div>
             )}
           </div>
@@ -143,17 +143,17 @@ const StudentHomework = () => {
              </div>
 
              <p className="text-slate-600 font-black text-lg leading-relaxed max-w-2xl border-l-[6px] border-slate-50 pl-8 py-2 group-hover:border-purple-100 transition-colors uppercase">
-              {hw.description || 'School instructions for this task manifest have not been detailed. Please consult individual faculty nodes.'}
+              {hw.description || 'Instructions for this homework have not been added yet. Please ask your teacher.'}
              </p>
             </div>
 
             <div className="mt-12 flex flex-col sm:flex-row gap-6 items-center relative z-10">
              <button className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest shadow-slate-200 hover:bg-purple-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn uppercase">
-               <FileText size={18} className="group-hover/btn:rotate-12 transition-transform"/> Access Materials
+               <FileText size={18} className="group-hover/btn:rotate-12 transition-transform"/> View Materials
              </button>
              {!hw.isSubmitted && (
               <button className="w-full sm:w-auto bg-purple-600 text-white px-12 py-5 rounded-[5px] font-black text-[10px]  shadow-2xl active:scale-95 tracking-widest shadow-purple-100 hover:bg-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95 group/submit uppercase">
-                <Send size={18} className="group-hover/submit:translate-x-1 group-hover/submit:-translate-y-1 transition-transform"/> Submit Execution
+                <Send size={18} className="group-hover/submit:translate-x-1 group-hover/submit:-translate-y-1 transition-transform"/> Submit Now
               </button>
              )}
             </div>
@@ -168,9 +168,9 @@ const StudentHomework = () => {
        >
          <div className="w-32 h-32 bg-slate-50 rounded-[5px] flex items-center justify-center mx-auto mb-8 text-6xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📚</div>
          <div className="space-y-4">
-          <h3 className="text-3xl font-black text-slate-900  uppercase">Repository Clear</h3>
+          <h3 className="text-3xl font-black text-slate-900  uppercase">No Homework</h3>
           <p className="max-w-md mx-auto text-slate-400 font-black text-[10px]  leading-relaxed px-10 uppercase">
-           No pending assignments detected for your current cohort. Maintain operational readiness for upcoming task emissions.
+           No pending homework found for your class. Check back later for new assignments.
           </p>
          </div>
        </motion.div>

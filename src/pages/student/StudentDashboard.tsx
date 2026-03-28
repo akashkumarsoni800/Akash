@@ -49,7 +49,7 @@ export default function StudentDashboard() {
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
    <div className="text-center animate-pulse">
     <GraduationCap size={64} className="mx-auto text-indigo-600 mb-4" />
-    <p className="font-black tracking-widest text-gray-400 uppercase">Syncing Your Portal...</p>
+    <p className="font-black tracking-widest text-gray-400 uppercase">Loading Student Portal...</p>
    </div>
   </div>
  );
@@ -69,20 +69,20 @@ export default function StudentDashboard() {
      <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12 text-center lg:text-left">
       <div className="space-y-8">
        <div className="inline-flex items-center gap-2 px-5 py-2 bg-purple-50 rounded-full text-[9px] font-black  text-purple-600 border border-purple-100 animate-pulse">
-        < Award size={14} /> Academic Excellence 2024-25
+        < Award size={14} /> School Year 2024-25
        </div>
        
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
         Welcome Back,<br/>
         <span className="text-purple-600">
-         {student?.full_name?.split(' ')[0] || 'Scholar'}!
+         {student?.full_name?.split(' ')[0] || 'Student'}!
         </span>
        </h1>
 
        <div className="flex flex-wrap justify-center lg:justify-start gap-3">
         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1">Assigned Batch</p>
-          <p className="text-lg font-black text-slate-800 ">Class {student?.class_name || 'N/A'}</p>
+          <p className="text-lg font-black text-slate-800 "> {student?.class_name || 'N/A'}</p>
         </div>
         <div className="px-6 py-3 bg-slate-50 border border-slate-100 rounded-[5px]">
           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-1"> No</p>
@@ -107,28 +107,28 @@ export default function StudentDashboard() {
      </div>
     </motion.div>
 
-    {/* --- PERFORMANCE INDEX --- */}
+    {/* --- QUICK STATS --- */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <StatCard 
        icon={Clock} 
        title="Attendance Log" 
        value={`${attendancePct}%`} 
        color="purple"
-       subText="Real-time Presence"
+       subText="Present"
       />
       <StatCard 
        icon={CreditCard} 
        title="Financial Status" 
        value={`₹${pendingFees.toLocaleString()}`} 
        color={pendingFees > 0 ? "rose" : "emerald"}
-       subText="Pending Dues"
+       subText="Pending Fees"
       />
       <StatCard 
        icon={BookOpen} 
        title="Homework Portal" 
        value={homeworkCount} 
        color="amber"
-       subText="Assigned Tasks"
+       subText="Homework Found"
       />
     </div>
 
@@ -137,24 +137,24 @@ export default function StudentDashboard() {
      <div className="lg:col-span-2 space-y-8">
        <div className="flex items-center justify-between">
         <h3 className="text-[10px] font-black text-slate-400  flex items-center gap-3 uppercase">
-         <Layout size={16} className="text-purple-600"/> Core Access
+         <Layout size={16} className="text-purple-600"/> Menu
         </h3>
        </div>
        
        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        <ActionCard icon="💸" label="Fees " path="/student/fees" color="emerald" navigate={navigate}/>
-        <ActionCard icon="📊" label="Academic Data" path="/student/result" color="purple" navigate={navigate}/>
-        <ActionCard icon="📑" label="Homework Hub" path="/student/homework" color="amber" navigate={navigate}/>
-        <ActionCard icon="📅" label="Presence Log" path="/student/attendance" color="blue" navigate={navigate}/>
-        <ActionCard icon="🆔" label="Identity Card" path="/student/id-card" color="slate" navigate={navigate}/>
-        <ActionCard icon="📢" label="Broadcasts" path="/student/notices" color="rose" navigate={navigate}/>
+        <ActionCard icon="💸" label="Fees" path="/student/fees" color="emerald" navigate={navigate}/>
+        <ActionCard icon="📊" label="Results" path="/student/result" color="purple" navigate={navigate}/>
+        <ActionCard icon="📑" label="Homework" path="/student/homework" color="amber" navigate={navigate}/>
+        <ActionCard icon="📅" label="Attendance" path="/student/attendance" color="blue" navigate={navigate}/>
+        <ActionCard icon="🆔" label="ID Card" path="/student/id-card" color="slate" navigate={navigate}/>
+        <ActionCard icon="📢" label="Notices" path="/student/notices" color="rose" navigate={navigate}/>
        </div>
      </div>
 
      {/* --- BROADCAST BOARD --- */}
      <div className="space-y-8">
        <h3 className="text-[10px] font-black text-slate-400  flex items-center gap-3 uppercase">
-        <Bell size={16} className="text-purple-600"/> Latest Broadcasts
+        <Bell size={16} className="text-purple-600"/> Latest Notices
        </h3>
        
        <div className="bg-white rounded-[5px] p-8 border border-slate-100 shadow-sm flex flex-col gap-6">
@@ -169,10 +169,10 @@ export default function StudentDashboard() {
            </div>
          </div>
         )) : (
-         <div className="text-center py-12 opacity-30 font-black text-[10px] tracking-widest text-slate-400">Zero Broadcasts</div>
+         <div className="text-center py-12 opacity-30 font-black text-[10px] tracking-widest text-slate-400">No new notices</div>
         )}
         <button onClick={() => navigate('/student/notices')} className="w-full bg-slate-50 py-4 rounded-[5px] text-[10px] font-black tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 group uppercase">
-         Full Archive Access <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform"/>
+         View all notices <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform"/>
         </button>
        </div>
      </div>

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { 
  UserPlus, Plus, Search, 
@@ -50,53 +49,23 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    const { data: existingStaff } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
    if (existingStaff) throw new Error(`Email already exists: This email is used by another teacher (${existingStaff.full_name}).`);
 
-   // 2. Add teacher to the database
+   // 2. Auth Protocol & Database Indexing via Edge Function
    const schoolId = localStorage.getItem('current_school_id');
    
-   // Initialize temporary client to prevent session hijack
-   const tempSupabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-     }
-    }
-   );
-
-   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
-    email: formData.email,
-    password: formData.password,
-    options: {
-     data: {
-      full_name: formData.fullName,
-      role: 'teacher'
-     }
+   const { data: result, error: fnError } = await supabase.functions.invoke('create-user', {
+    body: {
+     email: formData.email,
+     password: formData.password,
+     full_name: formData.fullName,
+     role: 'teacher',
+     school_id: schoolId,
+     subject: formData.subject,
+     phone: formData.phone
     }
    });
 
-   if (authError) throw authError;
-
-   if (authData.user) {
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     id: authData.user.id,
-     full_name: formData.fullName,
-     subject: formData.subject,
-     email: formData.email,
-     phone: formData.phone,
-     role: 'teacher',
-     school_id: schoolId
-    }]);
-    
-    if (dbError) {
-     if (dbError.code === '23505') {
-       throw new Error(`Error: This email (${formData.email}) is already in use.`);
-     }
-     throw dbError;
-    }
-   }
+   if (fnError) throw fnError;
+   if (result?.error) throw new Error(result.error);
 
    toast.success("Teacher added successfully! 💎");
    setIsModalOpen(false);

@@ -52,7 +52,7 @@ const StudentAttendance = () => {
      <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
      <Activity size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8 uppercase">Syncing Presence List...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 uppercase">Loading Attendance...</p>
   </div>
  );
 
@@ -67,12 +67,12 @@ const StudentAttendance = () => {
       className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] shadow-sm border border-slate-100 hover:shadow-2xl active:scale-95 tracking-widest hover:border-blue-200 transition-all active:scale-95"
      >
       <ChevronLeft size={18} className="text-blue-600 group-hover:-translate-x-1 transition-transform" />
-      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Portal Exit</span>
+      <span className="font-black tracking-widest text-[10px] text-slate-600 uppercase">Back</span>
      </button>
 
      <div className="bg-slate-900 px-6 py-3 rounded-[5px] border border-slate-800 shadow-2xl active:scale-95 tracking-widest flex items-center gap-4 group">
        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-       <span className="text-[10px] font-black  text-blue-400 uppercase">Real-Time Sync Active</span>
+       <span className="text-[10px] font-black  text-blue-400 uppercase">Live Updates Active</span>
      </div>
     </div>
 
@@ -80,18 +80,18 @@ const StudentAttendance = () => {
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="">
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-        Presence<br/>
-        <span className="text-blue-600">Analytics</span>
+        Attendance<br/>
+        <span className="text-blue-600">History</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center gap-2 uppercase">
-        <ShieldCheck size={12} className="text-blue-500" /> School Presence & Activity Audit
+        <ShieldCheck size={12} className="text-blue-500" /> Complete school attendance record
        </p>
       </motion.div>
       
       <div className="bg-white border border-slate-100 rounded-[5px] p-6 shadow-sm flex items-center gap-8 group hover:shadow-2xl active:scale-95 tracking-widest transition-all">
        <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-3xl shadow-2xl active:scale-95 tracking-widest shadow-slate-200 group-hover:scale-110 transition-transform">📅</div>
        <div>
-        <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Audit Score</p>
+        <p className="text-[9px] font-black text-slate-400  mb-1 uppercase">Attendance</p>
         <p className="text-3xl font-black text-slate-900 uppercase">{stats.percentage}% Consistent</p>
        </div>
       </div>
@@ -99,10 +99,10 @@ const StudentAttendance = () => {
 
     {/* 🟢 ANALYTICS SUMMARY GRID */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <PremiumStatBox label="Presence Velocity" value={`${stats.percentage}%`} icon={TrendingUp} accent="blue" />
-      <PremiumStatBox label="Total Logged Nodes" value={stats.total} icon={BarChart3} accent="slate" />
-      <PremiumStatBox label="Successful Authentications" value={stats.present} icon={CheckCircle2} accent="emerald" />
-      <PremiumStatBox label="Missed Sessions" value={stats.absent} icon={XCircle} accent="rose" />
+      <PremiumStatBox label="Monthly Score" value={`${stats.percentage}%`} icon={TrendingUp} accent="blue" />
+      <PremiumStatBox label="Total Days" value={stats.total} icon={BarChart3} accent="slate" />
+      <PremiumStatBox label="Days Present" value={stats.present} icon={CheckCircle2} accent="emerald" />
+      <PremiumStatBox label="Days Absent" value={stats.absent} icon={XCircle} accent="rose" />
     </div>
 
     {/* 🔵 PRESENCE TIMELINE */}
@@ -114,15 +114,15 @@ const StudentAttendance = () => {
     >
       <div className="p-10 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row justify-between items-center gap-6 px-12">
        <h3 className="font-black text-[10px] text-slate-400  flex items-center gap-3 uppercase">
-         <Clock size={16} className="text-blue-600"/> Chronological Presence Timeline
+         <Clock size={16} className="text-blue-600"/> Attendance History
        </h3>
        <div className="flex items-center gap-4">
          <div className="relative group/filter">
           <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/filter:text-blue-500 transition-colors" size={14}/>
           <select className="bg-white border border-slate-100 rounded-[5px] pl-10 pr-6 py-2 text-[9px] font-black tracking-widest outline-none focus:ring-4 focus:ring-blue-100 transition-all appearance-none uppercase">
             <option>Full List</option>
-            <option>Last 30 Cycles</option>
-            <option>Flagged Only</option>
+            <option>Last 30 Days</option>
+            <option>Absents Only</option>
           </select>
          </div>
        </div>
@@ -152,7 +152,7 @@ const StudentAttendance = () => {
                  {new Date(record.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                </p>
                <p className="text-[9px] font-black text-slate-400  flex items-center gap-2 uppercase">
-                 <Zap size={10} className="text-blue-500"/> {new Date(record.date).toLocaleDateString('en-GB', { weekday: 'long' })} Protocol
+                 <Zap size={10} className="text-blue-500"/> {new Date(record.date).toLocaleDateString('en-GB', { weekday: 'long' })}
                </p>
               </div>
             </div>
@@ -163,7 +163,7 @@ const StudentAttendance = () => {
                ? 'bg-slate-900 text-white shadow-slate-200 group-hover/row:bg-blue-600' 
                : 'bg-rose-600 text-white shadow-rose-200 animate-pulse'
               }`}>
-               {record.status === 'P' || record.status === 'Present' ? 'Session Authenticated' : 'Presence Flagged'}
+               {record.status === 'P' || record.status === 'Present' ? 'Present' : 'Absent'}
               </div>
             </div>
            </motion.div>
@@ -173,8 +173,8 @@ const StudentAttendance = () => {
         <div className="py-32 text-center space-y-8 bg-slate-50/50 rounded-[5px] border border-dashed border-slate-200 opacity-30 group">
           <div className="w-24 h-24 bg-white rounded-[5px] flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner group-hover:rotate-12 transition-transform duration-500">📅</div>
           <div className="space-y-2">
-           <h4 className="text-xl font-black text-slate-900 uppercase">Records Nullified</h4>
-           <p className="text-[9px] font-black text-slate-400 uppercase">No presence records found in the current session cycle.</p>
+           <h4 className="text-xl font-black text-slate-900 uppercase">No Records Found</h4>
+           <p className="text-[9px] font-black text-slate-400 uppercase">No attendance records found for this month.</p>
           </div>
         </div>
        )}

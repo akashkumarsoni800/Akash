@@ -80,7 +80,7 @@ const StatCard = ({ icon: Icon, title, value, color, subText }: any) => {
    <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
      <div className="flex items-center gap-2">
       <div className={`w-2 h-2 rounded-full ${color === 'blue' ? 'bg-blue-500 animate-pulse' : color === 'amber' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
-      <span className="text-[9px] font-black text-slate-400 tracking-wider">Live Sync</span>
+       <span className="text-[9px] font-black text-slate-400 tracking-wider">Connected</span>
      </div>
      <Activity size={14} className="text-slate-200" />
    </div>
@@ -127,7 +127,7 @@ const AdminDashboard = () => {
   else { toast.error(err.message); }
  };
 
- if (statsLoading || pendingLoading) return <div className="h-screen flex items-center justify-center font-black text-slate-400  text-xs uppercase tracking-widest">ASM SYNCING...</div>;
+  if (statsLoading || pendingLoading) return <div className="h-screen flex items-center justify-center font-black text-slate-400  text-xs uppercase tracking-widest">LOADING...</div>;
 
  const counts = stats || { students: 0, teachers: 0, pending: 0, admins: 0 };
 

@@ -160,10 +160,10 @@ const TeacherAnalytics: React.FC = () => {
     {/* Header */}
     <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
      <h1 className="text-6xl md:text-7xl font-black  bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-6 uppercase">
-      📊 Analytics Dashboard
+      Class Progress Reports
      </h1>
      <p className="text-xl text-gray-600 font-black max-w-2xl mx-auto">
-      Real-time insights • {selectedPeriod.toUpperCase()} view • Auto-updated
+      Live class performance • {selectedPeriod.toUpperCase()} report • Updated automatically
      </p>
     </motion.div>
 
@@ -212,7 +212,7 @@ const TeacherAnalytics: React.FC = () => {
      >
       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📊</div>
       <h3 className="text-4xl font-black text-green-600 mb-2 uppercase">{analytics.attendanceRate}%</h3>
-      <p className="text-sm text-gray-500 tracking-wide font-black">Avg Attendance</p>
+      <p className="text-sm text-gray-500 tracking-wide font-black">Average Attendance</p>
       <span className={`text-xs px-2 py-1 rounded-full mt-2 inline-block font-black ${
        analytics.attendanceRate >= 90 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
       }`}>
@@ -229,11 +229,11 @@ const TeacherAnalytics: React.FC = () => {
      >
       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">⭐</div>
       <h3 className="text-4xl font-black text-purple-600 mb-2 uppercase">{analytics.passPercentage}%</h3>
-      <p className="text-sm text-gray-500 tracking-wide font-black">Pass Rate</p>
+      <p className="text-sm text-gray-500 tracking-wide font-black">Passing Students</p>
       <span className={`text-xs px-2 py-1 rounded-full mt-2 inline-block font-black ${
        analytics.passPercentage >= 85 ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800'
       }`}>
-       {analytics.topPerformers} Top Students
+       {analytics.topPerformers} High Scorers
       </span>
      </motion.div>
     </div>
@@ -248,7 +248,7 @@ const TeacherAnalytics: React.FC = () => {
       className="bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50 group hover:shadow-3xl"
      >
       <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-8 flex items-center gap-3 uppercase">
-       📈 Performance Distribution
+       📈 Grade Summary
        <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-black">
         {selectedPeriod.toUpperCase()}
        </span>
@@ -257,7 +257,7 @@ const TeacherAnalytics: React.FC = () => {
       {/* Dynamic Progress Bars */}
       <div className="space-y-6">
        <div className="flex justify-between items-center">
-        <span className="text-lg font-black text-gray-700">A+ (90+)</span>
+        <span className="text-lg font-black text-gray-700">A+ Grade (90%+)</span>
         <div className="w-48 bg-gray-200 rounded-full h-4">
          <motion.div 
           className="bg-gradient-to-r from-green-400 to-emerald-500 h-4 rounded-full shadow-lg"
@@ -270,7 +270,7 @@ const TeacherAnalytics: React.FC = () => {
        </div>
        
        <div className="flex justify-between items-center">
-        <span className="text-lg font-black text-gray-700">A (80-89)</span>
+        <span className="text-lg font-black text-gray-700">A Grade (80-89%)</span>
         <div className="w-48 bg-gray-200 rounded-full h-4">
          <motion.div 
           className="bg-gradient-to-r from-blue-400 to-indigo-500 h-4 rounded-full shadow-lg"
@@ -283,7 +283,7 @@ const TeacherAnalytics: React.FC = () => {
        </div>
        
        <div className="flex justify-between items-center">
-        <span className="text-lg font-black text-gray-700">B (70-79)</span>
+        <span className="text-lg font-black text-gray-700">B Grade (70-79%)</span>
         <div className="w-48 bg-gray-200 rounded-full h-4">
          <motion.div 
           className="bg-gradient-to-r from-orange-400 to-yellow-500 h-4 rounded-full shadow-lg"
@@ -304,7 +304,7 @@ const TeacherAnalytics: React.FC = () => {
       transition={{ delay: 0.5 }}
       className="bg-white/90 backdrop-blur-xl p-10 rounded-[5px] shadow-2xl border border-white/50"
      >
-      <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-8 uppercase">📅 Attendance Trend</h3>
+      <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-8 uppercase">📅 Attendance by Day</h3>
       <div className="space-y-6">
        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, index) => (
         <div key={day} className="flex justify-between items-center">
@@ -344,7 +344,7 @@ const TeacherAnalytics: React.FC = () => {
       className="group bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => window.print()}
      >
-      📈 Full Report
+      Print Report
      </motion.button>
      
      <motion.button 
@@ -352,20 +352,20 @@ const TeacherAnalytics: React.FC = () => {
       className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => {
        const top = analytics.recentResults.sort((a,b) => b.marks - a.marks)[0];
-       import('sonner').then(({ toast }) => toast.info(`Top Performer: ${top?.student_name || 'Calculating...'} (${top?.marks || 0}%)`));
+       import('sonner').then(({ toast }) => toast.info(`Top Student: ${top?.student_name || 'Calculating...'} (${top?.marks || 0}%)`));
       }}
      >
-      🎯 Top Performers ({analytics.topPerformers})
+      🎯 Top Students ({analytics.topPerformers})
      </motion.button>
      
      <motion.button 
       whileHover={{ scale: 1.05, y: -5 }}
       className="group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-8 rounded-[5px] font-black tracking-widest shadow-2xl active:scale-95 tracking-widest hover:shadow-2xl transition-all duration-300"
       onClick={() => {
-       import('sonner').then(({ toast }) => toast.warning(`Critical Protocol: ${analytics.lowAttendance} students identified with sub-optimal attendance.`));
+       import('sonner').then(({ toast }) => toast.warning(`Warning: ${analytics.lowAttendance} students have low attendance.`));
       }}
      >
-      ⚠️ Alert Students ({analytics.lowAttendance})
+      ⚠️ Check Low Attendance ({analytics.lowAttendance})
      </motion.button>
     </motion.div>
 

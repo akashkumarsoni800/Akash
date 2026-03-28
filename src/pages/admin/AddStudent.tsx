@@ -271,9 +271,7 @@ const AddStudent = () => {
         <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
          {isEdit ? 'Edit Student' : 'Add Student'}
         </h1>
-        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
-         <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Student Details v4.8 Stable
-        </p>
+         <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Enter student information
        </motion.div>
      </div>
 
@@ -289,7 +287,7 @@ const AddStudent = () => {
           </div>
           <div>
            <h2 className="text-3xl font-black text-slate-900  uppercase">{isEdit ? 'Edit Student' : 'Student Details'}</h2>
-           <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">{isEdit ? 'UPDATE RECORDS' : 'REGISTRATION FORM'}</p>
+            <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none">{isEdit ? 'UPDATE FORM' : 'STUDENT FORM'}</p>
           </div>
         </div>
 
@@ -378,7 +376,7 @@ const AddStudent = () => {
                         className="w-full"
                       />
                     ) : (
-                      <div className="text-slate-300 font-black animate-pulse uppercase text-xs">Awaiting Vision Node...</div>
+                      <div className="text-slate-300 font-black animate-pulse uppercase text-xs">Starting camera...</div>
                     )}
                   </div>
 
@@ -411,7 +409,7 @@ const AddStudent = () => {
          <div className="grid grid-cols-2 gap-6">
           <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
           <div className="space-y-1 group">
-           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">GenderSelection</label>
+           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Gender</label>
            <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" required>
             <option value="">Select Gender</option>
             <option value="Male">Male</option>

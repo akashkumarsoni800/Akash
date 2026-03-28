@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
@@ -47,53 +46,23 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
    }
 
-   // 1. Create Auth User & Database Record via Secondary Client
-   const schoolId = localStorage.getItem('current_school_id');
-   
-   // Initialize temporary client to prevent session hijack
-   const tempSupabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-     }
-    }
-   );
-
-   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
-    email: formData.email,
-    password: 'Teacher@123',
-    options: {
-     data: {
+    // 1. Synchronize Identity via Edge Function (Atomic Auth + DB)
+    const schoolId = localStorage.getItem('current_school_id');
+    
+    const { data: result, error: fnError } = await supabase.functions.invoke('create-user', {
+     body: {
+      email: formData.email,
+      password: 'Teacher@123',
       full_name: formData.name,
       role: 'teacher',
-     },
-    },
-   });
-
-   if (authError) throw authError;
-
-   if (authData.user) {
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     id: authData.user.id,
-     full_name: formData.name,
-     subject: formData.subject,
-     email: formData.email,
-     phone: formData.phone,
-     role: 'teacher',
-     school_id: schoolId
-    }]);
-    
-    if (dbError) {
-     if (dbError.code === '23505') {
-      throw new Error(`This email node (${formData.email}) is already globally synchronized. Faculty may belong to only one institution.`);
+      school_id: schoolId,
+      subject: formData.subject,
+      phone: formData.phone
      }
-     throw dbError;
-    }
-   }
+    });
+
+    if (fnError) throw fnError;
+    if (result?.error) throw new Error(result.error);
 
    toast.success("Teacher Created Successfully!");
    navigate('/admin/dashboard');
@@ -113,11 +82,11 @@ const AddTeacher = () => {
     <div className="mb-12 text-center space-y-4">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
        <h1 className="text-5xl md:text-6xl font-black text-slate-900  leading-none uppercase">
-        Faculty<br/>
-        <span className="text-[var(--accent-admin)]">Induction</span>
+        Add<br/>
+        <span className="text-[var(--accent-admin)]">Teacher</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center gap-2">
-        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid Academic Staff  v4.2
+        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Teacher Details
        </p>
       </motion.div>
     </div>
@@ -134,15 +103,15 @@ const AddTeacher = () => {
         <UserPlus size={24} />
        </div>
        <div>
-        <h2 className="text-2xl font-black text-slate-900  uppercase">Credential Entry</h2>
-        <p className="text-[9px] font-black text-slate-300 tracking-widest leading-none">ASM REGISTRY INDEX: STAFF_NEW</p>
+        <h2 className="text-2xl font-black text-slate-900  uppercase">Login Details</h2>
+        <p className="text-[9px] font-black text-slate-300 tracking-widest leading-none">NEW TEACHER FORM</p>
        </div>
      </div>
 
      <form onSubmit={handleSubmit} className="space-y-8">
       <div className="grid grid-cols-1 gap-8">
         <InputField 
-         label="Official Full Name *" 
+         label="Full Name *" 
          name="name" 
          placeholder="Ex: Rajesh Kumar" 
          value={formData.name}
@@ -152,7 +121,7 @@ const AddTeacher = () => {
         />
 
         <InputField 
-         label="Primary Discipline / Role *" 
+         label="Subject / Role *" 
          name="subject" 
          placeholder="Ex: Advanced Mathematics" 
          value={formData.subject}
@@ -163,7 +132,7 @@ const AddTeacher = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
          <InputField 
-          label="Paid Email Node *" 
+          label="Email Address *" 
           name="email" 
           type="email" 
           placeholder="teacher@asm-portal.com" 
@@ -174,7 +143,7 @@ const AddTeacher = () => {
          />
 
          <InputField 
-          label="Uplink Mobile Node *" 
+          label="Mobile Number *" 
           name="phone" 
           placeholder="+91 XXXX-XXXXXX" 
           value={formData.phone}
@@ -205,7 +174,7 @@ const AddTeacher = () => {
          {isPending ? (
           <RefreshCw className="animate-spin" size={20} />
          ) : (
-          <><Zap size={20} className="group-hover:translate-y-[-2px] transition-transform" /> Synchronize Staff </>
+          <><Zap size={20} className="group-hover:translate-y-[-2px] transition-transform" /> Save Teacher </>
          )}
         </button>
         
@@ -214,7 +183,7 @@ const AddTeacher = () => {
          onClick={() => navigate('/admin/dashboard')}
          className="px-10 py-6 rounded-[5px] font-black  text-[10px] text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all"
         >
-         Abort Induction
+         Cancel
         </button>
       </div>
      </form>

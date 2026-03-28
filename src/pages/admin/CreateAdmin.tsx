@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { supabase } from '../../supabaseClient';
 import { toast } from 'sonner';
 import { 
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TeachersManagement from '../../components/admin/TeachersManagement';
+
 
 const CreateAdmin = () => {
  const [loading, setLoading] = useState(false);
@@ -32,50 +32,22 @@ const CreateAdmin = () => {
    const { data: existing } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Identity conflict: Email registered to faculty (${existing.full_name})`);
 
-   // 1. Initialize temporary client for session isolation
-   const tempSupabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-     }
-    }
-   );
+   const schoolId = localStorage.getItem('current_school_id');
 
-   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
-    email: formData.email,
-    password: formData.password,
-    options: {
-     data: {
-      full_name: formData.full_name,
-      role: 'admin',
-     },
-    },
-   });
-
-   if (authError) throw authError;
-
-   if (authData.user) {
-    const schoolId = localStorage.getItem('current_school_id');
-    const { error: dbError } = await supabase.from('teachers').insert([{
-     id: authData.user.id,
-     full_name: formData.full_name,
+   // 1. Initialize identity synchronization via Edge Function
+   const { data: result, error: fnError } = await supabase.functions.invoke('create-user', {
+    body: {
      email: formData.email,
+     password: formData.password,
+     full_name: formData.full_name,
      role: 'admin',
      school_id: schoolId,
      subject: 'Administration'
-    }]);
-
-    if (dbError) {
-     if (dbError.code === '23505') {
-       throw new Error(`Conflict: This administrative node (${formData.email}) already exists in the global federation.`);
-     }
-     throw dbError;
     }
-   }
+   });
+
+   if (fnError) throw fnError;
+   if (result?.error) throw new Error(result.error);
 
    toast.success(`New Admin Paid: ${formData.full_name}`);
    toast.info("Access permissions propagated across institutional nodes.");
