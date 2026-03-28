@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -6,7 +6,7 @@ import {
  Plus, Search, Users, Calendar, ArrowRight,
  Wallet, Send, RefreshCw, Trash2, CheckCircle,
  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
- MessageSquare, Clock, AlertTriangle
+ MessageSquare, Clock, AlertTriangle, Filter, Camera
 } from 'lucide-react';
 import { 
   useGetAllStudents, 
