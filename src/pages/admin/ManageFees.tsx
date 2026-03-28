@@ -647,11 +647,14 @@ const ManageFees = () => {
               <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100">
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
                   <div className="w-10 h-10 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-300 font-bold text-xs uppercase">
-                    {fee.students?.class_name}
+                    {fee.students?.class_name || '??'}
                   </div>
                   <div>
-                    <h4 className="font-black text-slate-900 text-sm leading-none uppercase">{fee.students?.full_name}</h4>
-                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter">Amount: ₹{fee.total_amount} • {fee.month}</p>
+                    <h4 className="font-black text-slate-900 text-sm leading-none uppercase">{fee.students?.full_name || 'Unknown Student'}</h4>
+                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter">
+                      Amount: ₹{fee.total_amount} • {fee.month} 
+                      {!fee.students && <span className="text-rose-500 ml-2 font-black italic">[Record Unlinked]</span>}
+                    </p>
                   </div>
                 </div>
                 <button 
@@ -663,8 +666,23 @@ const ManageFees = () => {
               </div>
             ))
           ) : (
-            <div className="py-12 text-center bg-slate-50/50 rounded-[5px] border-2 border-dashed border-slate-100">
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic leading-none">No pending fees for this month summary.</p>
+            <div className="py-16 text-center bg-slate-50/50 rounded-[5px] border-2 border-dashed border-slate-100 flex flex-col items-center gap-6">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
+                <MessageSquare size={32} />
+              </div>
+              <div>
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                  No reminders for {showAllMonths ? 'the entire school' : remindMonth}
+                </p>
+                {!showAllMonths && feeStats.totalPending > 0 && (
+                  <button 
+                    onClick={() => setShowAllMonths(true)}
+                    className="mt-6 px-10 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl animate-bounce-short"
+                  >
+                    Show all {feeStats.totalPending} pending payments across all months
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
