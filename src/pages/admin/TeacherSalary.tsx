@@ -113,7 +113,7 @@ const TeacherSalary = () => {
    const { error } = await supabase.from('teacher_salaries').insert([finalTotal]);
    if (error) throw error;
    
-   toast.success('✅ Salary record authorized!');
+   toast.success('Salary record saved!');
    setNewSalary({
     teacher_id: '',
     teacher_name: '',
@@ -141,7 +141,7 @@ const TeacherSalary = () => {
     .eq('id', salaryId);
    
    if (error) throw error;
-   toast.success('✅ Payment Released!');
+   toast.success('Salary paid successfully!');
    fetchData();
   } catch (error: any) {
    toast.error('Failed to update status');
@@ -159,7 +159,7 @@ const TeacherSalary = () => {
        <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
        <CreditCard size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
      </div>
-     <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Initializing Payroll ...</p>
+     <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Loading Payroll...</p>
     </div>
   );
  }
@@ -175,9 +175,9 @@ const TeacherSalary = () => {
         Teacher<br/>
         <span className="text-[var(--accent-admin)]">Salaries</span>
        </h1>
-       <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
-        <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Paid School Salary v4.2
-       </p>
+        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
+         <ShieldCheck size={12} className="text-[var(--accent-admin)]" /> Employee Payroll Management
+        </p>
       </motion.div>
       
        <div className="bg-white border border-slate-100 rounded-[5px] p-4 shadow-sm flex items-center gap-6 group hover:shadow-2xl active:scale-95 tracking-widest transition-all relative z-20">
@@ -209,7 +209,7 @@ const TeacherSalary = () => {
       <form onSubmit={handleSalarySubmit} className="space-y-6 relative z-10">
        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <div className="space-y-3 group">
-          <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Select Teacher</label>
+          <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Choose Teacher</label>
           <div className="relative">
             <UserCheck className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
             <select 
@@ -226,7 +226,7 @@ const TeacherSalary = () => {
              className="premium-input pl-16 appearance-none"
              required
             >
-             <option value="">Identify Recipient</option>
+              <option value="">Select Staff Member</option>
              {teachers.map(t => (
               <option key={t.id} value={t.id}>{t.full_name} — {t.role}</option>
              ))}
@@ -235,7 +235,7 @@ const TeacherSalary = () => {
          </div>
 
          <div className="space-y-3 group">
-          <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Payroll frequency</label>
+          <label className="text-[10px] font-black text-slate-400  ml-2 group-focus-within:text-blue-600 transition-colors">Select Month</label>
           <div className="relative">
             <Calendar className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/input:text-blue-400 transition-colors" size={20} />
             <input 
@@ -253,7 +253,7 @@ const TeacherSalary = () => {
          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 opacity-20 blur-3xl"></div>
          
          <div className="flex items-center gap-4 relative z-10 border-b border-slate-100 pb-6">
-          <p className="text-[10px] font-black text-slate-400 ">Structure Parameters</p>
+           <p className="text-[10px] font-black text-slate-400 ">Salary Details</p>
          </div>
 
          {(!dbColumns.includes('basic_salary') && dbColumns.length > 0) ? (
@@ -302,8 +302,8 @@ const TeacherSalary = () => {
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
           {dbColumns.includes('allowances') && (
-           <InputField 
-            label="Auxiliary Benefits" 
+            <InputField 
+             label="Other Allowances" 
             type="number" 
             value={newSalary.allowances || ''}
             prefix="INR"
@@ -313,8 +313,8 @@ const TeacherSalary = () => {
            />
           )}
           {dbColumns.includes('deductions') && (
-           <InputField 
-            label="Fiscal Reductions" 
+            <InputField 
+             label="Deductions" 
             type="number" 
             value={newSalary.deductions || ''}
             prefix="INR"
@@ -331,7 +331,7 @@ const TeacherSalary = () => {
          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/total:opacity-10 transition-opacity" />
          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="text-center md:text-left">
-            <p className="text-[10px] font-black text-blue-400 mb-2 leading-none">Net School Total</p>
+             <p className="text-[10px] font-black text-blue-400 mb-2 leading-none">Total Net Salary</p>
             <h2 className="text-3xl md:text-4xl font-black leading-none uppercase">₹ {calculateNetSalary().toLocaleString()}</h2>
           </div>
           <button 
@@ -339,8 +339,8 @@ const TeacherSalary = () => {
            disabled={loading}
            className="premium-button-admin w-full bg-white text-slate-900 duration-300 hover:bg-blue-600 hover:text-white border-none shadow-2xl active:scale-95 tracking-widest py-3"
           >
-           {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
-           {loading ? 'Authenticating...' : 'Authorize Payment'}
+            {loading ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
+            {loading ? 'Processing...' : 'Add Salary Record'}
           </button>
          </div>
        </div>
@@ -356,15 +356,15 @@ const TeacherSalary = () => {
       <div className="flex items-center justify-between mb-8 border-b border-slate-50 pb-6">
         <div className="space-y-3">
           <h2 className="text-2xl font-black text-slate-900 leading-none uppercase">Salary<br/><span className="text-[var(--accent-admin)] uppercase">History</span></h2>
-         <p className="text-[9px] font-black text-slate-400  leading-none">Historical Payment </p>
+          <p className="text-[9px] font-black text-slate-400  leading-none">Previous salary records</p>
         </div>
         <div className="flex flex-col items-end gap-2">
          <div className="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-[5px] text-[10px] font-black border border-blue-100 shadow-sm">
-          {salaries.length} Slips Indexed
+           {salaries.length} Records Found
          </div>
          <div className="flex items-center gap-2">
            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-           <p className="text-[8px] font-black text-slate-300 tracking-widest">Live Accounting Sync</p>
+            <p className="text-[8px] font-black text-slate-300 tracking-widest">Status: Connected</p>
          </div>
         </div>
       </div>
@@ -434,7 +434,7 @@ const TeacherSalary = () => {
              className="flex-1 py-3 bg-slate-900 text-white rounded-[5px] font-black text-[11px] tracking-widest hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-2xl active:scale-95 tracking-widest active:scale-95 group/release"
             >
              {salaryLoading[salary.id] ? <RefreshCw size={20} className="animate-spin" /> : salary.status === 'Paid' ? <CheckCircle size={20} className="text-emerald-400" /> : <Zap size={20} className="group-hover/release:rotate-12 transition-transform" />}
-             {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Settlement Secure' : 'Authorize Release'}
+              {salaryLoading[salary.id] ? 'Updating...' : salary.status === 'Paid' ? 'Paid' : 'Mark as Paid'}
             </button>
             <button className="w-16 h-16 bg-slate-50 text-slate-300 rounded-[5px] flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all hover:shadow-2xl active:scale-95 tracking-widest group-hover/item:text-blue-500 active:scale-95">
              <Download size={24} />
@@ -447,7 +447,7 @@ const TeacherSalary = () => {
       </div>
       
       <button className="mt-10 py-3 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 shadow-inner">
-        Open Audit Vault →
+         View Full Report →
       </button>
      </motion.div>
     </div>

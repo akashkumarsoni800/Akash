@@ -115,7 +115,7 @@ export default function SchoolRegistrationPage() {
       }
 
       setSuccessData({ name: school.name, code: school.school_code });
-      toast.success("Institution Onboarded Successfully! 🏫");
+      toast.success("School Registered Successfully! 🏫");
 
     } catch (error: any) {
       toast.error(error.message || "Onboarding failed");
@@ -138,13 +138,13 @@ export default function SchoolRegistrationPage() {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-4xl font-black uppercase tracking-tighter italic">Welcome to the Network</h1>
-            <p className="text-slate-400 font-bold tracking-widest text-xs uppercase">Your institution is now digitally synchronized</p>
+            <h1 className="text-4xl font-black uppercase tracking-tighter italic">Registration Successful!</h1>
+            <p className="text-slate-400 font-bold tracking-widest text-xs uppercase">Your school is now ready to use Tekool</p>
           </div>
 
           <div className="bg-white/5 border border-white/10 p-10 rounded-[5px] space-y-8 backdrop-blur-xl">
             <div>
-              <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2">Institutional Name</p>
+              <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2">School Name</p>
               <h2 className="text-2xl font-black tracking-tight">{successData.name}</h2>
             </div>
             
@@ -163,7 +163,7 @@ export default function SchoolRegistrationPage() {
             onClick={() => navigate('/login')}
             className="w-full bg-blue-600 hover:bg-white hover:text-slate-950 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest transition-all shadow-2xl flex items-center justify-center gap-4 group"
           >
-            Enter Management Console <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+            Go to Admin Dashboard <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
           </button>
         </motion.div>
       </div>
@@ -197,15 +197,15 @@ export default function SchoolRegistrationPage() {
                   <Building2 size={32} />
                 </div>
                 <div>
-                  <h2 className="text-4xl font-black leading-none uppercase italic">Register<br/>Institution</h2>
-                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-4 italic">Corporate Onboarding v4.0</p>
+                  <h2 className="text-4xl font-black leading-none uppercase italic">Register<br/>School</h2>
+                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-4 italic">School Setup</p>
                 </div>
               </div>
 
               <div className="relative z-10 pt-16 border-t border-white/5 space-y-6">
-                <FeatureItem text="Unlimited Student Nodes" />
-                <FeatureItem text="Encrypted Staff Isolation" />
-                <FeatureItem text="Global Academic Standards" />
+                <FeatureItem text="Unlimited Students" />
+                <FeatureItem text="Secure Staff Accounts" />
+                <FeatureItem text="Smart School Management" />
               </div>
             </div>
 
@@ -213,12 +213,12 @@ export default function SchoolRegistrationPage() {
             <div className="flex-1 p-10 md:p-16 space-y-12">
               <div className="flex justify-between items-end">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900 uppercase">School Profiling</h3>
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">Institutional Master Registry</p>
+                  <h3 className="text-2xl font-black text-slate-900 uppercase">School Profile</h3>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest mt-1">School Registration Info</p>
                 </div>
                 <div className="hidden sm:block text-right">
                   <p className="text-[10px] font-black text-blue-600 tracking-widest leading-none">Status: Ready</p>
-                  <p className="text-[10px] font-black text-slate-300 tracking-widest mt-1 uppercase">Cloud Archive</p>
+                  <p className="text-[10px] font-black text-slate-300 tracking-widest mt-1 uppercase">Saved Online</p>
                 </div>
               </div>
 
@@ -226,15 +226,15 @@ export default function SchoolRegistrationPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div className="space-y-10 md:col-span-2">
                     <InputField 
-                      label="Institutional Legal Name" 
-                      placeholder="Ex: St. Mary's Global Academy"
+                      label="School Legal Name" 
+                      placeholder="Ex: Little Flowers Public School"
                       icon={Building2}
                       required
                       value={formData.schoolName}
                       onChange={(e: any) => setFormData({...formData, schoolName: e.target.value})}
                     />
                     <InputField 
-                      label="Desired School Code (Unique Identifier)" 
+                      label="Desired School Code (Short Code)" 
                       placeholder="Ex: MARY01"
                       icon={ShieldCheck}
                       required
@@ -273,7 +273,7 @@ export default function SchoolRegistrationPage() {
                   </div>
 
                   <div className="md:col-span-2 pt-6 border-t border-slate-50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-10">Administrative Head (First Admin)</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-10">School Administrator Info</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <InputField 
                         label="Full Name" 
@@ -284,7 +284,7 @@ export default function SchoolRegistrationPage() {
                         onChange={(e: any) => setFormData({...formData, adminName: e.target.value})}
                       />
                       <InputField 
-                        label="Registered Email" 
+                        label="Admin Email" 
                         type="email"
                         placeholder="admin@school.com"
                         icon={Mail}
@@ -293,7 +293,7 @@ export default function SchoolRegistrationPage() {
                         onChange={(e: any) => setFormData({...formData, adminEmail: e.target.value})}
                       />
                       <InputField 
-                        label="Contact Number" 
+                        label="Mobile Number" 
                         placeholder="+91 XXXX-XXXXXX"
                         icon={Smartphone}
                         required
@@ -322,7 +322,7 @@ export default function SchoolRegistrationPage() {
                     disabled={loading}
                     className="w-full bg-slate-900 text-white py-6 rounded-[5px] font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
                   >
-                    {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Sparkles size={20} /> Initialize Institution</>}
+                    {loading ? <RefreshCw className="animate-spin" size={20} /> : <><Sparkles size={20} /> Register My School</>}
                   </button>
                   
                   <button 
@@ -330,7 +330,7 @@ export default function SchoolRegistrationPage() {
                     onClick={() => navigate('/')}
                     className="w-full bg-slate-50 text-slate-400 py-6 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
                   >
-                    Cancel Onboarding
+                    Cancel Registration
                   </button>
                 </div>
               </form>
@@ -338,7 +338,7 @@ export default function SchoolRegistrationPage() {
               <div className="bg-blue-50/50 p-8 rounded-[5px] border border-blue-100/50 flex items-start gap-4">
                 <Info size={18} className="text-blue-500 mt-1" />
                 <p className="text-[10px] font-black text-slate-500 leading-relaxed uppercase tracking-wider">
-                  Important: This process will create a master administrative account. Keep your School Code secure but shareable with your team.
+                  Important: This process will create a main admin account. Keep your School Code secure but shareable with your team.
                 </p>
               </div>
             </div>

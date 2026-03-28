@@ -113,7 +113,7 @@ const ProfileSetupPage = () => {
    if (error) throw error;
    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
    setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
-   toast.success("Biometric capture successful!");
+   toast.success("Photo uploaded successfully!");
   } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
  };
 
@@ -135,7 +135,7 @@ const ProfileSetupPage = () => {
    });
 
    if (error) throw error;
-   toast.success("Identity Refined: Authorization Confirmed ✅");
+   toast.success("Profile updated successfully! ✅");
 
    const { data: { user } } = await supabase.auth.getUser();
    const isSelfEdit = user?.id === profileId;
@@ -166,7 +166,7 @@ const ProfileSetupPage = () => {
       <RefreshCw size={60} className="animate-spin text-blue-600/20"/>
       <Fingerprint size={30} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600" />
     </div>
-    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Synchronizing Identity Protocols...</p>
+    <p className="font-black  text-slate-400 text-[10px] mt-8 text-center px-10">Loading profile...</p>
    </div>
  );
 
@@ -178,11 +178,11 @@ const ProfileSetupPage = () => {
     <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className=" text-center md:text-left">
        <h1 className="text-5xl md:text-7xl font-black text-slate-900  leading-none uppercase">
-        Protocol<br/>
-        <span className="text-blue-600">Initialization</span>
+        Profile<br/>
+        <span className="text-blue-600">Setup</span>
        </h1>
        <p className="text-slate-400 font-black text-[10px] mt-4 flex items-center justify-center md:justify-start gap-2">
-        <ShieldCheck size={12} className="text-blue-500" /> Paid Identity Calibration Flow
+        <ShieldCheck size={12} className="text-blue-500" /> Update your information
        </p>
       </motion.div>
       
@@ -207,8 +207,8 @@ const ProfileSetupPage = () => {
        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50/50 blur-[100px] rounded-full -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110 pointer-events-none"></div>
 
        <div className="text-center md:text-left relative z-10 border-b border-slate-50 pb-10">
-         <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">{id ? `Update ${targetType} Identity` : "Identity Refinement"}</h2>
-         <p className="text-[10px] font-black text-slate-400  mt-3">Sequential Data Alignment</p>
+         <h2 className="text-3xl font-black text-slate-900  leading-none uppercase">{id ? `Update ${targetType} Identity` : "Update Profile"}</h2>
+         <p className="text-[10px] font-black text-slate-400  mt-3">Fill your details below</p>
        </div>
 
        <form onSubmit={handleUpdate} className="space-y-12 relative z-10">
@@ -235,55 +235,55 @@ const ProfileSetupPage = () => {
 
          <div className="grid gap-10">
           <InputField 
-           label="School Nomenclature" 
+           label="Full Name" 
            value={formData.full_name} 
            onChange={(e: any) => setFormData({...formData, full_name: e.target.value})} 
            icon={User}
-           placeholder="Enter identity name..."
+           placeholder="Enter your name..."
           />
 
           <InputField 
-           label="Communication Node (Mail)" 
+           label="Email Address" 
            type="email"
            value={formData.email} 
            onChange={(e: any) => setFormData({...formData, email: e.target.value})} 
            icon={Mail}
-           placeholder="node@institutional.asm"
+           placeholder="yourname@email.com"
           />
 
           <InputField 
-           label="Satellite Contact (Mobile)" 
+           label="Mobile Number" 
            value={formData.phone} 
            onChange={(e: any) => setFormData({...formData, phone: e.target.value})} 
            icon={Smartphone}
-           placeholder="Direct line sync..."
+           placeholder="Enter your number..."
           />
 
           {targetType === 'teacher' && (
            <InputField 
-            label="Specialization Domain" 
+            label="Subject/Expertise" 
             value={formData.subject} 
             onChange={(e: any) => setFormData({...formData, subject: e.target.value})} 
             icon={BookOpen}
-            placeholder="Core subject alignment..."
+            placeholder="Mathematics, Science, etc."
            />
           )}
 
           {targetType === 'student' && (
            <div className="grid gap-10">
              <InputField 
-              label="Guardian Authority" 
+              label="Parent/Father Name" 
               value={formData.parent_name} 
               onChange={(e: any) => setFormData({...formData, parent_name: e.target.value})} 
               icon={UserCheck}
-              placeholder="Parent nomenclature..."
+              placeholder="Enter father's name..."
              />
              <InputField 
-              label="Geospatial Hub (Address)" 
+              label="Home Address" 
               value={formData.address} 
               onChange={(e: any) => setFormData({...formData, address: e.target.value})} 
               icon={MapPin}
-              placeholder="Residential coordinates..."
+              placeholder="Enter your address..."
              />
            </div>
           )}
@@ -298,7 +298,7 @@ const ProfileSetupPage = () => {
            {saving ? (
              <RefreshCw className="animate-spin" size={24} />
            ) : (
-             <><Save size={24} className="group-hover/btn:translate-y-[-2px] transition-transform" /> Authorize Calibration</>
+             <><Save size={24} className="group-hover/btn:translate-y-[-2px] transition-transform" /> Save Profile</>
            )}
           </button>
          </div>
@@ -314,26 +314,26 @@ const ProfileSetupPage = () => {
         className="bg-slate-900 rounded-[5px] p-12 text-white shadow-2xl relative overflow-hidden group"
        >
          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-20 blur-3xl rounded-full" />
-         <h3 className="text-[10px] font-black text-blue-400  mb-12 relative z-10 text-center md:text-left uppercase">Calibration Pulse</h3>
+         <h3 className="text-[10px] font-black text-blue-400  mb-12 relative z-10 text-center md:text-left uppercase">System Status</h3>
          
          <div className="space-y-10 relative z-10">
           <div className="flex justify-between items-end border-b border-white/5 pb-8">
-            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Sync Integrity</p>
-            <p className="text-3xl font-black  text-blue-400 leading-none">100%</p>
+            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Status</p>
+            <p className="text-3xl font-black  text-blue-400 leading-none">Healthy</p>
           </div>
           <div className="flex justify-between items-end border-b border-white/5 pb-8">
-            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Node Response</p>
+            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Connection</p>
             <p className="text-xl font-black  leading-none text-emerald-400">Stable</p>
           </div>
           <div className="flex justify-between items-end border-b border-white/5 pb-8">
-            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Protocol ASM</p>
-            <p className="text-xl font-black  text-indigo-400 leading-none">v3.0.4</p>
+            <p className="text-[9px] font-black text-slate-400 tracking-widest leading-none">Version</p>
+            <p className="text-xl font-black  text-indigo-400 leading-none">v5.8.0</p>
           </div>
          </div>
 
          <div className="mt-12 bg-white/5 backdrop-blur-md p-6 rounded-[5px] border border-white/5">
           <p className="text-[9px] font-black text-white/30  leading-relaxed">
-           Notice: Identity calibration requires absolute nomenclature accuracy for institutional indexing.
+           Note: This information is used for school records. Please ensure your name matches official identification.
           </p>
          </div>
        </motion.div>
@@ -348,7 +348,7 @@ const ProfileSetupPage = () => {
           <div className="w-10 h-10 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-500 shadow-inner">
             <Info size={20} />
           </div>
-          <h4 className="text-lg font-black text-slate-900  ">Identity Guide</h4>
+          <h4 className="text-lg font-black text-slate-900  ">Quick Guide</h4>
          </div>
          <ul className="space-y-6">
           <li className="flex items-start gap-5">
@@ -361,7 +361,7 @@ const ProfileSetupPage = () => {
           </li>
           <li className="flex items-start gap-5">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shadow-lg shadow-blue-200 shrink-0" />
-            <p className="text-[11px] font-black text-slate-500 leading-relaxed">Mail node updates will require a terminal sign-out for re-authentication.</p>
+            <p className="text-[11px] font-black text-slate-500 leading-relaxed">Updating your email will require you to sign in again.</p>
           </li>
          </ul>
          
@@ -371,7 +371,7 @@ const ProfileSetupPage = () => {
             onClick={() => navigate('/reset-password')}
             className="w-full flex items-center justify-center gap-3 py-4 bg-slate-50 text-slate-900 rounded-[5px] font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95 border border-slate-100 shadow-sm"
            >
-            <LucideLock size={16} /> Change Password Protocol
+            <LucideLock size={16} /> Change Password
            </button>
          </div>
         </motion.div>
