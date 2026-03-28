@@ -51,12 +51,8 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    if (existingStaff) throw new Error(`Email already exists: This email is used by another teacher (${existingStaff.full_name}).`);
 
    // 2. Reverting to original induction protocol (Secondary Client)
-   // 2. Identity Synchronized Verification (Institutional Isolation)
-   const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
-   
-   if (!schoolId) {
-     throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
-   }
+   // 2. Reverting to original induction protocol (Secondary Client)
+   const schoolId = localStorage.getItem('current_school_id');
    
    // Initialize temporary client to prevent session hijack
    const tempSupabase = createClient(
@@ -95,10 +91,7 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
       school_id: schoolId
      }]);
      
-     if (dbError) {
-       console.error("Critical DB Sync Error:", dbError);
-       throw new Error(`Database Synchronization Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
-     }
+     if (dbError) throw dbError;
     }
 
    toast.success("Teacher added successfully! 💎");

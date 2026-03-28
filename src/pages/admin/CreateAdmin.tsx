@@ -60,12 +60,7 @@ const CreateAdmin = () => {
    if (authError) throw authError;
 
    if (authData.user) {
-    const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
-    
-    if (!schoolId) {
-      throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
-    }
-
+    const schoolId = localStorage.getItem('current_school_id');
     const { error: dbError } = await supabase.from('teachers').insert([{
      id: authData.user.id,
      full_name: formData.full_name,
@@ -75,10 +70,7 @@ const CreateAdmin = () => {
      subject: 'Administration'
     }]);
 
-    if (dbError) {
-      console.error("Critical Admin Sync Error:", dbError);
-      throw new Error(`Administrative Federation Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
-    }
+    if (dbError) throw dbError;
    }
 
    toast.success(`New Admin Paid: ${formData.full_name}`);

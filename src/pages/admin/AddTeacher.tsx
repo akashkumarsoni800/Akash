@@ -47,12 +47,8 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
    }
 
-    // 1. Identity Synchronized Verification (Institutional Isolation)
-    const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
-    
-    if (!schoolId) {
-      throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
-    }
+    // 1. Create Account via Secondary Client
+    const schoolId = localStorage.getItem('current_school_id');
     
     // Initialize temporary client for session isolation
     const tempSupabase = createClient(
@@ -91,10 +87,7 @@ const AddTeacher = () => {
        school_id: schoolId
       }]);
       
-      if (dbError) {
-        console.error("Critical DB Sync Error:", dbError);
-        throw new Error(`Database Synchronization Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
-      }
+      if (dbError) throw dbError;
      }
 
     toast.success("Teacher Created Successfully!");
