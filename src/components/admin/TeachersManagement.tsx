@@ -46,46 +46,64 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Email already exists: This email is used by a student (${existing.full_name}).`);
 
-   // Note: We no longer block on existing Teacher email check because .upsert() 
-   // handles identity resolution across one or more institutions gracefully.
-
-   // 2. Identity Verification (Institutional Multi-Tenancy)
-   const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
+   // 2. Identity Resolution (Find existing identity or create new)
+   let userId: string | null = null;
    
-   if (!schoolId) {
-     throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
+   // Check if user already exists in our teachers table (any institution)
+   const { data: globalIdentity } = await supabase
+     .from('teachers')
+     .select('id')
+     .eq('email', formData.email)
+     .maybeSingle();
+
+   if (globalIdentity) {
+     userId = globalIdentity.id;
+   } else {
+     // Initialize temporary client to prevent session hijack
+     const tempSupabase = createClient(
+       import.meta.env.VITE_SUPABASE_URL,
+       import.meta.env.VITE_SUPABASE_ANON_KEY,
+       {
+         auth: {
+           persistSession: false,
+           autoRefreshToken: false,
+           detectSessionInUrl: false
+         }
+       }
+     );
+
+     const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+       email: formData.email,
+       password: 'Teacher@123',
+       options: {
+         data: {
+           full_name: formData.fullName,
+           role: 'teacher',
+         },
+       },
+     });
+
+     if (authError) {
+       // Fallback for globally registered users not in our Teacher table yet
+       if (authError.message.includes("already registered") || authError.status === 400) {
+          throw new Error("This email is already registered in the system. Use another email or contact support.");
+       }
+       throw authError;
+     }
+     
+     userId = authData.user?.id || null;
    }
-   
-   // Initialize temporary client to prevent session hijack
-   const tempSupabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-     }
-    }
-   );
 
-   const { data: authData, error: authError } = await tempSupabase.auth.signUp({
-    email: formData.email,
-    password: formData.password,
-    options: {
-     data: {
-      full_name: formData.fullName,
-      role: 'teacher'
-     }
-    }
-   });
-
-   if (authError) throw authError;
-
-    if (authData.user) {
+   if (userId) {
      // Identity Resolution: Use upsert to associate with institutional node
+     const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
+     
+     if (!schoolId) {
+       throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
+     }
+
      const { error: dbError } = await supabase.from('teachers').upsert({
-      id: authData.user.id,
+      id: userId,
       full_name: formData.fullName,
       subject: formData.subject,
       email: formData.email,
