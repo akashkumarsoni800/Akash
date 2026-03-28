@@ -55,7 +55,6 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
 // --- SHARED ---
-import DynamicBranding from './components/shared/DynamicBranding';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,7 +79,6 @@ function App() {
     >
       <BrowserRouter>
         <div className="min-h-screen bg-gray-50 notranslate flex flex-col">
-          <DynamicBranding />
           <Toaster position="top-right" richColors closeButton />
 
           <Routes>
