@@ -46,7 +46,7 @@ const GlobalGallerySlider = () => {
             <Image size={18} />
           </div>
           <div>
-            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">Institutional Gallery</h3>
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">School Gallery</h3>
             <p className="text-[8px] font-black text-slate-400 uppercase mt-1">Recent School Events & Highlights</p>
           </div>
         </div>
