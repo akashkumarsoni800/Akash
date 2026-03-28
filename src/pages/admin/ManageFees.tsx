@@ -30,6 +30,7 @@ const ManageFees = () => {
   const [showNextMonthPrompt, setShowNextMonthPrompt] = useState(false);
   const [nextMonth, setNextMonth] = useState('');
   const [waSearch, setWaSearch] = useState('');
+  const [classFilterWa, setClassFilterWa] = useState('');
   const [showScanner, setShowScanner] = useState(false);
   const webcamRef = useRef<any>(null);
   const [WebcamComp, setWebcamComp] = useState<any>(null);
@@ -39,7 +40,7 @@ const ManageFees = () => {
  const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
  const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
- const { data: pendingReminders = [], isLoading: remindersLoading } = useGetFeeReminders(remindMonth);
+ const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth);
 
  // ✅ 2. Mutations
  const addFeeHeadMutation = useAddFeeHead();
@@ -217,15 +218,33 @@ const ManageFees = () => {
   };
 
   const handleBulkReminders = () => {
-    if (pendingReminders.length === 0) return toast.error("No pending reminders");
-    if (!window.confirm(`This will open ${pendingReminders.length} WhatsApp tabs. Continue?`)) return;
-
+    if (!pendingReminders.length) return;
     pendingReminders.forEach((fee: any, idx: number) => {
-      setTimeout(() => {
-        handleSendReminder(fee);
-      }, idx * 1500); // 1.5s delay to prevent browser blocking/spam
+      setTimeout(() => handleSendReminder(fee), idx * 1500);
     });
-    toast.success(`Dispatching ${pendingReminders.length} reminders...`);
+    toast.success(`Sending ${pendingReminders.length} reminders...`);
+  };
+
+  const handleClassBulkReminders = () => {
+    if (!classFilterWa) return;
+    const classStudents = students.filter((s: any) => s.class_name === classFilterWa);
+    if (classStudents.length === 0) {
+      toast.error(`No students found in Class ${classFilterWa}`);
+      return;
+    }
+    
+    classStudents.forEach((student: any, idx: number) => {
+      setTimeout(() => {
+        handleSendReminder({ 
+          students: student, 
+          total_amount: '---', 
+          month: 'Adhoc', 
+          status: 'Pending', 
+          fee_structure: {} 
+        });
+      }, idx * 1500);
+    });
+    toast.success(`Broadcasting to ${classStudents.length} students in Class ${classFilterWa}...`);
   };
 
  if (loading && students.length === 0) {
@@ -519,24 +538,51 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">PENDING FEE ALERTS</p>
             </div>
           </div>
-           <div className="flex items-center gap-4">
-            <button 
-              onClick={handleBulkReminders}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-[5px] text-[8px] font-black tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase shadow-lg shadow-emerald-50 active:scale-95"
-            >
-              <Zap size={10} /> Send All Reminders
-            </button>
-            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-[5px]">
-              <Calendar size={16} className="text-slate-400 ml-2" />
-              <input 
-              type="month" 
-              className="bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase" 
-              value={remindMonth}
-              onChange={(e) => setRemindMonth(e.target.value)}
-            />
-            </div>
-          </div>
         </div>
+
+        <div className="flex flex-wrap items-center gap-4 mb-10 bg-slate-50 p-6 rounded-[5px] border border-slate-100">
+           <div className="flex-1 min-w-[200px] flex items-center gap-3 bg-white p-3 rounded-[5px] border border-slate-100 shadow-inner">
+             <Filter size={16} className="text-emerald-500 ml-2" />
+             <select 
+               value={classFilterWa}
+               onChange={(e) => setClassFilterWa(e.target.value)}
+               className="w-full bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase appearance-none"
+             >
+               <option value="">Choose Class for Bulk</option>
+               {[...new Set(students.map((s: any) => s.class_name))].sort().map(c => (
+                 <option key={c} value={c}>Class {c}</option>
+               ))}
+             </select>
+           </div>
+           
+           {classFilterWa && (
+             <button 
+               onClick={handleClassBulkReminders}
+               className="px-8 py-4 bg-slate-900 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 uppercase shadow-xl animate-bounce-short"
+             >
+               <Send size={14} /> Send to All in Class {classFilterWa}
+             </button>
+           )}
+ 
+           <div className="h-10 w-px bg-slate-200 mx-2 hidden md:block" />
+ 
+           <div className="flex items-center gap-4 bg-white p-3 rounded-[5px] border border-slate-100 shadow-inner">
+             <Calendar size={16} className="text-slate-400 ml-2" />
+             <input 
+               type="month" 
+               className="bg-transparent border-none text-[10px] font-black focus:ring-0 uppercase" 
+               value={remindMonth}
+               onChange={(e) => setRemindMonth(e.target.value)}
+             />
+           </div>
+ 
+           <button 
+             onClick={handleBulkReminders}
+             className="px-6 py-4 bg-emerald-600 text-white rounded-[5px] text-[10px] font-black tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2 uppercase shadow-lg shadow-emerald-50 active:scale-95"
+           >
+             <Zap size={10} /> Send Pending ({pendingReminders.length})
+           </button>
+         </div>
 
         <div className="space-y-4">
           {/* ✅ 1. Quick Individual Reminder Search */}
