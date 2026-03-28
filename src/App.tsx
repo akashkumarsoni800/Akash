@@ -48,6 +48,8 @@ import ManageSalaries from './pages/admin/ManageSalaries';
 import ManageInventory from './pages/admin/ManageInventory';
 import DocumentHub from './pages/admin/DocumentHub';
 import GalleryPage from './pages/GalleryPage';
+import VerifyStudent from './pages/public/VerifyStudent';
+
 
 
 import { QueryClient } from '@tanstack/react-query';
@@ -88,6 +90,7 @@ function App() {
           <Route path="/register" element={<StudentRegistrationForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/register-school" element={<SchoolRegistrationPage />} />
+          <Route path="/v/:id" element={<VerifyStudent />} />
 
            
 

@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentICard from '../../components/shared/StudentICard';
+import { QRCodeSVG } from 'qrcode.react';
+
 
 const DocumentHub = () => {
  const [studentId, setStudentId] = useState('');
@@ -421,10 +423,13 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
 
     <div className="mt-6 flex justify-between items-end border-t-2 border-slate-100 pt-6">
       <div className="text-center space-y-2">
-       <p className="text-[8px] font-black text-slate-300 tracking-widest leading-none">Seal </p>
-       <div className="w-24 h-12 border-2 border-dashed border-slate-100 rounded-[1.5rem] flex items-center justify-center bg-slate-50/30">
-         <img src={localStorage.getItem('current_school_logo') || "/logo.png"} alt="" className="w-8 h-8 opacity-20 grayscale" />
+       <div className="p-2 bg-white rounded-lg border border-slate-100 shadow-sm inline-block">
+        <QRCodeSVG 
+          value={`${window.location.origin}/v/${std.student_id}`}
+          size={50}
+        />
        </div>
+       <p className="text-[8px] font-black text-slate-300 tracking-widest uppercase mt-1">Scan to Verify</p>
       </div>
       <div className="text-center pb-2">
        <div className="w-48 h-[2px] bg-slate-900 mx-auto"></div>

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
+import { QRCodeSVG } from 'qrcode.react';
 
 const StudentICard = ({ student, hidePrintButton = false }: { student: any, hidePrintButton?: boolean }) => {
  const componentRef = useRef<any>();
@@ -59,15 +60,24 @@ const StudentICard = ({ student, hidePrintButton = false }: { student: any, hide
             <p className="text-[9px] font-black text-gray-700 leading-none">{student.father_name}</p>
            </div>
          </div>
-         
-         <div className="text-center w-16 mb-1">
-           <div className="h-8 flex flex-col justify-end items-center opacity-30 select-none grayscale">
-            <img src="/logo.png" alt="" className="w-5 h-5 mb-1" />
-           </div>
-           <div className="border-t border-blue-900 pt-1">
-            <p className="text-[5px] font-black text-blue-900 tracking-widest leading-none">Principal Sign</p>
-           </div>
-         </div>
+                  <div className="flex items-end gap-3 px-2 mb-1">
+            <div className="bg-white p-1 rounded-sm shadow-sm border border-gray-50 group hover:scale-150 transition-transform origin-bottom-right">
+              <QRCodeSVG 
+                value={`${window.location.origin}/v/${student.student_id}`}
+                size={40}
+                level="M"
+                includeMargin={false}
+              />
+            </div>
+            <div className="text-center w-16">
+              <div className="h-8 flex flex-col justify-end items-center opacity-30 select-none grayscale">
+                <img src="/logo.png" alt="" className="w-5 h-5 mb-1" />
+              </div>
+              <div className="border-t border-blue-900 pt-1">
+                <p className="text-[5px] font-black text-blue-900 tracking-widest leading-none uppercase">Principal Sign</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
