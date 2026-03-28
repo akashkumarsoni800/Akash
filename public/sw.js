@@ -19,12 +19,23 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only cache GET requests — POST/HEAD/PUT etc. are not cacheable
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Skip Supabase API calls — always fetch fresh from network
+  const url = new URL(event.request.url);
+  if (url.hostname.includes('supabase.co')) {
+    return;
+  }
+
   // Strategy: Network-First, Falling back to Cache
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache successful responses
-        if (response.status === 200) {
+        // Only cache successful GET responses
+        if (response && response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
