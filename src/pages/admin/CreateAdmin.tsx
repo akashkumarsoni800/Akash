@@ -29,8 +29,7 @@ const CreateAdmin = () => {
     throw new Error("Password must be at least 6 characters long.");
    }
 
-   // 1.0 Identity Conflict Check
-   // Initial Identity Sync Check (Students remain globally unique)
+   // 1.0 Initial Identity Conflict Check (Students remain globally unique)
    const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
    if (existing) throw new Error(`Identity conflict: Email registered to a student (${existing.full_name})`);
    
@@ -80,7 +79,10 @@ const CreateAdmin = () => {
      subject: 'Administration'
     }, { onConflict: 'id,school_id' });
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      console.error("Critical Admin Sync Error:", dbError);
+      throw new Error(`Administrative Federation Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
+    }
    }
 
    toast.success(`New Admin Paid: ${formData.full_name}`);

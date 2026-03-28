@@ -94,7 +94,10 @@ export default function TeachersManagement({ roleFilter = 'teacher' }: { roleFil
       school_id: schoolId
      }, { onConflict: 'id,school_id' });
      
-     if (dbError) throw dbError;
+     if (dbError) {
+       console.error("Critical DB Sync Error:", dbError);
+       throw new Error(`Database Synchronization Failed [${dbError.code || 'UNKNOWN'}]: ${dbError.message || 'Operation Aborted'}`);
+     }
     }
 
    toast.success("Teacher added successfully! 💎");
