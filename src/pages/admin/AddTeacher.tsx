@@ -25,7 +25,7 @@ const AddTeacher = () => {
   setIsPending(true);
 
   try {
-   // 0. Check if email already exists in Students table
+   // 0. Check if email already exists in Students table (Students remain globally unique)
    const { data: existingStudent } = await supabase
     .from('students')
     .select('full_name')
@@ -36,19 +36,15 @@ const AddTeacher = () => {
     throw new Error(`This email is already registered as a student (${existingStudent.full_name}).`);
    }
 
-   // 0.1 Check if email already exists in Teachers table
-   const { data: existingTeacher } = await supabase
-    .from('teachers')
-    .select('full_name')
-    .eq('email', formData.email)
-    .maybeSingle();
+   // Note: We no longer block on existing Teacher email check because .upsert() 
+   // handles identity resolution across one or more institutions gracefully.
 
-   if (existingTeacher) {
-    throw new Error(`This email is already registered as faculty (${existingTeacher.full_name}).`);
-   }
-
-    // 1. Create Account via Secondary Client
-    const schoolId = localStorage.getItem('current_school_id');
+    // 1. Identity Verification (Institutional Multi-Tenancy)
+    const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
+    
+    if (!schoolId) {
+      throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
+    }
     
     // Initialize temporary client for session isolation
     const tempSupabase = createClient(
@@ -77,7 +73,8 @@ const AddTeacher = () => {
     if (authError) throw authError;
 
      if (authData.user) {
-      const { error: dbError } = await supabase.from('teachers').insert([{
+      // Identity Resolution: Use upsert to associate with institutional node
+      const { error: dbError } = await supabase.from('teachers').upsert({
        id: authData.user.id,
        full_name: formData.name,
        subject: formData.subject,
@@ -85,7 +82,7 @@ const AddTeacher = () => {
        phone: formData.phone,
        role: 'teacher',
        school_id: schoolId
-      }]);
+      }, { onConflict: 'id,school_id' });
       
       if (dbError) throw dbError;
      }

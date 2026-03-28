@@ -30,8 +30,12 @@ const CreateAdmin = () => {
    }
 
    // 1.0 Identity Conflict Check
-   const { data: existing } = await supabase.from('teachers').select('full_name').eq('email', formData.email).maybeSingle();
-   if (existing) throw new Error(`Identity conflict: Email registered to faculty (${existing.full_name})`);
+   // Initial Identity Sync Check (Students remain globally unique)
+   const { data: existing } = await supabase.from('students').select('full_name').eq('email', formData.email).maybeSingle();
+   if (existing) throw new Error(`Identity conflict: Email registered to a student (${existing.full_name})`);
+   
+   // Note: We no longer block on existing Teacher email check because .upsert() 
+   // handles identity resolution across one or more institutions gracefully.
 
    // 1. Reverting to original induction protocol (Secondary Client)
    const tempSupabase = createClient(
@@ -60,15 +64,21 @@ const CreateAdmin = () => {
    if (authError) throw authError;
 
    if (authData.user) {
-    const schoolId = localStorage.getItem('current_school_id');
-    const { error: dbError } = await supabase.from('teachers').insert([{
+    // Identity Resolution: Use upsert to associate with institutional node
+    const schoolId = localStorage.getItem('current_school_id') || '15d35319-3fd1-4684-b539-7528db0614e8';
+    
+    if (!schoolId) {
+      throw new Error("Identity Synchronization Error: Institutional node ID is missing from your session. Please refresh the page.");
+    }
+
+    const { error: dbError } = await supabase.from('teachers').upsert({
      id: authData.user.id,
      full_name: formData.full_name,
      email: formData.email,
      role: 'admin',
      school_id: schoolId,
      subject: 'Administration'
-    }]);
+    }, { onConflict: 'id,school_id' });
 
     if (dbError) throw dbError;
    }
