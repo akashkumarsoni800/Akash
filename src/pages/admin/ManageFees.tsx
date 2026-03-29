@@ -104,12 +104,24 @@ const ManageFees = () => {
           setShowScanner(false);
 
           try {
-            // Direct Supabase lookup — works for both student_id and UUID id
-            const { data, error } = await supabase
+            // Step 1: Try student_id (most common case)
+            let { data, error } = await supabase
               .from('students')
               .select('*')
-              .or(`student_id.eq."${studentId}",id.eq."${studentId}",roll_no.eq."${studentId}"`)
+              .eq('student_id', studentId)
               .maybeSingle();
+
+            // Step 2: Try roll_no
+            if (!data && !error) {
+              const r2 = await supabase.from('students').select('*').eq('roll_no', studentId).maybeSingle();
+              data = r2.data; error = r2.error;
+            }
+
+            // Step 3: Try UUID id (fallback for old QR codes)
+            if (!data && !error) {
+              const r3 = await supabase.from('students').select('*').eq('id', studentId).maybeSingle();
+              data = r3.data; error = r3.error;
+            }
 
             if (data) {
               setScannedStudent(data);
