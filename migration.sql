@@ -265,3 +265,54 @@ CREATE POLICY "Public Gallery Read" ON storage.objects FOR SELECT USING (bucket_
 
 DROP POLICY IF EXISTS "Admin Gallery Write" ON storage.objects;
 CREATE POLICY "Admin Gallery Write" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'gallery');
+
+-- 10. Attendance Table (For QR-based attendance marking)
+CREATE TABLE IF NOT EXISTS public.attendance (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id TEXT NOT NULL,
+    student_name TEXT,
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    status TEXT NOT NULL DEFAULT 'Present',  -- Present / Absent / Late
+    marked_by TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(student_id, date, school_id)
+);
+
+ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth Manage Attendance" ON public.attendance;
+CREATE POLICY "Auth Manage Attendance" ON public.attendance FOR ALL TO authenticated USING (true) WITH CHECK (true);
+GRANT ALL ON TABLE public.attendance TO authenticated;
+
+-- 11. Library Tables (For QR-based book issue/return)
+CREATE TABLE IF NOT EXISTS public.library_books (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    author TEXT,
+    total_copies INT NOT NULL DEFAULT 1,
+    available_copies INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.library_books ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth Manage Library Books" ON public.library_books;
+CREATE POLICY "Auth Manage Library Books" ON public.library_books FOR ALL TO authenticated USING (true) WITH CHECK (true);
+GRANT ALL ON TABLE public.library_books TO authenticated;
+
+CREATE TABLE IF NOT EXISTS public.book_issues (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    student_id TEXT NOT NULL,
+    student_name TEXT,
+    book_id UUID REFERENCES public.library_books(id) ON DELETE CASCADE,
+    issued_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    due_date DATE,
+    returned_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.book_issues ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth Manage Book Issues" ON public.book_issues;
+CREATE POLICY "Auth Manage Book Issues" ON public.book_issues FOR ALL TO authenticated USING (true) WITH CHECK (true);
+GRANT ALL ON TABLE public.book_issues TO authenticated;

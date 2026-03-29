@@ -17,20 +17,22 @@ const VerifyStudent = () => {
         setLoading(true);
         if (!id) throw new Error("Student ID is missing");
 
-        // Step 1: Try by student_id (original working approach)
-        let { data, error: fetchError } = await supabase
-          .from('students')
-          .select('*')
-          .eq('student_id', id)
-          .maybeSingle();
+        const numericId = isNaN(Number(id)) ? null : Number(id);
 
-        // Step 2: If not found, try by UUID (for old QR codes using internal id)
+        // Step 1: Try student_id as number (DB column is INTEGER)
+        let { data, error: fetchError } = numericId
+          ? await supabase.from('students').select('*').eq('student_id', numericId).maybeSingle()
+          : { data: null, error: null };
+
+        // Step 2: Try student_id as string
         if (!data && !fetchError) {
-          const result = await supabase
-            .from('students')
-            .select('*')
-            .eq('id', id)
-            .maybeSingle();
+          const r2 = await supabase.from('students').select('*').eq('student_id', id).maybeSingle();
+          data = r2.data; fetchError = r2.error;
+        }
+
+        // Step 3: Try UUID id (fallback for old QR codes)
+        if (!data && !fetchError) {
+          const result = await supabase.from('students').select('*').eq('id', id).maybeSingle();
           data = result.data;
           fetchError = result.error;
         }

@@ -49,6 +49,7 @@ import ManageInventory from './pages/admin/ManageInventory';
 import DocumentHub from './pages/admin/DocumentHub';
 import GalleryPage from './pages/GalleryPage';
 import VerifyStudent from './pages/public/VerifyStudent';
+import LibraryHub from './pages/admin/LibraryHub';
 
 
 
@@ -132,6 +133,7 @@ function App() {
             <Route path="/admin/manage-salaries" element={<ProtectedRoute allowedRole="admin"><ManageSalaries /></ProtectedRoute>} />
             <Route path="/admin/inventory" element={<ProtectedRoute allowedRole="admin"><ManageInventory /></ProtectedRoute>} />
             <Route path="/admin/documents" element={<ProtectedRoute allowedRole="admin"><DocumentHub /></ProtectedRoute>} />
+            <Route path="/admin/library" element={<ProtectedRoute allowedRole="admin"><LibraryHub /></ProtectedRoute>} />
             <Route path="/gallery" element={<ProtectedRoute allowedRole="any"><GalleryPage /></ProtectedRoute>} />
           </Route>
 

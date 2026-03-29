@@ -104,20 +104,26 @@ const ManageFees = () => {
           setShowScanner(false);
 
           try {
-            // Step 1: Try student_id (most common case)
-            let { data, error } = await supabase
-              .from('students')
-              .select('*')
-              .eq('student_id', studentId)
-              .maybeSingle();
+            const numericId = isNaN(Number(studentId)) ? null : Number(studentId);
 
-            // Step 2: Try roll_no
+            // Step 1: Try student_id as number (DB column is INTEGER)
+            let { data, error } = numericId
+              ? await supabase.from('students').select('*').eq('student_id', numericId).maybeSingle()
+              : { data: null, error: null };
+
+            // Step 2: Try student_id as string (fallback)
+            if (!data && !error) {
+              const r1b = await supabase.from('students').select('*').eq('student_id', studentId).maybeSingle();
+              data = r1b.data; error = r1b.error;
+            }
+
+            // Step 3: Try roll_no
             if (!data && !error) {
               const r2 = await supabase.from('students').select('*').eq('roll_no', studentId).maybeSingle();
               data = r2.data; error = r2.error;
             }
 
-            // Step 3: Try UUID id (fallback for old QR codes)
+            // Step 4: Try UUID id (fallback for old QR codes)
             if (!data && !error) {
               const r3 = await supabase.from('students').select('*').eq('id', studentId).maybeSingle();
               data = r3.data; error = r3.error;
@@ -467,7 +473,7 @@ const ManageFees = () => {
         </div>
 
         <div className="space-y-6 relative z-10">
-          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Scan any student ID card to instantly access fee management, profile, documents, and more.</p>
+          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Scan any student ID card — mark attendance, assign/pay fees, WhatsApp reminders, library & more.</p>
           
           <div className="flex gap-4">
             <button 
@@ -487,7 +493,7 @@ const ManageFees = () => {
             )}
           </div>
 
-          {/* ✅ Action Hub — shown after scan */}
+          {/* ✅ Universal Action Hub */}
           <AnimatePresence>
             {scannedStudent && (
               <motion.div
@@ -496,7 +502,7 @@ const ManageFees = () => {
                 exit={{ opacity: 0, y: 10 }}
                 className="bg-white rounded-[5px] overflow-hidden shadow-2xl border border-slate-100"
               >
-                {/* Student header */}
+                {/* Student Card Header */}
                 <div className="flex items-center gap-4 p-5 bg-slate-50 border-b border-slate-100">
                   <div className="w-14 h-14 rounded-[5px] overflow-hidden border-2 border-white shadow-md flex-shrink-0">
                     {scannedStudent.photo_url ? (
@@ -519,46 +525,157 @@ const ManageFees = () => {
                   </div>
                 </div>
 
-                {/* Action Grid */}
-                <div className="grid grid-cols-2 gap-0 divide-x divide-y divide-slate-100">
+                {/* ✅ Attendance Row */}
+                <div className="p-4 bg-emerald-50/30 border-b border-slate-100">
+                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">Quick Attendance</p>
+                  <div className="flex gap-2">
+                    {(['Present', 'Absent', 'Late'] as const).map((status) => (
+                      <button
+                        key={status}
+                        onClick={async () => {
+                          const schoolId = localStorage.getItem('current_school_id');
+                          const { error } = await supabase.from('attendance').upsert({
+                            student_id: scannedStudent.student_id?.toString() || scannedStudent.id,
+                            student_name: scannedStudent.full_name,
+                            school_id: schoolId,
+                            date: new Date().toISOString().split('T')[0],
+                            status,
+                            marked_by: localStorage.getItem('user_email') || 'admin',
+                          }, { onConflict: 'student_id,date,school_id' });
+                          if (error) toast.error('Attendance error: ' + error.message);
+                          else toast.success(`✅ ${scannedStudent.full_name} marked ${status} for today`);
+                        }}
+                        className={`flex-1 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border ${
+                          status === 'Present' ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600' :
+                          status === 'Absent' ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white hover:border-rose-600' :
+                          'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white hover:border-amber-600'
+                        }`}
+                      >
+                        {status}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ✅ WhatsApp Row */}
+                <div className="p-4 bg-green-50/20 border-b border-slate-100">
+                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">WhatsApp Reminder</p>
                   <button
-                    onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected for fee assignment`); }}
-                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-blue-50 transition-all group"
+                    onClick={async () => {
+                      const schoolId = localStorage.getItem('current_school_id');
+                      const { data: pendingFees } = await supabase
+                        .from('fees')
+                        .select('total_amount, month')
+                        .eq('student_id', scannedStudent.student_id?.toString() || scannedStudent.id)
+                        .eq('status', 'Pending')
+                        .eq('school_id', schoolId);
+
+                      const phone = scannedStudent.contact_number?.replace(/\D/g, '');
+                      if (!phone) return toast.error('No phone number for this student');
+
+                      const totalPending = (pendingFees || []).reduce((s: number, f: any) => s + Number(f.total_amount), 0);
+                      const schoolName = localStorage.getItem('current_school_name') || 'School';
+                      const msg = `Dear Parent of *${scannedStudent.full_name}*, your ward has pending fees of *₹${totalPending}* at ${schoolName}. Please pay at the earliest. Thank you.`;
+                      window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                    }}
+                    className="w-full py-3 bg-green-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-green-500 transition-all flex items-center justify-center gap-2"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-                      <CreditCard size={18} />
+                    <MessageSquare size={14} /> Send Pending Fee Reminder
+                  </button>
+                </div>
+
+                {/* Action Grid (8 buttons) */}
+                <div className="grid grid-cols-4 gap-0 divide-x divide-y divide-slate-100">
+                  <button
+                    onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected`); }}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-blue-50 transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                      <CreditCard size={16} />
                     </div>
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Assign Fee</p>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Assign Fee</p>
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      const schoolId = localStorage.getItem('current_school_id');
+                      const { data: pendingFees } = await supabase
+                        .from('fees').select('id, total_amount, month')
+                        .eq('student_id', scannedStudent.student_id?.toString() || scannedStudent.id)
+                        .eq('status', 'Pending').eq('school_id', schoolId);
+                      if (!pendingFees?.length) return toast.info('No pending fees found');
+                      if (window.confirm(`Mark all ₹${pendingFees.reduce((s: number, f: any) => s + Number(f.total_amount), 0)} as Paid?`)) {
+                        await supabase.from('fees').update({ status: 'Paid', updated_at: new Date().toISOString() })
+                          .in('id', pendingFees.map((f: any) => f.id));
+                        toast.success(`✅ All fees marked Paid for ${scannedStudent.full_name}`);
+                      }
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-emerald-50 transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                      <CheckCircle size={16} />
+                    </div>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Pay Fee</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/admin/library?student=${scannedStudent.student_id}`)}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-amber-50 transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all">
+                      <Layout size={16} />
+                    </div>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Library</p>
                   </button>
 
                   <button
                     onClick={() => navigate(`/admin/documents?search=${scannedStudent.student_id}`)}
-                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-purple-50 transition-all group"
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-purple-50 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
-                      <ScanLine size={18} />
+                    <div className="w-9 h-9 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
+                      <ScanLine size={16} />
                     </div>
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ID / Docs</p>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">ID/Docs</p>
                   </button>
 
                   <button
                     onClick={() => navigate(`/v/${scannedStudent.student_id || scannedStudent.id}`)}
-                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-emerald-50 transition-all group"
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-teal-50 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
-                      <ShieldCheck size={18} />
+                    <div className="w-9 h-9 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all">
+                      <ShieldCheck size={16} />
                     </div>
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Verify</p>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Verify</p>
                   </button>
 
                   <button
                     onClick={() => navigate(`/admin/upload-result?student=${scannedStudent.student_id}`)}
-                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-rose-50 transition-all group"
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-rose-50 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all shadow-sm">
-                      <Star size={18} />
+                    <div className="w-9 h-9 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all">
+                      <Star size={16} />
                     </div>
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Results</p>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Results</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/admin/student/${scannedStudent.id}`)}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-indigo-50 transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                      <User size={16} />
+                    </div>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Profile</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate('/admin/library')}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-orange-50 transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-all">
+                      <Info size={16} />
+                    </div>
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">More</p>
                   </button>
                 </div>
               </motion.div>
