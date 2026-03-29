@@ -201,9 +201,16 @@ const ManageFees = () => {
  };
 
   const handleSendReminder = (fee: any) => {
-    const student = fee.students;
-    if (!student) return toast.error("Student record not linked. Please re-assign this fee.");
-    if (!student.contact_number) return toast.error(`No contact number found for ${student.full_name}`);
+    // ✅ Try join first, then fallback to students array in memory
+    let student = fee.students;
+    if (!student?.full_name) {
+      student = students.find((s: any) => 
+        s.student_id?.toString() === fee.student_id?.toString() ||
+        s.id?.toString() === fee.student_id?.toString()
+      );
+    }
+    if (!student) return toast.error("Student record not linked. Re-assign this fee.");
+    if (!student.contact_number) return toast.error(`No contact number for ${student.full_name}`);
 
    let phone = student.contact_number.replace(/\D/g, ''); 
    if (phone.length === 10) phone = `91${phone}`;
@@ -219,16 +226,23 @@ const ManageFees = () => {
     .join('%0A');
 
    const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
-   const message = `*📄 FEE REMINDER - ${schoolName.toUpperCase()}*%0A%0A*Student:* ${student.full_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month to avoid late fees._%0A_Thank you, Management_`;
+   const message = `*📄 FEE REMINDER - ${schoolName.toUpperCase()}*%0A%0A*Student:* ${student.full_name}%0A*Class:* ${student.class_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month to avoid late fees._%0A_Thank you, Management_`;
      window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
 
   const handleBulkReminders = () => {
     if (!pendingReminders.length) return;
+    let sent = 0;
     pendingReminders.forEach((fee: any, idx: number) => {
-      setTimeout(() => handleSendReminder(fee), idx * 1500);
+      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
+        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
+      );
+      if (student?.contact_number) {
+        setTimeout(() => handleSendReminder(fee), sent * 1500);
+        sent++;
+      }
     });
-    toast.success(`Sending ${pendingReminders.length} reminders...`);
+    toast.success(`Sending ${sent} reminders (${pendingReminders.length - sent} skipped — no phone number)...`);
   };
 
   const handleCloneLastMonthFees = async () => {
@@ -815,23 +829,51 @@ const ManageFees = () => {
               <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fetching pending fees...</p>
             </div>
           ) : pendingReminders.length > 0 ? (
-            pendingReminders.map((fee: any) => (
+            pendingReminders
+              .map((fee: any) => {
+                // ✅ Resolve student from join OR from loaded students array
+                const student = fee.students?.full_name
+                  ? fee.students
+                  : students.find((s: any) =>
+                      s.student_id?.toString() === fee.student_id?.toString() ||
+                      s.id?.toString() === fee.student_id?.toString()
+                    );
+                return { ...fee, _student: student };
+              })
+              .filter((fee: any) => {
+                if (!waSearch) return true;
+                const name = fee._student?.full_name || '';
+                return name.toLowerCase().includes(waSearch.toLowerCase());
+              })
+              .filter((fee: any) => {
+                if (!classFilterWa) return true;
+                return fee._student?.class_name === classFilterWa;
+              })
+              .map((fee: any) => (
               <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100">
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
-                  <div className="w-10 h-10 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-300 font-bold text-xs uppercase">
-                    {fee.students?.class_name || '??'}
+                  <div className="w-12 h-12 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-black text-xs uppercase shadow-sm">
+                    {fee._student?.class_name || '??'}
                   </div>
                   <div>
-                    <h4 className="font-black text-slate-900 text-sm leading-none uppercase">{fee.students?.full_name || 'Unknown Student'}</h4>
+                    <h4 className="font-black text-slate-900 text-sm leading-none uppercase">
+                      {fee._student?.full_name || <span className="text-rose-400 italic">Unknown — ID:{fee.student_id}</span>}
+                    </h4>
                     <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter">
-                      Amount: ₹{fee.total_amount} • {fee.month} 
-                      {!fee.students && <span className="text-rose-500 ml-2 font-black italic">[Record Unlinked]</span>}
+                      ₹{fee.total_amount} • {fee.month}
+                      {fee._student?.contact_number && (
+                        <span className="ml-2 text-emerald-500">📱 {fee._student.contact_number}</span>
+                      )}
+                      {!fee._student?.contact_number && (
+                        <span className="ml-2 text-rose-400 font-black italic">No Phone</span>
+                      )}
                     </p>
                   </div>
                 </div>
                 <button 
                   onClick={() => handleSendReminder(fee)}
-                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 uppercase"
+                  disabled={!fee._student?.contact_number}
+                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 uppercase disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <Send size={14} /> SEND REMINDER
                 </button>
