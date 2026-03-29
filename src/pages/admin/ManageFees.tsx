@@ -33,6 +33,7 @@ const ManageFees = () => {
   const [showAllMonths, setShowAllMonths] = useState(false);
   const [waSearch, setWaSearch] = useState('');
   const [classFilterWa, setClassFilterWa] = useState('');
+  const [autoToggled, setAutoToggled] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [scannedStudent, setScannedStudent] = useState<any>(null); // ✅ NEW: result of scan
   const [scanLoading, setScanLoading] = useState(false);
@@ -44,7 +45,15 @@ const ManageFees = () => {
  const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
  const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
- const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
+  const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
+
+  // ✅ Auto-toggle to Show All if current month is empty to avoid confusion
+  useEffect(() => {
+    if (!remLoading && pendingReminders.length === 0 && !showAllMonths && !autoToggled) {
+      setShowAllMonths(true);
+      setAutoToggled(true);
+    }
+  }, [pendingReminders, remLoading, showAllMonths, autoToggled]);
 
  // ✅ 2. Mutations
  const addFeeHeadMutation = useAddFeeHead();
@@ -232,17 +241,20 @@ const ManageFees = () => {
 
   const handleBulkReminders = () => {
     if (!pendingReminders.length) return;
+    const confirmed = window.confirm(`Bulk Send: This will open ${pendingReminders.length} WhatsApp windows one by one. Continue?`);
+    if (!confirmed) return;
+
     let sent = 0;
-    pendingReminders.forEach((fee: any, idx: number) => {
+    pendingReminders.forEach((fee: any) => {
       const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
         s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
       );
       if (student?.contact_number) {
-        setTimeout(() => handleSendReminder(fee), sent * 1500);
+        setTimeout(() => handleSendReminder(fee), sent * 3000);
         sent++;
       }
     });
-    toast.success(`Sending ${sent} reminders (${pendingReminders.length - sent} skipped — no phone number)...`);
+    toast.success(`⚠️ Opening ${sent} windows. Please allow popups!`);
   };
 
   const handleCloneLastMonthFees = async () => {
@@ -327,11 +339,20 @@ const ManageFees = () => {
         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">System Health</p>
         <p className="text-[10px] font-black text-emerald-600 uppercase">Secure & Encrypted</p>
       </div>
-      <button className="premium-button-admin flex items-center gap-2 bg-slate-900 text-white border-none shadow-2xl hover:scale-105 active:scale-95 tracking-widest uppercase">
-       <Plus size={20} /> 
-       <span>Manage Heads</span>
-      </button>
-     </div>
+       <button 
+        onClick={() => document.getElementById('assign-form')?.scrollIntoView({ behavior: 'smooth' })}
+        className="premium-button-admin flex items-center gap-2 bg-blue-600 font-black text-white border-none shadow-2xl hover:scale-105 active:scale-95 tracking-widest uppercase px-8"
+       >
+        <Plus size={20} /> 
+        <span>Add Fee</span>
+       </button>
+       <button 
+        onClick={() => { setLocalLoading(true); setTimeout(() => setLocalLoading(false), 500); }}
+        className="premium-button-admin p-4 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white rounded-[5px] transition-all"
+       >
+        <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+       </button>
+      </div>
     </div>
 
     {/* --- MAIN GRID --- */}
@@ -341,6 +362,7 @@ const ManageFees = () => {
       
        {/* 🟡 1. ASSIGN FEE FORM */}
        <motion.div 
+        id="assign-form"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="premium-card p-10 md:p-14 relative overflow-hidden"
@@ -461,9 +483,12 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-blue-400 mb-2 uppercase">Total Amount</p>
              <h2 className="text-5xl md:text-6xl font-black text-white leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
-           <button disabled={loading} className="premium-button-admin bg-white text-slate-900 hover:bg-blue-600 hover:text-white border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-12 uppercase">
-             {loading ? <RefreshCw size={24} className="animate-spin" /> : <ShieldCheck size={24} />}
-             {loading ? 'Processing...' : 'Save Fee Record'}
+           <button disabled={loading} className="premium-button-admin bg-blue-600 text-white hover:bg-slate-900 border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-16 py-6 text-lg uppercase flex items-center gap-4">
+             {loading ? <RefreshCw size={28} className="animate-spin" /> : <ShieldCheck size={28} />}
+             <div className="text-left leading-none">
+              <span className="block text-[8px] opacity-60 font-black">CONFIRM & SAVE</span>
+              <span className="block">{loading ? 'Processing...' : 'Assign Fee Record'}</span>
+             </div>
            </button>
           </div>
         </form>
