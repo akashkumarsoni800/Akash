@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +8,7 @@ import {
  Plus, Search, Users, Calendar, ArrowRight,
  Wallet, Send, RefreshCw, Trash2, CheckCircle,
  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
- MessageSquare, Clock, AlertTriangle, Filter, Camera
+ MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine
 } from 'lucide-react';
 import { 
   useGetAllStudents, 
@@ -21,6 +22,7 @@ import {
 } from '../../hooks/useQueries';
 
 const ManageFees = () => {
+ const navigate = useNavigate();
  const [newHeadName, setNewHeadName] = useState('');
  const [selectedStudent, setSelectedStudent] = useState('');
  const [selectedClass, setSelectedClass] = useState('');
@@ -32,6 +34,9 @@ const ManageFees = () => {
   const [waSearch, setWaSearch] = useState('');
   const [classFilterWa, setClassFilterWa] = useState('');
   const [showScanner, setShowScanner] = useState(false);
+  const [scannedStudent, setScannedStudent] = useState<any>(null); // ✅ NEW: result of scan
+  const [scanLoading, setScanLoading] = useState(false);
+  const [searchParams] = useSearchParams();
   const scannerRef = useRef<any>(null);
 
  // ✅ 1. Persistent Data Hooks
@@ -54,50 +59,81 @@ const ManageFees = () => {
   sum + Number(val || 0), 0);
 
  // Update initial fee values when heads load
- useEffect(() => {
-  if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
-   setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
-  }
- }, [feeHeads]);
+  useEffect(() => {
+   if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
+    setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
+   }
+  }, [feeHeads]);
 
- // ✅ Real Scanner Logic
+  // ✅ 3. URL Param Selection
+  useEffect(() => {
+    const searchId = searchParams.get('search');
+    if (searchId && students.length > 0) {
+      const lowerSearch = searchId.toLowerCase();
+      const matched = students.find((s: any) => 
+        s.student_id?.toString().toLowerCase() === lowerSearch || 
+        s.id?.toString().toLowerCase() === lowerSearch ||
+        s.roll_no?.toString().toLowerCase() === lowerSearch
+      );
+      if (matched) {
+        setSelectedStudent(matched.student_id);
+        toast.success(`Selected student: ${matched.full_name}`);
+      }
+    }
+  }, [searchParams, students]);
+
+ // ✅ Real Scanner Logic — fetches from Supabase directly for reliability
  useEffect(() => {
     if (showScanner) {
       setTimeout(() => {
         const scanner = new Html5QrcodeScanner(
           "reader",
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          /* verbose= */ false
+          { fps: 15, qrbox: { width: 250, height: 250 } },
+          false
         );
 
-        scanner.render((decodedText) => {
-          const matched = students.find((s: any) => 
-            s.roll_no?.toString() === decodedText || 
-            s.student_id?.toString() === decodedText
-          );
-
-          if (matched) {
-            setSelectedStudent(matched.student_id);
-            toast.success(`Scanned: ${matched.full_name}`);
-            setShowScanner(false);
-            scanner.clear().catch(console.error);
-          } else {
-            toast.error("Student not found for this code");
+        scanner.render(async (decodedText) => {
+          // 🛠️ Robust ID Extraction from URL or raw IDs
+          let studentId = decodedText.trim();
+          if (studentId.includes('/v/')) {
+            studentId = studentId.split('/v/').pop()?.split(/[?#]/)[0].replace(/\/$/, '') || studentId;
           }
-        }, (error) => {
-          // console.warn(error);
-        });
+
+          setScanLoading(true);
+          scanner.clear().catch(() => {});
+          setShowScanner(false);
+
+          try {
+            // Direct Supabase lookup — works for both student_id and UUID id
+            const { data, error } = await supabase
+              .from('students')
+              .select('*')
+              .or(`student_id.eq."${studentId}",id.eq."${studentId}",roll_no.eq."${studentId}"`)
+              .maybeSingle();
+
+            if (data) {
+              setScannedStudent(data);
+              toast.success(`✅ Student found: ${data.full_name}`);
+            } else {
+              toast.error(`No student found for ID: ${studentId}`);
+            }
+          } catch (err: any) {
+            toast.error('Scan failed: ' + err.message);
+          } finally {
+            setScanLoading(false);
+          }
+        }, () => {});
 
         scannerRef.current = scanner;
       }, 300);
 
       return () => {
         if (scannerRef.current) {
-          scannerRef.current.clear().catch(console.error);
+          scannerRef.current.clear().catch(() => {});
         }
       };
     }
-  }, [showScanner, students]);
+  }, [showScanner]);
 
  const handleAssignFee = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -419,19 +455,103 @@ const ManageFees = () => {
         </div>
 
         <div className="space-y-6 relative z-10">
-          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Instantly load student profile to assign fees or view records.</p>
+          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Scan any student ID card to instantly access fee management, profile, documents, and more.</p>
           
           <div className="flex gap-4">
             <button 
-              onClick={() => setShowScanner(true)}
+              onClick={() => { setScannedStudent(null); setShowScanner(true); }}
               className="flex-1 py-4 bg-blue-600 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-blue-500 transition-all shadow-xl uppercase flex items-center justify-center gap-2"
             >
-              <Camera size={16} /> Open Scanner
+              {scanLoading ? <RefreshCw size={16} className="animate-spin" /> : <Camera size={16} />}
+              {scanLoading ? 'Looking up...' : 'Open Scanner'}
             </button>
-            <button className="flex-1 py-4 bg-white/10 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-white/20 transition-all uppercase">
-              Manual ID Look
-            </button>
+            {scannedStudent && (
+              <button 
+                onClick={() => setScannedStudent(null)}
+                className="py-4 px-5 bg-white/10 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-white/20 transition-all uppercase flex items-center gap-2"
+              >
+                <X size={14} /> Clear
+              </button>
+            )}
           </div>
+
+          {/* ✅ Action Hub — shown after scan */}
+          <AnimatePresence>
+            {scannedStudent && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="bg-white rounded-[5px] overflow-hidden shadow-2xl border border-slate-100"
+              >
+                {/* Student header */}
+                <div className="flex items-center gap-4 p-5 bg-slate-50 border-b border-slate-100">
+                  <div className="w-14 h-14 rounded-[5px] overflow-hidden border-2 border-white shadow-md flex-shrink-0">
+                    {scannedStudent.photo_url ? (
+                      <img src={scannedStudent.photo_url} className="w-full h-full object-cover" alt="" />
+                    ) : (
+                      <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-black text-xl">
+                        {scannedStudent.full_name?.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-black text-slate-900 truncate text-sm uppercase">{scannedStudent.full_name}</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                      Class {scannedStudent.class_name} • Roll #{scannedStudent.roll_no}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full flex-shrink-0">
+                    <CheckCircle size={12} />
+                    <span className="text-[8px] font-black uppercase tracking-widest">Verified</span>
+                  </div>
+                </div>
+
+                {/* Action Grid */}
+                <div className="grid grid-cols-2 gap-0 divide-x divide-y divide-slate-100">
+                  <button
+                    onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected for fee assignment`); }}
+                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-blue-50 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                      <CreditCard size={18} />
+                    </div>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Assign Fee</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/admin/documents?search=${scannedStudent.student_id}`)}
+                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-purple-50 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
+                      <ScanLine size={18} />
+                    </div>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ID / Docs</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/v/${scannedStudent.student_id || scannedStudent.id}`)}
+                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-emerald-50 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                      <ShieldCheck size={18} />
+                    </div>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Verify</p>
+                  </button>
+
+                  <button
+                    onClick={() => navigate(`/admin/upload-result?student=${scannedStudent.student_id}`)}
+                    className="flex flex-col items-center gap-2.5 p-5 hover:bg-rose-50 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all shadow-sm">
+                      <Star size={18} />
+                    </div>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Results</p>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <AnimatePresence>
@@ -442,32 +562,38 @@ const ManageFees = () => {
               exit={{ opacity: 0, y: 20 }}
               className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
             >
-              <div className="premium-card p-10 flex flex-col items-center gap-10 w-full max-w-xl">
-                 <div className="w-full flex justify-between items-center mb-4 text-white">
-                   <h2 className="text-xl font-black uppercase">Real-Time ID Scanner</h2>
-                   <button onClick={() => setShowScanner(false)} className="text-slate-400 hover:text-white uppercase font-black text-xs">Close</button>
+              <div className="bg-white rounded-[2rem] p-8 flex flex-col items-center gap-8 w-full max-w-md shadow-2xl">
+                 <div className="w-full flex justify-between items-center">
+                   <div>
+                     <h2 className="text-xl font-black text-slate-900 uppercase">Scan Student ID</h2>
+                     <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase mt-1">Aligns with QR Code on card</p>
+                   </div>
+                   <button onClick={() => setShowScanner(false)} className="p-3 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100">
+                     <X size={20} />
+                   </button>
                  </div>
                  
-                 <div id="reader" className="w-full max-w-sm rounded-[5px] overflow-hidden border-2 border-slate-700 shadow-2xl relative bg-black min-h-[300px]">
+                 <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-slate-900 shadow-2xl relative bg-black min-h-[280px]">
                    <div className="absolute inset-0 pointer-events-none z-10">
-                     <div className="w-full h-full border-[30px] border-slate-900/40"></div>
-                     <div className="animate-scan-line"></div>
+                     <div className="w-full h-full border-[35px] border-slate-950/50"></div>
+                     <div className="absolute top-1/2 left-0 w-full h-0.5 bg-blue-500/80 shadow-[0_0_12px_rgba(59,130,246,0.6)] animate-scan-line"></div>
                    </div>
                  </div>
 
-                 <div className="text-center p-6 bg-slate-800 rounded-[5px] border border-slate-700 w-full">
-                   <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-3">Scanning Active</p>
-                   <p className="text-[9px] text-slate-400 font-bold uppercase leading-relaxed text-center px-4">Place the Student ID card (QR code or Barcode) in the center of the viewfinder.</p>
-                 </div>
-
-                 <div className="flex items-center gap-4 text-slate-500 font-bold text-[8px] uppercase tracking-widest bg-slate-900 px-6 py-3 rounded-full">
-                    <CheckCircle size={10} className="text-emerald-500" /> Auto-lookup enabled
+                 <div className="w-full p-5 bg-slate-50 rounded-2xl flex items-center gap-4 border border-slate-100">
+                   <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 animate-pulse">
+                     <Zap size={20} />
+                   </div>
+                   <p className="text-[10px] font-black text-slate-500 uppercase leading-relaxed tracking-wider">
+                     Point camera at the QR code on the student ID card. Student will be identified automatically.
+                   </p>
                  </div>
                </div>
             </motion.div>
           )}
         </AnimatePresence>
        </motion.div>
+
 
        {/* 🟢 WHATSAPP REMINDERS HUB */}
        <motion.div 

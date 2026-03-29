@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User, BookOpen, GraduationCap, MapPin, Search, AlertCircle, RefreshCw, Star, Zap } from 'lucide-react';
+import { ShieldCheck, User, BookOpen, GraduationCap, MapPin, Search, AlertCircle, RefreshCw, Star, Zap, CreditCard, Edit, LayoutDashboard } from 'lucide-react';
 
 const VerifyStudent = () => {
   const { id } = useParams<{ id: string }>();
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -19,7 +20,7 @@ const VerifyStudent = () => {
         const { data, error: fetchError } = await supabase
           .from('students')
           .select('*')
-          .eq('student_id', id)
+          .or(`student_id.eq."${id}",id.eq."${id}"`)
           .maybeSingle();
 
         if (fetchError) throw fetchError;
@@ -33,7 +34,19 @@ const VerifyStudent = () => {
       }
     };
 
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Check local metadata or fetch role
+        const role = localStorage.getItem('user_role');
+        if (role === 'admin' || role === 'teacher') {
+          setIsAdmin(true);
+        }
+      }
+    };
+
     fetchStudent();
+    checkAdmin();
   }, [id]);
 
   if (loading) {
@@ -156,6 +169,47 @@ const VerifyStudent = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Admin Quick Actions */}
+        {isAdmin && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <Link 
+              to={`/admin/manage-fees?search=${student.student_id}`}
+              className="bg-slate-900 text-white p-6 rounded-[2rem] flex items-center justify-between group hover:bg-blue-600 transition-all shadow-xl"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white group-hover:text-blue-600 transition-all">
+                  <CreditCard size={20} />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] font-black text-white/50 uppercase tracking-widest leading-none mb-1.5">Administrative Action</p>
+                  <p className="text-sm font-black uppercase">Manage Fees</p>
+                </div>
+              </div>
+              <Zap size={20} className="text-blue-400 group-hover:text-white" />
+            </Link>
+
+            <Link 
+              to={`/admin/dashboard`}
+              className="bg-white text-slate-900 p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:border-purple-200 transition-all shadow-lg"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-50 group-hover:text-purple-600 transition-all">
+                  <LayoutDashboard size={20} />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1.5">Registry Access</p>
+                  <p className="text-sm font-black uppercase">Admin Portal</p>
+                </div>
+              </div>
+              <Edit size={20} className="text-slate-200 group-hover:text-purple-600" />
+            </Link>
+          </motion.div>
+        )}
 
         {/* Footer Actions */}
         <div className="flex justify-center pt-8 border-t border-slate-100/50">

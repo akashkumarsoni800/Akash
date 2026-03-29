@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, LogOut, User, ChevronDown, Bell, Search, Globe, ShieldCheck, Settings } from 'lucide-react';
+import { Menu, LogOut, User, ChevronDown, Bell, Search, Globe, ShieldCheck, Settings, Camera } from 'lucide-react';
+import QRScannerModal from './shared/QRScannerModal';
 
 const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isGlobeOpen, setIsGlobeOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [notices, setNotices] = useState<any[]>([]);
   const [isReallyDesktop, setIsReallyDesktop] = useState(false);
 
@@ -140,6 +142,18 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
     else navigate('/student/dashboard');
   };
 
+  const handleScanSuccess = (decodedText: string) => {
+    // 🛠️ Robust ID Extraction (Handles URLs, Trailing Slashes, and Query Params)
+    let studentId = decodedText.trim();
+    if (studentId.includes('/v/')) {
+      studentId = studentId.split('/v/').pop()?.split(/[?#]/)[0].replace(/\/$/, '') || studentId;
+    }
+    
+    // Auto-navigate to Manage Fees for that student
+    navigate(`/admin/manage-fees?search=${encodeURIComponent(studentId)}`);
+    setIsScannerOpen(false);
+  };
+
   const roleLabel = userRole === 'admin' ? 'Administrator' : userRole === 'teacher' ? 'Faculty Member' : 'Student Scholar';
   const roleColor = userRole === 'admin' ? 'text-blue-600' : userRole === 'teacher' ? 'text-emerald-600' : 'text-purple-600';
   const roleBg = userRole === 'admin' ? 'bg-blue-50' : userRole === 'teacher' ? 'bg-emerald-50' : 'bg-purple-50';
@@ -175,6 +189,18 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
               ⌘ K
             </div>
           </div>
+
+          {/* Quick Scanner UI Link */}
+          {userRole === 'admin' && (
+            <button 
+              onClick={() => setIsScannerOpen(true)}
+              className="absolute -right-14 top-1/2 -translate-y-1/2 p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 bg-white border border-slate-100/50 rounded-2xl shadow-sm transition-all active:scale-95 group overflow-hidden"
+              title="Quick ID Scan"
+            >
+              <div className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 opacity-0 group-hover:opacity-100 animate-pulse transition-opacity" />
+              <Camera size={20} />
+            </button>
+          )}
 
           {/* Search Results Dropdown */}
           <AnimatePresence>
@@ -392,6 +418,11 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
           </AnimatePresence>
         </div>
       </div>
+      <QRScannerModal 
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScanSuccess={handleScanSuccess}
+      />
     </header>
   );
 };

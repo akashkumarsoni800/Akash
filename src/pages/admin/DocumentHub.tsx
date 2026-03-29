@@ -425,7 +425,7 @@ const AdmitGrid = ({ students }: { students: any[] }) => (
       <div className="text-center space-y-2">
        <div className="p-2 bg-white rounded-lg border border-slate-100 shadow-sm inline-block">
         <QRCodeSVG 
-          value={`${window.location.origin}/v/${std.student_id}`}
+          value={`${window.location.origin}/v/${std.student_id || std.id}`}
           size={50}
         />
        </div>
