@@ -59,52 +59,54 @@ const Home = () => {
         keywords="Free School ERP Bihar, Best School Management Software Patna, Adukul, Digital School Bihar, School ERP India"
       />
 
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://adukul.com/"
-        },{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Register School",
-          "item": "https://adukul.com/register-school"
-        }]
-      }
-      </script>
+      <script 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://adukul.com/"
+          },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Register School",
+            "item": "https://adukul.com/register-school"
+          }]
+        })}}
+      />
 
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [{
-          "@type": "Question",
-          "name": "Is Adukul really free for schools?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, Adukul offers a comprehensive free tier for schools in India to manage their basic operations like attendance, fees, and results without any upfront cost."
-          }
-        }, {
-          "@type": "Question",
-          "name": "Does Adukul support schools in Bihar?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Absolutely. Adukul is tailored for educational institutions across Bihar, including Patna, Gaya, and Bhagalpur, supporting local administrative needs."
-          }
-        }, {
-          "@type": "Question",
-          "name": "Can I manage school fees digitally with Adukul?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, Adukul includes a robust fee management module that allows schools to track payments, generate invoices, and send reminders to parents."
-          }
-        }]
-      }
-      </script>
+      <script 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [{
+            "@type": "Question",
+            "name": "Is Adukul really free for schools?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Adukul offers a comprehensive free tier for schools in India to manage their basic operations like attendance, fees, and results without any upfront cost."
+            }
+          }, {
+            "@type": "Question",
+            "name": "Does Adukul support schools in Bihar?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutely. Adukul is tailored for educational institutions across Bihar, including Patna, Gaya, and Bhagalpur, supporting local administrative needs."
+            }
+          }, {
+            "@type": "Question",
+            "name": "Can I manage school fees digitally with Adukul?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Adukul includes a robust fee management module that allows schools to track payments, generate invoices, and send reminders to parents."
+            }
+          }]
+        })}}
+      />
       
       {/* --- PREMIUM NAVIGATION --- */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
