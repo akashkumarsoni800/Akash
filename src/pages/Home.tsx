@@ -58,6 +58,53 @@ const Home = () => {
         description="Adukul is India's leading digital school ERP, especially designed for Bihar. Automate fees, attendance, and examinations in Patna, Gaya, and across Bihar."
         keywords="Free School ERP Bihar, Best School Management Software Patna, Adukul, Digital School Bihar, School ERP India"
       />
+
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://adukul.com/"
+        },{
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Register School",
+          "item": "https://adukul.com/register-school"
+        }]
+      }
+      </script>
+
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [{
+          "@type": "Question",
+          "name": "Is Adukul really free for schools?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Adukul offers a comprehensive free tier for schools in India to manage their basic operations like attendance, fees, and results without any upfront cost."
+          }
+        }, {
+          "@type": "Question",
+          "name": "Does Adukul support schools in Bihar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. Adukul is tailored for educational institutions across Bihar, including Patna, Gaya, and Bhagalpur, supporting local administrative needs."
+          }
+        }, {
+          "@type": "Question",
+          "name": "Can I manage school fees digitally with Adukul?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Adukul includes a robust fee management module that allows schools to track payments, generate invoices, and send reminders to parents."
+          }
+        }]
+      }
+      </script>
       
       {/* --- PREMIUM NAVIGATION --- */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
@@ -195,10 +242,10 @@ const Home = () => {
         <section className="py-32 bg-slate-50/50 border-y border-slate-100">
           <div className="max-w-[1400px] mx-auto px-6 md:px-10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-              <div className="max-w-2xl space-y-4">
+              <article className="max-w-2xl space-y-4">
                 <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">All Features for Free</h2>
                 <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Adukul provides all the tools your school needs.</p>
-              </div>
+              </article>
               <button className="text-indigo-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group">
                 Explore All modules <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>

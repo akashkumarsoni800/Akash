@@ -15,12 +15,12 @@ const AdukulLogo: React.FC<AdukulLogoProps> = ({ size = 'md', className = '', le
   };
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`${sizeClasses[size]} bg-white rounded-[5px] border border-slate-100 flex items-center justify-center text-slate-800 font-black shadow-lg shadow-slate-200/50 active:scale-95 transition-all`}>
+    <div className={`flex items-center gap-3 ${className}`} role="img" aria-label="Adukul Logo">
+      <div className={`${sizeClasses[size]} bg-white rounded-[5px] border border-slate-100 flex items-center justify-center text-slate-800 font-black shadow-lg shadow-slate-200/50 active:scale-95 transition-all outline-none`}>
         A
       </div>
       {!letterOnly && (
-        <span className={`${size === 'xl' ? 'text-4xl' : 'text-xl'} font-black tracking-tighter text-slate-900 uppercase`}>
+        <span className={`${size === 'xl' ? 'text-4xl' : 'text-xl'} font-black tracking-tighter text-slate-900 uppercase`} aria-hidden="true">
           Adukul
         </span>
       )}
