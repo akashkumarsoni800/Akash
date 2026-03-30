@@ -20,7 +20,7 @@ const Sidebar = () => {
   const [logoLoadError, setLogoLoadError] = useState(false);
   const [profile, setProfile] = useState({ name: 'User', avatar: '', role: '' as any });
   const [schoolLogo, setSchoolLogo] = useState(localStorage.getItem('current_school_logo'));
-  const [schoolName, setSchoolName] = useState(localStorage.getItem('current_school_name') || 'Tekool');
+  const [schoolName, setSchoolName] = useState(localStorage.getItem('current_school_name') || 'Adukul');
   const schoolCode = localStorage.getItem('current_school_code');
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Sidebar = () => {
           }
           if (data.name) {
             let finalName = data.name;
-            if (finalName === 'ASMD' || finalName === 'Academic Luminary') finalName = 'Tekool';
+            if (finalName === 'ASMD' || finalName === 'Academic Luminary') finalName = 'Adukul';
             setSchoolName(finalName);
             localStorage.setItem('current_school_name', finalName);
           }
@@ -56,7 +56,7 @@ const Sidebar = () => {
 
     const handleStorageChange = () => {
       setSchoolLogo(localStorage.getItem('current_school_logo'));
-      setSchoolName(localStorage.getItem('current_school_name') || 'Tekool');
+      setSchoolName(localStorage.getItem('current_school_name') || 'Adukul');
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
@@ -196,7 +196,7 @@ const Sidebar = () => {
             </div>
             <div>
               <h2 className="text-[13px] font-black text-white leading-none uppercase tracking-tight">
-                {schoolName || 'Tekool'}
+                {schoolName || 'Adukul'}
               </h2>
               <p className="text-[9px] font-black text-slate-500 tracking-widest mt-1">Platform v5.0</p>
             </div>

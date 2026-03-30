@@ -54,17 +54,17 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d] font-sans selection:bg-indigo-100 italic-none">
       <MetaData 
-        title="Tekool - Free School Management System India | Digital Campus"
-        description="Tekool is India's leading free School Management System. Automate fees, attendance, and examinations with our premium ERP solution."
-        keywords="Free School ERP, India, School Management Software, Tekool, Digital School"
+        title="Adukul - Best Free School Management System Bihar & India"
+        description="Adukul is India's leading digital school ERP, especially designed for Bihar. Automate fees, attendance, and examinations in Patna, Gaya, and across Bihar."
+        keywords="Free School ERP Bihar, Best School Management Software Patna, Adukul, Digital School Bihar, School ERP India"
       />
       
       {/* --- PREMIUM NAVIGATION --- */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Tekool Logo" />
-            <span className="text-xl font-black tracking-tighter text-indigo-950 uppercase hidden sm:block">Tekool</span>
+            <img src="/logo.png" className="w-10 h-10 object-contain" alt="Adukul Logo" />
+            <span className="text-xl font-black tracking-tighter text-indigo-950 uppercase hidden sm:block">Adukul</span>
           </div>
 
           <nav className="hidden lg:flex items-center gap-10">
@@ -100,7 +100,7 @@ const Home = () => {
             >
               <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">The Future of Education</span>
               <h1 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tighter uppercase">
-                Tekool: Free <br/> School Management <span className="text-indigo-600 underline decoration-indigo-200">System India</span>
+                Adukul: Free <br/> School Management <span className="text-indigo-600 underline decoration-indigo-200">System Bihar</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 The ultimate school management solution for growing educational institutions and chains. Manage all school data with high-level security.
@@ -197,7 +197,7 @@ const Home = () => {
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
               <div className="max-w-2xl space-y-4">
                 <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">All Features for Free</h2>
-                <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Tekool provides all the tools your school needs.</p>
+                <p className="text-lg text-slate-500">From Fee Management to Automated Attendance, Adukul provides all the tools your school needs.</p>
               </div>
               <button className="text-indigo-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group">
                 Explore All modules <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -276,7 +276,7 @@ const Home = () => {
             <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Voice of Leadership</h2>
             <div className="max-w-full mx-auto space-y-10">
               <p className="text-3xl md:text-5xl font-black leading-tight tracking-tighter italic">
-                "Tekool has completely transformed how we manage our network of 12 schools. The central reporting alone saved us hundreds of manual labor hours per month."
+                "Adukul has completely transformed how we manage our network of 12 schools. The central reporting alone saved us hundreds of manual labor hours per month."
               </p>
               <div className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full border-4 border-indigo-500/30 overflow-hidden ring-4 ring-slate-900">
@@ -316,8 +316,8 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 md:col-span-1 space-y-8 text-left">
               <div className="flex items-center gap-2">
-                <img src="/logo.png" className="w-8 h-8 object-contain" alt="Tekool Logo" />
-                <span className="text-sm font-black text-indigo-950 uppercase">Tekool</span>
+                <img src="/logo.png" className="w-8 h-8 object-contain" alt="Adukul Logo" />
+                <span className="text-sm font-black text-indigo-950 uppercase">Adukul</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Making school management easy with modern tools and design.</p>
             </div>
@@ -328,7 +328,7 @@ const Home = () => {
           </div>
 
           <div className="pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-5">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">© 2024 Tekool. All rights reserved.</p>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">© 2024 Adukul. All rights reserved.</p>
             <div className="flex gap-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">
               <span>Engage globally. Manage locally.</span>
             </div>

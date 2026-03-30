@@ -7,14 +7,14 @@ interface MetaDataProps {
 }
 
 const MetaData = ({ 
-  title = "Tekool - Free School Management System India", 
-  description = "The best free School Management System in India. Manage fees, attendance, results, and homework with ease.",
-  keywords = "Tekool, School Management System, India, Free School Software"
+  title = "Adukul - Best Free School Management System for Bihar & India", 
+  description = "Adukul is India's leading digital school ERP, especially designed for Bihar. Manage fees, attendance, results, and homework for schools in Patna, Gaya, and across Bihar.",
+  keywords = "School Management System Bihar, Best School ERP Patna, Free School Software Bihar, Adukul, Bihar Education Digitalization, School ERP India"
 }: MetaDataProps) => {
   
   useEffect(() => {
     // 🏷️ Update Title
-    document.title = title.includes('Tekool') ? title : `${title} | Tekool`;
+    document.title = title.includes('Adukul') ? title : `${title} | Adukul`;
 
     // 📝 Update Description
     const metaDescription = document.querySelector('meta[name="description"]');

@@ -139,7 +139,7 @@ export default function SchoolRegistrationPage() {
           
           <div className="space-y-4">
             <h1 className="text-4xl font-black uppercase tracking-tighter italic">Registration Successful!</h1>
-            <p className="text-slate-400 font-bold tracking-widest text-xs uppercase">Your school is now ready to use Tekool</p>
+            <p className="text-slate-400 font-bold tracking-widest text-xs uppercase">Your school is now ready to use Adukul</p>
           </div>
 
           <div className="bg-white/5 border border-white/10 p-10 rounded-[5px] space-y-8 backdrop-blur-xl">
@@ -172,7 +172,7 @@ export default function SchoolRegistrationPage() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-inter selection:bg-blue-100">
-      <MetaData title="Register Your School" description="Join Tekool and digitize your institution. Manage fees, attendance, and students in one unified free platform." />
+      <MetaData title="Register Your School" description="Join Adukul and digitize your institution. Manage fees, attendance, and students in one unified free platform." />
       
       {/* Background Decor */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none opacity-50">

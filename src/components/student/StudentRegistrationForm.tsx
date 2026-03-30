@@ -91,7 +91,7 @@ export default function StudentRegistrationForm() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-inter selection:bg-blue-100 selection:text-blue-900">
-      <MetaData title="Student Registration" description="Register as a student at your school through Tekool." />
+      <MetaData title="Student Registration" description="Register as a student at your school through Adukul." />
       
       {/* --- MESH DECORATION --- */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">

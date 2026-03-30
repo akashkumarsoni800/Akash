@@ -9,7 +9,7 @@ import {
  ArrowRight, Lock, Mail, Globe, 
  Briefcase, CheckCircle2, Eye, EyeOff
 } from 'lucide-react';
-import TekoolLogo from '../../components/shared/TekoolLogo';
+import AdukulLogo from '../../components/shared/AdukulLogo';
 
 const LoginPage = () => {
  const navigate = useNavigate();
@@ -212,7 +212,7 @@ const LoginPage = () => {
 
   return (
    <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-6 relative overflow-hidden font-inter">
-    <MetaData title="Login to Tekool" description="Access your school dashboard, manage students, fees, and more." />
+    <MetaData title="Login to Adukul" description="Access your school dashboard, manage students, fees, and more." />
     {/* Background Subtle Grid */}
     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] pointer-events-none"></div>
 
@@ -247,7 +247,7 @@ const LoginPage = () => {
        <div className="mx-auto mb-8 flex flex-col items-center">
         <img src="/logo.png" className="w-32 h-32 object-contain hover:rotate-6 transition-transform" alt="Logo" />
         <h1 className="text-6xl md:text-7xl font-black text-slate-900 leading-[0.9] mt-8 uppercase">
-          TEKOOL DIGITAL<br/>
+          ADUKUL DIGITAL<br/>
           <span className="text-slate-400">ECOSYSTEM</span>
         </h1>
        </div>
