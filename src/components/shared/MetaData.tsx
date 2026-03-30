@@ -9,7 +9,7 @@ interface MetaDataProps {
 const MetaData = ({ 
   title = "Adukul - Best Free School Management System Bihar & India", 
   description = "Adukul is the most powerful free School Management System in India and Bihar. Highly secure ERP for managing fees, attendance, results, and digital admissions.",
-  keywords = "Adukul, Free School Management System, India, Bihar, School ERP, Free School Software, Best School ERP Patna, Digital School, School Fee Tracker"
+  keywords = "Adukul, Free School Management System, India, Bihar, School ERP, Free School Software, Best School ERP Patna, Digital School, School Fee Tracker, Akash Kumar, CEO Akash Kumar"
 }: MetaDataProps) => {
   
   useEffect(() => {
