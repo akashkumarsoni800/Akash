@@ -7,9 +7,9 @@ interface MetaDataProps {
 }
 
 const MetaData = ({ 
-  title = "Adukul - Best Free School Management System for Bihar & India", 
-  description = "Adukul is India's leading digital school ERP, especially designed for Bihar. Manage fees, attendance, results, and homework for schools in Patna, Gaya, and across Bihar.",
-  keywords = "School Management System Bihar, Best School ERP Patna, Free School Software Bihar, Adukul, Bihar Education Digitalization, School ERP India"
+  title = "Adukul - Best Free School Management System Bihar & India", 
+  description = "Adukul is the most powerful free School Management System in India and Bihar. Highly secure ERP for managing fees, attendance, results, and digital admissions.",
+  keywords = "Adukul, Free School Management System, India, Bihar, School ERP, Free School Software, Best School ERP Patna, Digital School, School Fee Tracker"
 }: MetaDataProps) => {
   
   useEffect(() => {
