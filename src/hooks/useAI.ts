@@ -135,7 +135,7 @@ export const useAI = () => {
 
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: "gemini-1.5-flash-latest",
         tools: TOOLS as any,
         systemInstruction: "You are Adukul AI, the intelligent control center for Adukul School Management System. Your job is to help administrators and teachers manage the school. You can query students, mark attendance, check fees, and create notices. Always be professional, helpful, and concise. Use tools whenever a user asks for data or actions. If a tool requires an ID you don't have, ask for the student's name first to find it.",
       });
