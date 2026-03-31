@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'; // ✅ Added for 404 animation
 import Sidebar from './components/Sidebar';
 import StudentRegistrationForm from './components/student/StudentRegistrationForm';
 import ProtectedRoute from './components/ProtectedRoute';
+import AIAssistant from './components/AIAssistant';
 
 // --- PUBLIC PAGES ---
 import Home from './pages/Home';
@@ -163,7 +164,8 @@ function App() {
             </div>
           } />
         </Routes>
-      </div>
+          <AIAssistant />
+        </div>
       </BrowserRouter>
     </PersistQueryClientProvider>
   );

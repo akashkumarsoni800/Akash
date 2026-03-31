@@ -13,6 +13,7 @@
     "@dfinity/candid": "^2.1.0",
     "@dfinity/identity": "^2.1.0",
     "@dfinity/principal": "^2.1.0",
+    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.89.0",
     "@tanstack/query-sync-storage-persister": "^5.95.2",
     "@tanstack/react-query": "^5.90.16",
