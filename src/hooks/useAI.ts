@@ -107,7 +107,7 @@ export const useAI = () => {
           const { data } = await supabase.from('fees').select('*').eq('student_id', args.studentId);
           return data;
         }
-        case "create_notice": {
+        case "create_system_notice": {
           const { error } = await supabase.from('notices').insert([{
             title: args.title,
             content: args.content,
@@ -134,17 +134,27 @@ export const useAI = () => {
     setMessages(newMessages);
 
     try {
+      console.log("AI Request using model: gemini-1.5-flash");
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash-latest",
+        model: "gemini-1.5-flash",
         tools: TOOLS as any,
-        systemInstruction: "You are Adukul AI, the intelligent control center for Adukul School Management System. Your job is to help administrators and teachers manage the school. You can query students, mark attendance, check fees, and create notices. Always be professional, helpful, and concise. Use tools whenever a user asks for data or actions. If a tool requires an ID you don't have, ask for the student's name first to find it.",
       });
 
       const chat = model.startChat({
-        history: messages.map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }],
-        })),
+        history: [
+          {
+            role: 'user',
+            parts: [{ text: "You are Adukul AI, the intelligent control center for Adukul School Management System. Your job is to help administrators and teachers manage the school. You can query students, mark attendance, check fees, and create notices. Always be professional, helpful, and concise. Use tools whenever a user asks for data or actions. If a tool requires an ID you don't have, ask for the student's name first to find it." }],
+          },
+          {
+            role: 'model',
+            parts: [{ text: "Understood. I am Adukul AI. I am ready to help you manage the school efficiently. How can I assist you today?" }],
+          },
+          ...messages.map(m => ({
+            role: m.role === 'user' ? 'user' : 'model',
+            parts: [{ text: m.content }],
+          })),
+        ],
       });
 
       let result = await chat.sendMessage(userInput);

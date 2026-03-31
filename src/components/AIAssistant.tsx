@@ -105,7 +105,7 @@ const AIAssistant: React.FC = () => {
                   <h3 className="font-bold text-sm">Adukul AI</h3>
                   <p className="text-[10px] opacity-80 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                    Online Control Center
+                    Online Control Center v2.1
                   </p>
                 </div>
               </div>
