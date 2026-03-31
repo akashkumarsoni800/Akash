@@ -10,6 +10,7 @@ import {
   LogOut, Shield, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AIAssistant from './AIAssistant';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -289,6 +290,7 @@ const Sidebar = () => {
           </div>
         </div>
       </main>
+      <AIAssistant />
     </div>
   );
 };

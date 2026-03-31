@@ -17,8 +17,6 @@ const AIAssistant: React.FC = () => {
   const { identity } = useInternetIdentity();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  if (!identity) return null;
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
