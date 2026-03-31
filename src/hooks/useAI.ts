@@ -134,11 +134,19 @@ export const useAI = () => {
     setMessages(newMessages);
 
     try {
-      console.log("AI Request using model: gemini-1.5-flash");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        tools: TOOLS as any,
-      });
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API Key missing! Please add VITE_GEMINI_API_KEY to your .env file.");
+      }
+
+      console.log("AI Request using model: gemini-pro");
+      const model = genAI.getGenerativeModel(
+        {
+          model: "gemini-1.5-flash", 
+          tools: TOOLS as any,
+        },
+        { apiVersion: 'v1' }
+      );
 
       const chat = model.startChat({
         history: [

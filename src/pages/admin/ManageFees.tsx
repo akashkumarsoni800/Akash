@@ -35,6 +35,7 @@ const ManageFees = () => {
   const [classFilterWa, setClassFilterWa] = useState('');
   const [autoToggled, setAutoToggled] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const [showHeadsModal, setShowHeadsModal] = useState(false); // ✅ NEW: for heads management
   const [scannedStudent, setScannedStudent] = useState<any>(null); // ✅ NEW: result of scan
   const [scanLoading, setScanLoading] = useState(false);
   const [searchParams] = useSearchParams();
@@ -347,10 +348,17 @@ const ManageFees = () => {
         <span>Add Fee</span>
        </button>
        <button 
-        onClick={() => { setLocalLoading(true); setTimeout(() => setLocalLoading(false), 500); }}
-        className="premium-button-admin p-4 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white rounded-[5px] transition-all"
+        onClick={() => window.location.reload()}
+        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
        >
         <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+       </button>
+       <button 
+        onClick={() => setShowHeadsModal(true)}
+        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
+       >
+        <LayoutDashboard size={20} /> 
+        <span>Heads</span>
        </button>
       </div>
     </div>
@@ -1002,6 +1010,106 @@ const ManageFees = () => {
        </motion.div>
      </div>
     </div>
+
+    {/* 🟢 MANAGE FEE HEADS MODAL */}
+    <AnimatePresence>
+      {showHeadsModal && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="bg-white rounded-[2rem] p-10 w-full max-w-xl shadow-2xl overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
+            
+            <div className="flex justify-between items-center mb-10 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                  <LayoutDashboard size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Manage Fee Heads</h2>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">ADD OR REMOVE FEE CATEGORIES</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowHeadsModal(false)}
+                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-8 relative z-10">
+              {/* Add New Head */}
+              <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 shadow-inner">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">New Head Category</p>
+                <div className="flex gap-4">
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Tution Fee"
+                    className="premium-input flex-1 bg-white border-transparent"
+                    value={newHeadName}
+                    onChange={(e) => setNewHeadName(e.target.value)}
+                  />
+                  <button 
+                    onClick={() => {
+                      if (!newHeadName) return toast.error("Enter head name");
+                      addFeeHeadMutation.mutate(newHeadName, {
+                        onSuccess: () => {
+                          setNewHeadName('');
+                          toast.success(`Head '${newHeadName}' added!`);
+                        }
+                      });
+                    }}
+                    className="px-8 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-100"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              {/* Current List */}
+              <div className="max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
+                <div className="grid grid-cols-1 gap-4">
+                  {feeHeads.map((head: any) => (
+                    <div 
+                      key={head.id} 
+                      className="p-6 bg-white rounded-2xl border border-slate-100 flex justify-between items-center group hover:border-rose-100 transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span className="font-black text-slate-800 uppercase text-xs">{head.name}</span>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          if (window.confirm(`Delete head '${head.name}'?`)) {
+                            deleteFeeHeadMutation.mutate(head.id);
+                          }
+                        }}
+                        className="p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 pt-8 border-t border-slate-50 flex justify-center">
+               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">All changes reflect in the main assignment form immediately.</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
    </div>
   </div>
  );
