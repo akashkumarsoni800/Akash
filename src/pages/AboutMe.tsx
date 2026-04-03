@@ -69,22 +69,22 @@ const AboutMe = () => {
 
       <main className="container mx-auto px-6 pt-40 pb-24 relative z-10">
         <div className="max-w-6xl mx-auto">
-          {/* Header Section - MoncyDev Style */}
-          <header className="mb-32 flex flex-col items-start lg:items-end text-left lg:text-right">
-            <motion.h2 
+          {/* Header Section - Authentic MoncyDev Style */}
+          <header className="mb-32 flex flex-col items-start text-left">
+            <motion.h3 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg md:text-xl font-light uppercase tracking-[0.5em] text-indigo-400 mb-12 lg:mb-16 reveal-item"
+              className="text-xl md:text-2xl font-normal uppercase tracking-[0.5rem] text-indigo-400 mb-12 reveal-item"
             >
               About Me
-            </motion.h2>
+            </motion.h3>
             
-            <h1 
+            <p 
               ref={textRef}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1] max-w-4xl"
+              className="text-3xl md:text-[33px] font-semibold tracking-[1px] leading-[1.1] md:leading-[36px] max-w-4xl text-white"
             >
-              I am a <span className="text-indigo-500 italic">Full-Stack</span> Developer building systems that simplify life through <span className="underline decoration-indigo-500/30">digital</span> excellence.
-            </h1>
+              I am a <span className="text-indigo-500 italic">Full-Stack</span> Developer building systems that simplify life through digital excellence. My focus is on creating scalable solutions that solve real-world problems with elegance and efficiency.
+            </p>
           </header>
 
           <section className="grid lg:grid-cols-2 gap-24 items-start mb-32">
