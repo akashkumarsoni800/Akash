@@ -246,3 +246,24 @@ h4, h5, h6 {
 .animate-bounce-short {
   animation: bounce-short 1s ease-in-out infinite;
 }
+
+/* --- PORTFOLIO INTEGRATION STYLES --- */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes shimmer-slide {
+  from { transform: rotate(0deg) scale(2); }
+  to { transform: rotate(360deg) scale(2); }
+}
+
+.animate-shimmer-slide {
+  animation: shimmer-slide 4s linear infinite;
+}
+
+.hero-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+}

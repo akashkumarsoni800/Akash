@@ -14,6 +14,7 @@ import LoginPage from './pages/auth/LoginPage';
 import ResetPassword from './pages/auth/ResetPassword';
 import ProfileSetupPage from './pages/auth/ProfileSetupPage';
 import SchoolRegistrationPage from './pages/auth/SchoolRegistrationPage'; // ✅ NEW
+import AboutMe from './pages/AboutMe'; // ✅ NEW PREMIUM PORTFOLIO
 
 // --- DASHBOARDS ---
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -92,6 +93,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/register-school" element={<SchoolRegistrationPage />} />
           <Route path="/v/:id" element={<VerifyStudent />} />
+          <Route path="/about" element={<AboutMe />} />
 
            
 

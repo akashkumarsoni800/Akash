@@ -7,6 +7,7 @@ import {
   Quote, ChevronRight, Menu, X, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import MetaData from '../components/shared/MetaData';
 
 const Home = () => {
@@ -117,9 +118,10 @@ const Home = () => {
           </div>
 
           <nav className="hidden lg:flex items-center gap-10">
-            {['Features', 'Solutions', 'Pricing', 'About'].map((item) => (
+            {['Features', 'Solutions', 'Pricing'].map((item) => (
               <a key={item} href={`#${item.toLowerCase()}`} className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-600 transition-colors">{item}</a>
             ))}
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-600 transition-colors">About</Link>
           </nav>
 
           <div className="flex items-center gap-4">
@@ -394,9 +396,10 @@ const Home = () => {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 z-40 bg-white pt-24 px-8 space-y-10 lg:hidden"
           >
-            {['Features', 'Solutions', 'Pricing', 'About'].map((item) => (
+            {['Features', 'Solutions', 'Pricing'].map((item) => (
               <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="block text-4xl font-black text-slate-900 uppercase tracking-tighter">{item}</a>
             ))}
+            <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block text-4xl font-black text-slate-900 uppercase tracking-tighter">About</Link>
             <div className="pt-10 border-t border-slate-100 space-y-4">
               <button onClick={() => navigate('/login')} className="w-full py-5 text-xl font-black text-slate-900 uppercase tracking-tighter border-2 border-slate-100 rounded-[5px]">Login</button>
               <button 
