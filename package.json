@@ -14,8 +14,8 @@
     "@dfinity/identity": "^2.1.0",
     "@dfinity/principal": "^2.1.0",
     "@google/generative-ai": "^0.24.1",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/drei": "^9.102.6",
+    "@react-three/fiber": "^8.17.10",
     "@supabase/supabase-js": "^2.89.0",
     "@tanstack/query-sync-storage-persister": "^5.95.2",
     "@tanstack/react-query": "^5.90.16",
@@ -37,7 +37,7 @@
     "react-webcam": "^7.2.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "three": "^0.183.2"
+    "three": "^0.160.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
