@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Terminal, Code, Layout, Server, Cpu, Globe, User, Mail, ArrowUpRight } from 'lucide-react';
 import { ShimmerButton } from '../components/ui/ShimmerButton';
+import Character from '../components/portfolio/Character';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -9,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const AboutMe = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLHeadingElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -69,23 +70,36 @@ const AboutMe = () => {
 
       <main className="container mx-auto px-6 pt-40 pb-24 relative z-10">
         <div className="max-w-6xl mx-auto">
-          {/* Header Section - Authentic MoncyDev Style */}
-          <header className="mb-32 flex flex-col items-start text-left">
-            <motion.h3 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xl md:text-2xl font-normal uppercase tracking-[0.5rem] text-indigo-400 mb-12 reveal-item"
-            >
-              About Me
-            </motion.h3>
-            
-            <p 
-              ref={textRef}
-              className="text-3xl md:text-[33px] font-semibold tracking-[1px] leading-[1.1] md:leading-[36px] max-w-4xl text-white"
-            >
-              I am a <span className="text-indigo-500 italic">Full-Stack</span> Developer building systems that simplify life through digital excellence. My focus is on creating scalable solutions that solve real-world problems with elegance and efficiency.
-            </p>
-          </header>
+          {/* Authentic MoncyDev 3D Layout */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-32">
+            <div className="flex flex-col items-start text-left order-2 lg:order-1">
+              <motion.h3 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xl md:text-2xl font-normal uppercase tracking-[0.5rem] text-indigo-400 mb-12 reveal-item"
+              >
+                About Me
+              </motion.h3>
+              
+              <p 
+                ref={textRef}
+                className="text-3xl md:text-[33px] font-semibold tracking-[1px] leading-[1.1] md:leading-[36px] text-white reveal-item"
+              >
+                I am a <span className="text-indigo-500 italic">Full-Stack</span> Developer building systems that simplify life through digital excellence. My focus is on creating scalable solutions that solve real-world problems.
+              </p>
+              
+              <div className="mt-12 reveal-item">
+                <ShimmerButton className="h-14 px-10 rounded-[5px] text-[10px] font-black uppercase tracking-[0.2em] bg-white text-black hover:bg-slate-100 transition-all flex items-center gap-3">
+                  Check Resume <ArrowUpRight size={14} />
+                </ShimmerButton>
+              </div>
+            </div>
+
+            {/* 3D Character Column */}
+            <div className="order-1 lg:order-2">
+               <Character />
+            </div>
+          </div>
 
           <section className="grid lg:grid-cols-2 gap-24 items-start mb-32">
             <div className="space-y-8 reveal-item">
