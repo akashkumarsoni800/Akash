@@ -45,6 +45,7 @@ const ManageFees = () => {
   });
   const [missingFees, setMissingFees] = useState<any[]>([]);
   const [isDetecting, setIsDetecting] = useState(false);
+  const [scanLoading, setScanLoading] = useState(false);
 
  // ✅ 1. Persistent Data Hooks
  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
