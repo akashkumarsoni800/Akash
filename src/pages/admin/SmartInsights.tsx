@@ -68,13 +68,15 @@ const SmartInsights: React.FC = () => {
     try {
       const schoolId = getCurrentSchoolId();
       const [studentsRes, attendanceRes, feesRes, resultsRes] = await Promise.all([
-        supabase.from('students').select('student_id,full_name,class_name,section,contact_number,roll_number')
+        supabase.from('students').select('student_id,full_name,father_name,class_name,section,contact_number,roll_no')
           .eq('school_id', schoolId).eq('is_approved', 'approved'),
         supabase.from('attendance').select('student_id,status,date').eq('school_id', schoolId),
         supabase.from('fees').select('student_id,status,total_amount,month').eq('school_id', schoolId),
         supabase.from('student_results').select('student_id,marks,max_marks,subject').eq('school_id', schoolId),
-
       ]);
+
+      if (studentsRes.error) console.error("Students Fetch Error:", studentsRes.error);
+      if (feesRes.error) console.error("Fees Fetch Error:", feesRes.error);
 
       const students: Student[] = studentsRes.data || [];
       const attendance: AttendanceRecord[] = attendanceRes.data || [];
