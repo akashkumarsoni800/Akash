@@ -249,7 +249,7 @@ const ManageFees = () => {
   const startSequentialReminders = () => {
     if (!pendingReminders.length) return;
     
-    // Sort students with phone numbers first
+    // ✅ Apply current UI filters to the sequential queue
     const targetStudents = pendingReminders
       .map((fee: any) => {
         const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
@@ -257,9 +257,14 @@ const ManageFees = () => {
         );
         return { ...fee, _student: student };
       })
-      .filter((fee: any) => !!fee._student?.contact_number);
+      .filter((fee: any) => !!fee._student?.contact_number)
+      .filter((fee: any) => {
+        const nameMatch = !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
+        const classMatch = !classFilterWa || fee._student?.class_name === classFilterWa;
+        return nameMatch && classMatch;
+      });
 
-    if (targetStudents.length === 0) return toast.error("No students with valid phone numbers selected");
+    if (targetStudents.length === 0) return toast.error("No students matching filters with valid phone numbers found");
     
     setAutomation({
       isOpen: true,
@@ -944,7 +949,7 @@ const ManageFees = () => {
                </button>
              </div>
              <button 
-              onClick={handleBulkReminders}
+              onClick={startSequentialReminders}
               disabled={pendingReminders.length === 0}
               className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl shadow-emerald-50 disabled:opacity-30 flex items-center gap-3 animate-bounce-short"
              >
@@ -986,7 +991,7 @@ const ManageFees = () => {
           {/* Class-wise Broadcast Button */}
           {classFilterWa && (
              <button 
-              onClick={handleClassBulkReminders}
+              onClick={startSequentialReminders}
               className="w-full py-4 mb-4 bg-slate-900 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 border-2 border-slate-800"
              >
                <Send size={14} /> Broadcast to Class {classFilterWa}
