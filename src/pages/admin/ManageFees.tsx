@@ -5,10 +5,10 @@ import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
- Plus, Search, Users, Calendar, ArrowRight,
- Wallet, Send, RefreshCw, Trash2, CheckCircle,
- ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
- MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine
+  Plus, Search, Users, Calendar, ArrowRight,
+  Wallet, Send, RefreshCw, Trash2, CheckCircle,
+  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
+  MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain
 } from 'lucide-react';
 import { 
   useGetAllStudents, 
@@ -37,9 +37,13 @@ const ManageFees = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [showHeadsModal, setShowHeadsModal] = useState(false); // ✅ NEW: for heads management
   const [scannedStudent, setScannedStudent] = useState<any>(null); // ✅ NEW: result of scan
-  const [scanLoading, setScanLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const scannerRef = useRef<any>(null);
+  const [automation, setAutomation] = useState<{ isOpen: boolean; students: any[]; currentIndex: number }>({
+    isOpen: false,
+    students: [],
+    currentIndex: 0
+  });
+  const [missingFees, setMissingFees] = useState<any[]>([]);
+  const [isDetecting, setIsDetecting] = useState(false);
 
  // ✅ 1. Persistent Data Hooks
  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
@@ -240,22 +244,97 @@ const ManageFees = () => {
      window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
 
-  const handleBulkReminders = () => {
+  const startSequentialReminders = () => {
     if (!pendingReminders.length) return;
-    const confirmed = window.confirm(`Bulk Send: This will open ${pendingReminders.length} WhatsApp windows one by one. Continue?`);
-    if (!confirmed) return;
+    
+    // Sort students with phone numbers first
+    const targetStudents = pendingReminders
+      .map((fee: any) => {
+        const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
+          s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
+        );
+        return { ...fee, _student: student };
+      })
+      .filter((fee: any) => !!fee._student?.contact_number);
 
-    let sent = 0;
-    pendingReminders.forEach((fee: any) => {
-      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
-        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
-      );
-      if (student?.contact_number) {
-        setTimeout(() => handleSendReminder(fee), sent * 3000);
-        sent++;
-      }
+    if (targetStudents.length === 0) return toast.error("No students with valid phone numbers selected");
+    
+    setAutomation({
+      isOpen: true,
+      students: targetStudents,
+      currentIndex: 0
     });
-    toast.success(`⚠️ Opening ${sent} windows. Please allow popups!`);
+  };
+
+  const nextSequentialReminder = () => {
+    const current = automation.students[automation.currentIndex];
+    handleSendReminder(current);
+    
+    if (automation.currentIndex < automation.students.length - 1) {
+      setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
+    } else {
+      setAutomation(prev => ({ ...prev, isOpen: false }));
+      toast.success("✅ Sequence completed!");
+    }
+  };
+
+  const handleSmartAutoAssign = async () => {
+    if (!remindMonth) return toast.error("Please pick a month in the Reminders section first.");
+    
+    setLocalLoading(true);
+    try {
+      // 1. Find who ALREADY has fees for this month
+      const { data: existingFees } = await supabase
+        .from('fees')
+        .select('student_id')
+        .eq('month', remindMonth);
+      
+      const existingIds = new Set(existingFees?.map(f => f.student_id?.toString()));
+      
+      // 2. Identify missing students
+      const missing = students.filter(s => !existingIds.has(s.student_id?.toString()));
+      
+      if (missing.length === 0) {
+        toast.success("All students already have fee records for this month! 🎉");
+        return;
+      }
+
+      const confirmed = window.confirm(`Found ${missing.length} students without fees for ${remindMonth}. Auto-assign using their last known fee structure?`);
+      if (!confirmed) return;
+
+      // 3. For each missing student, get their last recorded fee
+      const newFees: any[] = [];
+      
+      for (const student of missing) {
+        const { data: lastFee } = await supabase
+          .from('fees')
+          .select('fee_structure, total_amount')
+          .eq('student_id', student.student_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (lastFee) {
+          newFees.push({
+            student_id: student.student_id,
+            month: remindMonth,
+            fee_structure: lastFee.fee_structure,
+            total_amount: lastFee.total_amount,
+            status: 'Pending'
+          });
+        }
+      }
+
+      if (newFees.length > 0) {
+        assignFeesMutation.mutate(newFees);
+      } else {
+        toast.info("No previous fee history found for these students. Please assign manually.");
+      }
+    } catch (err: any) {
+      toast.error("Auto-Assign failed: " + err.message);
+    } finally {
+      setLocalLoading(false);
+    }
   };
 
   const handleCloneLastMonthFees = async () => {
@@ -362,12 +441,71 @@ const ManageFees = () => {
        </button>
       </div>
     </div>
-
     {/* --- MAIN GRID --- */}
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
      
      <div className="lg:col-span-2 space-y-12">
-      
+       
+       {/* 🚀 AUTOMATION ADUKUL PANEL */}
+       <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="premium-card p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] shadow-2xl overflow-hidden group"
+       >
+        <div className="bg-white m-0.5 rounded-[1.9rem] p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-40"></div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-10">
+            <div className="flex items-center gap-6">
+              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform">
+                <Zap size={28} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
+                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+               <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-3">
+                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
+                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Live Auto-Pilot</span>
+               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-blue-200 transition-all flex flex-col gap-6">
+               <div>
+                 <h3 className="text-[12px] font-black text-slate-900 uppercase mb-1">Monthly Auto-Assign</h3>
+                 <p className="text-[10px] text-slate-500 font-medium">Detect students without fees and clone last month's records instantly.</p>
+               </div>
+               <button 
+                onClick={handleSmartAutoAssign}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-blue-600 transition-all uppercase flex items-center justify-center gap-3 shadow-xl"
+               >
+                 <RefreshCw size={14} className={localLoading ? 'animate-spin' : ''} />
+                 {localLoading ? 'Processing...' : 'Start Auto-Pilot'}
+               </button>
+            </div>
+
+            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-emerald-200 transition-all flex flex-col gap-6">
+               <div>
+                 <h3 className="text-[12px] font-black text-slate-900 uppercase mb-1">Bulk Reminders</h3>
+                 <p className="text-[10px] text-slate-500 font-medium tracking-tight">Send professional WhatsApp receipts & alerts to all defaulters.</p>
+               </div>
+               <button 
+                onClick={startSequentialReminders}
+                disabled={pendingReminders.length === 0}
+                className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-emerald-500 transition-all uppercase flex items-center justify-center gap-3 shadow-xl shadow-emerald-50"
+               >
+                 <MessageSquare size={14} />
+                 Execute Bulk Reminders
+               </button>
+            </div>
+          </div>
+        </div>
+       </motion.div>
+
        {/* 🟡 1. ASSIGN FEE FORM */}
        <motion.div 
         id="assign-form"
@@ -1011,6 +1149,87 @@ const ManageFees = () => {
      </div>
     </div>
 
+    {/* 🟢 AUTOMATION PROGRESS MODAL */}
+    <AnimatePresence>
+      {automation.isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="bg-white rounded-[2.5rem] p-12 w-full max-w-md shadow-2xl relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
+            
+            <div className="flex justify-between items-center mb-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                  <Brain size={24} className="animate-pulse" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Auto Reminders</h2>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Processing Queue</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))}
+                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-8 text-center bg-slate-50 p-10 rounded-[2rem] border border-slate-100">
+               <div className="relative inline-block">
+                 <div className="w-24 h-24 rounded-full border-4 border-slate-100 border-t-emerald-500 animate-spin"></div>
+                 <div className="absolute inset-0 flex items-center justify-center font-black text-slate-900 text-xl">
+                   {automation.currentIndex + 1}
+                 </div>
+               </div>
+               
+               <div>
+                 <p className="text-lg font-black text-slate-900 uppercase">{automation.students[automation.currentIndex]?._student?.full_name}</p>
+                 <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase mt-2">
+                   Phone: {automation.students[automation.currentIndex]?._student?.contact_number}
+                 </p>
+               </div>
+
+               <div className="space-y-2">
+                 <div className="flex justify-between text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-1">
+                   <span>Progress</span>
+                   <span>{Math.round(((automation.currentIndex + 1) / automation.students.length) * 100)}%</span>
+                 </div>
+                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                   <div 
+                    className="h-full bg-emerald-500 transition-all duration-500" 
+                    style={{ width: `${((automation.currentIndex + 1) / automation.students.length) * 100}%` }}
+                   />
+                 </div>
+               </div>
+            </div>
+
+            <div className="mt-10 flex flex-col gap-4">
+               <button 
+                onClick={nextSequentialReminder}
+                className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-emerald-500 transition-all uppercase flex items-center justify-center gap-3 shadow-xl"
+               >
+                 <Send size={16} />
+                 {automation.currentIndex === automation.students.length - 1 ? 'Send Final Reminder & Finish' : 'Send & Load Next Student'}
+               </button>
+               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest text-center italic">
+                 Note: Har student ke liye ek naya tab khulega.
+               </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
     {/* 🟢 MANAGE FEE HEADS MODAL */}
     <AnimatePresence>
       {showHeadsModal && (
@@ -1047,7 +1266,6 @@ const ManageFees = () => {
             </div>
 
             <div className="space-y-8 relative z-10">
-              {/* Add New Head */}
               <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 shadow-inner">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">New Head Category</p>
                 <div className="flex gap-4">
@@ -1075,7 +1293,6 @@ const ManageFees = () => {
                 </div>
               </div>
 
-              {/* Current List */}
               <div className="max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
                 <div className="grid grid-cols-1 gap-4">
                   {feeHeads.map((head: any) => (
@@ -1102,7 +1319,6 @@ const ManageFees = () => {
                 </div>
               </div>
             </div>
-
             <div className="mt-10 pt-8 border-t border-slate-50 flex justify-center">
                <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">All changes reflect in the main assignment form immediately.</p>
             </div>
@@ -1110,6 +1326,8 @@ const ManageFees = () => {
         </motion.div>
       )}
     </AnimatePresence>
+
+
    </div>
   </div>
  );

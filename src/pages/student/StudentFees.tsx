@@ -75,116 +75,131 @@ const StudentFees = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-10 pb-32 font-inter">
-      <div className="max-w-full mx-auto space-y-12">
+      <div className="max-w-7xl mx-auto space-y-12">
         
-        {/* --- BACK BUTTON --- */}
-        <motion.button 
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          onClick={() => navigate(-1)} 
-          className="group flex items-center gap-3 bg-white px-6 py-3 rounded-[5px] text-[10px] font-black tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 uppercase"
-        >
-          <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Return to Dashboard
-        </motion.button>
+        {/* --- NAVIGATION --- */}
+        <div className="flex justify-between items-center">
+          <motion.button 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={() => navigate(-1)} 
+            className="group flex items-center gap-3 bg-white px-6 py-3 rounded-2xl text-[10px] font-black tracking-widest text-slate-400 border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 uppercase"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
+          </motion.button>
 
-        {/* --- HEADER / OUTSTANDING --- */}
+          <div className="hidden md:flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
+            <ShieldCheck size={14} className="text-emerald-500" />
+            <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase">Verified Student Portal</p>
+          </div>
+        </div>
+
+        {/* --- HEADER BLOCK --- */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-900 rounded-[5px] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden group"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
         >
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600 opacity-10 rounded-full blur-[80px] -mr-40 -mt-40 transition-transform duration-[4s] group-hover:scale-110" />
-          
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
-            <div className="text-center md:text-left space-y-6">
+          <div className="lg:col-span-2 bg-slate-900 rounded-[2.5rem] p-12 text-white shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600 opacity-20 rounded-full blur-[100px] -mr-48 -mt-48 pointer-events-none" />
+            <div className="relative z-10 space-y-8">
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-blue-400 uppercase">Fee Details</p>
-                <h1 className="text-5xl md:text-7xl font-black  leading-none uppercase">Your<br/>Fees</h1>
+                <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">Financial Overview</p>
+                <h1 className="text-5xl md:text-7xl font-black leading-none uppercase tracking-tighter">Your<br/>Fees</h1>
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-4">
-                <div className="w-10 h-10 bg-white/10 rounded-[5px] flex items-center justify-center text-white/40">
-                  <User size={20} />
+              
+              <div className="flex flex-wrap gap-12 pt-4">
+                <div className="space-y-1">
+                  <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Student Name</p>
+                  <p className="text-sm font-black uppercase text-white">{student?.full_name}</p>
                 </div>
-                <div>
-                  <p className="text-[8px] font-black text-white/30 tracking-widest uppercase">Student</p>
-                  <p className="text-sm font-black text-white  tracking-tight uppercase">{student?.full_name}</p>
+                <div className="space-y-1 border-l border-white/10 pl-12">
+                  <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Class / Sec</p>
+                  <p className="text-sm font-black uppercase text-white">{student?.class_name || 'N/A'}</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="bg-white/5 backdrop-blur-2xl p-10 rounded-[5px] border border-white/10 text-center min-w-[280px] shadow-inner group/stat relative overflow-hidden">
-              <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/stat:opacity-5 transition-opacity" />
-              <p className="text-[10px] font-black text-blue-300 mb-2 uppercase">Balance Due</p>
-              <p className={`text-6xl font-black uppercase ${pending > 0 ? 'text-blue-400' : 'text-emerald-400 '}`}>₹{pending.toLocaleString()}</p>
-              <div className="mt-4 flex items-center justify-center gap-2">
-                <div className={`w-2 h-2 rounded-full animate-pulse ${pending > 0 ? 'bg-blue-400' : 'bg-emerald-400'}`} />
-                <p className="text-[8px] font-black text-white/20 tracking-widest uppercase">Status: Updated</p>
-              </div>
+          <div className="bg-white rounded-[2.5rem] p-12 flex flex-col justify-center items-center text-center border border-slate-100 shadow-xl group hover:border-blue-100 transition-all">
+            <p className="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-widest">Total Outstanding</p>
+            <p className={`text-6xl font-black uppercase tracking-tighter transition-colors ${pending > 0 ? 'text-blue-600' : 'text-emerald-500'}`}>
+              ₹{pending.toLocaleString()}
+            </p>
+            <div className="mt-6 flex items-center gap-3 px-6 py-2 bg-slate-50 rounded-full">
+              <div className={`w-2 h-2 rounded-full ${pending > 0 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                {pending > 0 ? 'Payment Required' : 'All Dues Clear'}
+              </p>
             </div>
           </div>
         </motion.div>
 
-        {/* --- TRANSACTION FEED --- */}
+        {/* --- TIMELINE SECTION --- */}
         <div className="space-y-8">
-          <div className="flex items-center gap-4 px-6">
-            <div className="w-10 h-10 bg-white rounded-[5px] flex items-center justify-center text-slate-300 border border-slate-100 font-black text-xs shadow-sm uppercase">IV</div>
-            <h3 className="text-xl font-black text-slate-900  uppercase">Invoiced Settlements</h3>
+          <div className="flex items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-300 border border-slate-100 font-black text-xs shadow-sm shadow-slate-100">
+                <Layout size={20} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Fee Timeline</h3>
+            </div>
+            
+            <div className="flex items-center gap-2">
+               <span className="w-3 h-3 bg-blue-100 rounded-full"></span>
+               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Paid</span>
+               <span className="w-3 h-3 bg-slate-900 rounded-full ml-4"></span>
+               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Pending</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-6">
             {fees.map((fee: any, idx: number) => (
               <motion.div 
                 key={fee.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * idx }}
-                className="bg-white rounded-[5px] shadow-sm border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all duration-700"
+                transition={{ delay: idx * 0.05 }}
+                className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden group hover:shadow-2xl hover:border-blue-100 transition-all"
               >
                 <div className="flex flex-col md:flex-row">
-                  <div className={`p-10 md:w-72 flex flex-col justify-center items-center text-center relative overflow-hidden transition-colors duration-700 ${fee.status === 'Paid' ? 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white' : 'bg-slate-900 text-white'}`}>
-                    <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-                      <Zap size={200} className="rotate-12 translate-x-10 translate-y-10" />
+                  <div className={`p-10 md:w-64 flex flex-col justify-center items-center text-center relative transition-colors duration-500 ${fee.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-slate-900 text-white'}`}>
+                    <p className="text-[10px] font-black mb-1 uppercase tracking-widest opacity-60">{fee.month}</p>
+                    <h3 className="text-3xl font-black uppercase tracking-tighter">{fee.status}</h3>
+                    <div className="mt-4 p-3 rounded-full bg-white/10">
+                      {fee.status === 'Paid' ? <CheckCircle2 size={24}/> : <AlertCircle size={24} className="text-amber-500"/>}
                     </div>
-                    <p className="text-[10px] font-black  mb-2 relative z-10 uppercase">{fee.month}</p>
-                    <h3 className="text-4xl font-black  relative z-10 uppercase">{fee.status}</h3>
-                    {fee.status === 'Paid' ? (
-                      <CheckCircle2 size={40} className="mt-6 opacity-40 group-hover:scale-110 transition-transform relative z-10"/>
-                    ) : (
-                      <div className="mt-6 bg-blue-600/20 p-4 rounded-full animate-pulse relative z-10">
-                        <AlertCircle size={30} className="text-blue-400"/>
-                      </div>
-                    )}
                   </div>
 
-                  <div className="flex-1 p-10 md:p-14 space-y-10 group/content">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
+                  <div className="flex-1 p-10 md:p-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
                       {fee.fee_structure && Object.entries(fee.fee_structure).map(([key, val]: any) => (
                         Number(val) > 0 && (
-                          <div key={key} className="flex justify-between items-end border-b border-slate-50 pb-3 group/item uppercase">
-                            <span className="text-[10px] font-black text-slate-300 tracking-widest group-hover/content:text-slate-400 group-hover/item:text-blue-500 transition-colors uppercase">{key}</span>
-                            <span className="font-black text-slate-900 tracking-tight uppercase">₹{Number(val).toLocaleString()}</span>
+                          <div key={key} className="space-y-1">
+                            <p className="text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">{key}</p>
+                            <p className="text-lg font-black text-slate-900 tracking-tight">₹{Number(val).toLocaleString()}</p>
                           </div>
                         )
                       ))}
                     </div>
 
-                    <div className="flex flex-col lg:flex-row justify-between items-center pt-10 border-t border-slate-50 gap-10">
-                      <div className="text-center lg:text-left transition-transform group-hover/content:-translate-y-1 duration-500">
-                        <p className="text-[9px] font-black text-slate-300 tracking-widest mb-1 uppercase">Total Amount</p>
-                        <h4 className="text-5xl font-black text-slate-900 uppercase">₹{Number(fee.total_amount).toLocaleString()}</h4>
+                    <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-slate-50 gap-6">
+                      <div>
+                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1 text-center sm:text-left">Settlement Amount</p>
+                        <h4 className="text-4xl font-black text-slate-900 tracking-tight uppercase">₹{Number(fee.total_amount).toLocaleString()}</h4>
                       </div>
-                      <div className="flex gap-4 w-full lg:w-auto">
+                      <div className="flex gap-3 w-full sm:w-auto">
                         <button 
                           onClick={() => handleWhatsApp(fee)} 
-                          className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-white border border-emerald-100 text-emerald-600 font-black text-[10px] tracking-widest shadow-sm hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 uppercase"
+                          className="flex-1 sm:px-8 py-4 rounded-xl bg-emerald-50 text-emerald-600 font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-2 border border-emerald-100 shadow-sm shadow-emerald-50 active:scale-95"
                         >
-                          <Send size={16}/> Share
+                          <Send size={14}/> Share Receipt
                         </button>
                         <button 
-                          onClick={() => window.print()} 
-                          className="flex-1 lg:px-10 lg:py-5 py-4 rounded-[5px] bg-slate-900 text-white font-black text-[10px] tracking-widest shadow-2xl active:scale-95 tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 group/print uppercase"
+                          onClick={() => window.print()}
+                          className="flex-1 sm:px-8 py-4 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-2 shadow-xl active:scale-95"
                         >
-                          <Download size={16} className="group-hover/print:translate-y-1 transition-transform" /> Download PDF
+                          <Printer size={14}/> Print
                         </button>
                       </div>
                     </div>
@@ -194,25 +209,23 @@ const StudentFees = () => {
             ))}
             
             {fees.length === 0 && (
-              <div className="bg-white p-24 rounded-[5px] border border-dashed border-slate-200 text-center space-y-8 group">
-                <div className="w-24 h-24 bg-slate-50 rounded-[1.5rem] flex items-center justify-center mx-auto transition-transform duration-1000 group-hover:rotate-12">
-                  <Wallet size={40} className="text-slate-200"/>
+              <div className="bg-white p-24 rounded-[3rem] border-2 border-dashed border-slate-100 text-center space-y-6">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-200">
+                  <Wallet size={32} />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-slate-900 font-black  text-2xl uppercase">List Clean</p>
-                  <p className="text-[10px] font-black text-slate-300 uppercase">No fee records found for this period.</p>
+                  <p className="text-2xl font-black text-slate-900 uppercase">Archive Empty</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No fee records found in your account.</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* --- FOOTER DECOR --- */}
-        <div className="pt-12 text-center">
-          <div className="inline-flex items-center gap-3 bg-white px-6 py-2.5 rounded-full border border-slate-100 shadow-sm opacity-50">
-            <ShieldCheck size={14} className="text-blue-500" />
-            <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase">ASM School Management System</p>
-          </div>
+        {/* --- FOOTER FEEDBACK --- */}
+        <div className="pt-20 text-center space-y-6 opacity-30 group cursor-default">
+           <div className="w-px h-12 bg-slate-200 mx-auto group-hover:bg-blue-300 transition-colors"></div>
+           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.5em] group-hover:text-blue-500 transition-colors">ASM Secured Transaction Engine</p>
         </div>
 
       </div>
