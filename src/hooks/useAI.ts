@@ -4,8 +4,10 @@ import { supabase } from "../supabaseClient";
 import { getCurrentSchoolId } from "./useQueries";
 import { toast } from "sonner";
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
+// Initialize Gemini with v1beta — required for function calling / tools
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "", {
+  apiVersion: 'v1beta'
+});
 
 const TOOLS = [
   {
@@ -139,14 +141,11 @@ export const useAI = () => {
         throw new Error("Gemini API Key missing! Please add VITE_GEMINI_API_KEY to your .env file.");
       }
 
-      console.log("AI Request using model: gemini-1.5-flash");
-      const model = genAI.getGenerativeModel(
-        {
-          model: "gemini-1.5-flash", 
-          tools: TOOLS as any,
-        },
-        { apiVersion: 'v1beta' }  // v1beta required for function calling
-      );
+      console.log("AI Request using model: gemini-1.5-flash (v1beta)");
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash", 
+        tools: TOOLS as any,
+      });
 
       const chat = model.startChat({
         history: [
