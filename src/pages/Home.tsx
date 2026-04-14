@@ -324,18 +324,19 @@ const Home = () => {
         <section className="py-32 bg-slate-900 text-white overflow-hidden relative">
           <Quote className="absolute -top-10 -left-10 text-white/5 w-64 h-64" />
           <div className="max-w-[1400px] mx-auto px-6 md:px-10 text-center space-y-16 relative">
-            <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Voice of Leadership</h2>
+            <h2 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Message from CEO</h2>
             <div className="max-w-full mx-auto space-y-10">
               <p className="text-3xl md:text-5xl font-black leading-tight tracking-tighter italic">
-                "Adukul has completely transformed how we manage our network of 12 schools. The central reporting alone saved us hundreds of manual labor hours per month."
+                "Technical innovation is the backbone of modern education. At Adukul, we are committed to providing world-class school management tools for free, ensuring that every student in Bihar and India has access to a digital-first campus."
               </p>
               <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full border-4 border-indigo-500/30 overflow-hidden ring-4 ring-slate-900">
-                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover" alt="Director" />
+                <div className="w-24 h-24 rounded-full border-4 border-indigo-500/30 overflow-hidden ring-4 ring-slate-900 shadow-2xl relative group">
+                  <img src="/logo.png" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="CEO Akash Kumar" />
+                  <div className="absolute inset-0 bg-indigo-600/10 group-hover:opacity-0 transition-opacity" />
                 </div>
                 <div>
-                  <p className="text-xl font-black text-white uppercase tracking-tight">Dr. Richard Henderson</p>
-                  <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Director of Operations, Global Education Group</p>
+                  <p className="text-xl font-black text-white uppercase tracking-tight">Akash Kumar</p>
+                  <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Founder & CEO, Adukul | Diploma in Computer Science</p>
                 </div>
               </div>
             </div>
@@ -373,9 +374,32 @@ const Home = () => {
               <p className="text-[11px] text-slate-500 leading-relaxed uppercase font-black">Making school management easy with modern tools and design.</p>
             </div>
             
-            <FooterColumn title="Platform" links={['Features', 'Pricing', 'Solutions', 'API Docs']} />
-            <FooterColumn title="Resources" links={['About Us', 'Case Studies', 'Support', 'Blog']} />
-            <FooterColumn title="Legal" links={['Privacy Policy', 'Terms of Service', 'Data Security']} />
+            <FooterColumn 
+              title="Platform" 
+              links={[
+                { label: 'Features', path: '#features' },
+                { label: 'Pricing', path: '#pricing' },
+                { label: 'Solutions', path: '#solutions' },
+                { label: 'API Docs', path: '#' }
+              ]} 
+            />
+            <FooterColumn 
+              title="Resources" 
+              links={[
+                { label: 'About Us', path: '/about' },
+                { label: 'Case Studies', path: '#' },
+                { label: 'Support', path: '/support' },
+                { label: 'Blog', path: '#' }
+              ]} 
+            />
+            <FooterColumn 
+              title="Legal" 
+              links={[
+                { label: 'Privacy Policy', path: '/privacy' },
+                { label: 'Terms of Service', path: '/terms' },
+                { label: 'Data Security', path: '#' }
+              ]} 
+            />
           </div>
 
           <div className="pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-5">
@@ -453,12 +477,22 @@ const StakeholderItem = ({ icon, title, desc }: any) => (
   </div>
 );
 
-const FooterColumn = ({ title, links }: any) => (
+const FooterColumn = ({ title, links }: { title: string, links: { label: string, path: string }[] }) => (
   <div className="space-y-6 text-left">
     <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600">{title}</h4>
     <ul className="space-y-3">
-      {links.map((link: string) => (
-        <li key={link}><a href="#" className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-indigo-600 transition-colors">{link}</a></li>
+      {links.map((link) => (
+        <li key={link.label}>
+          {link.path.startsWith('#') || link.path === '#' ? (
+            <a href={link.path} className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+              {link.label}
+            </a>
+          ) : (
+            <Link to={link.path} className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+              {link.label}
+            </Link>
+          )}
+        </li>
       ))}
     </ul>
   </div>

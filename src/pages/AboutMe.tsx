@@ -61,7 +61,7 @@ const AboutMe = () => {
 
       <nav className="fixed top-0 w-full z-50 p-8 flex justify-between items-center backdrop-blur-sm border-b border-white/5">
         <div className="flex items-center space-x-2 font-mono text-[10px] tracking-[0.3em] uppercase opacity-50">
-           <span>Akash / Developer</span>
+           <span>Akash Kumar / CEO</span>
         </div>
         <div className="flex items-center space-x-6">
            <a href="/" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Home</a>
@@ -85,7 +85,7 @@ const AboutMe = () => {
                 ref={textRef}
                 className="text-3xl md:text-[33px] font-semibold tracking-[1px] leading-[1.1] md:leading-[36px] text-white reveal-item"
               >
-                I am a <span className="text-indigo-500 italic">Full-Stack</span> Developer building systems that simplify life through digital excellence. My focus is on creating scalable solutions that solve real-world problems.
+                I am <span className="text-indigo-500 italic">Akash Kumar</span> — Founder & CEO of Adukul. Currently pursuing a **Diploma in Computer Science**, I am dedicated to bridging the digital divide in education.
               </p>
               
               <div className="mt-12 reveal-item">
@@ -108,7 +108,7 @@ const AboutMe = () => {
                 <span className="font-mono text-xs uppercase tracking-widest">Philosophy</span>
               </div>
               <p className="text-xl md:text-2xl text-slate-400 leading-relaxed font-medium">
-                My approach to development is centered on **scalability** and **performance**. Whether it's a School Management System or a real-time dashboard, I believe every line of code should contribute to a seamless user experience.
+                My journey in Computer Science is driven by a passion for building high-performance, scalable systems. Whether it's the Adukul School Management System or custom digital architectures, I believe in code that empowers people.
               </p>
               <div className="pt-8">
                 <ShimmerButton className="h-14 px-10 rounded-[5px] text-[10px] font-black uppercase tracking-[0.2em] bg-white text-black hover:bg-slate-100 transition-all flex items-center gap-3">

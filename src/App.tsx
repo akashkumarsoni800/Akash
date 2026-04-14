@@ -15,6 +15,9 @@ import ResetPassword from './pages/auth/ResetPassword';
 import ProfileSetupPage from './pages/auth/ProfileSetupPage';
 import SchoolRegistrationPage from './pages/auth/SchoolRegistrationPage'; // ✅ NEW
 import AboutMe from './pages/AboutMe'; // ✅ NEW PREMIUM PORTFOLIO
+import PrivacyPolicy from './pages/public/PrivacyPolicy';
+import TermsConditions from './pages/public/TermsConditions';
+import HelpSupport from './pages/public/HelpSupport';
 
 // --- DASHBOARDS ---
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -94,6 +97,9 @@ function App() {
           <Route path="/register-school" element={<SchoolRegistrationPage />} />
           <Route path="/v/:id" element={<VerifyStudent />} />
           <Route path="/about" element={<AboutMe />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/support" element={<HelpSupport />} />
 
            
 
