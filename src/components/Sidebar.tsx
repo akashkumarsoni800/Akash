@@ -7,7 +7,7 @@ import {
   X, LayoutDashboard, CreditCard, UserPlus, Users,
   ShieldCheck, ClipboardList, Calendar, FileText,
   BookOpen, Package, Wallet, PieChart, Users2, Bell,
-  LogOut, Shield, ChevronRight
+  LogOut, Shield, ChevronRight, Brain
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AIAssistant from './AIAssistant';
@@ -221,6 +221,7 @@ const Sidebar = () => {
               <NavItem to="/admin/upload-result" icon={<ClipboardList size={18} />} label="Results" />
               <NavItem to="/admin/documents" icon={<FileText size={18} />} label="Documents" />
               <NavItem to="/admin/add-event" icon={<Bell size={18} />} label="Notice Board" />
+              <NavItem to="/admin/smart-insights" icon={<Brain size={18} />} label="Smart Insights" />
               <NavItem to="/admin/create-admin" icon={<ShieldCheck size={18} />} label=" Admins" />
             </>
           )}

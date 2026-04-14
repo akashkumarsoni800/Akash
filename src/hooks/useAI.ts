@@ -1,206 +1,155 @@
 import { useState } from 'react';
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { supabase } from "../supabaseClient";
 import { getCurrentSchoolId } from "./useQueries";
 import { toast } from "sonner";
 
-// Initialize Gemini with v1beta — required for function calling / tools
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "", {
-  apiVersion: 'v1beta'
-});
+// ─── Types ─────────────────────────────────────────────────────────────────
+interface Message { role: 'user' | 'assistant'; content: string; }
 
-const TOOLS = [
-  {
-    functionDeclarations: [
-      {
-        name: "get_student_list",
-        description: "Fetch a list of students filtered by class and optional section.",
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            className: { type: SchemaType.STRING, description: "The class name (e.g. 10, 5th, etc.)" },
-            section: { type: SchemaType.STRING, description: "Optional section (A, B, C)" },
-          },
-          required: ["className"],
-        },
-      },
-      {
-        name: "get_student_details",
-        description: "Get detailed information about a specific student by name or ID.",
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            query: { type: SchemaType.STRING, description: "Student name or partial name" },
-          },
-          required: ["query"],
-        },
-      },
-      {
-        name: "mark_attendance",
-        description: "Mark attendance for a specific student.",
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            studentId: { type: SchemaType.NUMBER, description: "The numeric student ID" },
-            status: { type: SchemaType.STRING, enum: ["Present", "Absent", "Late"], description: "Attendance status" },
-          },
-          required: ["studentId", "status"],
-        },
-      },
-      {
-        name: "get_fee_summary",
-        description: "Check the fee status of a student.",
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            studentId: { type: SchemaType.NUMBER, description: "The numeric student ID" },
-          },
-          required: ["studentId"],
-        },
-      },
-      {
-        name: "create_system_notice",
-        description: "Create a new notice for the school.",
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            title: { type: SchemaType.STRING, description: "Title of the notice" },
-            content: { type: SchemaType.STRING, description: "Detailed content of the notice" },
-          },
-          required: ["title", "content"],
-        },
-      }
-    ],
-  },
-];
-
-export const useAI = () => {
-  const [messages, setMessages] = useState<{ role: 'user' | 'model', content: string }[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const executeTool = async (call: any) => {
+// ─── School Context Fetcher ──────────────────────────────────────────────────
+const fetchSchoolContext = async (): Promise<string> => {
+  try {
     const schoolId = getCurrentSchoolId();
-    const { name, args } = call;
+    if (!schoolId) return "";
 
-    try {
-      switch (name) {
-        case "get_student_list": {
-          let query = supabase.from('students').select('*').eq('school_id', schoolId).ilike('class_name', `%${args.className}%`);
-          if (args.section) query = query.eq('section', args.section);
-          const { data } = await query;
-          return data;
-        }
-        case "get_student_details": {
-          const { data } = await supabase.from('students').select('*, fees(*), attendance(*)').eq('school_id', schoolId).ilike('full_name', `%${args.query}%`);
-          return data;
-        }
-        case "mark_attendance": {
-          const { error } = await supabase.from('attendance').insert([{
-            student_id: args.studentId,
-            status: args.status,
-            date: new Date().toISOString().split('T')[0],
-            school_id: schoolId
-          }]);
-          if (error) throw error;
-          toast.success(`Attendance marked as ${args.status}`);
-          return { success: true };
-        }
-        case "get_fee_summary": {
-          const { data } = await supabase.from('fees').select('*').eq('student_id', args.studentId);
-          return data;
-        }
-        case "create_system_notice": {
-          const { error } = await supabase.from('notices').insert([{
-            title: args.title,
-            content: args.content,
-            school_id: schoolId
-          }]);
-          if (error) throw error;
-          toast.success("Notice created successfully!");
-          return { success: true };
-        }
-        default:
-          return { error: "Tool not found" };
-      }
-    } catch (err: any) {
-      console.error(`Tool execution failed: ${name}`, err);
-      return { error: err.message };
-    }
-  };
+    const [studentsRes, attendanceRes, feesRes] = await Promise.all([
+      supabase.from('students').select('student_id,full_name,class_name,section').eq('school_id', schoolId).eq('is_approved', 'approved'),
+      supabase.from('attendance').select('student_id,status,date').eq('school_id', schoolId).order('date', { ascending: false }).limit(500),
+      supabase.from('fees').select('student_id,status').eq('school_id', schoolId),
+    ]);
+
+    const students = studentsRes.data || [];
+    const attendance = attendanceRes.data || [];
+    const fees = feesRes.data || [];
+
+    const totalStudents = students.length;
+    const pendingFees = fees.filter((f: any) => f.status === 'Pending').length;
+    const presentToday = attendance.filter((a: any) => {
+      const today = new Date().toISOString().split('T')[0];
+      return a.date === today && a.status === 'Present';
+    }).length;
+
+    // Low attendance students
+    const attByStudent = new Map<number, { total: number; present: number }>();
+    attendance.forEach((a: any) => {
+      if (!attByStudent.has(a.student_id)) attByStudent.set(a.student_id, { total: 0, present: 0 });
+      const rec = attByStudent.get(a.student_id)!;
+      rec.total++;
+      if (a.status === 'Present') rec.present++;
+    });
+
+    const lowAttStudents = students.filter((s: any) => {
+      const rec = attByStudent.get(s.student_id);
+      if (!rec || rec.total === 0) return false;
+      return (rec.present / rec.total) < 0.75;
+    });
+
+    const ctx = `
+SCHOOL DATA SUMMARY:
+- Total approved students: ${totalStudents}
+- Students with pending fees: ${pendingFees}
+- Present today: ${presentToday}
+- Students with <75% attendance: ${lowAttStudents.length}
+- Low attendance students: ${lowAttStudents.slice(0, 10).map((s: any) => {
+      const rec = attByStudent.get(s.student_id);
+      const pct = rec ? Math.round((rec.present / rec.total) * 100) : 0;
+      return `${s.full_name} (Class ${s.class_name}, ${pct}%)`;
+    }).join(', ')}
+
+STUDENT LIST (first 20): ${students.slice(0, 20).map((s: any) => `${s.full_name} (Class ${s.class_name})`).join(', ')}
+    `.trim();
+
+    return ctx;
+  } catch {
+    return "";
+  }
+};
+
+// ─── Hook ────────────────────────────────────────────────────────────────────
+export const useAI = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (userInput: string) => {
     if (!userInput.trim()) return;
 
-    setIsLoading(true);
-    const newMessages = [...messages, { role: 'user' as const, content: userInput }];
+    const newMessages: Message[] = [...messages, { role: 'user', content: userInput }];
     setMessages(newMessages);
+    setIsLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       if (!apiKey) {
-        throw new Error("Gemini API Key missing! Please add VITE_GEMINI_API_KEY to your .env file.");
+        throw new Error("Groq API Key missing! Add VITE_GROQ_API_KEY to .env file. Get free key at console.groq.com");
       }
 
-      console.log("AI Request using model: gemini-2.0-flash (v1beta)");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash", 
-        tools: TOOLS as any,
+      // Fetch live school context
+      const schoolContext = await fetchSchoolContext();
+
+      const systemPrompt = `You are Adukul AI — the intelligent assistant for Adukul School Management System.
+You help school administrators and teachers manage their school efficiently.
+
+${schoolContext ? `LIVE SCHOOL DATA:\n${schoolContext}` : ''}
+
+Your capabilities:
+- Answer questions about students, attendance, fees, results
+- Provide insights and recommendations based on school data
+- Help draft notices, messages, WhatsApp reminders
+- Suggest actions for at-risk students
+- Answer in Hinglish (Hindi + English mix) — friendly and professional
+
+Always be helpful, concise, and action-oriented. If you don't have specific data, say so honestly.`;
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama3-8b-8192',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...newMessages.map(m => ({ role: m.role, content: m.content })),
+          ],
+          max_tokens: 1024,
+          temperature: 0.7,
+        }),
       });
 
-      const chat = model.startChat({
-        history: [
-          {
-            role: 'user',
-            parts: [{ text: "You are Adukul AI, the intelligent control center for Adukul School Management System. Your job is to help administrators and teachers manage the school. You can query students, mark attendance, check fees, and create notices. Always be professional, helpful, and concise. Use tools whenever a user asks for data or actions. If a tool requires an ID you don't have, ask for the student's name first to find it." }],
-          },
-          {
-            role: 'model',
-            parts: [{ text: "Understood. I am Adukul AI. I am ready to help you manage the school efficiently. How can I assist you today?" }],
-          },
-          ...messages.map(m => ({
-            role: m.role === 'user' ? 'user' : 'model',
-            parts: [{ text: m.content }],
-          })),
-        ],
-      });
-
-      let result = await chat.sendMessage(userInput);
-      let response = result.response;
-      let calls = response.functionCalls();
-
-      while (calls && calls.length > 0) {
-        const toolResults = await Promise.all(calls.map(async (call) => {
-            const data = await executeTool(call);
-            return {
-                functionResponse: {
-                    name: call.name,
-                    response: { content: data }
-                }
-            };
-        }));
-
-        result = await chat.sendMessage(toolResults as any);
-        response = result.response;
-        calls = response.functionCalls();
+      if (!response.ok) {
+        const err = await response.json();
+        if (response.status === 429) throw new Error("QUOTA_EXCEEDED");
+        if (response.status === 401) throw new Error("Invalid API Key");
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
       }
 
-      const text = response.text();
-      setMessages([...newMessages, { role: 'model', content: text }]);
+      const data = await response.json();
+      const aiText = data.choices?.[0]?.message?.content || "Sorry, koi response nahi mila.";
+
+      setMessages([...newMessages, { role: 'assistant', content: aiText }]);
     } catch (error: any) {
       console.error("AI Error:", error);
       const msg = error?.message || 'Unknown error';
-      if (msg.includes('API_KEY') || msg.includes('API key')) {
-        toast.error("AI Key missing or invalid. Check VITE_GEMINI_API_KEY in .env");
-      } else if (msg.includes('429') || msg.includes('quota')) {
-        toast.error("AI quota exceeded. Try again after some time.");
+
+      let userMsg = '⚠️ Sorry, kuch error aa gaya. Dobara try karo.';
+      if (msg.includes('QUOTA_EXCEEDED') || msg.includes('429')) {
+        toast.error("Groq quota exceeded. Thodi der baad try karo.");
+        userMsg = '⏳ Abhi bahut requests ho gayi hain. 1 minute baad try karo.';
+      } else if (msg.includes('API Key') || msg.includes('401')) {
+        toast.error("Groq API Key missing! console.groq.com se free key lo aur .env mein VITE_GROQ_API_KEY set karo.");
+        userMsg = '🔑 AI Key set nahi hai. Admin se contact karo.';
       } else {
-        toast.error("AI failed: " + msg);
+        toast.error("AI Error: " + msg);
       }
-      setMessages([...newMessages, { role: 'model', content: '⚠️ Sorry, kuch error aa gaya. Dobara try karo.' }]);
+
+      setMessages([...newMessages, { role: 'assistant', content: userMsg }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return { messages, sendMessage, isLoading };
+  const clearMessages = () => setMessages([]);
+
+  return { messages, sendMessage, isLoading, clearMessages };
 };

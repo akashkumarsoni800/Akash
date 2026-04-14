@@ -54,6 +54,7 @@ import DocumentHub from './pages/admin/DocumentHub';
 import GalleryPage from './pages/GalleryPage';
 import VerifyStudent from './pages/public/VerifyStudent';
 import LibraryHub from './pages/admin/LibraryHub';
+import SmartInsights from './pages/admin/SmartInsights';
 
 
 
@@ -143,6 +144,7 @@ function App() {
             <Route path="/admin/documents" element={<ProtectedRoute allowedRole="admin"><DocumentHub /></ProtectedRoute>} />
             <Route path="/admin/library" element={<ProtectedRoute allowedRole="admin"><LibraryHub /></ProtectedRoute>} />
             <Route path="/gallery" element={<ProtectedRoute allowedRole="any"><GalleryPage /></ProtectedRoute>} />
+            <Route path="/admin/smart-insights" element={<ProtectedRoute allowedRole="admin"><SmartInsights /></ProtectedRoute>} />
           </Route>
 
           {/* 🔴 404 - ENHANCED */}
