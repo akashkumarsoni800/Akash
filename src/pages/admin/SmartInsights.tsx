@@ -32,8 +32,15 @@ interface StudentInsight {
   hasResults: boolean;
   consecutiveAbsent: number;
   issues: { type: 'attendance' | 'fee' | 'academic' | 'absent_streak'; label: string; severity: 'high' | 'medium' | 'low' }[];
-  score: number; // risk score — higher = more at risk
+  score: number;
 }
+
+interface AutomationQueue {
+  students: StudentInsight[];
+  currentIndex: number;
+  isOpen: boolean;
+}
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const severityColor = {
@@ -51,6 +58,9 @@ const SmartInsights: React.FC = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'attendance' | 'fee' | 'academic' | 'absent_streak'>('all');
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [automation, setAutomation] = useState<AutomationQueue>({ students: [], currentIndex: 0, isOpen: false });
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -105,9 +115,12 @@ const SmartInsights: React.FC = () => {
 
         // ── Fee Analysis ───────────────────────────────────────────────────
         const feeRecords = feeMap.get(student.student_id) || [];
-        const hasPending = feeRecords.some(f => f.status === 'Pending');
+        const hasPending = feeRecords.some(f => f.status?.trim().toLowerCase() === 'pending');
         const hasAnyFee = feeRecords.length > 0;
-        const feeStatus: StudentInsight['feeStatus'] = !hasAnyFee ? 'No Record' : hasPending ? 'Pending' : 'Paid';
+        
+        // If NO record exists, we treat it as Pending (Unassigned) to be safe
+        const feeStatus: StudentInsight['feeStatus'] = (!hasAnyFee || hasPending) ? 'Pending' : 'Paid';
+
 
         // ── Academic Analysis ──────────────────────────────────────────────
         const resultRecords = resultMap.get(student.student_id) || [];
@@ -159,6 +172,53 @@ const SmartInsights: React.FC = () => {
   };
 
   useEffect(() => { fetchData(); }, []);
+  useEffect(() => { setSelectedIds(new Set()); }, [filter, search]); // Reset selection when filter changes
+
+  // ── Selection Helpers ──────────────────────────────────────────────────
+  const toggleSelect = (id: number) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const selectAllFiltered = () => {
+    if (selectedIds.size === filtered.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(filtered.map(i => i.student.student_id)));
+  };
+
+  const selectAllDefaulters = () => {
+    const defaulters = insights.filter(i => i.feeStatus === 'Pending');
+    setSelectedIds(new Set(defaulters.map(d => d.student.student_id)));
+    setFilter('fee');
+  };
+
+  // ── Automation Logic ───────────────────────────────────────────────────
+  const startBulkReminders = () => {
+    const selectedStudents = insights.filter(i => selectedIds.has(i.student.student_id));
+    setAutomation({
+      students: selectedStudents,
+      currentIndex: 0,
+      isOpen: true
+    });
+  };
+
+  const nextReminder = () => {
+    const current = automation.students[automation.currentIndex];
+    if (current?.student.contact_number) {
+      const msg = encodeURIComponent(`Namaskar, aapke bacche ${current.student.full_name} ka school fee pending hai. Kripya jaldi jama karein. Adukul School Management.`);
+      window.open(`https://wa.me/91${current.student.contact_number.replace(/\D/g, '')}?text=${msg}`, '_blank');
+    }
+
+    if (automation.currentIndex < automation.students.length - 1) {
+      setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
+    } else {
+      setAutomation(prev => ({ ...prev, isOpen: false }));
+      setSelectedIds(new Set());
+      toast.success('Bulk reminders complete! 🎉');
+    }
+  };
+
 
   // ── Summary Stats ────────────────────────────────────────────────────────
   const stats = useMemo(() => ({
@@ -265,7 +325,14 @@ const SmartInsights: React.FC = () => {
             </button>
           ))}
         </div>
+        <button
+          onClick={selectAllDefaulters}
+          className="ml-auto text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors uppercase tracking-wider"
+        >
+          Select All Defaulters
+        </button>
       </div>
+
 
       {/* Student List */}
       {loading ? (
@@ -292,14 +359,28 @@ const SmartInsights: React.FC = () => {
                 className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Row Header */}
+                <div 
+                  className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-slate-50 border-r border-slate-100"
+                  onClick={(e) => { e.stopPropagation(); toggleSelect(insight.student.student_id); }}
+                >
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                    selectedIds.has(insight.student.student_id) 
+                      ? 'bg-indigo-600 border-indigo-600 text-white' 
+                      : 'border-slate-300 bg-white'
+                  }`}>
+                    {selectedIds.has(insight.student.student_id) && <CheckCircle2 size={14} />}
+                  </div>
+                </div>
+
                 <button
-                  className="w-full flex items-center gap-4 p-4 text-left"
+                  className="flex-1 flex items-center gap-4 p-4 text-left"
                   onClick={() => setExpandedId(expandedId === insight.student.student_id ? null : insight.student.student_id)}
                 >
                   {/* Risk indicator */}
-                  <div className={`w-2 h-10 rounded-full shrink-0 ${
+                  <div className={`w-1.5 h-10 rounded-full shrink-0 ${
                     insight.score >= 6 ? 'bg-red-500' : insight.score >= 3 ? 'bg-amber-500' : 'bg-blue-400'
                   }`} />
+
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -447,7 +528,110 @@ const SmartInsights: React.FC = () => {
           </AnimatePresence>
         </div>
       )}
+      {/* Floating Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-xl"
+          >
+            <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-2xl p-4 flex items-center justify-between gap-4 backdrop-blur-xl">
+              <div className="flex items-center gap-3 text-white">
+                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold">
+                  {selectedIds.size}
+                </div>
+                <div>
+                  <p className="text-sm font-bold">Students Selected</p>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Bulk Action Ready</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSelectedIds(new Set())}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-all uppercase"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={startBulkReminders}
+                  className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-indigo-900/40 uppercase flex items-center gap-2"
+                >
+                  <BadgeIndianRupee size={14} />
+                  Remind All
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Automation Modal Overlay */}
+      <AnimatePresence>
+        {automation.isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+              onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))}
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100"
+            >
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Brain size={32} className="animate-pulse" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Rule-Based Automation</h3>
+                <p className="text-sm text-slate-500 mb-8">
+                  Sending WhatsApp reminders to {automation.students.length} students.
+                </p>
+
+                <div className="space-y-4 mb-8">
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm font-bold text-indigo-600">
+                      {automation.currentIndex + 1}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-bold text-slate-800">{automation.students[automation.currentIndex]?.student.full_name}</p>
+                      <p className="text-[10px] text-slate-400">Class {automation.students[automation.currentIndex]?.student.class_name}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Progress bar */}
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-indigo-600 transition-all duration-500" 
+                      style={{ width: `${((automation.currentIndex + 1) / automation.students.length) * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={nextReminder}
+                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-xl shadow-indigo-200 flex items-center justify-center gap-3"
+                >
+                  <Send size={18} />
+                  {automation.currentIndex === automation.students.length - 1 ? 'Send Final Reminder' : 'Send & Next Student'}
+                </button>
+                
+                <p className="mt-6 text-[10px] text-slate-400 uppercase font-black tracking-widest leading-loose">
+                  Har click par ek naya WhatsApp tab khulega.<br/>Browser blocks sequential popups for safety.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
+
   );
 };
 
