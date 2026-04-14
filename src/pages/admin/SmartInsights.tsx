@@ -19,7 +19,8 @@ interface Student {
   roll_number?: string;
 }
 interface AttendanceRecord { student_id: number; status: string; date: string; }
-interface FeeRecord { student_id: number; status: string; total_amount?: number; }
+interface FeeRecord { student_id: number; status: string; total_amount?: number; month?: string; }
+
 interface ResultRecord { student_id: number; marks: number; max_marks?: number; subject?: string; }
 
 interface StudentInsight {
@@ -70,8 +71,9 @@ const SmartInsights: React.FC = () => {
         supabase.from('students').select('student_id,full_name,class_name,section,contact_number,roll_number')
           .eq('school_id', schoolId).eq('is_approved', 'approved'),
         supabase.from('attendance').select('student_id,status,date').eq('school_id', schoolId),
-        supabase.from('fees').select('student_id,status,total_amount').eq('school_id', schoolId),
+        supabase.from('fees').select('student_id,status,total_amount,month').eq('school_id', schoolId),
         supabase.from('student_results').select('student_id,marks,max_marks,subject').eq('school_id', schoolId),
+
       ]);
 
       const students: Student[] = studentsRes.data || [];
@@ -115,11 +117,11 @@ const SmartInsights: React.FC = () => {
 
         // ── Fee Analysis ───────────────────────────────────────────────────
         const feeRecords = feeMap.get(student.student_id) || [];
-        const hasPending = feeRecords.some(f => f.status?.trim().toLowerCase() === 'pending');
-        const hasAnyFee = feeRecords.length > 0;
+        const pendingRecord = feeRecords.find(f => f.status?.trim().toLowerCase() === 'pending');
         
-        // If NO record exists, we treat it as Pending (Unassigned) to be safe
-        const feeStatus: StudentInsight['feeStatus'] = (!hasAnyFee || hasPending) ? 'Pending' : 'Paid';
+        // ONLY show as Pending if an explicit 'Pending' record exists
+        const feeStatus: StudentInsight['feeStatus'] = pendingRecord ? 'Pending' : 'Paid';
+
 
 
         // ── Academic Analysis ──────────────────────────────────────────────
@@ -205,9 +207,40 @@ const SmartInsights: React.FC = () => {
 
   const nextReminder = () => {
     const current = automation.students[automation.currentIndex];
+    const schoolId = getCurrentSchoolId();
+    
     if (current?.student.contact_number) {
-      const msg = encodeURIComponent(`Namaskar, aapke bacche ${current.student.full_name} ka school fee pending hai. Kripya jaldi jama karein. Adukul School Management.`);
-      window.open(`https://wa.me/91${current.student.contact_number.replace(/\D/g, '')}?text=${msg}`, '_blank');
+      // Find the specific pending record to get month and amount
+      // Since we already filtered for 'pending' in startBulkReminders, we just need the data
+      const getLatestPending = async () => {
+        const { data } = await supabase
+          .from('fees')
+          .select('month, total_amount')
+          .eq('student_id', current.student.student_id)
+          .eq('status', 'Pending')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+        return data;
+      };
+
+      getLatestPending().then(feeData => {
+        const month = feeData?.month || 'Current Month';
+        const amount = feeData?.total_amount || '0';
+        const schoolName = localStorage.getItem('current_school_name') || 'Adukul School';
+        
+        const msg = encodeURIComponent(
+          `*📄 FEE REMINDER - ${schoolName.toUpperCase()}*\n\n` +
+          `*Student:* ${current.student.full_name}\n` +
+          `*Father:* ${current.student.father_name || 'N/A'}\n` +
+          `*Class:* ${current.student.class_name}\n` +
+          `*Month:* ${month}\n` +
+          `*Pending Amount:* ₹${amount}\n\n` +
+          `Kripya jald se jald fees jama karein. Dhanyawad.`
+        );
+        
+        window.open(`https://wa.me/91${current.student.contact_number?.replace(/\D/g, '')}?text=${msg}`, '_blank');
+      });
     }
 
     if (automation.currentIndex < automation.students.length - 1) {
@@ -218,6 +251,7 @@ const SmartInsights: React.FC = () => {
       toast.success('Bulk reminders complete! 🎉');
     }
   };
+
 
 
   // ── Summary Stats ────────────────────────────────────────────────────────
