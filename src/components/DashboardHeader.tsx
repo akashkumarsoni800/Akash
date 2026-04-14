@@ -190,19 +190,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
             </div>
           </div>
 
-          {/* Quick Scanner UI Link */}
-          {userRole === 'admin' && (
-            <button 
-              onClick={() => setIsScannerOpen(true)}
-              className="absolute -right-14 top-1/2 -translate-y-1/2 p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 bg-white border border-slate-100/50 rounded-2xl shadow-sm transition-all active:scale-95 group overflow-hidden"
-              title="Quick ID Scan"
-            >
-              <div className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 opacity-0 group-hover:opacity-100 animate-pulse transition-opacity" />
-              <Camera size={20} />
-            </button>
-          )}
-
-          {/* Search Results Dropdown */}
+          {/* Search Results Dropdown (Moved Camera out of here) */}
           <AnimatePresence>
             {isSearchOpen && (
               <>
@@ -252,7 +240,7 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
       </div>
 
       <div className="flex items-center gap-4 md:gap-8">
-        {/* Action Icons */}
+        {/* Action Icons (Notifications & Config) */}
         <div className="hidden sm:flex items-center gap-3">
           {/* Notification UI */}
           <div className="relative">
@@ -350,8 +338,20 @@ const DashboardHeader = ({ full_name, avatarUrl, userRole, onMenuClick }: any) =
           </div>
         </div>
 
-        {/* Vertical Divider */}
-        <div className="h-10 w-px bg-slate-100 hidden sm:block"></div>
+        {/* Vertical Divider (Hidden on mobile) */}
+        <div className="h-10 w-px bg-slate-100 hidden xs:block"></div>
+
+        {/* Quick Scanner UI Link (Now always visible on mobile) */}
+        {userRole === 'admin' && (
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            className="p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-[5px] transition-all relative group"
+            title="Quick ID Scan"
+          >
+            <Camera size={22} />
+            <span className="absolute bottom-1 right-1 w-2 h-2 bg-blue-500 rounded-full border-2 border-white opacity-0 group-hover:opacity-100 transition-opacity"></span>
+          </button>
+        )}
 
         {/* Profile Dropdown */}
         <div className="relative">

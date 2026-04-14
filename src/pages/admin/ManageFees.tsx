@@ -548,12 +548,14 @@ const ManageFees = () => {
         <form onSubmit={handleAssignFee} className="space-y-10 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
            <div className="space-y-4">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
+            <label htmlFor={bulkMode ? "class-select" : "student-select"} className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
              {bulkMode ? 'Target Class' : 'Target Student'}
             </label>
             <div className="relative group">
               {bulkMode ? (
                 <select 
+                  id="class-select"
+                  name="class-select"
                   className="premium-input w-full appearance-none pr-10"
                   value={selectedClass}
                   onChange={(e) => setSelectedClass(e.target.value)}
@@ -565,6 +567,8 @@ const ManageFees = () => {
                 </select>
               ) : (
                 <select 
+                  id="student-select"
+                  name="student-select"
                   className="premium-input w-full appearance-none pr-10"
                   value={selectedStudent}
                   onChange={(e) => setSelectedStudent(e.target.value)}
@@ -582,8 +586,10 @@ const ManageFees = () => {
            </div>
 
            <div className="space-y-4">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Billing Month</label>
+            <label htmlFor="billing-month" className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Billing Month</label>
             <input 
+             id="billing-month"
+             name="billing-month"
              type="month" 
              className="premium-input w-full"
              value={month}
@@ -598,7 +604,7 @@ const ManageFees = () => {
              {feeHeads.map((head: any) => (
               <div key={head.id} className="space-y-3 group/item">
                <div className="flex justify-between items-center px-2">
-                <label className="text-[10px] font-black text-slate-600 group-hover/item:text-blue-600 transition-colors uppercase">{head.name}</label>
+                <label htmlFor={`fee-head-${head.id}`} className="text-[10px] font-black text-slate-600 group-hover/item:text-blue-600 transition-colors uppercase">{head.name}</label>
                 <div className="flex gap-4 opacity-0 group-hover/item:opacity-100 transition-opacity">
                   <button type="button" onClick={() => deleteFeeHeadMutation.mutate(head.id)} className="text-rose-400 hover:text-rose-600">
                     <Trash2 size={12} />
@@ -608,6 +614,8 @@ const ManageFees = () => {
                <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-xs">₹</span>
                 <input 
+                 id={`fee-head-${head.id}`}
+                 name={`fee-head-${head.id}`}
                  type="number" 
                  placeholder="0.00"
                  className="premium-input w-full pl-10"
@@ -963,8 +971,11 @@ const ManageFees = () => {
           <div className="md:col-span-2 relative">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
             <input 
+              id="reminder-search"
+              name="reminder-search"
               type="text" 
               placeholder="Search student in reminders list..."
+              aria-label="Search student in reminders list"
               className="premium-input w-full pl-16 py-5 bg-slate-50 border-transparent hover:bg-white"
               value={waSearch}
               onChange={(e) => setWaSearch(e.target.value)}
@@ -972,6 +983,9 @@ const ManageFees = () => {
           </div>
           <div className="relative group">
             <select 
+              id="reminder-class-filter"
+              name="reminder-class-filter"
+              aria-label="Filter reminders by class"
               className="premium-input w-full appearance-none pr-10 bg-slate-50 border-transparent"
               value={classFilterWa}
               onChange={(e) => setClassFilterWa(e.target.value)}

@@ -403,14 +403,46 @@ const AddStudent = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-         <InputField label="Student Name *" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required icon={User} />
-         <InputField label="Father's Name *" name="father" placeholder="Father's Name" value={formData.father} onChange={handleChange} required icon={ShieldCheck} />
+         <InputField 
+            id="student-name"
+            label="Student Name *" 
+            name="name" 
+            placeholder="Full Name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            required 
+            icon={User} 
+          />
+         <InputField 
+            id="father-name"
+            label="Father's Name *" 
+            name="father" 
+            placeholder="Father's Name" 
+            value={formData.father} 
+            onChange={handleChange} 
+            required 
+            icon={ShieldCheck} 
+          />
          
          <div className="grid grid-cols-2 gap-6">
-          <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
+          <InputField 
+            id="dob"
+            label="Date of Birth" 
+            name="dob" 
+            type="date" 
+            value={formData.dob} 
+            onChange={handleChange} 
+          />
           <div className="space-y-1 group">
-           <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Gender</label>
-           <select name="gender" value={formData.gender} onChange={handleChange} className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" required>
+           <label htmlFor="gender" className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Gender</label>
+           <select 
+             id="gender"
+             name="gender" 
+             value={formData.gender} 
+             onChange={handleChange} 
+             className="premium-input appearance-none bg-slate-50 text-[10px] pr-10" 
+             required
+           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -418,27 +450,64 @@ const AddStudent = () => {
           </div>
          </div>
 
-         <InputField label="Phone Number" name="phone" placeholder="Mobile Number" value={formData.phone} onChange={handleChange} icon={Fingerprint} />
+         <InputField 
+            id="phone"
+            label="Phone Number" 
+            name="phone" 
+            placeholder="Mobile Number" 
+            value={formData.phone} 
+            onChange={handleChange} 
+            icon={Fingerprint} 
+          />
 
          <div className="space-y-1 group">
-          <label className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
+          <label htmlFor="class-input" className="block text-[9px] font-black text-slate-400  mb-3 ml-2 leading-none uppercase">Class *</label>
           <div className="flex gap-4">
-           <input type="text" name="class" placeholder="10A" value={formData.class} onChange={handleClassChange} onBlur={handleClassBlur} className="w-full premium-input pl-8 uppercase" required />
+           <input 
+             id="class-input"
+             type="text" 
+             name="class" 
+             placeholder="10A" 
+             value={formData.class} 
+             onChange={handleClassChange} 
+             onBlur={handleClassBlur} 
+             className="w-full premium-input pl-8 uppercase" 
+             required 
+           />
            <button type="button" onClick={() => fetchNextRoll(formData.class)} className="p-4 bg-blue-600 text-white rounded-[5px] hover:bg-slate-900 transition-all shadow-lg active:scale-95">
             <RefreshCw size={20}/>
            </button>
           </div>
          </div>
 
-         <InputField label="Roll Number *" name="roll" value={formData.roll} onChange={handleChange} required icon={Award} />
+         <InputField 
+            id="roll"
+            label="Roll Number *" 
+            name="roll" 
+            value={formData.roll} 
+            onChange={handleChange} 
+            required 
+            icon={Award} 
+          />
 
          <div className="md:col-span-2">
-           <InputField label="Email (Login ID) *" name="email" type="email" placeholder="student@school.com" value={formData.email} onChange={handleChange} required icon={Mail} />
+           <InputField 
+             id="email"
+             label="Email (Login ID) *" 
+             name="email" 
+             type="email" 
+             placeholder="student@school.com" 
+             value={formData.email} 
+             onChange={handleChange} 
+             required 
+             icon={Mail} 
+           />
          </div>
 
          <div className="md:col-span-2 space-y-1 group">
-          <label className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Address</label>
+          <label htmlFor="address" className="block text-[9px] font-black text-slate-400  ml-2 group-focus-within:text-blue-500">Address</label>
           <textarea
+           id="address"
            placeholder="Home Address..."
            name="address"
            value={formData.address}
@@ -464,12 +533,12 @@ const AddStudent = () => {
    </div>
   );
 };
-const InputField = ({ label, icon: Icon, ...props }: any) => (
+const InputField = ({ label, id, icon: Icon, ...props }: any) => (
  <div className="space-y-1 group">
-  <label className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
+  <label htmlFor={id} className="block text-[9px] font-black text-slate-400  ml-2 transition-colors group-focus-within:text-blue-500">{label}</label>
   <div className="relative">
    {Icon && <Icon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-blue-400 transition-colors" size={18} />}
-   <input className="premium-input pl-16" {...props} />
+   <input id={id} className="premium-input pl-16" {...props} />
   </div>
  </div>
 );

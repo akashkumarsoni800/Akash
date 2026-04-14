@@ -330,8 +330,11 @@ const SmartInsights: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1">
+          <label htmlFor="insight-search" className="sr-only">Search student or class</label>
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
+            id="insight-search"
+            name="insight-search"
             type="text"
             placeholder="Student ya class search karo..."
             value={search}
