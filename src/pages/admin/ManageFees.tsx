@@ -22,7 +22,8 @@ import {
 } from '../../hooks/useQueries';
 
 const ManageFees = () => {
- const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
  const [newHeadName, setNewHeadName] = useState('');
  const [selectedStudent, setSelectedStudent] = useState('');
  const [selectedClass, setSelectedClass] = useState('');
