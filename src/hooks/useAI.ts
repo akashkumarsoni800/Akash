@@ -13,7 +13,7 @@ const fetchSchoolContext = async (): Promise<string> => {
     if (!schoolId) return "";
 
     const [studentsRes, attendanceRes, feesRes] = await Promise.all([
-      supabase.from('students').select('student_id,full_name,class_name,section').eq('school_id', schoolId).eq('is_approved', 'approved'),
+      supabase.from('students').select('student_id,full_name,father_name,class_name,section,contact_number').eq('school_id', schoolId).eq('is_approved', 'approved'),
       supabase.from('attendance').select('student_id,status,date').eq('school_id', schoolId).order('date', { ascending: false }).limit(500),
       supabase.from('fees').select('student_id,status').eq('school_id', schoolId),
     ]);
@@ -23,7 +23,20 @@ const fetchSchoolContext = async (): Promise<string> => {
     const fees = feesRes.data || [];
 
     const totalStudents = students.length;
-    const pendingFees = fees.filter((f: any) => f.status === 'Pending').length;
+    const pendingFeeRecords = fees.filter((f: any) => f.status === 'Pending');
+    const pendingFeesCount = pendingFeeRecords.length;
+    
+    // Map pending fees to actual student details
+    const defaultersList = pendingFeeRecords.map((f: any) => {
+      const student = students.find((s: any) => s.student_id === f.student_id);
+      return student ? {
+        name: student.full_name,
+        father: student.father_name,
+        class: `${student.class_name}${student.section ? `-${student.section}` : ''}`,
+        mobile: student.contact_number
+      } : null;
+    }).filter(Boolean);
+
     const presentToday = attendance.filter((a: any) => {
       const today = new Date().toISOString().split('T')[0];
       return a.date === today && a.status === 'Present';
@@ -47,16 +60,19 @@ const fetchSchoolContext = async (): Promise<string> => {
     const ctx = `
 SCHOOL DATA SUMMARY:
 - Total approved students: ${totalStudents}
-- Students with pending fees: ${pendingFees}
+- Students with pending fees: ${pendingFeesCount}
 - Present today: ${presentToday}
 - Students with <75% attendance: ${lowAttStudents.length}
-- Low attendance students: ${lowAttStudents.slice(0, 10).map((s: any) => {
+
+DETAILED FEE DEFAULTERS (Jo fees nahi diye hain):
+${defaultersList.slice(0, 15).map((d: any) => `- Name: ${d.name}, Father: ${d.father}, Class: ${d.class}, Mobile: ${d.mobile}`).join('\n')}
+${defaultersList.length > 15 ? `...and ${defaultersList.length - 15} more.` : ''}
+
+LOW ATTENDANCE LIST: ${lowAttStudents.slice(0, 10).map((s: any) => {
       const rec = attByStudent.get(s.student_id);
       const pct = rec ? Math.round((rec.present / rec.total) * 100) : 0;
-      return `${s.full_name} (Class ${s.class_name}, ${pct}%)`;
+      return `${s.full_name} (${pct}%)`;
     }).join(', ')}
-
-STUDENT LIST (first 20): ${students.slice(0, 20).map((s: any) => `${s.full_name} (Class ${s.class_name})`).join(', ')}
     `.trim();
 
     return ctx;
@@ -92,11 +108,11 @@ You help school administrators and teachers manage their school efficiently.
 ${schoolContext ? `LIVE SCHOOL DATA:\n${schoolContext}` : ''}
 
 Your capabilities:
-- Answer questions about students, attendance, fees, results
-- Provide insights and recommendations based on school data
-- Help draft notices, messages, WhatsApp reminders
-- Suggest actions for at-risk students
-- Answer in Hinglish (Hindi + English mix) — friendly and professional
+- Answer questions about students, attendance, fees, results.
+- **IMPORTANT**: When asked about students with pending fees (defaulters), list their Name, Father's Name, Class, and Mobile number in a clean table or list.
+- **WHATSAPP REMINDERS**: For every defaulter, provide a direct WhatsApp link using this format: https://wa.me/91[Mobile]?text=[EncodedMessage].
+- Format messages in Hinglish (Hindi + English mix) — keep it friendly but professional.
+- Suggest actions for at-risk students (low attendance or poor marks).
 
 Always be helpful, concise, and action-oriented. If you don't have specific data, say so honestly.`;
 
