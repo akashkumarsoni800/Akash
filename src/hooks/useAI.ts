@@ -141,9 +141,9 @@ export const useAI = () => {
         throw new Error("Gemini API Key missing! Please add VITE_GEMINI_API_KEY to your .env file.");
       }
 
-      console.log("AI Request using model: gemini-1.5-flash (v1beta)");
+      console.log("AI Request using model: gemini-2.0-flash (v1beta)");
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash", 
+        model: "gemini-2.0-flash", 
         tools: TOOLS as any,
       });
 
