@@ -107,7 +107,7 @@ Always be helpful, concise, and action-oriented. If you don't have specific data
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'llama3-8b-8192',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: systemPrompt },
             ...newMessages.map(m => ({ role: m.role, content: m.content })),
