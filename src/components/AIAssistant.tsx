@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, X, Send, Sparkles, MessageSquare, User, Loader2, Mic, MicOff } from 'lucide-react';
 import { useAI } from '../hooks/useAI';
-import { useInternetIdentity } from '../hooks/useQueries';
+
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'sonner';
@@ -15,7 +15,7 @@ const AIAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const { messages, sendMessage, isLoading } = useAI();
-  const { identity } = useInternetIdentity();
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -133,7 +133,7 @@ const AIAssistant: React.FC = () => {
                     {suggestions.map((s, i) => (
                       <button
                         key={i}
-                        onClick={() => { setInput(s); handleSend(); }}
+                        onClick={() => sendMessage(s)}
                         className="w-full text-left p-3 text-xs bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-slate-200 dark:border-slate-700 rounded-2xl transition-all hover:border-indigo-200 dark:hover:border-indigo-500/30"
                       >
                         {s}

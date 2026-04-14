@@ -139,13 +139,13 @@ export const useAI = () => {
         throw new Error("Gemini API Key missing! Please add VITE_GEMINI_API_KEY to your .env file.");
       }
 
-      console.log("AI Request using model: gemini-pro");
+      console.log("AI Request using model: gemini-1.5-flash");
       const model = genAI.getGenerativeModel(
         {
           model: "gemini-1.5-flash", 
           tools: TOOLS as any,
         },
-        { apiVersion: 'v1' }
+        { apiVersion: 'v1beta' }  // v1beta required for function calling
       );
 
       const chat = model.startChat({
@@ -189,7 +189,15 @@ export const useAI = () => {
       setMessages([...newMessages, { role: 'model', content: text }]);
     } catch (error: any) {
       console.error("AI Error:", error);
-      toast.error("AI failed to respond: " + error.message);
+      const msg = error?.message || 'Unknown error';
+      if (msg.includes('API_KEY') || msg.includes('API key')) {
+        toast.error("AI Key missing or invalid. Check VITE_GEMINI_API_KEY in .env");
+      } else if (msg.includes('429') || msg.includes('quota')) {
+        toast.error("AI quota exceeded. Try again after some time.");
+      } else {
+        toast.error("AI failed: " + msg);
+      }
+      setMessages([...newMessages, { role: 'model', content: '⚠️ Sorry, kuch error aa gaya. Dobara try karo.' }]);
     } finally {
       setIsLoading(false);
     }
