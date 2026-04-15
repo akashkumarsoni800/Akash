@@ -496,28 +496,7 @@ const ManageFees = () => {
                 <Zap size={28} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-slate-900 uppercase mb-2">Automated Blast</h2>
-              
-              <div className="flex flex-col items-center gap-4 mb-8">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                    Automation Pulse Active
-                  </p>
-                </div>
-                
-                <label className="flex items-center gap-3 bg-emerald-50 px-6 py-3 rounded-2xl cursor-pointer hover:bg-emerald-100 transition-colors border border-emerald-100">
-                   <input 
-                    type="checkbox" 
-                    checked={isAutoAdvancing} 
-                    onChange={(e) => setIsAutoAdvancing(e.target.checked)}
-                    className="w-5 h-5 rounded border-emerald-200 text-emerald-600 focus:ring-emerald-500"
-                   />
-                   <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Enable Auto-Advance (3s Delay)</span>
-                </label>
-              </div>
-
-              <div className="space-y-6 mb-10 text-left bg-slate-50 p-8 rounded-[3rem] border border-slate-100 shadow-inner">
+                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
                 <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
               </div>
             </div>
@@ -1270,11 +1249,11 @@ const ManageFees = () => {
             <div className="flex justify-between items-center mb-10">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
-                  <Brain size={24} className="animate-pulse" />
+                  <Zap size={24} className="animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900 uppercase">Auto Reminders</h2>
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Processing Queue</p>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Automated Blast</h2>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Bulk Sending Mode</p>
                 </div>
               </div>
               <button 
@@ -1285,32 +1264,31 @@ const ManageFees = () => {
               </button>
             </div>
 
-            <div className="space-y-8 text-center bg-slate-50 p-10 rounded-[2rem] border border-slate-100">
-               <div className="relative inline-block">
-                 <div className="w-24 h-24 rounded-full border-4 border-slate-100 border-t-emerald-500 animate-spin"></div>
-                 <div className="absolute inset-0 flex items-center justify-center font-black text-slate-900 text-xl">
-                   {automation.currentIndex + 1}
-                 </div>
-               </div>
-               
-               <div>
-                 <p className="text-lg font-black text-slate-900 uppercase">{automation.students[automation.currentIndex]?._student?.full_name}</p>
-                 <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase mt-2">
-                   Phone: {automation.students[automation.currentIndex]?._student?.contact_number}
-                 </p>
-               </div>
+            <div className="flex flex-col items-center gap-6 mb-10">
+               <label className="flex items-center gap-3 bg-emerald-50 px-6 py-4 rounded-3xl cursor-pointer hover:bg-emerald-100 transition-all border border-emerald-100 group w-full">
+                  <input 
+                    type="checkbox" 
+                    checked={isAutoAdvancing} 
+                    onChange={(e) => setIsAutoAdvancing(e.target.checked)}
+                    className="w-6 h-6 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Enable Auto-Pilot</span>
+                    <span className="text-[8px] font-bold text-emerald-500 uppercase opacity-60">Automatically triggers next student in 3s</span>
+                  </div>
+               </label>
 
-               <div className="space-y-2">
-                 <div className="flex justify-between text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-1">
-                   <span>Progress</span>
-                   <span>{Math.round(((automation.currentIndex + 1) / automation.students.length) * 100)}%</span>
-                 </div>
-                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                   <div 
-                    className="h-full bg-emerald-500 transition-all duration-500" 
-                    style={{ width: `${((automation.currentIndex + 1) / automation.students.length) * 100}%` }}
-                   />
-                 </div>
+               <div className="w-full bg-slate-50 p-10 rounded-[3rem] border border-slate-100 text-center relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-slate-200">
+                    <div 
+                      className="h-full bg-emerald-500 transition-all duration-500"
+                      style={{ width: `${((automation.currentIndex + 1) / automation.students.length) * 100}%` }}
+                    />
+                  </div>
+                  
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Current Queue: {automation.currentIndex + 1} / {automation.students.length}</p>
+                  <h3 className="text-2xl font-black text-slate-900 uppercase leading-none mb-2">{automation.students[automation.currentIndex]?._student?.full_name}</h3>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Class {automation.students[automation.currentIndex]?._student?.class_name} • ₹{automation.students[automation.currentIndex]?.total_amount}</p>
                </div>
             </div>
 
