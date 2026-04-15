@@ -45,6 +45,7 @@ const ManageFees = () => {
     currentIndex: 0
   });
   const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([]);
+  const [isAutoAdvancing, setIsAutoAdvancing] = useState(false);
   const [missingFees, setMissingFees] = useState<any[]>([]);
   const [isDetecting, setIsDetecting] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
@@ -288,8 +289,19 @@ const ManageFees = () => {
     
     if (automation.currentIndex < automation.students.length - 1) {
       setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
+      
+      // ✅ Auto Advance Logic
+      if (isAutoAdvancing) {
+        toast.info(`Preparing next reminder for ${automation.students[automation.currentIndex + 1]?._student?.full_name}...`, { duration: 2000 });
+        setTimeout(() => {
+          if (automation.isOpen) { // Ensure modal is still open
+             nextSequentialReminder();
+          }
+        }, 3000); // 3 second delay to allow first tab to load
+      }
     } else {
       setAutomation(prev => ({ ...prev, isOpen: false }));
+      setIsAutoAdvancing(false);
       toast.success("✅ Sequence completed!");
     }
   };
@@ -484,7 +496,28 @@ const ManageFees = () => {
                 <Zap size={28} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
+                <h2 className="text-3xl font-black text-slate-900 uppercase mb-2">Automated Blast</h2>
+              
+              <div className="flex flex-col items-center gap-4 mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    Automation Pulse Active
+                  </p>
+                </div>
+                
+                <label className="flex items-center gap-3 bg-emerald-50 px-6 py-3 rounded-2xl cursor-pointer hover:bg-emerald-100 transition-colors border border-emerald-100">
+                   <input 
+                    type="checkbox" 
+                    checked={isAutoAdvancing} 
+                    onChange={(e) => setIsAutoAdvancing(e.target.checked)}
+                    className="w-5 h-5 rounded border-emerald-200 text-emerald-600 focus:ring-emerald-500"
+                   />
+                   <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Enable Auto-Advance (3s Delay)</span>
+                </label>
+              </div>
+
+              <div className="space-y-6 mb-10 text-left bg-slate-50 p-8 rounded-[3rem] border border-slate-100 shadow-inner">
                 <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
               </div>
             </div>

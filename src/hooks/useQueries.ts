@@ -574,7 +574,7 @@ export const useGetFeeStats = (): any => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('fees')
-        .select('status, total_amount')
+        .select('student_id, status, total_amount')
         .eq('school_id', schoolId);
       if (error) throw error;
       
@@ -604,6 +604,7 @@ export const useGetRecentPayments = (limit: number = 5): any => {
         .from('fees')
         .select(`*, students(full_name, class_name, contact_number)`)
         .eq('school_id', schoolId)
+        .eq('status', 'Paid')
         .order('updated_at', { ascending: false })
         .limit(limit);
       if (error) throw error;
