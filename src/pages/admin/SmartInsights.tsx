@@ -6,7 +6,7 @@ import {
   AlertTriangle, Users, TrendingDown, TrendingUp,
   BadgeIndianRupee, CalendarX, BookOpen, ChevronDown,
   RefreshCw, Filter, Search, CheckCircle2, XCircle,
-  Clock, Star, AlertCircle, BarChart3, Brain
+  Clock, Star, AlertCircle, BarChart3, Brain, Send
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ interface Student {
 interface AttendanceRecord { student_id: number; status: string; date: string; }
 interface FeeRecord { student_id: number; status: string; total_amount?: number; month?: string; }
 
-interface ResultRecord { student_id: number; marks: number; max_marks?: number; subject?: string; }
+interface ResultRecord { student_id: number; percentage: number; marks_data?: any; }
 
 interface StudentInsight {
   student: Student;
@@ -72,7 +72,7 @@ const SmartInsights: React.FC = () => {
           .eq('school_id', schoolId).eq('is_approved', 'approved'),
         supabase.from('attendance').select('student_id,status,date').eq('school_id', schoolId),
         supabase.from('fees').select('student_id,status,total_amount,month').eq('school_id', schoolId),
-        supabase.from('student_results').select('student_id,marks,max_marks,subject').eq('school_id', schoolId),
+        supabase.from('results').select('student_id,percentage,marks_data').eq('school_id', schoolId),
       ]);
 
       if (studentsRes.error) console.error("Students Fetch Error:", studentsRes.error);
@@ -130,7 +130,7 @@ const SmartInsights: React.FC = () => {
         const resultRecords = resultMap.get(student.student_id) || [];
         const hasResults = resultRecords.length > 0;
         const avgMarks = hasResults
-          ? Math.round(resultRecords.reduce((sum, r) => sum + (r.marks / (r.max_marks || 100)) * 100, 0) / resultRecords.length)
+          ? Math.round(resultRecords.reduce((sum, r) => sum + Number(r.percentage || 0), 0) / resultRecords.length)
           : 0;
 
         // ── Build Issues ───────────────────────────────────────────────────

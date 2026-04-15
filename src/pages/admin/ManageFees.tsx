@@ -36,8 +36,9 @@ const ManageFees = () => {
   const [classFilterWa, setClassFilterWa] = useState('');
   const [autoToggled, setAutoToggled] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
-  const [showHeadsModal, setShowHeadsModal] = useState(false); // ✅ NEW: for heads management
-  const [scannedStudent, setScannedStudent] = useState<any>(null); // ✅ NEW: result of scan
+  const [showHeadsModal, setShowHeadsModal] = useState(false); 
+  const [showDefaultersModal, setShowDefaultersModal] = useState(false);
+  const [scannedStudent, setScannedStudent] = useState<any>(null); 
   const [automation, setAutomation] = useState<{ isOpen: boolean; students: any[]; currentIndex: number }>({
     isOpen: false,
     students: [],
@@ -445,6 +446,13 @@ const ManageFees = () => {
        >
         <LayoutDashboard size={20} /> 
         <span>Heads</span>
+       </button>
+       <button 
+        onClick={() => setShowDefaultersModal(true)}
+        className="premium-button-admin flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
+       >
+        <AlertTriangle size={20} /> 
+        <span>Defaulters</span>
        </button>
       </div>
     </div>
@@ -1251,7 +1259,96 @@ const ManageFees = () => {
       )}
     </AnimatePresence>
 
+    {/* 🟢 DEFAULTERS LIST MODAL */}
+    <AnimatePresence>
+      {showDefaultersModal && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-6"
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="bg-white rounded-[2rem] p-6 md:p-10 w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden relative flex flex-col"
+          >
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center">
+                  <AlertTriangle size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Fee Defaulters List</h2>
+                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Students with pending fees across all months</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowDefaultersModal(false)}
+                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+              {pendingReminders.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3">
+                  {pendingReminders.map((fee: any) => {
+                    const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+                    return (
+                      <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 hover:border-rose-200 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-xs text-slate-400 border border-slate-100">
+                            {student?.class_name || '??'}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-900 uppercase text-sm">{student?.full_name || 'Unknown student'}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Month: {fee.month} • Father: {student?.father_name || 'N/A'}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6">
+                           <div className="text-right">
+                             <p className="text-[10px] font-black text-rose-500 uppercase leading-none">₹{fee.total_amount}</p>
+                             <p className="text-[8px] font-bold text-slate-300 uppercase mt-1">Pending</p>
+                           </div>
+                           <button 
+                            onClick={() => handleSendReminder(fee)}
+                            className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                            title="Send WhatsApp Reminder"
+                           >
+                            <Send size={16} />
+                           </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-20 text-center">
+                  <CheckCircle size={48} className="mx-auto text-emerald-400 mb-4" />
+                  <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">No pending fees found!</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
+               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Total Defaulters: {pendingReminders.length}</p>
+               <button 
+                onClick={startSequentialReminders}
+                className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-lg"
+               >
+                Execute Bulk Reminders
+               </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
     {/* 🟢 MANAGE FEE HEADS MODAL */}
+
     <AnimatePresence>
       {showHeadsModal && (
         <motion.div 
