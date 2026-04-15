@@ -574,7 +574,7 @@ const SmartInsights: React.FC = () => {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-xl"
+            className="fixed bottom-24 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-xl z-50 px-2"
           >
             <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-2xl p-4 flex items-center justify-between gap-4 backdrop-blur-xl">
               <div className="flex items-center gap-3 text-white">

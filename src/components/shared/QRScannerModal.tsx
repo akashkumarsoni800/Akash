@@ -61,12 +61,12 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ isOpen, onClose, onScan
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            className="bg-white w-full max-w-xl rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-slate-100"
+            className="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative border border-slate-100 mx-4"
           >
             {/* Header */}
-            <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 md:p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0">
                   <Camera size={20} />
                 </div>
                 <div>
