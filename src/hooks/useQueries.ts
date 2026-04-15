@@ -579,13 +579,13 @@ export const useGetFeeStats = (): any => {
       if (error) throw error;
       
       const feeArray = data || [];
-      const pendingCount = feeArray.filter((f: any) => f.status === 'Pending').length;
+      const pendingStudentsCount = new Set(feeArray.filter((f: any) => f.status === 'Pending').map(f => f.student_id)).size;
       const collectedAmount = feeArray.reduce((sum: number, f: any) => 
         f.status === 'Paid' ? sum + (Number(f.total_amount) || 0) : sum, 0);
       const totalAmount = feeArray.reduce((sum: number, f: any) => sum + (Number(f.total_amount) || 0), 0);
       
       return {
-        totalPending: pendingCount,
+        totalPending: pendingStudentsCount,
         totalCollected: collectedAmount,
         overdue: feeArray.filter((f: any) => f.status === 'Overdue').length,
         collectionRate: totalAmount > 0 ? Math.round((collectedAmount / totalAmount) * 100) : 0

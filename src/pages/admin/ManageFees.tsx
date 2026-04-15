@@ -44,6 +44,7 @@ const ManageFees = () => {
     students: [],
     currentIndex: 0
   });
+  const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([]);
   const [missingFees, setMissingFees] = useState<any[]>([]);
   const [isDetecting, setIsDetecting] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
@@ -243,33 +244,40 @@ const ManageFees = () => {
     .join('%0A');
 
    const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
-   const message = `*📄 FEE REMINDER - ${schoolName.toUpperCase()}*%0A%0A*Student:* ${student.full_name}%0A*Class:* ${student.class_name}%0A*Month:* ${fee.month}%0A%0A*PENDING BREAKDOWN:*%0A${breakdown}%0A%0A*TOTAL PAYABLE:* ₹${fee.total_amount}%0A*STATUS:* ${fee.status}%0A%0A_Please pay before the 10th of the month to avoid late fees._%0A_Thank you, Management_`;
+   const message = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*%0A%0ADear Parent, this is a friendly reminder regarding the pending fees for your child.%0A%0A*🔸 Student:* ${student.full_name}%0A*🔸 Class:* ${student.class_name}%0A*🔸 Month:* ${fee.month}%0A%0A*📋 DETAILS:*%0A${breakdown}%0A%0A*💰 TOTAL PAYABLE: ₹${fee.total_amount}*%0A*📌 STATUS: PENDING*%0A%0A_Please deposit the fee at the school office or pay online via the app. If already paid, please ignore this message._%0A%0A*Regards,*%0A*School Management*`;
      window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
 
   const startSequentialReminders = () => {
-    if (!pendingReminders.length) return;
-    
-    // ✅ Apply current UI filters to the sequential queue
-    const targetStudents = pendingReminders
-      .map((fee: any) => {
-        const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
-          s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
-        );
-        return { ...fee, _student: student };
-      })
-      .filter((fee: any) => !!fee._student?.contact_number)
-      .filter((fee: any) => {
-        const nameMatch = !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
-        const classMatch = !classFilterWa || fee._student?.class_name === classFilterWa;
+    // ✅ 1. Get potential targets based on selection OR current list filters
+    let baseTargets = [];
+    if (selectedFeeIds.length > 0) {
+      baseTargets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
+    } else {
+      baseTargets = pendingReminders.filter((fee: any) => {
+        const student = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+        const nameMatch = !waSearch || student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
+        const classMatch = !classFilterWa || student?.class_name === classFilterWa;
         return nameMatch && classMatch;
       });
+    }
 
-    if (targetStudents.length === 0) return toast.error("No students matching filters with valid phone numbers found");
-    
+    // ✅ 2. Resolve final data and filter by phone availability
+    const finalTargets = baseTargets.map((fee: any) => {
+      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
+        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
+      );
+      return { ...fee, _student: student };
+    }).filter(f => !!f._student?.contact_number);
+
+    if (finalTargets.length === 0) {
+      if (selectedFeeIds.length > 0) return toast.error("Selected students must have contact numbers!");
+      return toast.error("No students found with valid contact numbers.");
+    }
+
     setAutomation({
       isOpen: true,
-      students: targetStudents,
+      students: finalTargets,
       currentIndex: 0
     });
   };
@@ -1021,7 +1029,28 @@ const ManageFees = () => {
           )}
 
           {/* ✅ 2. Automated Pending Reminders List */}
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2 mb-4">Pending Fee Alerts ({pendingReminders.length})</p>
+          <div className="flex items-center justify-between pl-2 mb-4">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">Pending Fee Alerts ({pendingReminders.length})</p>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => {
+                  if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
+                  else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
+                }}
+                className="text-[9px] font-black text-blue-500 uppercase tracking-widest hover:text-blue-700 transition-colors"
+              >
+                {selectedFeeIds.length === pendingReminders.length ? 'Deselect All' : 'Select All'}
+              </button>
+              {selectedFeeIds.length > 0 && (
+                <button 
+                  onClick={startSequentialReminders}
+                  className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                >
+                  Send for {selectedFeeIds.length} Selected
+                </button>
+              )}
+            </div>
+          </div>
           
           {remLoading ? (
             <div className="py-12 text-center bg-slate-50/50 rounded-[5px] border border-slate-100 flex flex-col items-center gap-4">
@@ -1050,8 +1079,18 @@ const ManageFees = () => {
                 return fee._student?.class_name === classFilterWa;
               })
               .map((fee: any) => (
-              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100">
+              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-100"></div>
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedFeeIds.includes(fee.id.toString())}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
+                      else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
+                    }}
+                    className="w-5 h-5 rounded border-slate-200 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
                   <div className="w-12 h-12 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-black text-xs uppercase shadow-sm">
                     {fee._student?.class_name || '??'}
                   </div>
@@ -1075,7 +1114,7 @@ const ManageFees = () => {
                   disabled={!fee._student?.contact_number}
                   className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 uppercase disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  <Send size={14} /> SEND REMINDER
+                  <Send size={14} /> SEND
                 </button>
               </div>
             ))
@@ -1297,9 +1336,20 @@ const ManageFees = () => {
                 <div className="grid grid-cols-1 gap-3">
                   {pendingReminders.map((fee: any) => {
                     const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+                    const isSelected = selectedFeeIds.includes(fee.id.toString());
+                    
                     return (
-                      <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 hover:border-rose-200 transition-colors">
+                      <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 hover:border-emerald-200 transition-colors relative group">
                         <div className="flex items-center gap-4">
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected}
+                            onChange={(e) => {
+                              if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
+                              else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
+                            }}
+                            className="w-5 h-5 rounded border-slate-200 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
                           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-xs text-slate-400 border border-slate-100">
                             {student?.class_name || '??'}
                           </div>
@@ -1334,13 +1384,24 @@ const ManageFees = () => {
             </div>
 
             <div className="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
-               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Total Defaulters: {pendingReminders.length}</p>
-               <button 
-                onClick={startSequentialReminders}
-                className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-lg"
-               >
-                Execute Bulk Reminders
-               </button>
+               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Total Defaulters: {pendingReminders.length} | Selected: {selectedFeeIds.length}</p>
+               <div className="flex gap-4">
+                 <button 
+                  onClick={() => {
+                    if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
+                    else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
+                  }}
+                  className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-200 transition-all border border-slate-200"
+                 >
+                   {selectedFeeIds.length === pendingReminders.length ? 'Deselect All' : 'Select All'}
+                 </button>
+                 <button 
+                  onClick={startSequentialReminders}
+                  className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-lg"
+                 >
+                  {selectedFeeIds.length > 0 ? `Send to ${selectedFeeIds.length} Selected` : 'Send to All'}
+                 </button>
+               </div>
             </div>
           </motion.div>
         </motion.div>
