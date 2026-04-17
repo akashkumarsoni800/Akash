@@ -386,7 +386,7 @@ const Home = () => {
             <FooterColumn 
               title="Resources" 
               links={[
-                { label: 'About Us', path: '/about' },
+                { label: 'About Us', path: 'AboutMe' },
                 { label: 'Case Studies', path: '#' },
                 { label: 'Support', path: '/support' },
                 { label: 'Blog', path: '#' }
