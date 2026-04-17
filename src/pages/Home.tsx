@@ -150,7 +150,7 @@ const Home = () => {
               className="space-y-8 text-center lg:text-left"
             >
               <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">The Future of Education</span>
-              <h1 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tighter uppercase">
+              <h1 className="text-5xl md:text-8xl font-black text-nunito-900 leading-[0.95] tracking-tighter uppercase">
                 Adukul: Free <br/> School Management <span className="text-indigo-600 underline decoration-indigo-200">System Bihar</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -346,7 +346,7 @@ const Home = () => {
         {/* --- FINAL CTA --- */}
         <section className="py-24 bg-white relative">
           <div className="max-w-full mx-auto px-6">
-            <div className="p-16 md:p-24 bg-indigo-950 rounded-[5px] text-center text-white relative overflow-hidden shadow-2xl">
+            <div className="p-16 md:p-24 bg-skyblue-950 rounded-[5px] text-center text-white relative overflow-hidden shadow-2xl">
               <div className="relative z-10 space-y-10 animate__animated animate__pulse">
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Ready to digitize <br/> your school?</h2>
                 <p className="text-lg text-indigo-300 max-w-xl mx-auto">Join the hundreds of forward-thinking schools that have simplified their operations and elevated experience.</p>
