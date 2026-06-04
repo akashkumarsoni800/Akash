@@ -10,6 +10,10 @@ import {
  Briefcase, CheckCircle2, Eye, EyeOff
 } from 'lucide-react';
 import AdukulLogo from '../../components/shared/AdukulLogo';
+import DecryptedText from '../../components/ui/DecryptedText';
+import ShinyText from '../../components/ui/ShinyText';
+import SpotlightCard from '../../components/ui/SpotlightCard';
+
 
 const LoginPage = () => {
  const navigate = useNavigate();
@@ -237,163 +241,210 @@ const LoginPage = () => {
       </div>
      </motion.div>
     ) : !selectedRole ? (
-     <motion.div 
-      key="selector"
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      className="w-full max-w-full"
-     >
-      <div className="text-center mb-16">
-       <div className="mx-auto mb-8 flex flex-col items-center">
-        <img src="/logo.png" className="w-32 h-32 object-contain hover:rotate-6 transition-transform" alt="Logo" />
-        <h1 className="text-6xl md:text-7xl font-black text-slate-900 leading-[0.9] mt-8 uppercase">
-          ADUKUL DIGITAL<br/>
-          <span className="text-slate-400">ECOSYSTEM</span>
-        </h1>
-       </div>
-       <p className="text-slate-500 font-black text-[10px] flex items-center justify-center gap-2">
-        <Globe size={14} className="text-blue-500" /> Advanced Institutional Intelligence Platform
-       </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-       {roles.map((role) => (
-        <motion.div 
-         key={role.id}
-         onClick={() => setSelectedRole(role.id)}
-         whileHover={{ y: -10 }}
-         className={`role-card role-card-${role.id}`}
-        >
-          <div className={`w-20 h-20 rounded-[5px] flex items-center justify-center text-white mb-4 ${role.color} shadow-lg`}>
-           {role.icon}
-          </div>
-          <div>
-           <h3 className="text-2xl font-black text-slate-800  uppercase">{role.label}</h3>
-           <p className="text-xs font-black text-slate-400 tracking-widest mt-1">{role.sub}</p>
-          </div>
-          <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mt-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
-           <ArrowRight size={20} />
-          </div>
-        </motion.div>
-       ))}
-      </div>
-
-      <div className="mt-20 text-center opacity-40">
-       <p className="text-[10px] font-black text-slate-400 ">Paid Access Protocol v4.0</p>
-      </div>
-     </motion.div>
-    ) : (
-     <motion.div 
-      key="login"
-      initial={{ opacity: 0, x: 20 }} 
-      animate={{ opacity: 1, x: 0 }} 
-      className="w-full max-w-md"
-     >
-       <button 
-        onClick={() => setSelectedRole(null)}
-        className="mb-8 flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest hover:text-slate-900 transition-colors"
-       >
-        <ArrowRight size={14} className="rotate-180" /> Change Protocol
-       </button>
-
-       <div className="premium-card p-10 bg-white border-slate-200/60 shadow-2xl relative overflow-hidden">
-        <div className={`absolute top-0 left-0 w-full h-2 ${
-         selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
-        }`}></div>
-        
-        <h2 className="text-4xl font-black text-slate-900  mb-2 uppercase">
-         {selectedRole}<br/><span className="text-slate-400">Entry</span>
-        </h2>
-        <p className="text-[10px] font-black text-slate-400  mb-10">Verification required to proceed</p>
-
-        <form onSubmit={handleLogin} className="space-y-6">
-         {/* ✅ School Identifier Node */}
-         <div className="space-y-1.5">
-           <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Institutional Identifier</label>
-           <input 
-            type="text" 
-            placeholder="School Code (Ex: ASM01)" 
-            required 
-            className="premium-input uppercase" 
-            value={loginData.school_code}
-            onChange={e => setLoginData({...loginData, school_code: e.target.value.toUpperCase()})} 
+      <motion.div 
+       key="selector"
+       initial={{ opacity: 0, y: 20 }} 
+       animate={{ opacity: 1, y: 0 }} 
+       className="w-full max-w-full"
+      >
+       <div className="text-center mb-16">
+        <div className="mx-auto mb-8 flex flex-col items-center">
+         <img src="/logo.png" className="w-32 h-32 object-contain hover:rotate-6 transition-transform" alt="Logo" />
+         <h1 className="text-6xl md:text-7xl font-black text-slate-900 leading-[0.9] mt-8 uppercase flex flex-col items-center gap-2">
+           <DecryptedText 
+             text="ADUKUL DIGITAL" 
+             animateOn="view"
+             speed={40}
+             className="text-slate-900"
+             encryptedClassName="text-blue-600 font-mono"
            />
-         </div>
-
-         {selectedRole === 'student' ? (
-          <>
-           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Asset Nomenclature</label>
-            <input type="text" placeholder="Full Student Name" required className="premium-input" 
-             onChange={e => setLoginData({...loginData, full_name: e.target.value})} />
-           </div>
-           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Patrilineal Reference</label>
-            <input type="text" placeholder="Father's Name" required className="premium-input" 
-             onChange={e => setLoginData({...loginData, father_name: e.target.value})} />
-           </div>
-           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Archive ID</label>
-             <input type="text" placeholder="Class (Ex: 10A)" required className="premium-input " 
-              onChange={e => setLoginData({...loginData, class_name: e.target.value})} />
-            </div>
-            <div className="flex items-end">
-              <button type="submit" disabled={loading} className="premium-button w-full text-white tracking-widest text-[10px] h-[46px] bg-purple-600">
-               {loading ? '...' : 'Unlock'}
-              </button>
-            </div>
-           </div>
-          </>
-         ) : (
-          <>
-           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Identity Token</label>
-            <div className="relative">
-             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-             <input type="email" placeholder="staff@institution.com" required className="premium-input pl-12" 
-              onChange={e => setLoginData({...loginData, email: e.target.value})} />
-            </div>
-           </div>
-           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Access Cipher</label>
-            <div className="relative">
-             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-             <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12 pr-12" 
-              onChange={e => setLoginData({...loginData, password: e.target.value})} />
-             <button 
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-             </button>
-            </div>
-            <div className="flex justify-end pr-2">
-             <button 
-              type="button" 
-              onClick={() => navigate('/reset-password')}
-              className="text-[9px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
-             >
-              Forgot Password?
-             </button>
-            </div>
-           </div>
-           <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white  font-black shadow-lg hover:shadow-2xl active:scale-95 tracking-widest mt-4 ${
-            selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
-           }`}>
-             {loading ? 'Authenticating...' : 'Establish Link'}
-           </button>
-          </>
-         )}
-        </form>
-
-        <div className="mt-8 pt-8 border-t border-slate-50 text-center opacity-30">
-          <p className="text-[8px] font-black text-slate-500 ">Proprietary Educational </p>
+           <DecryptedText 
+             text="ECOSYSTEM" 
+             animateOn="view"
+             speed={50}
+             className="text-slate-400"
+             encryptedClassName="text-emerald-600 font-mono"
+           />
+         </h1>
         </div>
+        <p className="text-slate-500 font-black text-[10px] flex items-center justify-center gap-2">
+         <Globe size={14} className="text-blue-500" />
+         <ShinyText 
+           text="Advanced Institutional Intelligence Platform" 
+           speed={2.5} 
+           color="#64748b" 
+           shineColor="#3b82f6" 
+           className="tracking-widest uppercase"
+         />
+        </p>
        </div>
-     </motion.div>
-    )}
+
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {roles.map((role) => {
+          const spotColors = {
+            admin: 'rgba(37, 99, 235, 0.15)',
+            teacher: 'rgba(16, 185, 129, 0.15)',
+            student: 'rgba(139, 92, 246, 0.15)'
+          };
+          return (
+           <motion.div 
+            key={role.id}
+            onClick={() => setSelectedRole(role.id)}
+            whileHover={{ y: -6 }}
+            className="cursor-pointer"
+           >
+            <SpotlightCard
+              spotlightColor={spotColors[role.id as keyof typeof spotColors]}
+              className="role-card h-full bg-white border border-slate-200/80 hover:border-slate-300 transition-colors shadow-sm"
+            >
+              <div className={`w-20 h-20 rounded-[5px] flex items-center justify-center text-white mb-6 ${role.color} shadow-lg`}>
+               {role.icon}
+              </div>
+              <div>
+               <h3 className="text-2xl font-black text-slate-800 uppercase">{role.label}</h3>
+               <p className="text-xs font-black text-slate-400 tracking-widest mt-1">{role.sub}</p>
+              </div>
+              <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mt-6 transition-colors border border-slate-100">
+               <ArrowRight size={20} className="text-slate-600" />
+              </div>
+            </SpotlightCard>
+           </motion.div>
+          );
+        })}
+       </div>
+
+       <div className="mt-20 text-center opacity-40">
+        <p className="text-[10px] font-black text-slate-400 ">Paid Access Protocol v4.0</p>
+       </div>
+      </motion.div>
+     ) : (
+      <motion.div 
+       key="login"
+       initial={{ opacity: 0, x: 20 }} 
+       animate={{ opacity: 1, x: 0 }} 
+       className="w-full max-w-md"
+      >
+        <button 
+         onClick={() => setSelectedRole(null)}
+         className="mb-8 flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest hover:text-slate-900 transition-colors"
+        >
+         <ArrowRight size={14} className="rotate-180" /> Change Protocol
+        </button>
+
+        <SpotlightCard
+          spotlightColor={
+            selectedRole === 'admin' 
+              ? 'rgba(37, 99, 235, 0.15)' 
+              : selectedRole === 'teacher' 
+                ? 'rgba(16, 185, 129, 0.15)' 
+                : 'rgba(139, 92, 246, 0.15)'
+          }
+          className="p-10 bg-white border border-slate-200/80 shadow-2xl relative overflow-hidden rounded-3xl"
+        >
+         <div className={`absolute top-0 left-0 w-full h-2 ${
+          selectedRole === 'admin' ? 'bg-blue-600' : selectedRole === 'teacher' ? 'bg-emerald-600' : 'bg-purple-600'
+         }`}></div>
+         
+         <h2 className="text-4xl font-black text-slate-900 mb-2 uppercase flex flex-col items-start gap-1">
+           <DecryptedText 
+             text={selectedRole} 
+             animateOn="view"
+             speed={60}
+             className="text-slate-900"
+             encryptedClassName="text-slate-400 font-mono"
+           />
+           <span className="text-slate-400">Entry</span>
+         </h2>
+         <p className="text-[10px] font-black text-slate-400  mb-10">Verification required to proceed</p>
+
+         <form onSubmit={handleLogin} className="space-y-6">
+          {/* ✅ School Identifier Node */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Institutional Identifier</label>
+            <input 
+             type="text" 
+             placeholder="School Code (Ex: ASM01)" 
+             required 
+             className="premium-input uppercase" 
+             value={loginData.school_code}
+             onChange={e => setLoginData({...loginData, school_code: e.target.value.toUpperCase()})} 
+            />
+          </div>
+
+          {selectedRole === 'student' ? (
+           <>
+            <div className="space-y-1.5">
+             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Asset Nomenclature</label>
+             <input type="text" placeholder="Full Student Name" required className="premium-input" 
+              onChange={e => setLoginData({...loginData, full_name: e.target.value})} />
+            </div>
+            <div className="space-y-1.5">
+             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Patrilineal Reference</label>
+             <input type="text" placeholder="Father's Name" required className="premium-input" 
+              onChange={e => setLoginData({...loginData, father_name: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+             <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Archive ID</label>
+              <input type="text" placeholder="Class (Ex: 10A)" required className="premium-input " 
+               onChange={e => setLoginData({...loginData, class_name: e.target.value})} />
+             </div>
+             <div className="flex items-end">
+               <button type="submit" disabled={loading} className="premium-button w-full text-white tracking-widest text-[10px] h-[46px] bg-purple-600">
+                {loading ? '...' : 'Unlock'}
+               </button>
+             </div>
+            </div>
+           </>
+          ) : (
+           <>
+            <div className="space-y-1.5">
+             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Identity Token</label>
+             <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input type="email" placeholder="staff@institution.com" required className="premium-input pl-12" 
+               onChange={e => setLoginData({...loginData, email: e.target.value})} />
+             </div>
+            </div>
+            <div className="space-y-1.5">
+             <label className="text-[10px] font-black text-slate-400 tracking-widest ml-1">Access Cipher</label>
+             <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input type={showPassword ? "text" : "password"} placeholder="••••••••" required className="premium-input pl-12 pr-12" 
+               onChange={e => setLoginData({...loginData, password: e.target.value})} />
+              <button 
+               type="button"
+               onClick={() => setShowPassword(!showPassword)}
+               className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+             </div>
+             <div className="flex justify-end pr-2">
+              <button 
+               type="button" 
+               onClick={() => navigate('/reset-password')}
+               className="text-[9px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
+              >
+               Forgot Password?
+              </button>
+             </div>
+            </div>
+            <button type="submit" disabled={loading} className={`premium-button w-full py-4 text-white  font-black shadow-lg hover:shadow-2xl active:scale-95 tracking-widest mt-4 ${
+             selectedRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700' : selectedRole === 'teacher' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
+            }`}>
+              {loading ? 'Authenticating...' : 'Establish Link'}
+            </button>
+           </>
+          )}
+         </form>
+
+         <div className="mt-8 pt-8 border-t border-slate-50 text-center opacity-30">
+           <p className="text-[8px] font-black text-slate-500 ">Proprietary Educational </p>
+         </div>
+        </SpotlightCard>
+      </motion.div>
+     )}
    </AnimatePresence>
   </div>
  );

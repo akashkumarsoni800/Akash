@@ -5,21 +5,25 @@ import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-  Plus, Search, Users, Calendar, ArrowRight,
-  Wallet, Send, RefreshCw, Trash2, CheckCircle,
-  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
-  MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain
+   Plus, Search, Users, Calendar, ArrowRight,
+   Wallet, Send, RefreshCw, Trash2, CheckCircle,
+   ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
+   MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain
 } from 'lucide-react';
 import { 
-  useGetAllStudents, 
-  useGetFeeHeads, 
-  useGetFeeStats, 
-  useGetRecentPayments, 
-  useGetFeeReminders,
-  useAddFeeHead,
-  useDeleteFeeHead,
-  useAssignFees
+   useGetAllStudents, 
+   useGetFeeHeads, 
+   useGetFeeStats, 
+   useGetRecentPayments, 
+   useGetFeeReminders,
+   useAddFeeHead,
+   useDeleteFeeHead,
+   useAssignFees
 } from '../../hooks/useQueries';
+import DecryptedText from '../../components/ui/DecryptedText';
+import ShinyText from '../../components/ui/ShinyText';
+import SpotlightCard from '../../components/ui/SpotlightCard';
+
 
 const ManageFees = () => {
   const [searchParams] = useSearchParams();
@@ -49,6 +53,7 @@ const ManageFees = () => {
   const [missingFees, setMissingFees] = useState<any[]>([]);
   const [isDetecting, setIsDetecting] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
+  const scannerRef = useRef<any>(null);
 
  // ✅ 1. Persistent Data Hooks
  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
@@ -269,7 +274,7 @@ const ManageFees = () => {
         s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
       );
       return { ...fee, _student: student };
-    }).filter(f => !!f._student?.contact_number);
+    }).filter((f: any) => !!f._student?.contact_number);
 
     if (finalTargets.length === 0) {
       if (selectedFeeIds.length > 0) return toast.error("Selected students must have contact numbers!");
@@ -317,10 +322,10 @@ const ManageFees = () => {
         .select('student_id')
         .eq('month', remindMonth);
       
-      const existingIds = new Set(existingFees?.map(f => f.student_id?.toString()));
+      const existingIds = new Set(existingFees?.map((f: any) => f.student_id?.toString()));
       
       // 2. Identify missing students
-      const missing = students.filter(s => !existingIds.has(s.student_id?.toString()));
+      const missing = students.filter((s: any) => !existingIds.has(s.student_id?.toString()));
       
       if (missing.length === 0) {
         toast.success("All students already have fee records for this month! 🎉");
@@ -434,11 +439,23 @@ const ManageFees = () => {
         <Wallet size={20} />
        </span>
        <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">
-        Fee Management
+        <DecryptedText 
+          text="FEE MANAGEMENT" 
+          animateOn="view"
+          speed={40}
+          className="text-slate-900"
+          encryptedClassName="text-blue-600 font-mono"
+        />
        </h1>
       </div>
       <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
-       Financial Records & Reminders <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <ShinyText 
+          text="Financial Records & Reminders" 
+          speed={2} 
+          color="#94a3b8" 
+          shineColor="#2563eb"
+        />
+       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
       </p>
      </motion.div>
 
@@ -496,8 +513,23 @@ const ManageFees = () => {
                 <Zap size={28} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
-                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
+                <h2 className="text-3xl font-black text-slate-900 uppercase">
+                  <DecryptedText 
+                    text="AUTOMATION PULSE" 
+                    animateOn="view"
+                    speed={50}
+                    className="text-slate-900"
+                    encryptedClassName="text-indigo-600 font-mono"
+                  />
+                </h2>
+                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">
+                  <ShinyText 
+                    text="Smart Monthly Management" 
+                    speed={3} 
+                    color="#3b82f6" 
+                    shineColor="#6366f1"
+                  />
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
@@ -542,12 +574,11 @@ const ManageFees = () => {
        </motion.div>
 
        {/* 🟡 1. ASSIGN FEE FORM */}
-       <motion.div 
-        id="assign-form"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="premium-card p-10 md:p-14 relative overflow-hidden"
-       >
+       <SpotlightCard 
+         id="assign-form"
+         spotlightColor="rgba(37, 99, 235, 0.08)"
+         className="premium-card p-10 md:p-14 relative overflow-hidden rounded-[2rem] border border-slate-200/60 shadow-2xl"
+        >
         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
         
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
@@ -555,7 +586,15 @@ const ManageFees = () => {
             <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600">
              <Plus size={24} />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 uppercase">Assign New Fee</h2>
+            <h2 className="text-3xl font-black text-slate-900 uppercase">
+               <DecryptedText 
+                 text="Assign New Fee" 
+                 animateOn="view"
+                 speed={50}
+                 className="text-slate-900"
+                 encryptedClassName="text-blue-600 font-mono"
+               />
+             </h2>
           </div>
           <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-[5px] border border-slate-100">
            <button 
@@ -681,13 +720,12 @@ const ManageFees = () => {
            </button>
           </div>
         </form>
-       </motion.div>
+        </SpotlightCard>
 
        {/* 🟡 4. QUICK SCAN HUB */}
-       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative"
+       <SpotlightCard 
+        spotlightColor="rgba(59, 130, 246, 0.15)"
+        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative rounded-[2rem] border border-slate-800"
        >
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/30 blur-3xl rounded-full transition-opacity group-hover:opacity-100 opacity-50"></div>
         <div className="flex items-center gap-6 mb-8 relative z-10">
@@ -695,8 +733,23 @@ const ManageFees = () => {
            <Zap size={24} className="animate-pulse" />
           </div>
           <div>
-           <h2 className="text-2xl font-black uppercase leading-none">Quick Lookup</h2>
-           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">Scan or Search Student</p>
+           <h2 className="text-2xl font-black uppercase leading-none">
+             <DecryptedText 
+               text="Quick Lookup" 
+               animateOn="view"
+               speed={50}
+               className="text-white"
+               encryptedClassName="text-blue-500 font-mono"
+             />
+           </h2>
+           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">
+             <ShinyText 
+               text="Scan or Search Student" 
+               speed={2.5} 
+               color="#60a5fa" 
+               shineColor="#ffffff"
+             />
+           </p>
           </div>
         </div>
 
@@ -949,14 +1002,13 @@ const ManageFees = () => {
             </motion.div>
           )}
         </AnimatePresence>
-       </motion.div>
+        </SpotlightCard>
 
 
        {/* 🟢 WHATSAPP REMINDERS HUB */}
-       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="premium-card p-10 md:p-14 relative overflow-hidden"
+       <SpotlightCard 
+        spotlightColor="rgba(16, 185, 129, 0.08)"
+        className="premium-card p-10 md:p-14 relative overflow-hidden rounded-[2rem] border border-slate-200/60 shadow-2xl"
        >
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-6">
@@ -964,8 +1016,23 @@ const ManageFees = () => {
              <MessageSquare size={24} />
             </div>
             <div>
-             <h2 className="text-3xl font-black text-slate-900 uppercase">WhatsApp Reminders</h2>
-             <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">PENDING FEE ALERTS</p>
+             <h2 className="text-3xl font-black text-slate-900 uppercase">
+               <DecryptedText 
+                 text="WhatsApp Reminders" 
+                 animateOn="view"
+                 speed={50}
+                 className="text-slate-900"
+                 encryptedClassName="text-emerald-600 font-mono"
+               />
+             </h2>
+             <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">
+               <ShinyText 
+                 text="PENDING FEE ALERTS" 
+                 speed={2} 
+                 color="#94a3b8" 
+                 shineColor="#10b981"
+               />
+             </p>
             </div>
           </div>
 
@@ -1151,21 +1218,25 @@ const ManageFees = () => {
             </div>
           )}
         </div>
-       </motion.div>
+        </SpotlightCard>
      </div>
 
      {/* --- RIGHT: INSIGHTS & STATS --- */}
      <div className="space-y-10">
-       <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="premium-card p-12 relative overflow-hidden group"
-       >
-        <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
-        <h3 className="text-[10px] font-black text-slate-300  mb-12 relative z-10 uppercase">
-         Payment Summary
-        </h3>
+        <SpotlightCard 
+         spotlightColor="rgba(59, 130, 246, 0.08)"
+         className="premium-card p-12 relative overflow-hidden group rounded-[2rem] border border-slate-200/60 shadow-2xl"
+        >
+         <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
+         <h3 className="text-[10px] font-black text-slate-300  mb-12 relative z-10 uppercase">
+           <DecryptedText 
+             text="Payment Summary" 
+             animateOn="view"
+             speed={50}
+             className="text-slate-500 font-bold"
+             encryptedClassName="text-blue-600 font-mono"
+           />
+         </h3>
         <div className="space-y-8 relative z-10">
           <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
@@ -1182,19 +1253,25 @@ const ManageFees = () => {
              <p className="text-2xl font-black text-rose-500 uppercase">{feeStats.overdue}</p>
            </div>
           </div>
-        </div>
-       </motion.div>
+         </div>
+        </SpotlightCard>
 
-       <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="premium-card p-12 flex flex-col min-h-[500px] relative group"
-       >
-        <div className="flex items-center justify-between mb-12">
-          <h3 className="text-[10px] font-black text-slate-300  uppercase">Recent Payments</h3>
-          <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
-        </div>
+        <SpotlightCard 
+         spotlightColor="rgba(59, 130, 246, 0.08)"
+         className="premium-card p-12 flex flex-col min-h-[500px] relative group rounded-[2rem] border border-slate-200/60 shadow-2xl"
+        >
+         <div className="flex items-center justify-between mb-12">
+           <h3 className="text-[10px] font-black text-slate-300  uppercase">
+             <DecryptedText 
+               text="Recent Payments" 
+               animateOn="view"
+               speed={50}
+               className="text-slate-500 font-bold"
+               encryptedClassName="text-blue-600 font-mono"
+             />
+           </h3>
+           <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
+         </div>
         <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
           {recentPayments.length > 0 ? recentPayments.map((p: any, idx: number) => (
            <motion.div 
@@ -1225,7 +1302,7 @@ const ManageFees = () => {
         <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100 uppercase">
           View All Records →
         </button>
-       </motion.div>
+        </SpotlightCard>
      </div>
     </div>
 

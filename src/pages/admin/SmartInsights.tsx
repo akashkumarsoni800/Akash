@@ -2,12 +2,15 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabaseClient';
 import { getCurrentSchoolId } from '../../hooks/useQueries';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import {
   AlertTriangle, Users, TrendingDown, TrendingUp,
   BadgeIndianRupee, CalendarX, BookOpen, ChevronDown,
   RefreshCw, Filter, Search, CheckCircle2, XCircle,
   Clock, Star, AlertCircle, BarChart3, Brain, Send
 } from 'lucide-react';
+import DecryptedText from '../../components/ui/DecryptedText';
+import ShinyText from '../../components/ui/ShinyText';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Student {
@@ -17,6 +20,7 @@ interface Student {
   section?: string;
   contact_number?: string;
   roll_number?: string;
+  father_name?: string;
 }
 interface AttendanceRecord { student_id: number; status: string; date: string; }
 interface FeeRecord { student_id: number; status: string; total_amount?: number; month?: string; }
@@ -285,7 +289,15 @@ const SmartInsights: React.FC = () => {
             <Brain size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-800">Smart Student Insights</h1>
+            <h1 className="text-xl font-bold text-slate-800">
+              <DecryptedText 
+                text="Smart Student Insights" 
+                animateOn="view"
+                speed={50}
+                className="text-slate-800 font-bold"
+                encryptedClassName="text-indigo-600 font-mono"
+              />
+            </h1>
             <p className="text-xs text-slate-500">
               {lastUpdated ? `Last updated: ${lastUpdated.toLocaleTimeString()}` : 'Loading...'}
             </p>
