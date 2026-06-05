@@ -5,35 +5,35 @@ import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-   Plus, Search, Users, Calendar, ArrowRight,
-   Wallet, Send, RefreshCw, Trash2, CheckCircle,
-   ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
-   MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain
+  Plus, Search, Users, Calendar, ArrowRight,
+  Wallet, Send, RefreshCw, Trash2, CheckCircle,
+  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
+  MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain, Download
 } from 'lucide-react';
 import { 
-   useGetAllStudents, 
-   useGetFeeHeads, 
-   useGetFeeStats, 
-   useGetRecentPayments, 
-   useGetFeeReminders,
-   useAddFeeHead,
-   useDeleteFeeHead,
-   useAssignFees
+  useGetAllStudents, 
+  useGetFeeHeads, 
+  useGetFeeStats, 
+  useGetRecentPayments, 
+  useGetFeeReminders,
+  useAddFeeHead,
+  useDeleteFeeHead,
+  useAssignFees
 } from '../../hooks/useQueries';
-import DecryptedText from '../../components/ui/DecryptedText';
-import ShinyText from '../../components/ui/ShinyText';
-import SpotlightCard from '../../components/ui/SpotlightCard';
-
 
 const ManageFees = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
- const [newHeadName, setNewHeadName] = useState('');
- const [selectedStudent, setSelectedStudent] = useState('');
- const [selectedClass, setSelectedClass] = useState('');
- const [month, setMonth] = useState('');
- const [feeValues, setFeeValues] = useState<any>({});
- const [bulkMode, setBulkMode] = useState(false);
+  
+  // ✅ Refs Definition Fixed (Missing scannerRef error solved)
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
+  const [newHeadName, setNewHeadName] = useState('');
+  const [selectedStudent, setSelectedStudent] = useState('');
+  const [selectedClass, setSelectedClass] = useState('');
+  const [month, setMonth] = useState('');
+  const [feeValues, setFeeValues] = useState<Record<string, any>>({});
+  const [bulkMode, setBulkMode] = useState(false);
   const [remindMonth, setRemindMonth] = useState(new Date().toISOString().slice(0, 7));
   const [showAllMonths, setShowAllMonths] = useState(false);
   const [waSearch, setWaSearch] = useState('');
@@ -50,17 +50,28 @@ const ManageFees = () => {
   });
   const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([]);
   const [isAutoAdvancing, setIsAutoAdvancing] = useState(false);
-  const [missingFees, setMissingFees] = useState<any[]>([]);
-  const [isDetecting, setIsDetecting] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
-  const scannerRef = useRef<any>(null);
 
- // ✅ 1. Persistent Data Hooks
- const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
- const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
- const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
- const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
+  // ✅ 1. Persistent Data Hooks
+  const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
+  const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
+  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
+  const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
   const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
+
+  const loading = stdLoading || headsLoading || statsLoading || paymentsLoading || localLoading;
+
+  // Helper for total
+  const totalAmountValue = Object.values(feeValues).reduce((sum: number, val: any) => 
+    sum + Number(val || 0), 0);
+
+  // Update initial fee values when heads load
+  useEffect(() => {
+    if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
+      setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
+    }
+  }, [feeHeads]);
 
   // ✅ Auto-toggle to Show All if current month is empty to avoid confusion
   useEffect(() => {
@@ -70,24 +81,10 @@ const ManageFees = () => {
     }
   }, [pendingReminders, remLoading, showAllMonths, autoToggled]);
 
- // ✅ 2. Mutations
- const addFeeHeadMutation = useAddFeeHead();
- const deleteFeeHeadMutation = useDeleteFeeHead();
- const assignFeesMutation = useAssignFees();
-
- const [localLoading, setLocalLoading] = useState(false);
- const loading = stdLoading || headsLoading || statsLoading || paymentsLoading || localLoading;
-
- // Helper for total
- const totalAmountValue = Object.values(feeValues).reduce((sum: number, val: any) => 
-  sum + Number(val || 0), 0);
-
- // Update initial fee values when heads load
-  useEffect(() => {
-   if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
-    setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
-   }
-  }, [feeHeads]);
+  // ✅ 2. Mutations
+  const addFeeHeadMutation = useAddFeeHead();
+  const deleteFeeHeadMutation = useDeleteFeeHead();
+  const assignFeesMutation = useAssignFees();
 
   // ✅ 3. URL Param Selection
   useEffect(() => {
@@ -106,10 +103,10 @@ const ManageFees = () => {
     }
   }, [searchParams, students]);
 
- // ✅ Real Scanner Logic — fetches from Supabase directly for reliability
- useEffect(() => {
+  // ✅ Real Scanner Logic — fetches from Supabase directly for reliability
+  useEffect(() => {
     if (showScanner) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         const scanner = new Html5QrcodeScanner(
           "reader",
           { fps: 15, qrbox: { width: 250, height: 250 } },
@@ -117,7 +114,6 @@ const ManageFees = () => {
         );
 
         scanner.render(async (decodedText) => {
-          // 🛠️ Robust ID Extraction from URL or raw IDs
           let studentId = decodedText.trim();
           if (studentId.includes('/v/')) {
             studentId = studentId.split('/v/').pop()?.split(/[?#]/)[0].replace(/\/$/, '') || studentId;
@@ -130,24 +126,20 @@ const ManageFees = () => {
           try {
             const numericId = isNaN(Number(studentId)) ? null : Number(studentId);
 
-            // Step 1: Try student_id as number (DB column is INTEGER)
             let { data, error } = numericId
               ? await supabase.from('students').select('*').eq('student_id', numericId).maybeSingle()
               : { data: null, error: null };
 
-            // Step 2: Try student_id as string (fallback)
             if (!data && !error) {
               const r1b = await supabase.from('students').select('*').eq('student_id', studentId).maybeSingle();
               data = r1b.data; error = r1b.error;
             }
 
-            // Step 3: Try roll_no
             if (!data && !error) {
               const r2 = await supabase.from('students').select('*').eq('roll_no', studentId).maybeSingle();
               data = r2.data; error = r2.error;
             }
 
-            // Step 4: Try UUID id (fallback for old QR codes)
             if (!data && !error) {
               const r3 = await supabase.from('students').select('*').eq('id', studentId).maybeSingle();
               data = r3.data; error = r3.error;
@@ -167,6 +159,334 @@ const ManageFees = () => {
         }, () => {});
 
         scannerRef.current = scanner;
+      }, 300);
+
+      return () => {
+        clearTimeout(timer);
+        if (scannerRef.current) {
+          scannerRef.current.clear().catch(() => {});
+        }
+      };
+    }
+  }, [showScanner]);
+
+  const handleAssignFee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bulkMode && !selectedStudent) return toast.error("Please select a student");
+    if (bulkMode && !selectedClass) return toast.error("Please select a class");
+    if (!month) return toast.error("Please select a month");
+    if (totalAmountValue <= 0) return toast.error("Total fee cannot be zero");
+
+    try {
+      let feesToInsert: any[] = [];
+      
+      if (bulkMode && selectedClass) {
+        const classStudents = students.filter((s: any) => s.class_name === selectedClass);
+        if (classStudents.length === 0) throw new Error("No students found in this class");
+
+        feesToInsert = classStudents.map((student: any) => ({
+          student_id: student.student_id,
+          month,
+          fee_structure: feeValues,
+          total_amount: totalAmountValue,
+          status: 'Pending'
+        }));
+      } else {
+        feesToInsert = [{
+          student_id: selectedStudent, 
+          month,
+          fee_structure: feeValues,
+          total_amount: totalAmountValue,
+          status: 'Pending'
+        }];
+      }
+
+      assignFeesMutation.mutate(feesToInsert, {
+        onSuccess: () => {
+          setSelectedStudent('');
+          setMonth('');
+          setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
+          toast.success("Fee Assigned Successfully!");
+        }
+      });
+    } catch (error: any) {
+      toast.error("Assignment Failed: " + error.message);
+    }
+  };
+
+  const handleFeeValueChange = (headId: string, value: string) => {
+    setFeeValues({ ...feeValues, [headId]: value });
+  };
+
+  const handleSendReminder = (fee: any) => {
+    let student = fee.students;
+    if (!student?.full_name) {
+      student = students.find((s: any) => 
+        s.student_id?.toString() === fee.student_id?.toString() ||
+        s.id?.toString() === fee.student_id?.toString()
+      );
+    }
+    if (!student) return toast.error("Student record not linked. Re-assign this fee.");
+    if (!student.contact_number) return toast.error(`No contact number for ${student.full_name}`);
+
+    let phone = student.contact_number.replace(/\D/g, ''); 
+    if (phone.length === 10) phone = `91${phone}`;
+    else if (phone.length > 10 && !phone.startsWith('91')) phone = `91${phone.slice(-10)}`;
+
+    const breakdown = Object.entries(fee.fee_structure || {})
+      .filter(([_, val]) => Number(val) > 0)
+      .map(([headId, val]) => {
+        const head = feeHeads.find((h: any) => h.id.toString() === headId.toString());
+        return `• ${head ? head.name.toUpperCase() : 'FEE'}: ₹${val}`;
+      })
+      .join('%0A');
+
+    const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
+    const message = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*%0A%0ADear Parent, this is a friendly reminder regarding the pending fees for your child.%0A%0A*🔸 Student:* ${student.full_name}%0A*🔸 Class:* ${student.class_name}%0A*🔸 Month:* ${fee.month}%0A%0A*📋 DETAILS:*%0A${breakdown}%0A%0A*💰 TOTAL PAYABLE: ₹${fee.total_amount}*%0A*📌 STATUS: PENDING*%0A%0A_Please deposit the fee at the school office or pay online. If already paid, please ignore._%0A%0A*Regards,*%0A*School Management*`;
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+  };
+
+  const startSequentialReminders = () => {
+    let baseTargets = [];
+    if (selectedFeeIds.length > 0) {
+      baseTargets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
+    } else {
+      baseTargets = pendingReminders.filter((fee: any) => {
+        const student = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+        const nameMatch = !waSearch || student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
+        const classMatch = !classFilterWa || student?.class_name === classFilterWa;
+        return nameMatch && classMatch;
+      });
+    }
+
+    const finalTargets = baseTargets.map((fee: any) => {
+      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
+        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
+      );
+      return { ...fee, _student: student };
+    }).filter(f => !!f._student?.contact_number);
+
+    if (finalTargets.length === 0) {
+      return toast.error("No students found with valid contact numbers.");
+    }
+
+    setAutomation({
+      isOpen: true,
+      students: finalTargets,
+      currentIndex: 0
+    });
+  };
+
+  const nextSequentialReminder = () => {
+    const current = automation.students[automation.currentIndex];
+    handleSendReminder(current);
+    
+    if (automation.currentIndex < automation.students.length - 1) {
+      setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
+      if (isAutoAdvancing) {
+        toast.info(`Preparing next template alert...`, { duration: 1500 });
+        setTimeout(() => {
+          nextSequentialReminder();
+        }, 3000);
+      }
+    } else {
+      setAutomation(prev => ({ ...prev, isOpen: false }));
+      toast.success("✅ Automation Blast complete!");
+    }
+  };
+
+  // ✅ NEW ADDED ADVANCED FUNCTION A: Bulk Update Select Actions to Paid
+  const handleBulkMarkAsPaid = async () => {
+    if (selectedFeeIds.length === 0) return toast.error("Pehle checkbox me students select karein!");
+    const confirmAction = window.confirm(`Kya aap sabhi ${selectedFeeIds.length} selected records ko 'Paid' mark karna chahte hain?`);
+    if (!confirmAction) return;
+
+    setLocalLoading(true);
+    try {
+      const { error } = await supabase
+        .from('fees')
+        .update({ status: 'Paid', updated_at: new Date().toISOString() })
+        .in('id', selectedFeeIds);
+
+      if (error) throw error;
+      toast.success("✅ Selected fees marked as Paid successfully!");
+      setSelectedFeeIds([]);
+    } catch (err: any) {
+      toast.error("Status update processing failed: " + err.message);
+    } finally {
+      setLocalLoading(false);
+    }
+  };
+
+  // ✅ NEW ADDED ADVANCED FUNCTION B: Export Selected/All filtered Defaulters List to CSV Sheet
+  const exportDefaultersToCSV = () => {
+    if (pendingReminders.length === 0) return toast.error("Export karne ke liye koi entries nahi hain.");
+    
+    let csvHeaders = "Student Name,Class,Roll No,Phone,Month,Pending Amount\n";
+    const rows = pendingReminders.map((fee: any) => {
+      const matchedStud = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+      return `"${matchedStud?.full_name || 'N/A'}","${matchedStud?.class_name || 'N/A'}","${matchedStud?.roll_no || 'N/A'}","${matchedStud?.contact_number || 'N/A'}","${fee.month}",${fee.total_amount}`;
+    }).join("\n");
+
+    const blob = new Blob([csvHeaders + rows], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `Defaulters_Report_${remindMonth}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("📁 Defaulters csv download complete!");
+  };
+
+  const handleSmartAutoAssign = async () => {
+    if (!remindMonth) return toast.error("Please pick a month in the Reminders section first.");
+    setLocalLoading(true);
+    try {
+      const { data: existingFees } = await supabase
+        .from('fees')
+        .select('student_id')
+        .eq('month', remindMonth);
+      
+      const existingIds = new Set(existingFees?.map(f => f.student_id?.toString()));
+      const missing = students.filter(s => !existingIds.has(s.student_id?.toString()));
+      
+      if (missing.length === 0) {
+        toast.success("All students already have fee records for this month! 🎉");
+        return;
+      }
+
+      const confirmed = window.confirm(`Found ${missing.length} students without fees for ${remindMonth}. Auto-assign using last records?`);
+      if (!confirmed) return;
+
+      const newFees: any[] = [];
+      for (const student of missing) {
+        const { data: lastFee } = await supabase
+          .from('fees')
+          .select('fee_structure, total_amount')
+          .eq('student_id', student.student_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (lastFee) {
+          newFees.push({
+            student_id: student.student_id,
+            month: remindMonth,
+            fee_structure: lastFee.fee_structure,
+            total_amount: lastFee.total_amount,
+            status: 'Pending'
+          });
+        }
+      }
+
+      if (newFees.length > 0) {
+        assignFeesMutation.mutate(newFees);
+      } else {
+        toast.info("No history patterns parameters logs found.");
+      }
+    } catch (err: any) {
+      toast.error("Auto-Assign failed: " + err.message);
+    } finally {
+      setLocalLoading(false);
+    }
+  };
+
+  const handleCloneLastMonthFees = async () => {
+    if (!month) return toast.error("Select the target month first");
+    const [year, mon] = month.split('-').map(Number);
+    const prevDate = new Date(year, mon - 2, 1);
+    const prevMonthStr = `${prevDate.getFullYear()}-${(prevDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
+    if (!window.confirm(`Clone all pending fees from ${prevMonthStr} to ${month}?`)) return;
+
+    try {
+      setLocalLoading(true);
+      const { data: prevFees, error: fetchError } = await supabase
+        .from('fees')
+        .select('student_id, fee_structure, total_amount')
+        .eq('month', prevMonthStr);
+
+      if (fetchError) throw fetchError;
+      if (!prevFees || prevFees.length === 0) throw new Error(`No records found for ${prevMonthStr}`);
+
+      const newFees = prevFees.map(f => ({
+        student_id: f.student_id,
+        month: month,
+        fee_structure: f.fee_structure,
+        total_amount: f.total_amount,
+        status: 'Pending'
+      }));
+
+      assignFeesMutation.mutate(newFees);
+    } catch (error: any) {
+      toast.error("Cloning Failed: " + error.message);
+    } finally {
+      setLocalLoading(false);
+    }
+  };
+
+ return (
+  <div className="min-h-screen bg-white text-slate-900 font-sans tracking-tight">
+   <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-10 md:py-20">
+    
+    {/* --- HEADER --- */}
+    <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-10">
+     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+      <div className="flex items-center gap-4 mb-4">
+       <span className="w-10 h-10 rounded-[5px] bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+        <Wallet size={20} />
+       </span>
+       <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">
+        Fee Management
+       </h1>
+      </div>
+      <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
+       Financial Records & Reminders <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      </p>
+     </motion.div>
+
+     <div className="flex flex-wrap items-center gap-4">
+       <button 
+        onClick={() => document.getElementById('assign-form')?.scrollIntoView({ behavior: 'smooth' })}
+        className="premium-button-admin flex items-center gap-2 bg-blue-600 font-black text-white border-none shadow-2xl hover:scale-105 active:scale-95 tracking-widest uppercase px-8"
+       >
+        <Plus size={20} /> 
+        <span>Add Fee</span>
+       </button>
+       <button 
+        onClick={() => window.location.reload()}
+        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
+       >
+        <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+       </button>
+       <button 
+        onClick={() => setShowHeadsModal(true)}
+        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
+       >
+        <LayoutDashboard size={20} /> 
+        <span>Heads</span>
+       </button>
+       <button 
+        onClick={() => setShowDefaultersModal(true)}
+        className="premium-button-admin flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
+       >
+        <AlertTriangle size={20} /> 
+        <span>Defaulters</span>
+       </button>
+      </div>
+    </div>
+
+    {/* --- MAIN GRID --- */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+     <div className="lg:col-span-2 space-y-12">
+       
+       {/* 🚀 AUTOMATION ADUKUL PANEL */}
+       <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="premium-card p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] shadow-2xl overflow-hidden group"
+       >
+        <div className="bg-white m-0.5 rounded-[1.9rem] p-8 md:p        scannerRef.current = scanner;
       }, 300);
 
       return () => {
