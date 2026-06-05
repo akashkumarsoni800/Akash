@@ -486,344 +486,6 @@ const ManageFees = () => {
         animate={{ opacity: 1, scale: 1 }}
         className="premium-card p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] shadow-2xl overflow-hidden group"
        >
-        <div className="bg-white m-0.5 rounded-[1.9rem] p-8 md:p        scannerRef.current = scanner;
-      }, 300);
-
-      return () => {
-        if (scannerRef.current) {
-          scannerRef.current.clear().catch(() => {});
-        }
-      };
-    }
-  }, [showScanner]);
-
- const handleAssignFee = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!bulkMode && !selectedStudent) return toast.error("Please select a student");
-  if (bulkMode && !selectedClass) return toast.error("Please select a class");
-  if (!month) return toast.error("Please select a month");
-  if (totalAmountValue <= 0) return toast.error("Total fee cannot be zero");
-
-  try {
-   let feesToInsert: any[] = [];
-   
-   if (bulkMode && selectedClass) {
-    const classStudents = students.filter((s: any) => s.class_name === selectedClass);
-    if (classStudents.length === 0) throw new Error("No students found in this class");
-
-    feesToInsert = classStudents.map((student: any) => ({
-     student_id: student.student_id,
-     month,
-     fee_structure: feeValues,
-     total_amount: totalAmountValue,
-     status: 'Pending'
-    }));
-   } else {
-    feesToInsert = [{
-     student_id: selectedStudent, 
-     month,
-     fee_structure: feeValues,
-     total_amount: totalAmountValue,
-     status: 'Pending'
-    }];
-   }
-
-   assignFeesMutation.mutate(feesToInsert, {
-    onSuccess: () => {
-      setSelectedStudent('');
-      setMonth('');
-      setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
-    }
-   });
-  } catch (error: any) {
-   toast.error("Assignment Failed: " + error.message);
-  }
- };
-
- const handleFeeValueChange = (headId: string, value: string) => {
-  setFeeValues({ ...feeValues, [headId]: value });
- };
-
-  const handleSendReminder = (fee: any) => {
-    // ✅ Try join first, then fallback to students array in memory
-    let student = fee.students;
-    if (!student?.full_name) {
-      student = students.find((s: any) => 
-        s.student_id?.toString() === fee.student_id?.toString() ||
-        s.id?.toString() === fee.student_id?.toString()
-      );
-    }
-    if (!student) return toast.error("Student record not linked. Re-assign this fee.");
-    if (!student.contact_number) return toast.error(`No contact number for ${student.full_name}`);
-
-   let phone = student.contact_number.replace(/\D/g, ''); 
-   if (phone.length === 10) phone = `91${phone}`;
-   else if (phone.length === 12 && phone.startsWith('91')) phone = phone;
-   else if (phone.length > 10 && !phone.startsWith('91')) phone = `91${phone.slice(-10)}`;
-
-   const breakdown = Object.entries(fee.fee_structure || {})
-    .filter(([_, val]) => Number(val) > 0)
-     .map(([headId, val]) => {
-       const head = feeHeads.find((h: any) => h.id.toString() === headId.toString());
-       return `• ${head ? head.name.toUpperCase() : 'FEE'}: ₹${val}`;
-     })
-    .join('%0A');
-
-   const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
-   const message = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*%0A%0ADear Parent, this is a friendly reminder regarding the pending fees for your child.%0A%0A*🔸 Student:* ${student.full_name}%0A*🔸 Class:* ${student.class_name}%0A*🔸 Month:* ${fee.month}%0A%0A*📋 DETAILS:*%0A${breakdown}%0A%0A*💰 TOTAL PAYABLE: ₹${fee.total_amount}*%0A*📌 STATUS: PENDING*%0A%0A_Please deposit the fee at the school office or pay online via the app. If already paid, please ignore this message._%0A%0A*Regards,*%0A*School Management*`;
-     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-  };
-
-  const startSequentialReminders = () => {
-    // ✅ 1. Get potential targets based on selection OR current list filters
-    let baseTargets = [];
-    if (selectedFeeIds.length > 0) {
-      baseTargets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
-    } else {
-      baseTargets = pendingReminders.filter((fee: any) => {
-        const student = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-        const nameMatch = !waSearch || student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
-        const classMatch = !classFilterWa || student?.class_name === classFilterWa;
-        return nameMatch && classMatch;
-      });
-    }
-
-    // ✅ 2. Resolve final data and filter by phone availability
-    const finalTargets = baseTargets.map((fee: any) => {
-      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
-        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
-      );
-      return { ...fee, _student: student };
-    }).filter((f: any) => !!f._student?.contact_number);
-
-    if (finalTargets.length === 0) {
-      if (selectedFeeIds.length > 0) return toast.error("Selected students must have contact numbers!");
-      return toast.error("No students found with valid contact numbers.");
-    }
-
-    setAutomation({
-      isOpen: true,
-      students: finalTargets,
-      currentIndex: 0
-    });
-  };
-
-  const nextSequentialReminder = () => {
-    const current = automation.students[automation.currentIndex];
-    handleSendReminder(current);
-    
-    if (automation.currentIndex < automation.students.length - 1) {
-      setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
-      
-      // ✅ Auto Advance Logic
-      if (isAutoAdvancing) {
-        toast.info(`Preparing next reminder for ${automation.students[automation.currentIndex + 1]?._student?.full_name}...`, { duration: 2000 });
-        setTimeout(() => {
-          if (automation.isOpen) { // Ensure modal is still open
-             nextSequentialReminder();
-          }
-        }, 3000); // 3 second delay to allow first tab to load
-      }
-    } else {
-      setAutomation(prev => ({ ...prev, isOpen: false }));
-      setIsAutoAdvancing(false);
-      toast.success("✅ Sequence completed!");
-    }
-  };
-
-  const handleSmartAutoAssign = async () => {
-    if (!remindMonth) return toast.error("Please pick a month in the Reminders section first.");
-    
-    setLocalLoading(true);
-    try {
-      // 1. Find who ALREADY has fees for this month
-      const { data: existingFees } = await supabase
-        .from('fees')
-        .select('student_id')
-        .eq('month', remindMonth);
-      
-      const existingIds = new Set(existingFees?.map((f: any) => f.student_id?.toString()));
-      
-      // 2. Identify missing students
-      const missing = students.filter((s: any) => !existingIds.has(s.student_id?.toString()));
-      
-      if (missing.length === 0) {
-        toast.success("All students already have fee records for this month! 🎉");
-        return;
-      }
-
-      const confirmed = window.confirm(`Found ${missing.length} students without fees for ${remindMonth}. Auto-assign using their last known fee structure?`);
-      if (!confirmed) return;
-
-      // 3. For each missing student, get their last recorded fee
-      const newFees: any[] = [];
-      
-      for (const student of missing) {
-        const { data: lastFee } = await supabase
-          .from('fees')
-          .select('fee_structure, total_amount')
-          .eq('student_id', student.student_id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-
-        if (lastFee) {
-          newFees.push({
-            student_id: student.student_id,
-            month: remindMonth,
-            fee_structure: lastFee.fee_structure,
-            total_amount: lastFee.total_amount,
-            status: 'Pending'
-          });
-        }
-      }
-
-      if (newFees.length > 0) {
-        assignFeesMutation.mutate(newFees);
-      } else {
-        toast.info("No previous fee history found for these students. Please assign manually.");
-      }
-    } catch (err: any) {
-      toast.error("Auto-Assign failed: " + err.message);
-    } finally {
-      setLocalLoading(false);
-    }
-  };
-
-  const handleCloneLastMonthFees = async () => {
-    if (!month) return toast.error("Select the target month first");
-    
-    const [year, mon] = month.split('-').map(Number);
-    const prevDate = new Date(year, mon - 2, 1);
-    const prevMonthStr = `${prevDate.getFullYear()}-${(prevDate.getMonth() + 1).toString().padStart(2, '0')}`;
-
-    if (!window.confirm(`Clone all pending fees from ${prevMonthStr} to ${month}?`)) return;
-
-    try {
-      setLocalLoading(true);
-      const { data: prevFees, error: fetchError } = await supabase
-        .from('fees')
-        .select('student_id, fee_structure, total_amount')
-        .eq('month', prevMonthStr);
-
-      if (fetchError) throw fetchError;
-      if (!prevFees || prevFees.length === 0) throw new Error(`No records found for ${prevMonthStr}`);
-
-      const newFees = prevFees.map(f => ({
-        student_id: f.student_id,
-        month: month,
-        fee_structure: f.fee_structure,
-        total_amount: f.total_amount,
-        status: 'Pending'
-      }));
-
-      assignFeesMutation.mutate(newFees);
-    } catch (error: any) {
-      toast.error("Cloning Failed: " + error.message);
-    } finally {
-      setLocalLoading(false);
-    }
-  };
-
-  const handleClassBulkReminders = () => {
-    if (!classFilterWa) return;
-    const classStudents = students.filter((s: any) => s.class_name === classFilterWa);
-    if (classStudents.length === 0) {
-      toast.error(`No students found in Class ${classFilterWa}`);
-      return;
-    }
-    
-    classStudents.forEach((student: any, idx: number) => {
-      setTimeout(() => {
-        handleSendReminder({ 
-          students: student, 
-          total_amount: '---', 
-          month: 'Adhoc', 
-          status: 'Pending', 
-          fee_structure: {} 
-        });
-      }, idx * 1500);
-    });
-    toast.success(`Sending ${classStudents.length} reminders to Class ${classFilterWa}...`);
-  };
-
- return (
-  <div className="min-h-screen bg-white text-slate-900 font-sans tracking-tight">
-   <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-10 md:py-20">
-    
-    {/* --- HEADER --- */}
-    <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-10">
-     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-      <div className="flex items-center gap-4 mb-4">
-       <span className="w-10 h-10 rounded-[5px] bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
-        <Wallet size={20} />
-       </span>
-       <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">
-        <DecryptedText 
-          text="FEE MANAGEMENT" 
-          animateOn="view"
-          speed={40}
-          className="text-slate-900"
-          encryptedClassName="text-blue-600 font-mono"
-        />
-       </h1>
-      </div>
-      <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
-        <ShinyText 
-          text="Financial Records & Reminders" 
-          speed={2} 
-          color="#94a3b8" 
-          shineColor="#2563eb"
-        />
-       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      </p>
-     </motion.div>
-
-     <div className="flex items-center gap-4">
-      <div className="text-right mr-4 hidden md:block">
-        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">System Health</p>
-        <p className="text-[10px] font-black text-emerald-600 uppercase">Secure & Encrypted</p>
-      </div>
-       <button 
-        onClick={() => document.getElementById('assign-form')?.scrollIntoView({ behavior: 'smooth' })}
-        className="premium-button-admin flex items-center gap-2 bg-blue-600 font-black text-white border-none shadow-2xl hover:scale-105 active:scale-95 tracking-widest uppercase px-8"
-       >
-        <Plus size={20} /> 
-        <span>Add Fee</span>
-       </button>
-       <button 
-        onClick={() => window.location.reload()}
-        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-       </button>
-       <button 
-        onClick={() => setShowHeadsModal(true)}
-        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <LayoutDashboard size={20} /> 
-        <span>Heads</span>
-       </button>
-       <button 
-        onClick={() => setShowDefaultersModal(true)}
-        className="premium-button-admin flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <AlertTriangle size={20} /> 
-        <span>Defaulters</span>
-       </button>
-      </div>
-    </div>
-    {/* --- MAIN GRID --- */}
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-     
-     <div className="lg:col-span-2 space-y-12">
-       
-       {/* 🚀 AUTOMATION ADUKUL PANEL */}
-       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="premium-card p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] shadow-2xl overflow-hidden group"
-       >
         <div className="bg-white m-0.5 rounded-[1.9rem] p-8 md:p-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-40"></div>
           
@@ -833,30 +495,17 @@ const ManageFees = () => {
                 <Zap size={28} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-slate-900 uppercase">
-                  <DecryptedText 
-                    text="AUTOMATION PULSE" 
-                    animateOn="view"
-                    speed={50}
-                    className="text-slate-900"
-                    encryptedClassName="text-indigo-600 font-mono"
-                  />
-                </h2>
-                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">
-                  <ShinyText 
-                    text="Smart Monthly Management" 
-                    speed={3} 
-                    color="#3b82f6" 
-                    shineColor="#6366f1"
-                  />
-                </p>
+                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
+                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
               </div>
             </div>
-            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
-               <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-3">
-                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
-                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Live Auto-Pilot</span>
-               </div>
+            <div className="flex items-center gap-2">
+               <button 
+                onClick={exportDefaultersToCSV}
+                className="px-4 py-2 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-slate-200"
+               >
+                 <Download size={14} /> Export Report
+               </button>
             </div>
           </div>
 
@@ -894,11 +543,12 @@ const ManageFees = () => {
        </motion.div>
 
        {/* 🟡 1. ASSIGN FEE FORM */}
-       <SpotlightCard 
-         id="assign-form"
-         spotlightColor="rgba(37, 99, 235, 0.08)"
-         className="premium-card p-10 md:p-14 relative overflow-hidden rounded-[2rem] border border-slate-200/60 shadow-2xl"
-        >
+       <motion.div 
+        id="assign-form"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="premium-card p-10 md:p-14 relative overflow-hidden"
+       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
         
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
@@ -906,24 +556,18 @@ const ManageFees = () => {
             <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600">
              <Plus size={24} />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 uppercase">
-               <DecryptedText 
-                 text="Assign New Fee" 
-                 animateOn="view"
-                 speed={50}
-                 className="text-slate-900"
-                 encryptedClassName="text-blue-600 font-mono"
-               />
-             </h2>
+            <h2 className="text-3xl font-black text-slate-900 uppercase">Assign New Fee</h2>
           </div>
           <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-[5px] border border-slate-100">
            <button 
+            type="button"
             onClick={() => setBulkMode(false)}
             className={`px-6 py-3 rounded-[5px] text-[10px] font-black uppercase tracking-widest transition-all ${!bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
            >
             Student
            </button>
            <button 
+            type="button"
             onClick={() => setBulkMode(true)}
             className={`px-6 py-3 rounded-[5px] text-[10px] font-black uppercase tracking-widest transition-all ${bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
            >
@@ -1001,13 +645,13 @@ const ManageFees = () => {
                <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-xs">₹</span>
                 <input 
-                 id={`fee-head-${head.id}`}
-                 name={`fee-head-${head.id}`}
-                 type="number" 
-                 placeholder="0.00"
-                 className="premium-input w-full pl-10"
-                 value={feeValues[head.id] || ''}
-                 onChange={(e) => handleFeeValueChange(head.id, e.target.value)}
+                  id={`fee-head-${head.id}`}
+                  name={`fee-head-${head.id}`}
+                  type="number" 
+                  placeholder="0.00"
+                  className="premium-input w-full pl-10"
+                  value={feeValues[head.id] || ''}
+                  onChange={(e) => handleFeeValueChange(head.id, e.target.value)}
                 />
                </div>
               </div>
@@ -1031,7 +675,7 @@ const ManageFees = () => {
              <p className="text-[10px] font-black text-blue-400 mb-2 uppercase">Total Amount</p>
              <h2 className="text-5xl md:text-6xl font-black text-white leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
-           <button disabled={loading} className="premium-button-admin bg-blue-600 text-white hover:bg-slate-900 border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-16 py-6 text-lg uppercase flex items-center gap-4">
+           <button type="submit" disabled={loading} className="premium-button-admin bg-blue-600 text-white hover:bg-slate-900 border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-16 py-6 text-lg uppercase flex items-center gap-4">
              {loading ? <RefreshCw size={28} className="animate-spin" /> : <ShieldCheck size={28} />}
              <div className="text-left leading-none">
               <span className="block text-[8px] opacity-60 font-black">CONFIRM & SAVE</span>
@@ -1040,12 +684,14 @@ const ManageFees = () => {
            </button>
           </div>
         </form>
-        </SpotlightCard>
+       </motion.div>
 
        {/* 🟡 4. QUICK SCAN HUB */}
-       <SpotlightCard 
-        spotlightColor="rgba(59, 130, 246, 0.15)"
-        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative rounded-[2rem] border border-slate-800"
+ Quick Lookup Cards
+       <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative"
        >
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/30 blur-3xl rounded-full transition-opacity group-hover:opacity-100 opacity-50"></div>
         <div className="flex items-center gap-6 mb-8 relative z-10">
@@ -1053,23 +699,8 @@ const ManageFees = () => {
            <Zap size={24} className="animate-pulse" />
           </div>
           <div>
-           <h2 className="text-2xl font-black uppercase leading-none">
-             <DecryptedText 
-               text="Quick Lookup" 
-               animateOn="view"
-               speed={50}
-               className="text-white"
-               encryptedClassName="text-blue-500 font-mono"
-             />
-           </h2>
-           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">
-             <ShinyText 
-               text="Scan or Search Student" 
-               speed={2.5} 
-               color="#60a5fa" 
-               shineColor="#ffffff"
-             />
-           </p>
+           <h2 className="text-2xl font-black uppercase leading-none">Quick Lookup</h2>
+           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">Scan or Search Student</p>
           </div>
         </div>
 
@@ -1094,7 +725,6 @@ const ManageFees = () => {
             )}
           </div>
 
-          {/* ✅ Universal Action Hub */}
           <AnimatePresence>
             {scannedStudent && (
               <motion.div
@@ -1103,7 +733,6 @@ const ManageFees = () => {
                 exit={{ opacity: 0, y: 10 }}
                 className="bg-white rounded-[5px] overflow-hidden shadow-2xl border border-slate-100"
               >
-                {/* Student Card Header */}
                 <div className="flex items-center gap-4 p-5 bg-slate-50 border-b border-slate-100">
                   <div className="w-14 h-14 rounded-[5px] overflow-hidden border-2 border-white shadow-md flex-shrink-0">
                     {scannedStudent.photo_url ? (
@@ -1126,7 +755,6 @@ const ManageFees = () => {
                   </div>
                 </div>
 
-                {/* ✅ Attendance Row */}
                 <div className="p-4 bg-emerald-50/30 border-b border-slate-100">
                   <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">Quick Attendance</p>
                   <div className="flex gap-2">
@@ -1144,12 +772,12 @@ const ManageFees = () => {
                             marked_by: localStorage.getItem('user_email') || 'admin',
                           }, { onConflict: 'student_id,date,school_id' });
                           if (error) toast.error('Attendance error: ' + error.message);
-                          else toast.success(`✅ ${scannedStudent.full_name} marked ${status} for today`);
+                          else toast.success(`✅ ${scannedStudent.full_name} marked ${status}`);
                         }}
                         className={`flex-1 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border ${
-                          status === 'Present' ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600' :
-                          status === 'Absent' ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white hover:border-rose-600' :
-                          'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white hover:border-amber-600'
+                          status === 'Present' ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white' :
+                          status === 'Absent' ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white' :
+                          'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white'
                         }`}
                       >
                         {status}
@@ -1158,7 +786,6 @@ const ManageFees = () => {
                   </div>
                 </div>
 
-                {/* ✅ WhatsApp Row */}
                 <div className="p-4 bg-green-50/20 border-b border-slate-100">
                   <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">WhatsApp Reminder</p>
                   <button
@@ -1176,7 +803,7 @@ const ManageFees = () => {
 
                       const totalPending = (pendingFees || []).reduce((s: number, f: any) => s + Number(f.total_amount), 0);
                       const schoolName = localStorage.getItem('current_school_name') || 'School';
-                      const msg = `Dear Parent of *${scannedStudent.full_name}*, your ward has pending fees of *₹${totalPending}* at ${schoolName}. Please pay at the earliest. Thank you.`;
+                      const msg = `Dear Parent of *${scannedStudent.full_name}*, your ward has pending fees of *₹${totalPending}* at ${schoolName}. Please pay at the earliest.`;
                       window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
                     }}
                     className="w-full py-3 bg-green-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-green-500 transition-all flex items-center justify-center gap-2"
@@ -1185,98 +812,36 @@ const ManageFees = () => {
                   </button>
                 </div>
 
-                {/* Action Grid (8 buttons) */}
                 <div className="grid grid-cols-4 gap-0 divide-x divide-y divide-slate-100">
-                  <button
-                    onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected`); }}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-blue-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
-                      <CreditCard size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Assign Fee</p>
+                  <button onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected`); }} className="flex flex-col items-center gap-2 p-4 hover:bg-blue-50 transition-all">
+                    <CreditCard size={16} className="text-blue-600" />
+                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Assign Fee</p>
                   </button>
-
                   <button
                     onClick={async () => {
                       const schoolId = localStorage.getItem('current_school_id');
                       const { data: pendingFees } = await supabase
-                        .from('fees').select('id, total_amount, month')
+                        .from('fees').select('id, total_amount')
                         .eq('student_id', scannedStudent.student_id?.toString() || scannedStudent.id)
                         .eq('status', 'Pending').eq('school_id', schoolId);
                       if (!pendingFees?.length) return toast.info('No pending fees found');
-                      if (window.confirm(`Mark all ₹${pendingFees.reduce((s: number, f: any) => s + Number(f.total_amount), 0)} as Paid?`)) {
-                        await supabase.from('fees').update({ status: 'Paid', updated_at: new Date().toISOString() })
-                          .in('id', pendingFees.map((f: any) => f.id));
-                        toast.success(`✅ All fees marked Paid for ${scannedStudent.full_name}`);
+                      if (window.confirm(`Mark all as Paid?`)) {
+                        await supabase.from('fees').update({ status: 'Paid', updated_at: new Date().toISOString() }).in('id', pendingFees.map((f: any) => f.id));
+                        toast.success(`✅ Fees marked Paid for ${scannedStudent.full_name}`);
                       }
                     }}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-emerald-50 transition-all group"
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-emerald-50 transition-all"
                   >
-                    <div className="w-9 h-9 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                      <CheckCircle size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Pay Fee</p>
+                    <CheckCircle size={16} className="text-emerald-600" />
+                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Pay Fee</p>
                   </button>
-
-                  <button
-                    onClick={() => navigate(`/admin/library?student=${scannedStudent.student_id}`)}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-amber-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all">
-                      <Layout size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Library</p>
+                  <button onClick={() => navigate(`/admin/library?student=${scannedStudent.student_id}`)} className="flex flex-col items-center gap-2 p-4 hover:bg-amber-50 transition-all">
+                    <Layout size={16} className="text-amber-600" />
+                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Library</p>
                   </button>
-
-                  <button
-                    onClick={() => navigate(`/admin/documents?search=${scannedStudent.student_id}`)}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-purple-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
-                      <ScanLine size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">ID/Docs</p>
-                  </button>
-
-                  <button
-                    onClick={() => navigate(`/v/${scannedStudent.student_id || scannedStudent.id}`)}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-teal-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all">
-                      <ShieldCheck size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Verify</p>
-                  </button>
-
-                  <button
-                    onClick={() => navigate(`/admin/upload-result?student=${scannedStudent.student_id}`)}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-rose-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-all">
-                      <Star size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Results</p>
-                  </button>
-
-                  <button
-                    onClick={() => navigate(`/admin/student/${scannedStudent.id}`)}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-indigo-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                      <User size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">Profile</p>
-                  </button>
-
-                  <button
-                    onClick={() => navigate('/admin/library')}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-orange-50 transition-all group"
-                  >
-                    <div className="w-9 h-9 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-all">
-                      <Info size={16} />
-                    </div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-wide text-center">More</p>
+                  <button onClick={() => navigate(`/admin/student/${scannedStudent.id}`)} className="flex flex-col items-center gap-2 p-4 hover:bg-indigo-50 transition-all">
+                    <User size={16} className="text-indigo-600" />
+                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Profile</p>
                   </button>
                 </div>
               </motion.div>
@@ -1296,7 +861,6 @@ const ManageFees = () => {
                  <div className="w-full flex justify-between items-center">
                    <div>
                      <h2 className="text-xl font-black text-slate-900 uppercase">Scan Student ID</h2>
-                     <p className="text-[9px] font-black text-slate-400 tracking-widest uppercase mt-1">Aligns with QR Code on card</p>
                    </div>
                    <button onClick={() => setShowScanner(false)} className="p-3 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100">
                      <X size={20} />
@@ -1309,26 +873,17 @@ const ManageFees = () => {
                      <div className="absolute top-1/2 left-0 w-full h-0.5 bg-blue-500/80 shadow-[0_0_12px_rgba(59,130,246,0.6)] animate-scan-line"></div>
                    </div>
                  </div>
-
-                 <div className="w-full p-5 bg-slate-50 rounded-2xl flex items-center gap-4 border border-slate-100">
-                   <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 animate-pulse">
-                     <Zap size={20} />
-                   </div>
-                   <p className="text-[10px] font-black text-slate-500 uppercase leading-relaxed tracking-wider">
-                     Point camera at the QR code on the student ID card. Student will be identified automatically.
-                   </p>
-                 </div>
-               </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
-        </SpotlightCard>
-
+       </motion.div>
 
        {/* 🟢 WHATSAPP REMINDERS HUB */}
-       <SpotlightCard 
-        spotlightColor="rgba(16, 185, 129, 0.08)"
-        className="premium-card p-10 md:p-14 relative overflow-hidden rounded-[2rem] border border-slate-200/60 shadow-2xl"
+       <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="premium-card p-10 md:p-14 relative overflow-hidden"
        >
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-6">
@@ -1336,45 +891,20 @@ const ManageFees = () => {
              <MessageSquare size={24} />
             </div>
             <div>
-             <h2 className="text-3xl font-black text-slate-900 uppercase">
-               <DecryptedText 
-                 text="WhatsApp Reminders" 
-                 animateOn="view"
-                 speed={50}
-                 className="text-slate-900"
-                 encryptedClassName="text-emerald-600 font-mono"
-               />
-             </h2>
-             <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">
-               <ShinyText 
-                 text="PENDING FEE ALERTS" 
-                 speed={2} 
-                 color="#94a3b8" 
-                 shineColor="#10b981"
-               />
-             </p>
+             <h2 className="text-3xl font-black text-slate-900 uppercase">WhatsApp Reminders</h2>
+             <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">PENDING FEE ALERTS</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
              <div className="flex bg-slate-50 p-1.5 rounded-[5px] border border-slate-100">
-               <button 
-                onClick={() => setShowAllMonths(false)}
-                className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${!showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}
-               >
-                This Month
-               </button>
-               <button 
-                onClick={() => setShowAllMonths(true)}
-                className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}
-               >
-                Show All
-               </button>
+               <button onClick={() => setShowAllMonths(false)} className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${!showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>This Month</button>
+               <button onClick={() => setShowAllMonths(true)} className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>Show All</button>
              </div>
              <button 
               onClick={startSequentialReminders}
               disabled={pendingReminders.length === 0}
-              className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl shadow-emerald-50 disabled:opacity-30 flex items-center gap-3 animate-bounce-short"
+              className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl disabled:opacity-30 flex items-center gap-3"
              >
               <Zap size={14} /> Send pending reminders
              </button>
@@ -1390,8 +920,7 @@ const ManageFees = () => {
               name="reminder-search"
               type="text" 
               placeholder="Search student in reminders list..."
-              aria-label="Search student in reminders list"
-              className="premium-input w-full pl-16 py-5 bg-slate-50 border-transparent hover:bg-white"
+              className="premium-input w-full pl-16 py-5 bg-slate-50 border-transparent"
               value={waSearch}
               onChange={(e) => setWaSearch(e.target.value)}
             />
@@ -1400,7 +929,6 @@ const ManageFees = () => {
             <select 
               id="reminder-class-filter"
               name="reminder-class-filter"
-              aria-label="Filter reminders by class"
               className="premium-input w-full appearance-none pr-10 bg-slate-50 border-transparent"
               value={classFilterWa}
               onChange={(e) => setClassFilterWa(e.target.value)}
@@ -1410,23 +938,13 @@ const ManageFees = () => {
                 <option key={cls} value={cls}>{cls}</option>
               ))}
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-blue-500">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
               <Filter size={16} />
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
-          {/* Class-wise Broadcast Button */}
-          {classFilterWa && (
-             <button 
-              onClick={startSequentialReminders}
-              className="w-full py-4 mb-4 bg-slate-900 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 border-2 border-slate-800"
-             >
-               <Send size={14} /> Broadcast to Class {classFilterWa}
-             </button>
-          )}
-
           {/* ✅ 2. Automated Pending Reminders List */}
           <div className="flex items-center justify-between pl-2 mb-4">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">Pending Fee Alerts ({pendingReminders.length})</p>
@@ -1441,12 +959,20 @@ const ManageFees = () => {
                 {selectedFeeIds.length === pendingReminders.length ? 'Deselect All' : 'Select All'}
               </button>
               {selectedFeeIds.length > 0 && (
-                <button 
-                  onClick={startSequentialReminders}
-                  className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                >
-                  Send for {selectedFeeIds.length} Selected
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleBulkMarkAsPaid}
+                    className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-[9px] font-black uppercase border border-blue-100 hover:bg-blue-600 hover:text-white transition-all"
+                  >
+                    Mark {selectedFeeIds.length} Paid
+                  </button>
+                  <button 
+                    onClick={startSequentialReminders}
+                    className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
+                  >
+                    Send to {selectedFeeIds.length} Selected
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -1459,26 +985,13 @@ const ManageFees = () => {
           ) : pendingReminders.length > 0 ? (
             pendingReminders
               .map((fee: any) => {
-                // ✅ Resolve student from join OR from loaded students array
-                const student = fee.students?.full_name
-                  ? fee.students
-                  : students.find((s: any) =>
-                      s.student_id?.toString() === fee.student_id?.toString() ||
-                      s.id?.toString() === fee.student_id?.toString()
-                    );
+                const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
                 return { ...fee, _student: student };
               })
-              .filter((fee: any) => {
-                if (!waSearch) return true;
-                const name = fee._student?.full_name || '';
-                return name.toLowerCase().includes(waSearch.toLowerCase());
-              })
-              .filter((fee: any) => {
-                if (!classFilterWa) return true;
-                return fee._student?.class_name === classFilterWa;
-              })
+              .filter((fee: any) => !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase()))
+              .filter((fee: any) => !classFilterWa || fee._student?.class_name === classFilterWa)
               .map((fee: any) => (
-              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl active:scale-95 tracking-widest transition-all border border-transparent hover:border-emerald-100 relative overflow-hidden">
+              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group border border-transparent hover:border-emerald-100 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-emerald-100"></div>
                 <div className="flex items-center gap-6 mb-4 sm:mb-0">
                   <input 
@@ -1499,19 +1012,14 @@ const ManageFees = () => {
                     </h4>
                     <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter">
                       ₹{fee.total_amount} • {fee.month}
-                      {fee._student?.contact_number && (
-                        <span className="ml-2 text-emerald-500">📱 {fee._student.contact_number}</span>
-                      )}
-                      {!fee._student?.contact_number && (
-                        <span className="ml-2 text-rose-400 font-black italic">No Phone</span>
-                      )}
+                      {fee._student?.contact_number && <span className="ml-2 text-emerald-500">📱 {fee._student.contact_number}</span>}
                     </p>
                   </div>
                 </div>
                 <button 
                   onClick={() => handleSendReminder(fee)}
                   disabled={!fee._student?.contact_number}
-                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 uppercase disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all uppercase disabled:opacity-30"
                 >
                   <Send size={14} /> SEND
                 </button>
@@ -1519,99 +1027,54 @@ const ManageFees = () => {
             ))
           ) : (
             <div className="py-16 text-center bg-slate-50/50 rounded-[5px] border-2 border-dashed border-slate-100 flex flex-col items-center gap-6">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
-                <MessageSquare size={32} />
-              </div>
-              <div>
-                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                  No reminders for {showAllMonths ? 'the entire school' : remindMonth}
-                </p>
-                {!showAllMonths && feeStats.totalPending > 0 && (
-                  <button 
-                    onClick={() => setShowAllMonths(true)}
-                    className="mt-6 px-10 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl animate-bounce-short"
-                  >
-                    Show all {feeStats.totalPending} pending payments across all months
-                  </button>
-                )}
-              </div>
+              <MessageSquare size={32} className="text-slate-300" />
+              <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">No reminders available.</p>
             </div>
           )}
         </div>
-        </SpotlightCard>
+       </motion.div>
      </div>
 
      {/* --- RIGHT: INSIGHTS & STATS --- */}
      <div className="space-y-10">
-        <SpotlightCard 
-         spotlightColor="rgba(59, 130, 246, 0.08)"
-         className="premium-card p-12 relative overflow-hidden group rounded-[2rem] border border-slate-200/60 shadow-2xl"
-        >
-         <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/50 rounded-full blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100"></div>
-         <h3 className="text-[10px] font-black text-slate-300  mb-12 relative z-10 uppercase">
-           <DecryptedText 
-             text="Payment Summary" 
-             animateOn="view"
-             speed={50}
-             className="text-slate-500 font-bold"
-             encryptedClassName="text-blue-600 font-mono"
-           />
-         </h3>
-        <div className="space-y-8 relative z-10">
-          <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100 shadow-sm relative overflow-hidden group/card hover:bg-slate-900 transition-all duration-700">
-           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600 opacity-0 group-hover/card:opacity-10 blur-2xl transition-opacity"></div>
-           <p className="text-[9px] font-black text-slate-400 group-hover/card:text-blue-400 tracking-widest mb-3 uppercase">Total Collected</p>
-           <p className="text-4xl font-black text-slate-900 group-hover/card:text-white uppercase">₹{feeStats.totalCollected.toLocaleString()}</p>
+       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-12 relative overflow-hidden group">
+        <h3 className="text-[10px] font-black text-slate-300 mb-12 uppercase">Payment Summary</h3>
+        <div className="space-y-8">
+          <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100">
+           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-3 uppercase">Total Collected</p>
+           <p className="text-4xl font-black text-slate-900">₹{feeStats.totalCollected.toLocaleString()}</p>
           </div>
           <div className="grid grid-cols-2 gap-6">
            <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
-             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Pending Payments</p>
-             <p className="text-2xl font-black text-slate-900 uppercase">{feeStats.totalPending}</p>
+             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Pending</p>
+             <p className="text-2xl font-black text-slate-900">{feeStats.totalPending}</p>
            </div>
            <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
              <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Late Payments</p>
-             <p className="text-2xl font-black text-rose-500 uppercase">{feeStats.overdue}</p>
+             <p className="text-2xl font-black text-rose-500">{feeStats.overdue}</p>
            </div>
           </div>
-         </div>
-        </SpotlightCard>
+        </div>
+       </motion.div>
 
-        <SpotlightCard 
-         spotlightColor="rgba(59, 130, 246, 0.08)"
-         className="premium-card p-12 flex flex-col min-h-[500px] relative group rounded-[2rem] border border-slate-200/60 shadow-2xl"
-        >
-         <div className="flex items-center justify-between mb-12">
-           <h3 className="text-[10px] font-black text-slate-300  uppercase">
-             <DecryptedText 
-               text="Recent Payments" 
-               animateOn="view"
-               speed={50}
-               className="text-slate-500 font-bold"
-               encryptedClassName="text-blue-600 font-mono"
-             />
-           </h3>
-           <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-200"></div>
-         </div>
+       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-12 flex flex-col min-h-[500px]">
+        <div className="flex items-center justify-between mb-12">
+          <h3 className="text-[10px] font-black text-slate-300 uppercase">Recent Payments</h3>
+        </div>
         <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-          {recentPayments.length > 0 ? recentPayments.map((p: any, idx: number) => (
-           <motion.div 
-            key={p.id} 
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 + idx * 0.1 }}
-            className="p-6 bg-slate-50/50 rounded-[5px] border border-slate-50 flex justify-between items-center group/item hover:bg-white hover:shadow-2xl hover:border-blue-100 transition-all cursor-pointer relative overflow-hidden"
-           >
-            <div className="flex items-center gap-5 relative z-10">
-              <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-all ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600 animate-pulse'}`}>
-               {p.status === 'Paid' ? <CheckCircle size={20}/> : <RefreshCw size={20} className="animate-spin" />}
+          {recentPayments.length > 0 ? recentPayments.map((p: any) => (
+           <div key={p.id} className="p-6 bg-slate-50/50 rounded-[5px] border border-slate-50 flex justify-between items-center group hover:bg-white transition-all">
+            <div className="flex items-center gap-5">
+              <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'}`}>
+               <CheckCircle size={20}/>
               </div>
               <div>
-               <p className="font-black text-[12px] text-slate-800  leading-tight uppercase">{p.students?.full_name}</p>
+               <p className="font-black text-[12px] text-slate-800 uppercase">{p.students?.full_name}</p>
                <p className="text-[9px] font-black text-slate-400 tracking-widest mt-1.5 uppercase">₹{p.total_amount} • {p.month}</p>
               </div>
             </div>
-            <ArrowRight size={16} className="text-slate-200 group-hover/item:text-blue-500 transition-transform group-hover/item:translate-x-1 relative z-10" />
-           </motion.div>
+            <ArrowRight size={16} className="text-slate-200 group-hover:text-blue-500" />
+           </div>
           )) : (
            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-20">
             <RefreshCw size={60} className="mb-6 animate-spin text-slate-300" />
@@ -1619,88 +1082,32 @@ const ManageFees = () => {
            </div>
           )}
         </div>
-        <button className="mt-10 py-5 bg-slate-50 rounded-[5px] text-[10px] font-black text-slate-400 tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-inner border border-slate-100 uppercase">
-          View All Records →
-        </button>
-        </SpotlightCard>
+       </motion.div>
      </div>
     </div>
 
     {/* 🟢 AUTOMATION PROGRESS MODAL */}
     <AnimatePresence>
       {automation.isOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
-        >
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[2.5rem] p-12 w-full max-w-md shadow-2xl relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
-            
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-[2.5rem] p-12 w-full max-w-md shadow-2xl relative overflow-hidden">
             <div className="flex justify-between items-center mb-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
-                  <Zap size={24} className="animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-slate-900 uppercase">Automated Blast</h2>
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Bulk Sending Mode</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))}
-                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
-              >
-                <X size={24} />
-              </button>
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Automated Blast</h2>
+              <button onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
             </div>
-
             <div className="flex flex-col items-center gap-6 mb-10">
-               <label className="flex items-center gap-3 bg-emerald-50 px-6 py-4 rounded-3xl cursor-pointer hover:bg-emerald-100 transition-all border border-emerald-100 group w-full">
-                  <input 
-                    type="checkbox" 
-                    checked={isAutoAdvancing} 
-                    onChange={(e) => setIsAutoAdvancing(e.target.checked)}
-                    className="w-6 h-6 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Enable Auto-Pilot</span>
-                    <span className="text-[8px] font-bold text-emerald-500 uppercase opacity-60">Automatically triggers next student in 3s</span>
-                  </div>
+               <label className="flex items-center gap-3 bg-emerald-50 px-6 py-4 rounded-3xl cursor-pointer w-full">
+                  <input type="checkbox" checked={isAutoAdvancing} onChange={(e) => setIsAutoAdvancing(e.target.checked)} className="w-6 h-6 text-emerald-600 focus:ring-emerald-500" />
+                  <span className="text-[10px] font-black text-emerald-700 uppercase">Enable Auto-Pilot (3s)</span>
                </label>
-
-               <div className="w-full bg-slate-50 p-10 rounded-[3rem] border border-slate-100 text-center relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-slate-200">
-                    <div 
-                      className="h-full bg-emerald-500 transition-all duration-500"
-                      style={{ width: `${((automation.currentIndex + 1) / automation.students.length) * 100}%` }}
-                    />
-                  </div>
-                  
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Current Queue: {automation.currentIndex + 1} / {automation.students.length}</p>
-                  <h3 className="text-2xl font-black text-slate-900 uppercase leading-none mb-2">{automation.students[automation.currentIndex]?._student?.full_name}</h3>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Class {automation.students[automation.currentIndex]?._student?.class_name} • ₹{automation.students[automation.currentIndex]?.total_amount}</p>
+               <div className="w-full bg-slate-50 p-10 rounded-[3rem] text-center">
+                  <h3 className="text-2xl font-black text-slate-900 uppercase">{automation.students[automation.currentIndex]?._student?.full_name}</h3>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase">Queue: {automation.currentIndex + 1} / {automation.students.length}</p>
                </div>
             </div>
-
-            <div className="mt-10 flex flex-col gap-4">
-               <button 
-                onClick={nextSequentialReminder}
-                className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-emerald-500 transition-all uppercase flex items-center justify-center gap-3 shadow-xl"
-               >
-                 <Send size={16} />
-                 {automation.currentIndex === automation.students.length - 1 ? 'Send Final Reminder & Finish' : 'Send & Load Next Student'}
-               </button>
-               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest text-center italic">
-                 Note: Har student ke liye ek naya tab khulega.
-               </p>
-            </div>
+            <button onClick={nextSequentialReminder} className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500">
+               <Send size={16} className="inline mr-2" /> Send & Advance
+            </button>
           </motion.div>
         </motion.div>
       )}
@@ -1709,107 +1116,25 @@ const ManageFees = () => {
     {/* 🟢 DEFAULTERS LIST MODAL */}
     <AnimatePresence>
       {showDefaultersModal && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-6"
-        >
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[2rem] p-6 md:p-10 w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden relative flex flex-col"
-          >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4">
+          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-[2rem] p-10 w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden flex flex-col">
             <div className="flex justify-between items-center mb-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center">
-                  <AlertTriangle size={24} />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-slate-900 uppercase">Fee Defaulters List</h2>
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">Students with pending fees across all months</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setShowDefaultersModal(false)}
-                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100"
-              >
-                <X size={24} />
-              </button>
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Fee Defaulters List</h2>
+              <button onClick={() => setShowDefaultersModal(false)} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
             </div>
-
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
-              {pendingReminders.length > 0 ? (
-                <div className="grid grid-cols-1 gap-3">
-                  {pendingReminders.map((fee: any) => {
-                    const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-                    const isSelected = selectedFeeIds.includes(fee.id.toString());
-                    
-                    return (
-                      <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 hover:border-emerald-200 transition-colors relative group">
-                        <div className="flex items-center gap-4">
-                          <input 
-                            type="checkbox" 
-                            checked={isSelected}
-                            onChange={(e) => {
-                              if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
-                              else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
-                            }}
-                            className="w-5 h-5 rounded border-slate-200 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                          />
-                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-xs text-slate-400 border border-slate-100">
-                            {student?.class_name || '??'}
-                          </div>
-                          <div>
-                            <p className="font-black text-slate-900 uppercase text-sm">{student?.full_name || 'Unknown student'}</p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Month: {fee.month} • Father: {student?.father_name || 'N/A'}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-6">
-                           <div className="text-right">
-                             <p className="text-[10px] font-black text-rose-500 uppercase leading-none">₹{fee.total_amount}</p>
-                             <p className="text-[8px] font-bold text-slate-300 uppercase mt-1">Pending</p>
-                           </div>
-                           <button 
-                            onClick={() => handleSendReminder(fee)}
-                            className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                            title="Send WhatsApp Reminder"
-                           >
-                            <Send size={16} />
-                           </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="py-20 text-center">
-                  <CheckCircle size={48} className="mx-auto text-emerald-400 mb-4" />
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">No pending fees found!</p>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
-               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Total Defaulters: {pendingReminders.length} | Selected: {selectedFeeIds.length}</p>
-               <div className="flex gap-4">
-                 <button 
-                  onClick={() => {
-                    if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
-                    else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
-                  }}
-                  className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-200 transition-all border border-slate-200"
-                 >
-                   {selectedFeeIds.length === pendingReminders.length ? 'Deselect All' : 'Select All'}
-                 </button>
-                 <button 
-                  onClick={startSequentialReminders}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-lg"
-                 >
-                  {selectedFeeIds.length > 0 ? `Send to ${selectedFeeIds.length} Selected` : 'Send to All'}
-                 </button>
-               </div>
+            <div className="flex-1 overflow-y-auto space-y-4">
+              {pendingReminders.map((fee: any) => {
+                const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+                return (
+                  <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl flex justify-between items-center">
+                    <div>
+                      <p className="font-black text-slate-900 uppercase">{student?.full_name || 'Unknown student'}</p>
+                      <p className="text-[10px] text-slate-400">Class: {student?.class_name} • Month: {fee.month}</p>
+                    </div>
+                    <span className="text-rose-500 font-black">₹{fee.total_amount}</span>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>
@@ -1817,103 +1142,32 @@ const ManageFees = () => {
     </AnimatePresence>
 
     {/* 🟢 MANAGE FEE HEADS MODAL */}
-
     <AnimatePresence>
       {showHeadsModal && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
-        >
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white rounded-[2rem] p-10 w-full max-w-xl shadow-2xl overflow-hidden relative"
-          >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
-            
-            <div className="flex justify-between items-center mb-10 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-                  <LayoutDashboard size={24} />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-slate-900 uppercase">Manage Fee Heads</h2>
-                  <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase">ADD OR REMOVE FEE CATEGORIES</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setShowHeadsModal(false)}
-                className="p-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100"
-              >
-                <X size={24} />
-              </button>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6">
+          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-[2rem] p-10 w-full max-w-xl shadow-2xl">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Manage Fee Heads</h2>
+              <button onClick={() => setShowHeadsModal(false)} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
             </div>
-
-            <div className="space-y-8 relative z-10">
-              <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 shadow-inner">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">New Head Category</p>
-                <div className="flex gap-4">
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Tution Fee"
-                    className="premium-input flex-1 bg-white border-transparent"
-                    value={newHeadName}
-                    onChange={(e) => setNewHeadName(e.target.value)}
-                  />
-                  <button 
-                    onClick={() => {
-                      if (!newHeadName) return toast.error("Enter head name");
-                      addFeeHeadMutation.mutate(newHeadName, {
-                        onSuccess: () => {
-                          setNewHeadName('');
-                          toast.success(`Head '${newHeadName}' added!`);
-                        }
-                      });
-                    }}
-                    className="px-8 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-100"
-                  >
-                    Add
-                  </button>
-                </div>
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <input type="text" placeholder="e.g. Tuition Fee" className="premium-input flex-1" value={newHeadName} onChange={(e) => setNewHeadName(e.target.value)} />
+                <button onClick={() => { if(!newHeadName) return; addFeeHeadMutation.mutate(newHeadName, { onSuccess: () => { setNewHeadName(''); toast.success('Category Added!'); } }); }} className="px-8 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase">Add</button>
               </div>
-
-              <div className="max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
-                <div className="grid grid-cols-1 gap-4">
-                  {feeHeads.map((head: any) => (
-                    <div 
-                      key={head.id} 
-                      className="p-6 bg-white rounded-2xl border border-slate-100 flex justify-between items-center group hover:border-rose-100 transition-all"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="font-black text-slate-800 uppercase text-xs">{head.name}</span>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          if (window.confirm(`Delete head '${head.name}'?`)) {
-                            deleteFeeHeadMutation.mutate(head.id);
-                          }
-                        }}
-                        className="p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+              <div className="max-h-[250px] overflow-y-auto space-y-2">
+                {feeHeads.map((head: any) => (
+                  <div key={head.id} className="p-4 bg-slate-50 rounded-xl flex justify-between items-center">
+                    <span className="font-black text-xs text-slate-800 uppercase">{head.name}</span>
+                    <button onClick={() => { if(window.confirm('Delete?')) deleteFeeHeadMutation.mutate(head.id); }} className="text-rose-500"><Trash2 size={16} /></button>
+                  </div>
+                ))}
               </div>
-            </div>
-            <div className="mt-10 pt-8 border-t border-slate-50 flex justify-center">
-               <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">All changes reflect in the main assignment form immediately.</p>
             </div>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
-
 
    </div>
   </div>
