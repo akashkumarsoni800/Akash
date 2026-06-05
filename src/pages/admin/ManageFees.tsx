@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { 
   useGetAllStudents, useGetFeeHeads, useGetFeeStats, 
-  useGetRecentPayments, useGetFeeReminders, useAddFeeHead, 
+  useGetRecentPayments, useAddFeeHead, 
   useDeleteFeeHead, useAssignFees
 } from '../../hooks/useQueries';
 
@@ -31,7 +31,6 @@ export default function ManageFees() {
   const [showAllMonths, setShowAllMonths] = useState(false);
   const [waSearch, setWaSearch] = useState('');
   const [classFilterWa, setClassFilterWa] = useState('');
-  const [autoToggled, setAutoToggled] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showHeadsModal, setShowHeadsModal] = useState(false); 
   const [showDefaultersModal, setShowDefaultersModal] = useState(false);
@@ -40,6 +39,10 @@ export default function ManageFees() {
   const [isAutoAdvancing, setIsAutoAdvancing] = useState(false);
   const [localLoading, setLocalLoading] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
+
+  // 100% Reliable Custom Direct Fetch for Reminders
+  const [pendingReminders, setPendingReminders] = useState<any[]>([]);
+  const [remLoading, setRemLoading] = useState(false);
 
   const [automation, setAutomation] = useState({
     isOpen: false,
@@ -52,10 +55,48 @@ export default function ManageFees() {
   const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
   const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0 }, isLoading: statsLoading } = useGetFeeStats();
   const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
-  const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
 
   const loading = stdLoading || headsLoading || statsLoading || paymentsLoading || localLoading;
   const totalAmountValue = Object.values(feeValues).reduce((sum, val) => sum + Number(val || 0), 0);
+
+  // --- DIRECT SUPABASE FETCH (Bypasses any faulty custom hooks) ---
+  useEffect(() => {
+    const fetchPendingFees = async () => {
+      setRemLoading(true);
+      try {
+        let query = supabase.from('fees').select('*').eq('status', 'Pending');
+        if (!showAllMonths) {
+          query = query.eq('month', remindMonth);
+        }
+        const { data, error } = await query;
+        if (error) throw error;
+        setPendingReminders(data || []);
+      } catch (err: any) {
+        console.error("Fetch Reminders Error:", err);
+      } finally {
+        setRemLoading(false);
+      }
+    };
+    fetchPendingFees();
+  }, [remindMonth, showAllMonths]);
+
+  // --- SMART MAPPING & FILTERING (Always up-to-date) ---
+  const mappedReminders = pendingReminders.map((fee: any) => ({
+    ...fee,
+    _student: fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString())
+  }));
+
+  const filteredReminders = mappedReminders.filter((fee: any) => {
+    const nameMatch = !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
+    // Use .toString() on both sides to prevent 8 === "8" returning false
+    const classMatch = !classFilterWa || fee._student?.class_name?.toString() === classFilterWa.toString();
+    return nameMatch && classMatch;
+  });
+
+  // --- MUTATIONS ---
+  const addFeeHeadMutation = useAddFeeHead();
+  const deleteFeeHeadMutation = useDeleteFeeHead();
+  const assignFeesMutation = useAssignFees();
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -63,13 +104,6 @@ export default function ManageFees() {
       setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
     }
   }, [feeHeads]);
-
-  useEffect(() => {
-    if (!remLoading && pendingReminders.length === 0 && !showAllMonths && !autoToggled) {
-      setShowAllMonths(true);
-      setAutoToggled(true);
-    }
-  }, [pendingReminders, remLoading, showAllMonths, autoToggled]);
 
   useEffect(() => {
     const searchId = searchParams.get('search');
@@ -108,13 +142,7 @@ export default function ManageFees() {
     }
   }, [showScanner]);
 
-  // --- MUTATIONS ---
-  const addFeeHeadMutation = useAddFeeHead();
-  const deleteFeeHeadMutation = useDeleteFeeHead();
-  const assignFeesMutation = useAssignFees();
-
   // --- CORE FUNCTIONS ---
-
   async function lookupStudent(studentId: string) {
     try {
       const fields = ['student_id', 'roll_no', 'id'];
@@ -152,7 +180,7 @@ export default function ManageFees() {
     try {
       let feesToInsert = [];
       if (bulkMode) {
-        const classStudents = students.filter((s: any) => s.class_name === selectedClass);
+        const classStudents = students.filter((s: any) => s.class_name?.toString() === selectedClass.toString());
         if (classStudents.length === 0) throw new Error("No students found in this class");
         feesToInsert = classStudents.map((s: any) => ({ student_id: s.student_id, month, fee_structure: feeValues, total_amount: totalAmountValue, status: 'Pending' }));
       } else {
@@ -176,12 +204,9 @@ export default function ManageFees() {
     setFeeValues({ ...feeValues, [headId]: value });
   }
 
-  // ✅ Fixed WhatsApp Integration (Maps reliably to Student Info)
   function handleSendReminder(fee: any) {
-    // 100% Reliable Lookup directly from the loaded students array
-    const student = students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-    
-    if (!student) return toast.error("Student record not linked. Database ID mismatch.");
+    const student = fee._student || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+    if (!student) return toast.error("Linked student record not found.");
     if (!student.contact_number) return toast.error(`No valid mobile number available for ${student.full_name}`);
 
     let cleanPhone = student.contact_number.replace(/\D/g, '');
@@ -218,26 +243,13 @@ Please clear the dues at the school cash counter or pay online via the app. If a
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(dynamicText)}`, '_blank');
   }
 
-  // ✅ Fixed Bulk Target Acquisition
   function startSequentialReminders() {
-    let targets = [];
-    
-    // Exact filtering based on Class Filter or Single Selection
-    if (selectedFeeIds.length > 0) {
-      targets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
-    } else {
-      targets = pendingReminders.filter((fee: any) => {
-        const stud = students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-        const nameMatch = !waSearch || stud?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
-        const classMatch = !classFilterWa || stud?.class_name === classFilterWa;
-        return nameMatch && classMatch;
-      });
-    }
+    // Only use the items currently visible in the filtered list
+    let targets = selectedFeeIds.length > 0 
+      ? filteredReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()))
+      : filteredReminders;
 
-    const finalQueue = targets.map((fee: any) => ({
-      ...fee,
-      _student: students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString())
-    })).filter(f => !!f._student?.contact_number);
+    const finalQueue = targets.filter(f => !!f._student?.contact_number);
 
     if (finalQueue.length === 0) return toast.error("No students found with valid contact numbers in this filter.");
 
@@ -270,6 +282,8 @@ Please clear the dues at the school cash counter or pay online via the app. If a
       if (error) throw error;
       toast.success("🎉 Selected records marked as Paid successfully!");
       setSelectedFeeIds([]);
+      // Reload or refetch
+      window.location.reload(); 
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -278,10 +292,10 @@ Please clear the dues at the school cash counter or pay online via the app. If a
   }
 
   function exportDefaultersToCSV() {
-    if (pendingReminders.length === 0) return toast.error("Data grid is empty.");
+    if (filteredReminders.length === 0) return toast.error("Data grid is empty.");
     let csv = "Student Name,Class,Roll No,Phone,Month,Amount\n";
-    pendingReminders.forEach((f: any) => {
-      const s = students.find((st: any) => st.student_id?.toString() === f.student_id?.toString());
+    filteredReminders.forEach((f: any) => {
+      const s = f._student;
       csv += `"${s?.full_name || 'N/A'}","${s?.class_name || 'N/A'}","${s?.roll_no || 'N/A'}","${s?.contact_number || 'N/A'}","${f.month}",${f.total_amount}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -392,7 +406,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
                  <h3 className="text-xs font-black text-slate-900 uppercase">B. Automation Reminders Blast</h3>
                  <p className="text-[11px] text-slate-500 mt-1">Sabhi clear defaulters ko bulk messaging system queue pipeline stack me trigger de.</p>
                </div>
-               <button onClick={startSequentialReminders} disabled={pendingReminders.length === 0} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 disabled:opacity-40">
+               <button onClick={startSequentialReminders} disabled={filteredReminders.length === 0} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 disabled:opacity-40">
                  <MessageSquare size={14} /> Start WhatsApp Blast
                </button>
             </div>
@@ -481,7 +495,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <div>
             <h2 className="text-xl font-black uppercase">Active Pending Registry</h2>
-            <p className="text-xs text-slate-400">Total Defaulters Listed: {pendingReminders.length}</p>
+            <p className="text-xs text-slate-400">Total Found: {pendingReminders.length} {waSearch || classFilterWa ? `(Filtered to: ${filteredReminders.length})` : ''}</p>
           </div>
           <div className="flex gap-2">
             <div className="border p-1 bg-slate-50 rounded-xl flex">
@@ -509,10 +523,10 @@ Please clear the dues at the school cash counter or pay online via the app. If a
 
         <div className="border-b pb-4 flex justify-between items-center text-xs">
           <button onClick={() => {
-            if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
-            else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
+            if (selectedFeeIds.length === filteredReminders.length) setSelectedFeeIds([]);
+            else setSelectedFeeIds(filteredReminders.map((f: any) => f.id.toString()));
           }} className="text-blue-600 font-bold hover:underline">
-            {selectedFeeIds.length === pendingReminders.length ? 'Deselect All Checkboxes' : 'Select All In View'}
+            {selectedFeeIds.length === filteredReminders.length && filteredReminders.length > 0 ? 'Deselect All Checkboxes' : 'Select All In View'}
           </button>
           {selectedFeeIds.length > 0 && (
             <div className="flex gap-2">
@@ -525,30 +539,25 @@ Please clear the dues at the school cash counter or pay online via the app. If a
         <div className="mt-4 space-y-3 max-h-[500px] overflow-y-auto pr-1">
           {remLoading ? (
             <div className="py-12 text-center text-slate-400 text-xs uppercase"><RefreshCw className="animate-spin inline mr-2 text-emerald-500" size={16} /> Parsing database files...</div>
-          ) : pendingReminders.length > 0 ? (
-            // ✅ YAHAN PURE STUDENT DETAIL MAP HO RAHI HAI SATH MEIN
-            pendingReminders
-              .map((fee: any) => ({ ...fee, _student: students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString()) }))
-              .filter((fee: any) => !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase()))
-              .filter((fee: any) => !classFilterWa || fee._student?.class_name === classFilterWa)
-              .map((fee: any) => (
-                <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 transition-all hover:bg-white hover:border-emerald-200">
-                  <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <input type="checkbox" checked={selectedFeeIds.includes(fee.id.toString())} onChange={(e) => {
-                      if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
-                      else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
-                    }} className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded border-slate-300 cursor-pointer" />
-                    <div className="w-10 h-10 bg-white border font-black text-xs flex items-center justify-center rounded-lg shadow-sm text-slate-700">C-{fee._student?.class_name || '??'}</div>
-                    <div>
-                      <h4 className="font-black text-sm text-slate-800 uppercase leading-none">{fee._student?.full_name || `Un-linked Account (ID:${fee.student_id})`}</h4>
-                      <p className="text-[11px] text-slate-400 mt-1">Amount: <span className="text-slate-700 font-bold">₹{fee.total_amount}</span> • Target Period: {fee.month}</p>
-                    </div>
+          ) : filteredReminders.length > 0 ? (
+            filteredReminders.map((fee: any) => (
+              <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 transition-all hover:bg-white hover:border-emerald-200">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <input type="checkbox" checked={selectedFeeIds.includes(fee.id.toString())} onChange={(e) => {
+                    if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
+                    else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
+                  }} className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded border-slate-300 cursor-pointer" />
+                  <div className="w-10 h-10 bg-white border font-black text-xs flex items-center justify-center rounded-lg shadow-sm text-slate-700">C-{fee._student?.class_name || '??'}</div>
+                  <div>
+                    <h4 className="font-black text-sm text-slate-800 uppercase leading-none">{fee._student?.full_name || `Un-linked Account (ID:${fee.student_id})`}</h4>
+                    <p className="text-[11px] text-slate-400 mt-1">Amount: <span className="text-slate-700 font-bold">₹{fee.total_amount}</span> • Target Period: {fee.month}</p>
                   </div>
-                  <button onClick={() => handleSendReminder(fee)} disabled={!fee._student?.contact_number} className="w-full sm:w-auto px-4 py-2 bg-white hover:bg-emerald-600 hover:text-white text-emerald-600 border border-emerald-100 rounded-lg text-xs font-black uppercase flex items-center justify-center gap-2 transition-all disabled:opacity-30">
-                    <Send size={12} /> Send WhatsApp
-                  </button>
                 </div>
-              ))
+                <button onClick={() => handleSendReminder(fee)} disabled={!fee._student?.contact_number} className="w-full sm:w-auto px-4 py-2 bg-white hover:bg-emerald-600 hover:text-white text-emerald-600 border border-emerald-100 rounded-lg text-xs font-black uppercase flex items-center justify-center gap-2 transition-all disabled:opacity-30">
+                  <Send size={12} /> Send WhatsApp
+                </button>
+              </div>
+            ))
           ) : (
             <div className="py-12 text-center text-slate-400 text-xs border border-dashed rounded-xl">Registry ledger is clean for current parameters.</div>
           )}
@@ -689,8 +698,8 @@ Please clear the dues at the school cash counter or pay online via the app. If a
               <button onClick={() => setShowDefaultersModal(false)} className="p-2 hover:bg-slate-50 rounded-xl"><X size={20} /></button>
             </div>
             <div className="flex-1 overflow-y-auto space-y-2 border-t pt-4">
-              {pendingReminders.map((fee: any) => {
-                const s = students.find((st: any) => st.student_id?.toString() === fee.student_id?.toString());
+              {filteredReminders.map((fee: any) => {
+                const s = fee._student;
                 return (
                   <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex justify-between items-center">
                     <div>
