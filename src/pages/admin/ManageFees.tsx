@@ -111,7 +111,8 @@ export default function ManageFees() {
     const searchId = searchParams.get('search');
     if (searchId && students.length > 0) {
       const matched = students.find((s: any) => 
-        s.student_id?.toString() === searchId || s.id?.toString() === searchId || s.roll_no?.toString() === searchId
+        s.student_id?.toString() === searchId || s.id?.toString() === searchId || s.father_name?.toString() === searchId || s.class_name?.toString() === searchId
+      );
       );
       if (matched) {
         setSelectedStudent(matched.student_id);
