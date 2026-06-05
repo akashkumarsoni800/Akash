@@ -57,11 +57,6 @@ export default function ManageFees() {
   const loading = stdLoading || headsLoading || statsLoading || paymentsLoading || localLoading;
   const totalAmountValue = Object.values(feeValues).reduce((sum, val) => sum + Number(val || 0), 0);
 
-  // --- MUTATIONS ---
-  const addFeeHeadMutation = useAddFeeHead();
-  const deleteFeeHeadMutation = useDeleteFeeHead();
-  const assignFeesMutation = useAssignFees();
-
   // --- EFFECTS ---
   useEffect(() => {
     if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
@@ -113,9 +108,13 @@ export default function ManageFees() {
     }
   }, [showScanner]);
 
+  // --- MUTATIONS ---
+  const addFeeHeadMutation = useAddFeeHead();
+  const deleteFeeHeadMutation = useDeleteFeeHead();
+  const assignFeesMutation = useAssignFees();
+
   // --- CORE FUNCTIONS ---
 
-  // QR ID Base Student Search
   async function lookupStudent(studentId: string) {
     try {
       const fields = ['student_id', 'roll_no', 'id'];
@@ -143,7 +142,6 @@ export default function ManageFees() {
     }
   }
 
-  // Fees Assignment Logic
   async function handleAssignFee(e: React.FormEvent) {
     e.preventDefault();
     if (!bulkMode && !selectedStudent) return toast.error("Please select a student");
@@ -178,10 +176,12 @@ export default function ManageFees() {
     setFeeValues({ ...feeValues, [headId]: value });
   }
 
-  // Pure Professional WhatsApp Integration
+  // ✅ Fixed WhatsApp Integration (Maps reliably to Student Info)
   function handleSendReminder(fee: any) {
-    const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-    if (!student) return toast.error("Linked student record not found.");
+    // 100% Reliable Lookup directly from the loaded students array
+    const student = students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+    
+    if (!student) return toast.error("Student record not linked. Database ID mismatch.");
     if (!student.contact_number) return toast.error(`No valid mobile number available for ${student.full_name}`);
 
     let cleanPhone = student.contact_number.replace(/\D/g, '');
@@ -196,7 +196,6 @@ export default function ManageFees() {
 
     const schoolName = localStorage.getItem('current_school_name') || 'ASM School';
     
-    // Clean and standard corporate text format 
     const dynamicText = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*
 
 Dear Parent, this is a reminder regarding the outstanding dues for your ward.
@@ -219,25 +218,28 @@ Please clear the dues at the school cash counter or pay online via the app. If a
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(dynamicText)}`, '_blank');
   }
 
-  // Automation Blast Engine
+  // ✅ Fixed Bulk Target Acquisition
   function startSequentialReminders() {
     let targets = [];
+    
+    // Exact filtering based on Class Filter or Single Selection
     if (selectedFeeIds.length > 0) {
       targets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
     } else {
       targets = pendingReminders.filter((fee: any) => {
-        const stud = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-        return (!waSearch || stud?.full_name?.toLowerCase().includes(waSearch.toLowerCase())) && 
-               (!classFilterWa || stud?.class_name === classFilterWa);
+        const stud = students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+        const nameMatch = !waSearch || stud?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
+        const classMatch = !classFilterWa || stud?.class_name === classFilterWa;
+        return nameMatch && classMatch;
       });
     }
 
     const finalQueue = targets.map((fee: any) => ({
       ...fee,
-      _student: fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString())
+      _student: students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString())
     })).filter(f => !!f._student?.contact_number);
 
-    if (finalQueue.length === 0) return toast.error("No selected records have valid phone numbers.");
+    if (finalQueue.length === 0) return toast.error("No students found with valid contact numbers in this filter.");
 
     setAutomation({ isOpen: true, students: finalQueue, currentIndex: 0 });
   }
@@ -258,7 +260,6 @@ Please clear the dues at the school cash counter or pay online via the app. If a
     }
   }
 
-  // Bulk Actions
   async function handleBulkMarkAsPaid() {
     if (selectedFeeIds.length === 0) return toast.error("Pehle checkbox me records select karein!");
     if (!window.confirm(`Mark ${selectedFeeIds.length} records as PAID?`)) return;
@@ -280,7 +281,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
     if (pendingReminders.length === 0) return toast.error("Data grid is empty.");
     let csv = "Student Name,Class,Roll No,Phone,Month,Amount\n";
     pendingReminders.forEach((f: any) => {
-      const s = f.students || students.find((st: any) => st.student_id?.toString() === f.student_id?.toString());
+      const s = students.find((st: any) => st.student_id?.toString() === f.student_id?.toString());
       csv += `"${s?.full_name || 'N/A'}","${s?.class_name || 'N/A'}","${s?.roll_no || 'N/A'}","${s?.contact_number || 'N/A'}","${f.month}",${f.total_amount}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -525,8 +526,9 @@ Please clear the dues at the school cash counter or pay online via the app. If a
           {remLoading ? (
             <div className="py-12 text-center text-slate-400 text-xs uppercase"><RefreshCw className="animate-spin inline mr-2 text-emerald-500" size={16} /> Parsing database files...</div>
           ) : pendingReminders.length > 0 ? (
+            // ✅ YAHAN PURE STUDENT DETAIL MAP HO RAHI HAI SATH MEIN
             pendingReminders
-              .map((fee: any) => ({ ...fee, _student: fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString()) }))
+              .map((fee: any) => ({ ...fee, _student: students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString()) }))
               .filter((fee: any) => !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase()))
               .filter((fee: any) => !classFilterWa || fee._student?.class_name === classFilterWa)
               .map((fee: any) => (
@@ -688,7 +690,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
             </div>
             <div className="flex-1 overflow-y-auto space-y-2 border-t pt-4">
               {pendingReminders.map((fee: any) => {
-                const s = fee.students || students.find((st: any) => st.student_id?.toString() === fee.student_id?.toString());
+                const s = students.find((st: any) => st.student_id?.toString() === fee.student_id?.toString());
                 return (
                   <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex justify-between items-center">
                     <div>
