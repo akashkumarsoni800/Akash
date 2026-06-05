@@ -5,29 +5,22 @@ import { supabase } from '../../supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-  Plus, Search, Users, Calendar, ArrowRight,
-  Wallet, Send, RefreshCw, Trash2, CheckCircle,
-  ShieldCheck, Zap, Info, Star, ChevronRight, Layout, ChevronDown,
-  MessageSquare, Clock, AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, ScanLine, Brain, Download
+  Plus, Search, ArrowRight, Wallet, Send, RefreshCw, Trash2, 
+  CheckCircle, ShieldCheck, Zap, Layout, ChevronDown, MessageSquare, 
+  AlertTriangle, Filter, Camera, X, CreditCard, User, LayoutDashboard, Download
 } from 'lucide-react';
 import { 
-  useGetAllStudents, 
-  useGetFeeHeads, 
-  useGetFeeStats, 
-  useGetRecentPayments, 
-  useGetFeeReminders,
-  useAddFeeHead,
-  useDeleteFeeHead,
-  useAssignFees
+  useGetAllStudents, useGetFeeHeads, useGetFeeStats, 
+  useGetRecentPayments, useGetFeeReminders, useAddFeeHead, 
+  useDeleteFeeHead, useAssignFees
 } from '../../hooks/useQueries';
 
-const ManageFees = () => {
+export default function ManageFees() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
-  // ✅ Refs Definition Fixed (Missing scannerRef error solved)
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
+  // --- STATE MANAGEMENT ---
   const [newHeadName, setNewHeadName] = useState('');
   const [selectedStudent, setSelectedStudent] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
@@ -43,37 +36,39 @@ const ManageFees = () => {
   const [showHeadsModal, setShowHeadsModal] = useState(false); 
   const [showDefaultersModal, setShowDefaultersModal] = useState(false);
   const [scannedStudent, setScannedStudent] = useState<any>(null); 
-  const [automation, setAutomation] = useState<{ isOpen: boolean; students: any[]; currentIndex: number }>({
-    isOpen: false,
-    students: [],
-    currentIndex: 0
-  });
   const [selectedFeeIds, setSelectedFeeIds] = useState<string[]>([]);
   const [isAutoAdvancing, setIsAutoAdvancing] = useState(false);
   const [localLoading, setLocalLoading] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
 
-  // ✅ 1. Persistent Data Hooks
+  const [automation, setAutomation] = useState({
+    isOpen: false,
+    students: [] as any[],
+    currentIndex: 0
+  });
+
+  // --- DATA FETCHING (HOOKS) ---
   const { data: students = [], isLoading: stdLoading } = useGetAllStudents();
   const { data: feeHeads = [], isLoading: headsLoading } = useGetFeeHeads();
-  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0, collectionRate: 0 }, isLoading: statsLoading } = useGetFeeStats();
+  const { data: feeStats = { totalPending: 0, totalCollected: 0, overdue: 0 }, isLoading: statsLoading } = useGetFeeStats();
   const { data: recentPayments = [], isLoading: paymentsLoading } = useGetRecentPayments();
   const { data: pendingReminders = [], isLoading: remLoading } = useGetFeeReminders(remindMonth, showAllMonths);
 
   const loading = stdLoading || headsLoading || statsLoading || paymentsLoading || localLoading;
+  const totalAmountValue = Object.values(feeValues).reduce((sum, val) => sum + Number(val || 0), 0);
 
-  // Helper for total
-  const totalAmountValue = Object.values(feeValues).reduce((sum: number, val: any) => 
-    sum + Number(val || 0), 0);
+  // --- MUTATIONS ---
+  const addFeeHeadMutation = useAddFeeHead();
+  const deleteFeeHeadMutation = useDeleteFeeHead();
+  const assignFeesMutation = useAssignFees();
 
-  // Update initial fee values when heads load
+  // --- EFFECTS ---
   useEffect(() => {
     if (feeHeads.length > 0 && Object.keys(feeValues).length === 0) {
       setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
     }
   }, [feeHeads]);
 
-  // ✅ Auto-toggle to Show All if current month is empty to avoid confusion
   useEffect(() => {
     if (!remLoading && pendingReminders.length === 0 && !showAllMonths && !autoToggled) {
       setShowAllMonths(true);
@@ -81,96 +76,75 @@ const ManageFees = () => {
     }
   }, [pendingReminders, remLoading, showAllMonths, autoToggled]);
 
-  // ✅ 2. Mutations
-  const addFeeHeadMutation = useAddFeeHead();
-  const deleteFeeHeadMutation = useDeleteFeeHead();
-  const assignFeesMutation = useAssignFees();
-
-  // ✅ 3. URL Param Selection
   useEffect(() => {
     const searchId = searchParams.get('search');
     if (searchId && students.length > 0) {
-      const lowerSearch = searchId.toLowerCase();
       const matched = students.find((s: any) => 
-        s.student_id?.toString().toLowerCase() === lowerSearch || 
-        s.id?.toString().toLowerCase() === lowerSearch ||
-        s.roll_no?.toString().toLowerCase() === lowerSearch
+        s.student_id?.toString() === searchId || s.id?.toString() === searchId || s.roll_no?.toString() === searchId
       );
       if (matched) {
         setSelectedStudent(matched.student_id);
-        toast.success(`Selected student: ${matched.full_name}`);
+        toast.success(`Student Auto-Selected: ${matched.full_name}`);
       }
     }
   }, [searchParams, students]);
 
-  // ✅ Real Scanner Logic — fetches from Supabase directly for reliability
+  // QR Scanner Effect
   useEffect(() => {
     if (showScanner) {
       const timer = setTimeout(() => {
-        const scanner = new Html5QrcodeScanner(
-          "reader",
-          { fps: 15, qrbox: { width: 250, height: 250 } },
-          false
-        );
-
+        const scanner = new Html5QrcodeScanner("reader", { fps: 15, qrbox: { width: 250, height: 250 } }, false);
         scanner.render(async (decodedText) => {
           let studentId = decodedText.trim();
           if (studentId.includes('/v/')) {
             studentId = studentId.split('/v/').pop()?.split(/[?#]/)[0].replace(/\/$/, '') || studentId;
           }
-
           setScanLoading(true);
           scanner.clear().catch(() => {});
           setShowScanner(false);
-
-          try {
-            const numericId = isNaN(Number(studentId)) ? null : Number(studentId);
-
-            let { data, error } = numericId
-              ? await supabase.from('students').select('*').eq('student_id', numericId).maybeSingle()
-              : { data: null, error: null };
-
-            if (!data && !error) {
-              const r1b = await supabase.from('students').select('*').eq('student_id', studentId).maybeSingle();
-              data = r1b.data; error = r1b.error;
-            }
-
-            if (!data && !error) {
-              const r2 = await supabase.from('students').select('*').eq('roll_no', studentId).maybeSingle();
-              data = r2.data; error = r2.error;
-            }
-
-            if (!data && !error) {
-              const r3 = await supabase.from('students').select('*').eq('id', studentId).maybeSingle();
-              data = r3.data; error = r3.error;
-            }
-
-            if (data) {
-              setScannedStudent(data);
-              toast.success(`✅ Student found: ${data.full_name}`);
-            } else {
-              toast.error(`No student found for ID: ${studentId}`);
-            }
-          } catch (err: any) {
-            toast.error('Scan failed: ' + err.message);
-          } finally {
-            setScanLoading(false);
-          }
+          await lookupStudent(studentId);
         }, () => {});
-
         scannerRef.current = scanner;
       }, 300);
-
       return () => {
         clearTimeout(timer);
-        if (scannerRef.current) {
-          scannerRef.current.clear().catch(() => {});
-        }
+        if (scannerRef.current) scannerRef.current.clear().catch(() => {});
       };
     }
   }, [showScanner]);
 
-  const handleAssignFee = async (e: React.FormEvent) => {
+  // --- CORE FUNCTIONS ---
+
+  // QR ID Base Student Search
+  async function lookupStudent(studentId: string) {
+    try {
+      const fields = ['student_id', 'roll_no', 'id'];
+      let foundData = null;
+
+      for (const field of fields) {
+        const queryVal = field === 'student_id' && !isNaN(Number(studentId)) ? Number(studentId) : studentId;
+        const { data } = await supabase.from('students').select('*').eq(field, queryVal).maybeSingle();
+        if (data) {
+          foundData = data;
+          break;
+        }
+      }
+
+      if (foundData) {
+        setScannedStudent(foundData);
+        toast.success(`✅ Student Found: ${foundData.full_name}`);
+      } else {
+        toast.error(`No student record matching ID: ${studentId}`);
+      }
+    } catch (err: any) {
+      toast.error('Lookup Failed: ' + err.message);
+    } finally {
+      setScanLoading(false);
+    }
+  }
+
+  // Fees Assignment Logic
+  async function handleAssignFee(e: React.FormEvent) {
     e.preventDefault();
     if (!bulkMode && !selectedStudent) return toast.error("Please select a student");
     if (bulkMode && !selectedClass) return toast.error("Please select a class");
@@ -178,27 +152,13 @@ const ManageFees = () => {
     if (totalAmountValue <= 0) return toast.error("Total fee cannot be zero");
 
     try {
-      let feesToInsert: any[] = [];
-      
-      if (bulkMode && selectedClass) {
+      let feesToInsert = [];
+      if (bulkMode) {
         const classStudents = students.filter((s: any) => s.class_name === selectedClass);
         if (classStudents.length === 0) throw new Error("No students found in this class");
-
-        feesToInsert = classStudents.map((student: any) => ({
-          student_id: student.student_id,
-          month,
-          fee_structure: feeValues,
-          total_amount: totalAmountValue,
-          status: 'Pending'
-        }));
+        feesToInsert = classStudents.map((s: any) => ({ student_id: s.student_id, month, fee_structure: feeValues, total_amount: totalAmountValue, status: 'Pending' }));
       } else {
-        feesToInsert = [{
-          student_id: selectedStudent, 
-          month,
-          fee_structure: feeValues,
-          total_amount: totalAmountValue,
-          status: 'Pending'
-        }];
+        feesToInsert = [{ student_id: selectedStudent, month, fee_structure: feeValues, total_amount: totalAmountValue, status: 'Pending' }];
       }
 
       assignFeesMutation.mutate(feesToInsert, {
@@ -206,972 +166,573 @@ const ManageFees = () => {
           setSelectedStudent('');
           setMonth('');
           setFeeValues(Object.fromEntries(feeHeads.map((h: any) => [h.id, 0])));
-          toast.success("Fee Assigned Successfully!");
+          toast.success("✅ Fee Assigned Successfully!");
         }
       });
     } catch (error: any) {
-      toast.error("Assignment Failed: " + error.message);
+      toast.error("Assignment Error: " + error.message);
     }
-  };
+  }
 
-  const handleFeeValueChange = (headId: string, value: string) => {
+  function handleFeeValueChange(headId: string, value: string) {
     setFeeValues({ ...feeValues, [headId]: value });
-  };
+  }
 
-  const handleSendReminder = (fee: any) => {
-    let student = fee.students;
-    if (!student?.full_name) {
-      student = students.find((s: any) => 
-        s.student_id?.toString() === fee.student_id?.toString() ||
-        s.id?.toString() === fee.student_id?.toString()
-      );
-    }
-    if (!student) return toast.error("Student record not linked. Re-assign this fee.");
-    if (!student.contact_number) return toast.error(`No contact number for ${student.full_name}`);
+  // Pure Professional WhatsApp Integration
+  function handleSendReminder(fee: any) {
+    const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+    if (!student) return toast.error("Linked student record not found.");
+    if (!student.contact_number) return toast.error(`No valid mobile number available for ${student.full_name}`);
 
-    let phone = student.contact_number.replace(/\D/g, ''); 
-    if (phone.length === 10) phone = `91${phone}`;
-    else if (phone.length > 10 && !phone.startsWith('91')) phone = `91${phone.slice(-10)}`;
+    let cleanPhone = student.contact_number.replace(/\D/g, '');
+    if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
 
-    const breakdown = Object.entries(fee.fee_structure || {})
+    const feeBreakdown = Object.entries(fee.fee_structure || {})
       .filter(([_, val]) => Number(val) > 0)
       .map(([headId, val]) => {
         const head = feeHeads.find((h: any) => h.id.toString() === headId.toString());
         return `• ${head ? head.name.toUpperCase() : 'FEE'}: ₹${val}`;
-      })
-      .join('%0A');
+      }).join('\n');
 
-    const schoolName = localStorage.getItem('current_school_name') || 'Adarsh Shishu Mandir';
-    const message = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*%0A%0ADear Parent, this is a friendly reminder regarding the pending fees for your child.%0A%0A*🔸 Student:* ${student.full_name}%0A*🔸 Class:* ${student.class_name}%0A*🔸 Month:* ${fee.month}%0A%0A*📋 DETAILS:*%0A${breakdown}%0A%0A*💰 TOTAL PAYABLE: ₹${fee.total_amount}*%0A*📌 STATUS: PENDING*%0A%0A_Please deposit the fee at the school office or pay online. If already paid, please ignore._%0A%0A*Regards,*%0A*School Management*`;
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-  };
+    const schoolName = localStorage.getItem('current_school_name') || 'ASM School';
+    
+    // Clean and standard corporate text format 
+    const dynamicText = `*🏛️ ${schoolName.toUpperCase()} - FEE REMINDER*
 
-  const startSequentialReminders = () => {
-    let baseTargets = [];
+Dear Parent, this is a reminder regarding the outstanding dues for your ward.
+
+*🔸 Student:* ${student.full_name}
+*🔸 Class:* ${student.class_name || 'N/A'}
+*🔸 Month:* ${fee.month}
+
+*📋 Fee Breakdown:*
+${feeBreakdown || '• Pending Maintenance Fee'}
+
+*💰 Total Outstanding Amount: ₹${fee.total_amount}*
+*📌 Status:* PENDING
+
+Please clear the dues at the school cash counter or pay online via the app. If already paid, please share the screenshot.
+
+*Regards,*
+*School Administration*`;
+
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(dynamicText)}`, '_blank');
+  }
+
+  // Automation Blast Engine
+  function startSequentialReminders() {
+    let targets = [];
     if (selectedFeeIds.length > 0) {
-      baseTargets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
+      targets = pendingReminders.filter((f: any) => selectedFeeIds.includes(f.id.toString()));
     } else {
-      baseTargets = pendingReminders.filter((fee: any) => {
-        const student = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-        const nameMatch = !waSearch || student?.full_name?.toLowerCase().includes(waSearch.toLowerCase());
-        const classMatch = !classFilterWa || student?.class_name === classFilterWa;
-        return nameMatch && classMatch;
+      targets = pendingReminders.filter((fee: any) => {
+        const stud = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+        return (!waSearch || stud?.full_name?.toLowerCase().includes(waSearch.toLowerCase())) && 
+               (!classFilterWa || stud?.class_name === classFilterWa);
       });
     }
 
-    const finalTargets = baseTargets.map((fee: any) => {
-      const student = fee.students?.full_name ? fee.students : students.find((s: any) =>
-        s.student_id?.toString() === fee.student_id?.toString() || s.id?.toString() === fee.student_id?.toString()
-      );
-      return { ...fee, _student: student };
-    }).filter(f => !!f._student?.contact_number);
+    const finalQueue = targets.map((fee: any) => ({
+      ...fee,
+      _student: fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString())
+    })).filter(f => !!f._student?.contact_number);
 
-    if (finalTargets.length === 0) {
-      return toast.error("No students found with valid contact numbers.");
-    }
+    if (finalQueue.length === 0) return toast.error("No selected records have valid phone numbers.");
 
-    setAutomation({
-      isOpen: true,
-      students: finalTargets,
-      currentIndex: 0
-    });
-  };
+    setAutomation({ isOpen: true, students: finalQueue, currentIndex: 0 });
+  }
 
-  const nextSequentialReminder = () => {
+  function nextSequentialReminder() {
     const current = automation.students[automation.currentIndex];
     handleSendReminder(current);
     
     if (automation.currentIndex < automation.students.length - 1) {
       setAutomation(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
       if (isAutoAdvancing) {
-        toast.info(`Preparing next template alert...`, { duration: 1500 });
-        setTimeout(() => {
-          nextSequentialReminder();
-        }, 3000);
+        toast.info("Opening next contact window queue...", { duration: 1000 });
+        setTimeout(() => nextSequentialReminder(), 3500);
       }
     } else {
       setAutomation(prev => ({ ...prev, isOpen: false }));
-      toast.success("✅ Automation Blast complete!");
+      toast.success("🎯 Bulk Blast Complete!");
     }
-  };
+  }
 
-  // ✅ NEW ADDED ADVANCED FUNCTION A: Bulk Update Select Actions to Paid
-  const handleBulkMarkAsPaid = async () => {
-    if (selectedFeeIds.length === 0) return toast.error("Pehle checkbox me students select karein!");
-    const confirmAction = window.confirm(`Kya aap sabhi ${selectedFeeIds.length} selected records ko 'Paid' mark karna chahte hain?`);
-    if (!confirmAction) return;
+  // Bulk Actions
+  async function handleBulkMarkAsPaid() {
+    if (selectedFeeIds.length === 0) return toast.error("Pehle checkbox me records select karein!");
+    if (!window.confirm(`Mark ${selectedFeeIds.length} records as PAID?`)) return;
 
     setLocalLoading(true);
     try {
-      const { error } = await supabase
-        .from('fees')
-        .update({ status: 'Paid', updated_at: new Date().toISOString() })
-        .in('id', selectedFeeIds);
-
+      const { error } = await supabase.from('fees').update({ status: 'Paid', updated_at: new Date().toISOString() }).in('id', selectedFeeIds);
       if (error) throw error;
-      toast.success("✅ Selected fees marked as Paid successfully!");
+      toast.success("🎉 Selected records marked as Paid successfully!");
       setSelectedFeeIds([]);
     } catch (err: any) {
-      toast.error("Status update processing failed: " + err.message);
+      toast.error(err.message);
     } finally {
       setLocalLoading(false);
     }
-  };
+  }
 
-  // ✅ NEW ADDED ADVANCED FUNCTION B: Export Selected/All filtered Defaulters List to CSV Sheet
-  const exportDefaultersToCSV = () => {
-    if (pendingReminders.length === 0) return toast.error("Export karne ke liye koi entries nahi hain.");
-    
-    let csvHeaders = "Student Name,Class,Roll No,Phone,Month,Pending Amount\n";
-    const rows = pendingReminders.map((fee: any) => {
-      const matchedStud = fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-      return `"${matchedStud?.full_name || 'N/A'}","${matchedStud?.class_name || 'N/A'}","${matchedStud?.roll_no || 'N/A'}","${matchedStud?.contact_number || 'N/A'}","${fee.month}",${fee.total_amount}`;
-    }).join("\n");
-
-    const blob = new Blob([csvHeaders + rows], { type: 'text/csv;charset=utf-8;' });
+  function exportDefaultersToCSV() {
+    if (pendingReminders.length === 0) return toast.error("Data grid is empty.");
+    let csv = "Student Name,Class,Roll No,Phone,Month,Amount\n";
+    pendingReminders.forEach((f: any) => {
+      const s = f.students || students.find((st: any) => st.student_id?.toString() === f.student_id?.toString());
+      csv += `"${s?.full_name || 'N/A'}","${s?.class_name || 'N/A'}","${s?.roll_no || 'N/A'}","${s?.contact_number || 'N/A'}","${f.month}",${f.total_amount}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `Defaulters_Report_${remindMonth}.csv`);
-    document.body.appendChild(link);
+    link.setAttribute("download", `Defaulters_${remindMonth}.csv`);
     link.click();
-    document.body.removeChild(link);
-    toast.success("📁 Defaulters csv download complete!");
-  };
+    toast.success("📁 Report Exported to CSV File Successfully!");
+  }
 
-  const handleSmartAutoAssign = async () => {
-    if (!remindMonth) return toast.error("Please pick a month in the Reminders section first.");
+  async function handleSmartAutoAssign() {
+    if (!remindMonth) return toast.error("Please pick a month filter first.");
     setLocalLoading(true);
     try {
-      const { data: existingFees } = await supabase
-        .from('fees')
-        .select('student_id')
-        .eq('month', remindMonth);
-      
-      const existingIds = new Set(existingFees?.map(f => f.student_id?.toString()));
+      const { data: existing } = await supabase.from('fees').select('student_id').eq('month', remindMonth);
+      const existingIds = new Set(existing?.map(f => f.student_id?.toString()));
       const missing = students.filter(s => !existingIds.has(s.student_id?.toString()));
       
-      if (missing.length === 0) {
-        toast.success("All students already have fee records for this month! 🎉");
-        return;
+      if (missing.length === 0) return toast.success("All students are already mapped! 🎉");
+      if (!window.confirm(`Auto-assign remaining ${missing.length} students from history fallback?`)) return;
+
+      const inserts = [];
+      for (const s of missing) {
+        const { data: last } = await supabase.from('fees').select('fee_structure, total_amount').eq('student_id', s.student_id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (last) inserts.push({ student_id: s.student_id, month: remindMonth, fee_structure: last.fee_structure, total_amount: last.total_amount, status: 'Pending' });
       }
 
-      const confirmed = window.confirm(`Found ${missing.length} students without fees for ${remindMonth}. Auto-assign using last records?`);
-      if (!confirmed) return;
-
-      const newFees: any[] = [];
-      for (const student of missing) {
-        const { data: lastFee } = await supabase
-          .from('fees')
-          .select('fee_structure, total_amount')
-          .eq('student_id', student.student_id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (lastFee) {
-          newFees.push({
-            student_id: student.student_id,
-            month: remindMonth,
-            fee_structure: lastFee.fee_structure,
-            total_amount: lastFee.total_amount,
-            status: 'Pending'
-          });
-        }
-      }
-
-      if (newFees.length > 0) {
-        assignFeesMutation.mutate(newFees);
-      } else {
-        toast.info("No history patterns parameters logs found.");
-      }
+      if (inserts.length > 0) assignFeesMutation.mutate(inserts);
+      else toast.info("No tracking history configurations logged.");
     } catch (err: any) {
-      toast.error("Auto-Assign failed: " + err.message);
+      toast.error(err.message);
     } finally {
       setLocalLoading(false);
     }
-  };
+  }
 
-  const handleCloneLastMonthFees = async () => {
-    if (!month) return toast.error("Select the target month first");
+  async function handleCloneLastMonthFees() {
+    if (!month) return toast.error("Pehle assign tab me Target Month chunein.");
     const [year, mon] = month.split('-').map(Number);
-    const prevDate = new Date(year, mon - 2, 1);
-    const prevMonthStr = `${prevDate.getFullYear()}-${(prevDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    const prevMonthStr = `${year}-${(mon - 1).toString().padStart(2, '0')}`;
 
-    if (!window.confirm(`Clone all pending fees from ${prevMonthStr} to ${month}?`)) return;
+    if (!window.confirm(`Clone complete raw structure mapping from ${prevMonthStr} to ${month}?`)) return;
 
     try {
       setLocalLoading(true);
-      const { data: prevFees, error: fetchError } = await supabase
-        .from('fees')
-        .select('student_id, fee_structure, total_amount')
-        .eq('month', prevMonthStr);
-
-      if (fetchError) throw fetchError;
-      if (!prevFees || prevFees.length === 0) throw new Error(`No records found for ${prevMonthStr}`);
-
-      const newFees = prevFees.map(f => ({
-        student_id: f.student_id,
-        month: month,
-        fee_structure: f.fee_structure,
-        total_amount: f.total_amount,
-        status: 'Pending'
-      }));
-
-      assignFeesMutation.mutate(newFees);
-    } catch (error: any) {
-      toast.error("Cloning Failed: " + error.message);
+      const { data: prevFees } = await supabase.from('fees').select('student_id, fee_structure, total_amount').eq('month', prevMonthStr);
+      if (!prevFees?.length) throw new Error("No historical data found in source month stack.");
+      
+      const payload = prevFees.map(f => ({ student_id: f.student_id, month, fee_structure: f.fee_structure, total_amount: f.total_amount, status: 'Pending' }));
+      assignFeesMutation.mutate(payload);
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setLocalLoading(false);
     }
-  };
+  }
 
  return (
   <div className="min-h-screen bg-white text-slate-900 font-sans tracking-tight">
-   <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-10 md:py-20">
+   <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-10">
     
-    {/* --- HEADER --- */}
-    <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-10">
-     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-      <div className="flex items-center gap-4 mb-4">
-       <span className="w-10 h-10 rounded-[5px] bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
-        <Wallet size={20} />
-       </span>
-       <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">
-        Fee Management
-       </h1>
+    {/* --- HEADER PANELS --- */}
+    <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-6">
+     <div>
+      <div className="flex items-center gap-4 mb-2">
+       <span className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-md"><Wallet size={20} /></span>
+       <h1 className="text-3xl font-black tracking-tight uppercase">Fee Management</h1>
       </div>
-      <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
-       Financial Records & Reminders <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      </p>
-     </motion.div>
+      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Automated Financial Desk & Receipt Center</p>
+     </div>
 
-     <div className="flex flex-wrap items-center gap-4">
-       <button 
-        onClick={() => document.getElementById('assign-form')?.scrollIntoView({ behavior: 'smooth' })}
-        className="premium-button-admin flex items-center gap-2 bg-blue-600 font-black text-white border-none shadow-2xl hover:scale-105 active:scale-95 tracking-widest uppercase px-8"
-       >
-        <Plus size={20} /> 
-        <span>Add Fee</span>
-       </button>
-       <button 
-        onClick={() => window.location.reload()}
-        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-       </button>
-       <button 
-        onClick={() => setShowHeadsModal(true)}
-        className="premium-button-admin flex items-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <LayoutDashboard size={20} /> 
-        <span>Heads</span>
-       </button>
-       <button 
-        onClick={() => setShowDefaultersModal(true)}
-        className="premium-button-admin flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white border-none shadow-xl hover:scale-105 active:scale-95 tracking-widest uppercase px-6"
-       >
-        <AlertTriangle size={20} /> 
-        <span>Defaulters</span>
-       </button>
+     <div className="flex flex-wrap items-center gap-3">
+       <button onClick={() => document.getElementById('assign-form')?.scrollIntoView({ behavior: 'smooth' })} className="px-5 py-3 bg-blue-600 text-white rounded-xl text-xs font-black uppercase flex items-center gap-2 shadow-lg"><Plus size={16} /> Add Fee</button>
+       <button onClick={() => window.location.reload()} className="p-3 bg-slate-50 text-slate-600 rounded-xl border hover:bg-slate-900 hover:text-white transition-all"><RefreshCw size={16} className={loading ? 'animate-spin' : ''} /></button>
+       <button onClick={() => setShowHeadsModal(true)} className="px-5 py-3 bg-slate-50 text-slate-700 rounded-xl border text-xs font-black uppercase flex items-center gap-2"><LayoutDashboard size={16} /> Categories</button>
+       <button onClick={() => setShowDefaultersModal(true)} className="px-5 py-3 bg-rose-50 text-rose-600 rounded-xl border border-rose-200 text-xs font-black uppercase flex items-center gap-2"><AlertTriangle size={16} /> Defaulters</button>
       </div>
     </div>
 
-    {/* --- MAIN GRID --- */}
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-     <div className="lg:col-span-2 space-y-12">
+    {/* --- WORKSPACE LAYOUT --- */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+     <div className="lg:col-span-2 space-y-10">
        
-       {/* 🚀 AUTOMATION ADUKUL PANEL */}
-       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="premium-card p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] shadow-2xl overflow-hidden group"
-       >
-        <div className="bg-white m-0.5 rounded-[1.9rem] p-8 md:p-12 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-40"></div>
-          
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-10">
-            <div className="flex items-center gap-6">
-              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform">
-                <Zap size={28} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-black text-slate-900 uppercase">Automation Pulse</h2>
-                <p className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Smart Monthly Management</p>
-              </div>
+       {/* PART 1: SMART CONTROL ENGINE */}
+       <div className="p-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-[1.4rem] p-8 relative">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 border-b pb-6">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Automation Control</h2>
+              <p className="text-[10px] font-black text-blue-500 tracking-wider uppercase">AutoPilot Data & Processing Engine</p>
             </div>
-            <div className="flex items-center gap-2">
-               <button 
-                onClick={exportDefaultersToCSV}
-                className="px-4 py-2 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-slate-200"
-               >
-                 <Download size={14} /> Export Report
-               </button>
-            </div>
+            <button onClick={exportDefaultersToCSV} className="px-4 py-2.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-xl text-xs font-black uppercase flex items-center gap-2 border"><Download size={14} /> Download Excel Report</button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-blue-200 transition-all flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 bg-slate-50 rounded-2xl border flex flex-col justify-between gap-4">
                <div>
-                 <h3 className="text-[12px] font-black text-slate-900 uppercase mb-1">Monthly Auto-Assign</h3>
-                 <p className="text-[10px] text-slate-500 font-medium">Detect students without fees and clone last month's records instantly.</p>
+                 <h3 className="text-xs font-black text-slate-900 uppercase">A. Intelligent Auto-Assign</h3>
+                 <p className="text-[11px] text-slate-500 mt-1">Is mahine jin bacho ki fees pending entry missing hai unhe auto-detect karke billing state create karein.</p>
                </div>
-               <button 
-                onClick={handleSmartAutoAssign}
-                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-blue-600 transition-all uppercase flex items-center justify-center gap-3 shadow-xl"
-               >
-                 <RefreshCw size={14} className={localLoading ? 'animate-spin' : ''} />
-                 {localLoading ? 'Processing...' : 'Start Auto-Pilot'}
+               <button onClick={handleSmartAutoAssign} className="w-full py-3 bg-slate-900 text-white rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 transition-all hover:bg-blue-600">
+                 <RefreshCw size={14} className={localLoading ? 'animate-spin' : ''} /> Execute AutoPilot Assign
                </button>
             </div>
 
-            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-emerald-200 transition-all flex flex-col gap-6">
+            <div className="p-6 bg-slate-50 rounded-2xl border flex flex-col justify-between gap-4">
                <div>
-                 <h3 className="text-[12px] font-black text-slate-900 uppercase mb-1">Bulk Reminders</h3>
-                 <p className="text-[10px] text-slate-500 font-medium tracking-tight">Send professional WhatsApp receipts & alerts to all defaulters.</p>
+                 <h3 className="text-xs font-black text-slate-900 uppercase">B. Automation Reminders Blast</h3>
+                 <p className="text-[11px] text-slate-500 mt-1">Sabhi clear defaulters ko bulk messaging system queue pipeline stack me trigger de.</p>
                </div>
-               <button 
-                onClick={startSequentialReminders}
-                disabled={pendingReminders.length === 0}
-                className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-emerald-500 transition-all uppercase flex items-center justify-center gap-3 shadow-xl shadow-emerald-50"
-               >
-                 <MessageSquare size={14} />
-                 Execute Bulk Reminders
+               <button onClick={startSequentialReminders} disabled={pendingReminders.length === 0} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2 disabled:opacity-40">
+                 <MessageSquare size={14} /> Start WhatsApp Blast
                </button>
             </div>
           </div>
         </div>
-       </motion.div>
+       </div>
 
-       {/* 🟡 1. ASSIGN FEE FORM */}
-       <motion.div 
-        id="assign-form"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="premium-card p-10 md:p-14 relative overflow-hidden"
-       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
-        
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-          <div className="flex items-center gap-6">
-            <div className="w-12 h-12 bg-blue-50 rounded-[5px] flex items-center justify-center text-blue-600">
-             <Plus size={24} />
-            </div>
-            <h2 className="text-3xl font-black text-slate-900 uppercase">Assign New Fee</h2>
+       {/* PART 2: THE ADMISSION/FEE ASSIGNMENT BLOCK */}
+       <div id="assign-form" className="p-8 border rounded-3xl bg-white relative">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 border-b pb-6">
+          <div className="flex items-center gap-4">
+            <span className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600"><Plus size={18} /></span>
+            <h2 className="text-xl font-black uppercase">Assign New Month Fees</h2>
           </div>
-          <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-[5px] border border-slate-100">
-           <button 
-            type="button"
-            onClick={() => setBulkMode(false)}
-            className={`px-6 py-3 rounded-[5px] text-[10px] font-black uppercase tracking-widest transition-all ${!bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
-           >
-            Student
-           </button>
-           <button 
-            type="button"
-            onClick={() => setBulkMode(true)}
-            className={`px-6 py-3 rounded-[5px] text-[10px] font-black uppercase tracking-widest transition-all ${bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
-           >
-            Bulk Class
-           </button>
+          <div className="flex bg-slate-100 p-1 rounded-xl">
+           <button type="button" onClick={() => setBulkMode(false)} className={`px-4 py-2 text-xs font-black uppercase rounded-lg ${!bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Single Student</button>
+           <button type="button" onClick={() => setBulkMode(true)} className={`px-4 py-2 text-xs font-black uppercase rounded-lg ${bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Bulk Class</button>
           </div>
         </div>
 
-        <form onSubmit={handleAssignFee} className="space-y-10 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div className="space-y-4">
-            <label htmlFor={bulkMode ? "class-select" : "student-select"} className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">
-             {bulkMode ? 'Target Class' : 'Target Student'}
-            </label>
-            <div className="relative group">
+        <form onSubmit={handleAssignFee} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">{bulkMode ? 'Target Class Group' : 'Target Student profile'}</label>
+            <div className="relative">
               {bulkMode ? (
-                <select 
-                  id="class-select"
-                  name="class-select"
-                  className="premium-input w-full appearance-none pr-10"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">Choose Class...</option>
+                <select className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none" value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
+                  <option value="">Select target class...</option>
                   {Array.from(new Set(students.map((s: any) => s.class_name))).map((cls: any) => (
-                    <option key={cls} value={cls}>{cls}</option>
+                    <option key={cls} value={cls}>Class {cls}</option>
                   ))}
                 </select>
               ) : (
-                <select 
-                  id="student-select"
-                  name="student-select"
-                  className="premium-input w-full appearance-none pr-10"
-                  value={selectedStudent}
-                  onChange={(e) => setSelectedStudent(e.target.value)}
-                >
-                  <option value="">Choose Student...</option>
+                <select className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none" value={selectedStudent} onChange={(e) => setSelectedStudent(e.target.value)}>
+                  <option value="">Select individual student...</option>
                   {students.map((s: any) => (
-                    <option key={s.student_id} value={s.student_id}>{s.full_name} ({s.roll_no})</option>
+                    <option key={s.student_id} value={s.student_id}>{s.full_name} (Roll: #{s.roll_no})</option>
                   ))}
                 </select>
               )}
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover:text-blue-500 transition-colors">
-                <ChevronDown size={18} />
-              </div>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" size={16} />
             </div>
            </div>
 
-           <div className="space-y-4">
-            <label htmlFor="billing-month" className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Billing Month</label>
-            <input 
-             id="billing-month"
-             name="billing-month"
-             type="month" 
-             className="premium-input w-full"
-             value={month}
-             onChange={(e) => setMonth(e.target.value)}
-            />
+           <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">Billing Statement Month</label>
+            <input type="month" className="w-full border p-3 rounded-xl text-sm outline-none" value={month} onChange={(e) => setMonth(e.target.value)} />
            </div>
           </div>
 
-          <div className="p-10 bg-slate-50/50 rounded-[5px] border border-slate-100 shadow-inner">
-            <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-10 text-center">Standard Fee Heads</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="p-6 bg-slate-50 rounded-2xl border">
+            <h4 className="text-[10px] font-black text-slate-400 text-center tracking-widest uppercase mb-6">Standard Active Fee Matrix</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {feeHeads.map((head: any) => (
-              <div key={head.id} className="space-y-3 group/item">
-               <div className="flex justify-between items-center px-2">
-                <label htmlFor={`fee-head-${head.id}`} className="text-[10px] font-black text-slate-600 group-hover/item:text-blue-600 transition-colors uppercase">{head.name}</label>
-                <div className="flex gap-4 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                  <button type="button" onClick={() => deleteFeeHeadMutation.mutate(head.id)} className="text-rose-400 hover:text-rose-600">
-                    <Trash2 size={12} />
-                  </button>
-                </div>
+              <div key={head.id} className="space-y-1">
+               <div className="flex justify-between text-xs px-1">
+                <span className="font-bold text-slate-600 uppercase">{head.name}</span>
+                <button type="button" onClick={() => deleteFeeHeadMutation.mutate(head.id)} className="text-slate-300 hover:text-rose-500 transition-colors"><Trash2 size={12} /></button>
                </div>
                <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-xs">₹</span>
-                <input 
-                  id={`fee-head-${head.id}`}
-                  name={`fee-head-${head.id}`}
-                  type="number" 
-                  placeholder="0.00"
-                  className="premium-input w-full pl-10"
-                  value={feeValues[head.id] || ''}
-                  onChange={(e) => handleFeeValueChange(head.id, e.target.value)}
-                />
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                <input type="number" placeholder="0.00" className="w-full border p-3 pl-8 rounded-xl text-sm outline-none focus:border-blue-500 bg-white" value={feeValues[head.id] || ''} onChange={(e) => handleFeeValueChange(head.id, e.target.value)} />
                </div>
               </div>
              ))}
             </div>
-
-            <div className="mt-8 flex justify-center">
-              <button 
-                type="button" 
-                onClick={handleCloneLastMonthFees}
-                className="px-6 py-3 border border-blue-100 rounded-[5px] text-[9px] font-black text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2 uppercase"
-              >
-                <RefreshCw size={14} /> COPY LAST MONTH'S DATA 
-              </button>
+            <div className="mt-6 flex justify-center border-t pt-4">
+              <button type="button" onClick={handleCloneLastMonthFees} className="px-4 py-2 border text-blue-600 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase rounded-lg flex items-center gap-2"><RefreshCw size={12} /> Sync Copy Past Month Dues</button>
             </div>
           </div>
 
-          <div className="bg-slate-900 p-10 rounded-[5px] shadow-2xl relative overflow-hidden group/btn flex flex-col md:flex-row items-center justify-between gap-8">
-           <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover/btn:opacity-10 transition-opacity" />
-           <div className="text-center md:text-left mb-0 relative z-10">
-             <p className="text-[10px] font-black text-blue-400 mb-2 uppercase">Total Amount</p>
-             <h2 className="text-5xl md:text-6xl font-black text-white leading-none uppercase">₹ {totalAmountValue.toLocaleString()}</h2>
+          <div className="bg-slate-900 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+           <div className="text-center sm:text-left">
+             <span className="text-[10px] text-blue-400 font-black uppercase block tracking-wider">Gross Payable Collection Amount</span>
+             <h2 className="text-3xl font-black text-white">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
-           <button type="submit" disabled={loading} className="premium-button-admin bg-blue-600 text-white hover:bg-slate-900 border-none shadow-2xl active:scale-95 tracking-widest relative z-10 px-16 py-6 text-lg uppercase flex items-center gap-4">
-             {loading ? <RefreshCw size={28} className="animate-spin" /> : <ShieldCheck size={28} />}
-             <div className="text-left leading-none">
-              <span className="block text-[8px] opacity-60 font-black">CONFIRM & SAVE</span>
-              <span className="block">{loading ? 'Processing...' : 'Assign Fee Record'}</span>
-             </div>
+           <button type="submit" disabled={loading} className="px-8 py-4 bg-blue-600 text-white rounded-xl font-black text-xs uppercase flex items-center gap-2 hover:bg-blue-500 shadow-md">
+             {loading ? <RefreshCw size={16} className="animate-spin" /> : <ShieldCheck size={16} />} Save Accounting Entry
            </button>
           </div>
         </form>
-       </motion.div>
+       </div>
 
-       {/* 🟡 4. QUICK SCAN HUB */}
- Quick Lookup Cards
-       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="premium-card p-10 bg-slate-900 text-white overflow-hidden group relative"
-       >
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/30 blur-3xl rounded-full transition-opacity group-hover:opacity-100 opacity-50"></div>
-        <div className="flex items-center gap-6 mb-8 relative z-10">
-          <div className="w-12 h-12 bg-blue-600 rounded-[5px] flex items-center justify-center text-white shadow-2xl">
-           <Zap size={24} className="animate-pulse" />
-          </div>
+       {/* PART 3: DESK REMINDERS & SEARCH VIEW */}
+       <div className="p-8 border rounded-3xl bg-white">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <div>
-           <h2 className="text-2xl font-black uppercase leading-none">Quick Lookup</h2>
-           <p className="text-[9px] font-black text-blue-400 tracking-widest mt-1 uppercase">Scan or Search Student</p>
+            <h2 className="text-xl font-black uppercase">Active Pending Registry</h2>
+            <p className="text-xs text-slate-400">Total Defaulters Listed: {pendingReminders.length}</p>
+          </div>
+          <div className="flex gap-2">
+            <div className="border p-1 bg-slate-50 rounded-xl flex">
+               <button onClick={() => setShowAllMonths(false)} className={`px-3 py-1.5 text-[10px] font-black uppercase rounded-lg ${!showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>Current Month</button>
+               <button onClick={() => setShowAllMonths(true)} className={`px-3 py-1.5 text-[10px] font-black uppercase rounded-lg ${showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>Lifetime All</button>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-6 relative z-10">
-          <p className="text-[10px] font-black text-slate-400 leading-relaxed uppercase">Scan any student ID card — mark attendance, assign/pay fees, WhatsApp reminders, library & more.</p>
-          
-          <div className="flex gap-4">
-            <button 
-              onClick={() => { setScannedStudent(null); setShowScanner(true); }}
-              className="flex-1 py-4 bg-blue-600 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-blue-500 transition-all shadow-xl uppercase flex items-center justify-center gap-2"
-            >
-              {scanLoading ? <RefreshCw size={16} className="animate-spin" /> : <Camera size={16} />}
-              {scanLoading ? 'Looking up...' : 'Open Scanner'}
-            </button>
-            {scannedStudent && (
-              <button 
-                onClick={() => setScannedStudent(null)}
-                className="py-4 px-5 bg-white/10 text-white rounded-[5px] font-black text-[10px] tracking-widest hover:bg-white/20 transition-all uppercase flex items-center gap-2"
-              >
-                <X size={14} /> Clear
-              </button>
-            )}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="sm:col-span-2 relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input type="text" placeholder="Filter student record dynamically..." className="w-full border p-3 pl-10 rounded-xl text-sm outline-none bg-slate-50" value={waSearch} onChange={(e) => setWaSearch(e.target.value)} />
           </div>
+          <div className="relative">
+            <select className="w-full border p-3 rounded-xl text-sm appearance-none outline-none bg-slate-50 pr-8" value={classFilterWa} onChange={(e) => setClassFilterWa(e.target.value)}>
+              <option value="">All Standard Classes</option>
+              {Array.from(new Set(students.map((s: any) => s.class_name))).map((cls: any) => (
+                <option key={cls} value={cls}>Class {cls}</option>
+              ))}
+            </select>
+            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+          </div>
+        </div>
 
+        <div className="border-b pb-4 flex justify-between items-center text-xs">
+          <button onClick={() => {
+            if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
+            else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
+          }} className="text-blue-600 font-bold hover:underline">
+            {selectedFeeIds.length === pendingReminders.length ? 'Deselect All Checkboxes' : 'Select All In View'}
+          </button>
+          {selectedFeeIds.length > 0 && (
+            <div className="flex gap-2">
+              <button onClick={handleBulkMarkAsPaid} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold border hover:bg-blue-600 hover:text-white transition-colors">Mark {selectedFeeIds.length} Paid</button>
+              <button onClick={startSequentialReminders} className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg font-bold border hover:bg-emerald-600 hover:text-white transition-colors">Send to Selected Batch</button>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          {remLoading ? (
+            <div className="py-12 text-center text-slate-400 text-xs uppercase"><RefreshCw className="animate-spin inline mr-2 text-emerald-500" size={16} /> Parsing database files...</div>
+          ) : pendingReminders.length > 0 ? (
+            pendingReminders
+              .map((fee: any) => ({ ...fee, _student: fee.students || students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString()) }))
+              .filter((fee: any) => !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase()))
+              .filter((fee: any) => !classFilterWa || fee._student?.class_name === classFilterWa)
+              .map((fee: any) => (
+                <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 transition-all hover:bg-white hover:border-emerald-200">
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <input type="checkbox" checked={selectedFeeIds.includes(fee.id.toString())} onChange={(e) => {
+                      if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
+                      else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
+                    }} className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded border-slate-300 cursor-pointer" />
+                    <div className="w-10 h-10 bg-white border font-black text-xs flex items-center justify-center rounded-lg shadow-sm text-slate-700">C-{fee._student?.class_name || '??'}</div>
+                    <div>
+                      <h4 className="font-black text-sm text-slate-800 uppercase leading-none">{fee._student?.full_name || `Un-linked Account (ID:${fee.student_id})`}</h4>
+                      <p className="text-[11px] text-slate-400 mt-1">Amount: <span className="text-slate-700 font-bold">₹{fee.total_amount}</span> • Target Period: {fee.month}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => handleSendReminder(fee)} disabled={!fee._student?.contact_number} className="w-full sm:w-auto px-4 py-2 bg-white hover:bg-emerald-600 hover:text-white text-emerald-600 border border-emerald-100 rounded-lg text-xs font-black uppercase flex items-center justify-center gap-2 transition-all disabled:opacity-30">
+                    <Send size={12} /> Send WhatsApp
+                  </button>
+                </div>
+              ))
+          ) : (
+            <div className="py-12 text-center text-slate-400 text-xs border border-dashed rounded-xl">Registry ledger is clean for current parameters.</div>
+          )}
+        </div>
+       </div>
+     </div>
+
+     {/* --- SIDEBAR INSIGHTS PANELS --- */}
+     <div className="space-y-8">
+       {/* ANALYTICS CARD */}
+       <div className="p-6 border rounded-3xl bg-white shadow-sm relative overflow-hidden">
+         <h3 className="text-xs font-black text-slate-400 uppercase mb-6 pl-1">Accounts Analytics</h3>
+         <div className="space-y-4">
+           <div className="p-4 bg-slate-50 border rounded-xl">
+             <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Net Gross Collected</span>
+             <p className="text-2xl font-black text-slate-900 mt-1">₹ {feeStats.totalCollected?.toLocaleString() || 0}</p>
+           </div>
+           <div className="grid grid-cols-2 gap-4">
+             <div className="p-4 bg-slate-50 border rounded-xl">
+               <span className="text-[9px] font-black text-slate-400 uppercase block">Pending Nodes</span>
+               <p className="text-xl font-black text-amber-600 mt-0.5">{feeStats.totalPending || 0}</p>
+             </div>
+             <div className="p-4 bg-slate-50 border rounded-xl">
+               <span className="text-[9px] font-black text-slate-400 uppercase block">Late Overdues</span>
+               <p className="text-xl font-black text-rose-500 mt-0.5">{feeStats.overdue || 0}</p>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       {/* CAMERA SCAN QUICK CARD */}
+       <div className="p-6 bg-slate-900 text-white rounded-3xl border">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center"><Camera size={16} /></span>
+            <h4 className="font-black text-sm uppercase">Quick Verification Desk</h4>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed mb-4">Point current camera at any generated student barcode card to look configuration metrics instantly.</p>
+          <button onClick={() => { setScannedStudent(null); setShowScanner(true); }} className="w-full py-3 bg-blue-600 text-white font-bold text-xs uppercase rounded-xl shadow-lg hover:bg-blue-500 transition-colors">
+            {scanLoading ? 'Parsing file...' : 'Initialize Hardware Scanner'}
+          </button>
+
+          {/* QUICKLOOKUP RESULTS SHEET */}
           <AnimatePresence>
             {scannedStudent && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="bg-white rounded-[5px] overflow-hidden shadow-2xl border border-slate-100"
-              >
-                <div className="flex items-center gap-4 p-5 bg-slate-50 border-b border-slate-100">
-                  <div className="w-14 h-14 rounded-[5px] overflow-hidden border-2 border-white shadow-md flex-shrink-0">
-                    {scannedStudent.photo_url ? (
-                      <img src={scannedStudent.photo_url} className="w-full h-full object-cover" alt="" />
-                    ) : (
-                      <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white font-black text-xl">
-                        {scannedStudent.full_name?.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-slate-900 truncate text-sm uppercase">{scannedStudent.full_name}</p>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
-                      Class {scannedStudent.class_name} • Roll #{scannedStudent.roll_no}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full flex-shrink-0">
-                    <CheckCircle size={12} />
-                    <span className="text-[8px] font-black uppercase tracking-widest">Verified</span>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-4 bg-white text-slate-900 rounded-2xl p-4 border shadow-xl">
+                <div className="flex items-center gap-3 pb-3 border-b">
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-lg font-black text-sm flex items-center justify-center">{scannedStudent.full_name?.charAt(0)}</div>
+                  <div>
+                    <h5 className="font-black text-sm uppercase leading-none">{scannedStudent.full_name}</h5>
+                    <p className="text-[10px] text-slate-400 mt-1">Class: {scannedStudent.class_name} • Roll: #{scannedStudent.roll_no}</p>
                   </div>
                 </div>
-
-                <div className="p-4 bg-emerald-50/30 border-b border-slate-100">
-                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">Quick Attendance</p>
-                  <div className="flex gap-2">
-                    {(['Present', 'Absent', 'Late'] as const).map((status) => (
-                      <button
-                        key={status}
-                        onClick={async () => {
-                          const schoolId = localStorage.getItem('current_school_id');
-                          const { error } = await supabase.from('attendance').upsert({
-                            student_id: scannedStudent.student_id?.toString() || scannedStudent.id,
-                            student_name: scannedStudent.full_name,
-                            school_id: schoolId,
-                            date: new Date().toISOString().split('T')[0],
-                            status,
-                            marked_by: localStorage.getItem('user_email') || 'admin',
-                          }, { onConflict: 'student_id,date,school_id' });
-                          if (error) toast.error('Attendance error: ' + error.message);
-                          else toast.success(`✅ ${scannedStudent.full_name} marked ${status}`);
-                        }}
-                        className={`flex-1 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all border ${
-                          status === 'Present' ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white' :
-                          status === 'Absent' ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white' :
-                          'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white'
-                        }`}
-                      >
-                        {status}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-4 bg-green-50/20 border-b border-slate-100">
-                  <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-3">WhatsApp Reminder</p>
-                  <button
-                    onClick={async () => {
-                      const schoolId = localStorage.getItem('current_school_id');
-                      const { data: pendingFees } = await supabase
-                        .from('fees')
-                        .select('total_amount, month')
-                        .eq('student_id', scannedStudent.student_id?.toString() || scannedStudent.id)
-                        .eq('status', 'Pending')
-                        .eq('school_id', schoolId);
-
-                      const phone = scannedStudent.contact_number?.replace(/\D/g, '');
-                      if (!phone) return toast.error('No phone number for this student');
-
-                      const totalPending = (pendingFees || []).reduce((s: number, f: any) => s + Number(f.total_amount), 0);
-                      const schoolName = localStorage.getItem('current_school_name') || 'School';
-                      const msg = `Dear Parent of *${scannedStudent.full_name}*, your ward has pending fees of *₹${totalPending}* at ${schoolName}. Please pay at the earliest.`;
-                      window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                    }}
-                    className="w-full py-3 bg-green-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-green-500 transition-all flex items-center justify-center gap-2"
-                  >
-                    <MessageSquare size={14} /> Send Pending Fee Reminder
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-4 gap-0 divide-x divide-y divide-slate-100">
-                  <button onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); toast.success(`${scannedStudent.full_name} selected`); }} className="flex flex-col items-center gap-2 p-4 hover:bg-blue-50 transition-all">
-                    <CreditCard size={16} className="text-blue-600" />
-                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Assign Fee</p>
-                  </button>
-                  <button
-                    onClick={async () => {
-                      const schoolId = localStorage.getItem('current_school_id');
-                      const { data: pendingFees } = await supabase
-                        .from('fees').select('id, total_amount')
-                        .eq('student_id', scannedStudent.student_id?.toString() || scannedStudent.id)
-                        .eq('status', 'Pending').eq('school_id', schoolId);
-                      if (!pendingFees?.length) return toast.info('No pending fees found');
-                      if (window.confirm(`Mark all as Paid?`)) {
-                        await supabase.from('fees').update({ status: 'Paid', updated_at: new Date().toISOString() }).in('id', pendingFees.map((f: any) => f.id));
-                        toast.success(`✅ Fees marked Paid for ${scannedStudent.full_name}`);
-                      }
-                    }}
-                    className="flex flex-col items-center gap-2 p-4 hover:bg-emerald-50 transition-all"
-                  >
-                    <CheckCircle size={16} className="text-emerald-600" />
-                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Pay Fee</p>
-                  </button>
-                  <button onClick={() => navigate(`/admin/library?student=${scannedStudent.student_id}`)} className="flex flex-col items-center gap-2 p-4 hover:bg-amber-50 transition-all">
-                    <Layout size={16} className="text-amber-600" />
-                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Library</p>
-                  </button>
-                  <button onClick={() => navigate(`/admin/student/${scannedStudent.id}`)} className="flex flex-col items-center gap-2 p-4 hover:bg-indigo-50 transition-all">
-                    <User size={16} className="text-indigo-600" />
-                    <p className="text-[8px] font-black text-slate-600 uppercase text-center">Profile</p>
-                  </button>
+                <div className="pt-3 flex gap-2">
+                  <button onClick={() => { setSelectedStudent(scannedStudent.student_id); setScannedStudent(null); }} className="flex-1 p-2 bg-blue-50 hover:bg-blue-600 hover:text-white transition-colors text-[10px] font-black text-blue-600 uppercase rounded-lg">Assign Fee</button>
+                  <button onClick={() => { setScannedStudent(null); }} className="p-2 border text-[10px] font-black uppercase rounded-lg text-slate-400 hover:bg-slate-50">Dismiss</button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+       </div>
 
-        <AnimatePresence>
-          {showScanner && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6"
-            >
-              <div className="bg-white rounded-[2rem] p-8 flex flex-col items-center gap-8 w-full max-w-md shadow-2xl">
-                 <div className="w-full flex justify-between items-center">
+       {/* RECENT SETTLEMENT ENGINE */}
+       <div className="p-6 border rounded-3xl bg-white min-h-[400px] flex flex-col justify-between">
+         <div>
+           <h3 className="text-xs font-black text-slate-400 uppercase mb-6 pl-1">Live Transaction Feeds</h3>
+           <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
+             {recentPayments.length > 0 ? recentPayments.map((p: any) => (
+               <div key={p.id} className="p-3 bg-slate-50 border rounded-xl flex items-center justify-between transition-all hover:bg-white">
+                 <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><CheckCircle size={14} /></div>
                    <div>
-                     <h2 className="text-xl font-black text-slate-900 uppercase">Scan Student ID</h2>
-                   </div>
-                   <button onClick={() => setShowScanner(false)} className="p-3 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100">
-                     <X size={20} />
-                   </button>
-                 </div>
-                 
-                 <div id="reader" className="w-full max-w-sm rounded-2xl overflow-hidden border-4 border-slate-900 shadow-2xl relative bg-black min-h-[280px]">
-                   <div className="absolute inset-0 pointer-events-none z-10">
-                     <div className="w-full h-full border-[35px] border-slate-950/50"></div>
-                     <div className="absolute top-1/2 left-0 w-full h-0.5 bg-blue-500/80 shadow-[0_0_12px_rgba(59,130,246,0.6)] animate-scan-line"></div>
+                     <p className="font-black text-xs text-slate-800 uppercase leading-none">{p.students?.full_name || 'N/A'}</p>
+                     <p className="text-[10px] text-slate-400 mt-1">₹{p.total_amount} • {p.month}</p>
                    </div>
                  </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-       </motion.div>
-
-       {/* 🟢 WHATSAPP REMINDERS HUB */}
-       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="premium-card p-10 md:p-14 relative overflow-hidden"
-       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-          <div className="flex items-center gap-6">
-            <div className="w-12 h-12 bg-emerald-50 rounded-[5px] flex items-center justify-center text-emerald-600">
-             <MessageSquare size={24} />
-            </div>
-            <div>
-             <h2 className="text-3xl font-black text-slate-900 uppercase">WhatsApp Reminders</h2>
-             <p className="text-[10px] font-black text-slate-300 tracking-widest leading-none uppercase">PENDING FEE ALERTS</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4">
-             <div className="flex bg-slate-50 p-1.5 rounded-[5px] border border-slate-100">
-               <button onClick={() => setShowAllMonths(false)} className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${!showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>This Month</button>
-               <button onClick={() => setShowAllMonths(true)} className={`px-5 py-2.5 rounded-[5px] text-[9px] font-black uppercase tracking-widest transition-all ${showAllMonths ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400'}`}>Show All</button>
-             </div>
-             <button 
-              onClick={startSequentialReminders}
-              disabled={pendingReminders.length === 0}
-              className="px-8 py-4 bg-emerald-600 text-white rounded-[5px] font-black text-[10px] tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl disabled:opacity-30 flex items-center gap-3"
-             >
-              <Zap size={14} /> Send pending reminders
-             </button>
-          </div>
-        </div>
-
-        {/* Search & Class Filter */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="md:col-span-2 relative">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-            <input 
-              id="reminder-search"
-              name="reminder-search"
-              type="text" 
-              placeholder="Search student in reminders list..."
-              className="premium-input w-full pl-16 py-5 bg-slate-50 border-transparent"
-              value={waSearch}
-              onChange={(e) => setWaSearch(e.target.value)}
-            />
-          </div>
-          <div className="relative group">
-            <select 
-              id="reminder-class-filter"
-              name="reminder-class-filter"
-              className="premium-input w-full appearance-none pr-10 bg-slate-50 border-transparent"
-              value={classFilterWa}
-              onChange={(e) => setClassFilterWa(e.target.value)}
-            >
-              <option value="">Filter by Class...</option>
-              {Array.from(new Set(students.map((s: any) => s.class_name))).map((cls: any) => (
-                <option key={cls} value={cls}>{cls}</option>
-              ))}
-            </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
-              <Filter size={16} />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* ✅ 2. Automated Pending Reminders List */}
-          <div className="flex items-center justify-between pl-2 mb-4">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">Pending Fee Alerts ({pendingReminders.length})</p>
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => {
-                  if (selectedFeeIds.length === pendingReminders.length) setSelectedFeeIds([]);
-                  else setSelectedFeeIds(pendingReminders.map((f: any) => f.id.toString()));
-                }}
-                className="text-[9px] font-black text-blue-500 uppercase tracking-widest hover:text-blue-700 transition-colors"
-              >
-                {selectedFeeIds.length === pendingReminders.length ? 'Deselect All' : 'Select All'}
-              </button>
-              {selectedFeeIds.length > 0 && (
-                <div className="flex gap-2">
-                  <button 
-                    onClick={handleBulkMarkAsPaid}
-                    className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-[9px] font-black uppercase border border-blue-100 hover:bg-blue-600 hover:text-white transition-all"
-                  >
-                    Mark {selectedFeeIds.length} Paid
-                  </button>
-                  <button 
-                    onClick={startSequentialReminders}
-                    className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
-                  >
-                    Send to {selectedFeeIds.length} Selected
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {remLoading ? (
-            <div className="py-12 text-center bg-slate-50/50 rounded-[5px] border border-slate-100 flex flex-col items-center gap-4">
-              <RefreshCw className="animate-spin text-emerald-500" size={24} />
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fetching pending fees...</p>
-            </div>
-          ) : pendingReminders.length > 0 ? (
-            pendingReminders
-              .map((fee: any) => {
-                const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
-                return { ...fee, _student: student };
-              })
-              .filter((fee: any) => !waSearch || fee._student?.full_name?.toLowerCase().includes(waSearch.toLowerCase()))
-              .filter((fee: any) => !classFilterWa || fee._student?.class_name === classFilterWa)
-              .map((fee: any) => (
-              <div key={fee.id} className="p-6 bg-slate-50 rounded-[5px] flex flex-col sm:flex-row justify-between items-center group border border-transparent hover:border-emerald-100 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-100"></div>
-                <div className="flex items-center gap-6 mb-4 sm:mb-0">
-                  <input 
-                    type="checkbox" 
-                    checked={selectedFeeIds.includes(fee.id.toString())}
-                    onChange={(e) => {
-                      if (e.target.checked) setSelectedFeeIds([...selectedFeeIds, fee.id.toString()]);
-                      else setSelectedFeeIds(selectedFeeIds.filter(id => id !== fee.id.toString()));
-                    }}
-                    className="w-5 h-5 rounded border-slate-200 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <div className="w-12 h-12 rounded-[5px] bg-white border border-slate-100 flex items-center justify-center text-slate-900 font-black text-xs uppercase shadow-sm">
-                    {fee._student?.class_name || '??'}
-                  </div>
-                  <div>
-                    <h4 className="font-black text-slate-900 text-sm leading-none uppercase">
-                      {fee._student?.full_name || <span className="text-rose-400 italic">Unknown — ID:{fee.student_id}</span>}
-                    </h4>
-                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter">
-                      ₹{fee.total_amount} • {fee.month}
-                      {fee._student?.contact_number && <span className="ml-2 text-emerald-500">📱 {fee._student.contact_number}</span>}
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => handleSendReminder(fee)}
-                  disabled={!fee._student?.contact_number}
-                  className="w-full sm:w-auto px-6 py-3 bg-white text-emerald-600 border border-emerald-100 rounded-[5px] font-black text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all uppercase disabled:opacity-30"
-                >
-                  <Send size={14} /> SEND
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="py-16 text-center bg-slate-50/50 rounded-[5px] border-2 border-dashed border-slate-100 flex flex-col items-center gap-6">
-              <MessageSquare size={32} className="text-slate-300" />
-              <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">No reminders available.</p>
-            </div>
-          )}
-        </div>
-       </motion.div>
-     </div>
-
-     {/* --- RIGHT: INSIGHTS & STATS --- */}
-     <div className="space-y-10">
-       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-12 relative overflow-hidden group">
-        <h3 className="text-[10px] font-black text-slate-300 mb-12 uppercase">Payment Summary</h3>
-        <div className="space-y-8">
-          <div className="p-8 bg-slate-50 rounded-[5px] border border-slate-100">
-           <p className="text-[9px] font-black text-slate-400 tracking-widest mb-3 uppercase">Total Collected</p>
-           <p className="text-4xl font-black text-slate-900">₹{feeStats.totalCollected.toLocaleString()}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-6">
-           <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
-             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Pending</p>
-             <p className="text-2xl font-black text-slate-900">{feeStats.totalPending}</p>
+                 <ArrowRight size={14} className="text-slate-300" />
+               </div>
+             )) : (
+               <div className="text-center py-12 text-slate-300 text-xs uppercase">No feed logs recorded.</div>
+             )}
            </div>
-           <div className="p-6 bg-slate-50 rounded-[5px] border border-slate-100">
-             <p className="text-[8px] font-black text-slate-400 tracking-widest mb-2 uppercase">Late Payments</p>
-             <p className="text-2xl font-black text-rose-500">{feeStats.overdue}</p>
-           </div>
-          </div>
-        </div>
-       </motion.div>
-
-       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-12 flex flex-col min-h-[500px]">
-        <div className="flex items-center justify-between mb-12">
-          <h3 className="text-[10px] font-black text-slate-300 uppercase">Recent Payments</h3>
-        </div>
-        <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-          {recentPayments.length > 0 ? recentPayments.map((p: any) => (
-           <div key={p.id} className="p-6 bg-slate-50/50 rounded-[5px] border border-slate-50 flex justify-between items-center group hover:bg-white transition-all">
-            <div className="flex items-center gap-5">
-              <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center ${p.status === 'Paid' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'}`}>
-               <CheckCircle size={20}/>
-              </div>
-              <div>
-               <p className="font-black text-[12px] text-slate-800 uppercase">{p.students?.full_name}</p>
-               <p className="text-[9px] font-black text-slate-400 tracking-widest mt-1.5 uppercase">₹{p.total_amount} • {p.month}</p>
-              </div>
-            </div>
-            <ArrowRight size={16} className="text-slate-200 group-hover:text-blue-500" />
-           </div>
-          )) : (
-           <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 py-20">
-            <RefreshCw size={60} className="mb-6 animate-spin text-slate-300" />
-            <p className="text-[10px] font-black tracking-widest uppercase">Awaiting ...</p>
-           </div>
-          )}
-        </div>
-       </motion.div>
+         </div>
+         <button onClick={() => navigate('/admin/records')} className="w-full py-3.5 bg-slate-50 text-slate-400 text-[10px] font-black uppercase border border-slate-100 rounded-xl hover:bg-slate-900 hover:text-white transition-colors mt-4">Audit Complete History ledger →</button>
+       </div>
      </div>
     </div>
 
-    {/* 🟢 AUTOMATION PROGRESS MODAL */}
+    {/* --- AUTOMATION MODAL WINDOW --- */}
     <AnimatePresence>
       {automation.isOpen && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-[2.5rem] p-12 w-full max-w-md shadow-2xl relative overflow-hidden">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-2xl font-black text-slate-900 uppercase">Automated Blast</h2>
-              <button onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-3xl p-8 w-full max-w-md border shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-black text-lg uppercase">WhatsApp Dispatch Terminal</h3>
+              <button onClick={() => setAutomation(prev => ({ ...prev, isOpen: false }))} className="text-slate-400 hover:text-slate-900"><X size={20} /></button>
             </div>
-            <div className="flex flex-col items-center gap-6 mb-10">
-               <label className="flex items-center gap-3 bg-emerald-50 px-6 py-4 rounded-3xl cursor-pointer w-full">
-                  <input type="checkbox" checked={isAutoAdvancing} onChange={(e) => setIsAutoAdvancing(e.target.checked)} className="w-6 h-6 text-emerald-600 focus:ring-emerald-500" />
-                  <span className="text-[10px] font-black text-emerald-700 uppercase">Enable Auto-Pilot (3s)</span>
+            <div className="space-y-6">
+               <label className="flex items-center gap-3 bg-emerald-50 p-4 rounded-xl border border-emerald-100 cursor-pointer">
+                  <input type="checkbox" checked={isAutoAdvancing} onChange={(e) => setIsAutoAdvancing(e.target.checked)} className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" />
+                  <div className="text-xs font-black text-emerald-800 uppercase">Enable Sync Auto-Advance (3.5s Delay)</div>
                </label>
-               <div className="w-full bg-slate-50 p-10 rounded-[3rem] text-center">
-                  <h3 className="text-2xl font-black text-slate-900 uppercase">{automation.students[automation.currentIndex]?._student?.full_name}</h3>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase">Queue: {automation.currentIndex + 1} / {automation.students.length}</p>
+               <div className="bg-slate-50 p-6 rounded-2xl border text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Queue Stack: {automation.currentIndex + 1} / {automation.students.length}</p>
+                  <h4 className="text-xl font-black uppercase text-slate-900 leading-none">{automation.students[automation.currentIndex]?._student?.full_name}</h4>
+                  <p className="text-xs text-slate-500 mt-2 font-bold">Class {automation.students[automation.currentIndex]?._student?.class_name} • Outstanding: ₹{automation.students[automation.currentIndex]?.total_amount}</p>
                </div>
+               <button onClick={nextSequentialReminder} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase rounded-xl flex items-center justify-center gap-2 shadow-lg">
+                  <Send size={14} /> Open Chat & Move Forward
+               </button>
             </div>
-            <button onClick={nextSequentialReminder} className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500">
-               <Send size={16} className="inline mr-2" /> Send & Advance
-            </button>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
 
-    {/* 🟢 DEFAULTERS LIST MODAL */}
+    {/* --- HARDWARE DIALOG MODAL --- */}
+    <AnimatePresence>
+      {showScanner && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl relative flex flex-col gap-4">
+             <div className="flex justify-between items-center">
+               <h3 className="font-black uppercase text-sm">Hardware Camera Mount</h3>
+               <button onClick={() => setShowScanner(false)} className="p-2 border rounded-xl hover:bg-slate-50"><X size={16} /></button>
+             </div>
+             <div id="reader" className="w-full rounded-2xl overflow-hidden border bg-black min-h-[280px]"></div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>
+
+    {/* --- MODAL FALLBACKS: DEFAULTERS & MANAGEMENT HEADS --- */}
     <AnimatePresence>
       {showDefaultersModal && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4">
-          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-[2rem] p-10 w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-black text-slate-900 uppercase">Fee Defaulters List</h2>
-              <button onClick={() => setShowDefaultersModal(false)} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
+        <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white rounded-3xl p-8 w-full max-w-3xl max-h-[85vh] flex flex-col border shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black uppercase">Outstanding Accounts Ledger</h3>
+              <button onClick={() => setShowDefaultersModal(false)} className="p-2 hover:bg-slate-50 rounded-xl"><X size={20} /></button>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-4">
+            <div className="flex-1 overflow-y-auto space-y-2 border-t pt-4">
               {pendingReminders.map((fee: any) => {
-                const student = fee.students?.full_name ? fee.students : students.find((s: any) => s.student_id?.toString() === fee.student_id?.toString());
+                const s = fee.students || students.find((st: any) => st.student_id?.toString() === fee.student_id?.toString());
                 return (
-                  <div key={fee.id} className="p-5 bg-slate-50 rounded-2xl flex justify-between items-center">
+                  <div key={fee.id} className="p-4 bg-slate-50 border rounded-xl flex justify-between items-center">
                     <div>
-                      <p className="font-black text-slate-900 uppercase">{student?.full_name || 'Unknown student'}</p>
-                      <p className="text-[10px] text-slate-400">Class: {student?.class_name} • Month: {fee.month}</p>
+                      <p className="font-black text-slate-800 text-sm uppercase leading-none">{s?.full_name || 'System Student Account'}</p>
+                      <p className="text-[11px] text-slate-400 mt-1">Class {s?.class_name || 'N/A'} • Period: {fee.month}</p>
                     </div>
-                    <span className="text-rose-500 font-black">₹{fee.total_amount}</span>
+                    <span className="text-rose-500 font-black text-sm">₹ {fee.total_amount}</span>
                   </div>
                 );
               })}
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
 
-    {/* 🟢 MANAGE FEE HEADS MODAL */}
     <AnimatePresence>
       {showHeadsModal && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-6">
-          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-[2rem] p-10 w-full max-w-xl shadow-2xl">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-2xl font-black text-slate-900 uppercase">Manage Fee Heads</h2>
-              <button onClick={() => setShowHeadsModal(false)} className="p-4 text-slate-400 hover:text-slate-900"><X size={24} /></button>
+        <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6">
+          <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="bg-white rounded-3xl p-8 w-full max-w-lg border shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-black uppercase">Configure Global Categories</h3>
+              <button onClick={() => setShowHeadsModal(false)} className="text-slate-400 hover:text-slate-900"><X size={20} /></button>
             </div>
             <div className="space-y-4">
-              <div className="flex gap-4">
-                <input type="text" placeholder="e.g. Tuition Fee" className="premium-input flex-1" value={newHeadName} onChange={(e) => setNewHeadName(e.target.value)} />
-                <button onClick={() => { if(!newHeadName) return; addFeeHeadMutation.mutate(newHeadName, { onSuccess: () => { setNewHeadName(''); toast.success('Category Added!'); } }); }} className="px-8 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase">Add</button>
+              <div className="flex gap-2">
+                <input type="text" placeholder="e.g. Computer Science Lab Fee" className="w-full border p-3 rounded-xl text-sm outline-none bg-slate-50" value={newHeadName} onChange={(e) => setNewHeadName(e.target.value)} />
+                <button onClick={() => { if(!newHeadName) return; addFeeHeadMutation.mutate(newHeadName, { onSuccess: () => { setNewHeadName(''); toast.success('Category Configured Successfully!'); } }); }} className="px-6 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase">Append</button>
               </div>
-              <div className="max-h-[250px] overflow-y-auto space-y-2">
+              <div className="max-h-[220px] overflow-y-auto space-y-2 pt-2 border-t">
                 {feeHeads.map((head: any) => (
-                  <div key={head.id} className="p-4 bg-slate-50 rounded-xl flex justify-between items-center">
-                    <span className="font-black text-xs text-slate-800 uppercase">{head.name}</span>
-                    <button onClick={() => { if(window.confirm('Delete?')) deleteFeeHeadMutation.mutate(head.id); }} className="text-rose-500"><Trash2 size={16} /></button>
+                  <div key={head.id} className="p-3.5 bg-slate-50 rounded-xl flex justify-between items-center border">
+                    <span className="font-black text-xs text-slate-700 uppercase tracking-wide">{head.name}</span>
+                    <button onClick={() => { if(window.confirm('Delete this Category Matrix permanently?')) deleteFeeHeadMutation.mutate(head.id); }} className="text-rose-400 hover:text-rose-600 transition-colors"><Trash2 size={14} /></button>
                   </div>
                 ))}
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
 
    </div>
   </div>
  );
-};
-
-export default ManageFees;
+}
