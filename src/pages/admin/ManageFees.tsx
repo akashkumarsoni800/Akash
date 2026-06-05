@@ -113,7 +113,7 @@ export default function ManageFees() {
       const matched = students.find((s: any) => 
         s.student_id?.toString() === searchId || s.id?.toString() === searchId || s.father_name?.toString() === searchId || s.class_name?.toString() === searchId
       );
-      );
+      
       if (matched) {
         setSelectedStudent(matched.student_id);
         toast.success(`Student Auto-Selected: ${matched.full_name}`);
