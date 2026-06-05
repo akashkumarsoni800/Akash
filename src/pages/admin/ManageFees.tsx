@@ -413,7 +413,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
           </div>
         </div>
        </div>
-
+       
        {/* PART 2: THE ADMISSION/FEE ASSIGNMENT BLOCK */}
        <div id="assign-form" className="p-8 border rounded-3xl bg-white relative">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 border-b pb-6">
@@ -422,42 +422,67 @@ Please clear the dues at the school cash counter or pay online via the app. If a
             <h2 className="text-xl font-black uppercase">Assign New Month Fees</h2>
           </div>
           <div className="flex bg-slate-100 p-1 rounded-xl">
-           <button type="button" onClick={() => setBulkMode(false)} className={`px-4 py-2 text-xs font-black uppercase rounded-lg ${!bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Single Student</button>
-           <button type="button" onClick={() => setBulkMode(true)} className={`px-4 py-2 text-xs font-black uppercase rounded-lg ${bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Bulk Class</button>
+           <button type="button" onClick={() => { setBulkMode(false); setSelectedClass(''); setSelectedStudent(''); }} className={`px-4 py-2 text-xs font-black uppercase rounded-lg transition-all ${!bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Single Student</button>
+           <button type="button" onClick={() => { setBulkMode(true); setSelectedClass(''); setSelectedStudent(''); }} className={`px-4 py-2 text-xs font-black uppercase rounded-lg transition-all ${bulkMode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Bulk Class</button>
           </div>
         </div>
 
         <form onSubmit={handleAssignFee} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           
+           {/* 1. CLASS FILTER (Always Visible) */}
            <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">{bulkMode ? 'Target Class Group' : 'Target Student profile'}</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">
+              {bulkMode ? 'Target Class Group' : 'Filter by Class (Optional)'}
+            </label>
             <div className="relative">
-              {bulkMode ? (
-                <select className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none" value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
-                  <option value="">Select target class...</option>
-                  {Array.from(new Set(students.map((s: any) => s.class_name))).map((cls: any) => (
-                    <option key={cls} value={cls}>Class {cls}</option>
-                  ))}
-                </select>
-              ) : (
-                <select className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none" value={selectedStudent} onChange={(e) => setSelectedStudent(e.target.value)}>
-                  <option value="">Select individual student...</option>
-                  {students.map((s: any) => (
-                    <option key={s.student_id} value={s.student_id}>{s.full_name} (Roll: #{s.roll_no})</option>
-                  ))}
-                </select>
-              )}
+              <select 
+                className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none bg-slate-50" 
+                value={selectedClass} 
+                onChange={(e) => {
+                  setSelectedClass(e.target.value);
+                  setSelectedStudent(''); // Reset student dropdown when class changes
+                }}
+              >
+                <option value="">{bulkMode ? 'Select target class...' : 'All Classes'}</option>
+                {Array.from(new Set(students.map((s: any) => s.class_name))).map((cls: any) => (
+                  <option key={cls} value={cls}>Class {cls}</option>
+                ))}
+              </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" size={16} />
             </div>
            </div>
 
+           {/* 2. STUDENT SELECT (Visible ONLY in Single Student Mode) */}
+           {!bulkMode && (
+             <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">Target Student Profile</label>
+              <div className="relative">
+                <select 
+                  className="w-full border p-3.5 rounded-xl appearance-none pr-10 text-sm outline-none bg-slate-50" 
+                  value={selectedStudent} 
+                  onChange={(e) => setSelectedStudent(e.target.value)}
+                >
+                  <option value="">Select individual student...</option>
+                  {students
+                    .filter((s: any) => !selectedClass || s.class_name?.toString() === selectedClass.toString())
+                    .map((s: any) => (
+                      <option key={s.student_id} value={s.student_id}>{s.full_name} (Roll: #{s.roll_no})</option>
+                    ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" size={16} />
+              </div>
+             </div>
+           )}
+
+           {/* 3. BILLING MONTH */}
            <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-1">Billing Statement Month</label>
-            <input type="month" className="w-full border p-3 rounded-xl text-sm outline-none" value={month} onChange={(e) => setMonth(e.target.value)} />
+            <input type="month" className="w-full border p-3.5 rounded-xl text-sm outline-none bg-slate-50" value={month} onChange={(e) => setMonth(e.target.value)} />
            </div>
           </div>
 
-          <div className="p-6 bg-slate-50 rounded-2xl border">
+          <div className="p-6 bg-slate-50 rounded-2xl border mt-4">
             <h4 className="text-[10px] font-black text-slate-400 text-center tracking-widest uppercase mb-6">Standard Active Fee Matrix</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {feeHeads.map((head: any) => (
@@ -473,7 +498,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
               </div>
              ))}
             </div>
-            <div className="mt-6 flex justify-center border-t pt-4">
+            <div className="mt-6 flex justify-center border-t border-slate-200 pt-4">
               <button type="button" onClick={handleCloneLastMonthFees} className="px-4 py-2 border text-blue-600 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase rounded-lg flex items-center gap-2"><RefreshCw size={12} /> Sync Copy Past Month Dues</button>
             </div>
           </div>
@@ -483,7 +508,7 @@ Please clear the dues at the school cash counter or pay online via the app. If a
              <span className="text-[10px] text-blue-400 font-black uppercase block tracking-wider">Gross Payable Collection Amount</span>
              <h2 className="text-3xl font-black text-white">₹ {totalAmountValue.toLocaleString()}</h2>
            </div>
-           <button type="submit" disabled={loading} className="px-8 py-4 bg-blue-600 text-white rounded-xl font-black text-xs uppercase flex items-center gap-2 hover:bg-blue-500 shadow-md">
+           <button type="submit" disabled={loading} className="px-8 py-4 bg-blue-600 text-white rounded-xl font-black text-xs uppercase flex items-center gap-2 hover:bg-blue-500 shadow-md transition-colors">
              {loading ? <RefreshCw size={16} className="animate-spin" /> : <ShieldCheck size={16} />} Save Accounting Entry
            </button>
           </div>
